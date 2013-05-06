@@ -3,6 +3,11 @@ require 'spec_helper'
 describe 'docker', :type => :class do
   let(:facts) { {:osfamily => 'Debian', :lsbdistcodename => 'precise'} }
 
+  it { should include_class('docker::install') }
+  it { should include_class('docker::service') }
+  it { should include_class('docker::config') }
+  it { should contain_service('docker').with_provider('upstart') }
+
   context 'with no parameters' do
     it { should include_class('apt') }
     it { should contain_package('lxc-docker').with_ensure('present') }

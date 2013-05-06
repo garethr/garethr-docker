@@ -9,15 +9,15 @@
 #   The package version to install, passed to ensure.
 #   Defaults to present.
 #
-class docker(
-  $version = $docker::params::version,
-) inherits docker::params {
-
+class docker::install {
+  include apt
   validate_string($version)
   validate_re($::osfamily, '^Debian$', 'This module uses PPA repos and only works with Debian based distros')
 
-  class { 'docker::install': } ->
-  class { 'docker::config': } ~>
-  class { 'docker::service': } ->
-  Class['docker']
+  apt::ppa { 'ppa:dotcloud/lxc-docker': }
+
+  package { 'lxc-docker':
+    ensure  => $docker::version,
+    require => Apt::Ppa['ppa:dotcloud/docker'],
+  }
 }

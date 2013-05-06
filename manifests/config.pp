@@ -1,0 +1,2 @@
+class docker::config {
+}
