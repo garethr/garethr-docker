@@ -1,0 +1,10 @@
+name        'garethr-docker'
+version     '0.0.1'
+source      'git://github.com/garethr/garethr-docker.git'
+author      'Gareth Rushgrove'
+summary     'Module for installing docker from official ppa'
+description 'Install the official docker packages'
+license     'Apache License, Version 2.0'
+
+dependency  'puppetlabs/apt', '>= 1.1.0'
+dependency  'puppetlabs/stdlib', '>=3.2.0'
