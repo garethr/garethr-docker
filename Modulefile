@@ -1,5 +1,5 @@
 name        'garethr-docker'
-version     '0.0.1'
+version     '0.0.2'
 source      'git://github.com/garethr/garethr-docker.git'
 author      'Gareth Rushgrove'
 summary     'Module for installing docker from official ppa'
