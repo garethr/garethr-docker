@@ -23,7 +23,7 @@ defined type which can be used like so:
 This is equivalent to running `docker pull base`. Note that it will run
 only if the image of that name does not already exist. This is
 downloading a large binary so on first run can take a while. For that
-reason this define turns off the default 5 minute timeou for exec.
+reason this define turns off the default 5 minute timeout for exec.
 
 Now you have an image you can run commands within a container managed by
 docker.
