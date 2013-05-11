@@ -5,7 +5,7 @@ describe 'docker::run', :type => :define do
 
   context 'passing the required params' do
     let(:params) { {'command' => 'command', 'image' => 'base'} }
-    it { should contain_file('/etc/init/docker-sample.conf').with_content(/docker run -m 0 base command/) }
+    it { should contain_file('/etc/init/docker-sample.conf').with_content(/docker run/).with_content(/base command/) }
     it { should contain_service('docker-sample') }
 
     ['p', 'dns', 'u', 'v', 'volumes-from'].each do |search|
@@ -21,6 +21,16 @@ describe 'docker::run', :type => :define do
   context 'when passing a memory limit in bytes' do
     let(:params) { {'command' => 'command', 'image' => 'base', 'memory_limit' => '1000'} }
     it { should contain_file('/etc/init/docker-sample.conf').with_content(/-m 1000/) }
+  end
+
+  context 'when passing a hostname' do
+    let(:params) { {'command' => 'command', 'image' => 'base', 'hostname' => 'example.com'} }
+    it { should contain_file('/etc/init/docker-sample.conf').with_content(/-h 'example.com'/) }
+  end
+
+  context 'when passing a username' do
+    let(:params) { {'command' => 'command', 'image' => 'base', 'username' => 'bob'} }
+    it { should contain_file('/etc/init/docker-sample.conf').with_content(/-u 'bob'/) }
   end
 
   context 'when passing a port number' do
