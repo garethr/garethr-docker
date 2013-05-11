@@ -18,6 +18,6 @@ class docker::install {
 
   package { 'lxc-docker':
     ensure  => $docker::version,
-    require => Apt::Ppa['ppa:dotcloud/docker'],
+    require => Apt::Ppa['ppa:dotcloud/lxc-docker'],
   }
 }
