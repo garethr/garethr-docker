@@ -24,3 +24,17 @@ This is equivalent to running `docker pull base`. Note that it will run
 only if the image of that name does not already exist. This is
 downloading a large binary so on first run can take a while. For that
 reason this define turns off the default 5 minute timeou for exec.
+
+Now you have an image you can run commands within a container managed by
+docker.
+
+    docker::run { 'helloworld':
+      image   => 'base',
+      command => '/bin/sh -c "while true; do echo hello world; sleep 1; done"'
+    }
+
+This is equivalent to running the following:
+
+    docker run -d base /bin/sh -c "while true; do echo hello world; sleep 1; done"
+
+but then having the process managed by upstart.
