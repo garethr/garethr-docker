@@ -11,4 +11,4 @@ setuid root
 respawn
 respawn limit 5 20
 
-exec docker run -d -u '<%= username %>' -h '<%= hostname %>'<% if ports %><% ports_array.each do |port| %> -p <%= port %><% end %><% end %><% if volumes %><% volumes_array.each do |volume| %> -v <%= volume %><% end %><% end %><% if volumes_from %> -volumes-from <%= volumes_from %><% end %> -m <%= memory_limit %> <%= image %> <%= command %>
+exec docker run -d -u '<%= username %>' -h '<%= hostname %>'<% if env %><% env_array.each do |env| %> -e <%= env %><% end %><% end %><% if ports %><% ports_array.each do |port| %> -p <%= port %><% end %><% end %><% if volumes %><% volumes_array.each do |volume| %> -v <%= volume %><% end %><% end %><% if volumes_from %> -volumes-from <%= volumes_from %><% end %> -m <%= memory_limit %> <%= image %> <%= command %>

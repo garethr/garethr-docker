@@ -8,7 +8,7 @@ describe 'docker::run', :type => :define do
     it { should contain_file('/etc/init/docker-sample.conf').with_content(/docker run/).with_content(/base command/) }
     it { should contain_service('docker-sample') }
 
-    ['p', 'dns', 'u', 'v', 'volumes-from'].each do |search|
+    ['p', 'dns', 'u', 'v', 'e', 'volumes-from'].each do |search|
       it { should_not contain_file('/etc/init/docker-sample.conf').with_content(/-${search}/) }
     end
   end
@@ -45,7 +45,17 @@ describe 'docker::run', :type => :define do
 
   context 'when passing serveral port numbers' do
     let(:params) { {'command' => 'command', 'image' => 'base', 'ports' => ['4444', '4555']} }
-    it { should contain_file('/etc/init/docker-sample.conf').with_content(/-p 4444 -p 4555/) }
+    it { should contain_file('/etc/init/docker-sample.conf').with_content(/-p 4444/).with_content(/-p 4555/) }
+  end
+
+  context 'when passing serveral environment variables' do
+    let(:params) { {'command' => 'command', 'image' => 'base', 'env' => ['FOO=BAR', 'FOO2=BAR2']} }
+    it { should contain_file('/etc/init/docker-sample.conf').with_content(/-e FOO=BAR/).with_content(/-e FOO2=BAR2/) }
+  end
+
+  context 'when passing an environment variable' do
+    let(:params) { {'command' => 'command', 'image' => 'base', 'env' => 'FOO=BAR'} }
+    it { should contain_file('/etc/init/docker-sample.conf').with_content(/-e FOO=BAR/) }
   end
 
   context 'when passing a data volume' do

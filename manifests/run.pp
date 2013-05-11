@@ -8,6 +8,7 @@ define docker::run(
   $volumes_from = false,
   $username = '',
   $hostname = '',
+  $env = [],
 ) {
 
   validate_re($image, '^[\S]*$')
@@ -18,6 +19,7 @@ define docker::run(
 
   $ports_array = any2array($ports)
   $volumes_array = any2array($volumes)
+  $env_array = any2array($env)
 
   file { "/etc/init/docker-${title}.conf":
     ensure  => present,

@@ -48,7 +48,8 @@ Run also contains a number of optional parameters:
       memory_limit => 10485760, # bytes 
       username     => 'example',
       hostname     => 'example.com',
+      env          => ['FOO=BAR', 'FOO2=BAR2'],
     }
 
-Note that both ports and volumes can be set with either a single string
+Note that ports, env and volumes can be set with either a single string
 or as above with an array of values.
