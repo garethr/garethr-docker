@@ -14,3 +14,13 @@ The module includes a single class:
     include 'docker'
 
 By default this sets up the PPA and installs the lxc-docker package.
+
+The next step is probably to install a docker image, for this we have a
+defined type which can be used like so:
+
+    docker::pull { 'base': }
+
+This is equivalent to running `docker pull base`. Note that it will run
+only if the image of that name does not already exist. This is
+downloading a large binary so on first run can take a while. For that
+reason this define turns off the default 5 minute timeou for exec.
