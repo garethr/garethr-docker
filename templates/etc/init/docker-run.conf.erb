@@ -1,0 +1,14 @@
+description "start and stop <%= title %> in docker"
+author "Gareth Rushgrove"
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+setuid root
+
+expect daemon
+
+respawn
+respawn limit 5 20
+
+exec docker run -d <%= image %> <%= command %>
