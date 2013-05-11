@@ -6,9 +6,7 @@ stop on runlevel [!2345]
 
 setuid root
 
-expect daemon
-
 respawn
 respawn limit 5 20
 
-exec docker run -d -m <%= memory_limit %> <%= image %> <%= command %>
+exec docker run <% if port %>-p <%= port %> <% end %>-m <%= memory_limit %> <%= image %> <%= command %>

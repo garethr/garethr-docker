@@ -5,7 +5,7 @@ describe 'docker::run', :type => :define do
 
   context 'passing the required params' do
     let(:params) { {'command' => 'command', 'image' => 'base'} }
-    it { should contain_file('/etc/init/docker-sample.conf').with_content(/docker run -d -m 0 base command/) }
+    it { should contain_file('/etc/init/docker-sample.conf').with_content(/docker run -m 0 base command/) }
     it { should contain_service('docker-sample') }
   end
 
@@ -17,6 +17,11 @@ describe 'docker::run', :type => :define do
   context 'when passing a memory limit in bytes' do
     let(:params) { {'command' => 'command', 'image' => 'base', 'memory_limit' => '1000'} }
     it { should contain_file('/etc/init/docker-sample.conf').with_content(/-m 1000/) }
+  end
+
+  context 'when passing a port number' do
+    let(:params) { {'command' => 'command', 'image' => 'base', 'port' => '4444'} }
+    it { should contain_file('/etc/init/docker-sample.conf').with_content(/-p 4444/) }
   end
 
   context 'with an invalid title' do

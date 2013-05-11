@@ -2,12 +2,13 @@ define docker::run(
   $image,
   $command,
   $memory_limit = '0',
+  $port = false,
   $running = true,
 ) {
 
   validate_re($image, '^[\S]*$')
   validate_re($title, '^[\S]*$')
-  #validate_re($memory_limit, '^[\d]*$')
+  validate_re($memory_limit, '^[\d]*$')
   validate_string($command)
   validate_bool($running)
 
