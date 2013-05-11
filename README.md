@@ -46,6 +46,8 @@ Run also contains a number of optional parameters:
       volumes      => ['/var/lib/counchdb', '/var/log'],
       volumes_from => '6446ea52fbc9',
       memory_limit => 10485760, # bytes 
+      username     => 'example',
+      hostname     => 'example.com',
     }
 
 Note that both ports and volumes can be set with either a single string
