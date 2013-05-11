@@ -11,4 +11,4 @@ expect daemon
 respawn
 respawn limit 5 20
 
-exec docker run -d <%= image %> <%= command %>
+exec docker run -d -m <%= memory_limit %> <%= image %> <%= command %>
