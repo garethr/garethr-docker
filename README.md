@@ -30,11 +30,22 @@ docker.
 
     docker::run { 'helloworld':
       image   => 'base',
-      command => '/bin/sh -c "while true; do echo hello world; sleep 1; done"'
+      command => '/bin/sh -c "while true; do echo hello world; sleep 1; done"',
     }
 
-This is equivalent to running the following:
+This is equivalent to running the following under upstart:
 
     docker run -d base /bin/sh -c "while true; do echo hello world; sleep 1; done"
 
-but then having the process managed by upstart.
+Run also contains a number of optional parameters:
+
+    docker::run { 'helloworld':
+      image        => 'base',
+      command      => '/bin/sh -c "while true; do echo hello world; sleep 1; done"',
+      ports        => ['4444', '4555'],
+      volumes      => ['/var/lib/counchdb', '/var/log'],
+      memory_limit => 10485760, # bytes 
+    }
+
+Note that both ports and volumes can be set with either a single string
+or as above with an array of values.
