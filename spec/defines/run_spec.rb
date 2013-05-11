@@ -20,8 +20,13 @@ describe 'docker::run', :type => :define do
   end
 
   context 'when passing a port number' do
-    let(:params) { {'command' => 'command', 'image' => 'base', 'port' => '4444'} }
+    let(:params) { {'command' => 'command', 'image' => 'base', 'ports' => '4444'} }
     it { should contain_file('/etc/init/docker-sample.conf').with_content(/-p 4444/) }
+  end
+
+  context 'when passing serveral port numbers' do
+    let(:params) { {'command' => 'command', 'image' => 'base', 'ports' => ['4444', '4555']} }
+    it { should contain_file('/etc/init/docker-sample.conf').with_content(/-p 4444 -p 4555/) }
   end
 
   context 'with an invalid title' do

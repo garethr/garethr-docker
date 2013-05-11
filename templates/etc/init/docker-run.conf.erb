@@ -9,4 +9,4 @@ setuid root
 respawn
 respawn limit 5 20
 
-exec docker run <% if port %>-p <%= port %> <% end %>-m <%= memory_limit %> <%= image %> <%= command %>
+exec docker run<% if ports %><% ports_array.each do |port| %> -p <%= port %><% end %><% end %> -m <%= memory_limit %> <%= image %> <%= command %>
