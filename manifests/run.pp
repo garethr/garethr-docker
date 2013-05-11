@@ -2,7 +2,8 @@ define docker::run(
   $image,
   $command,
   $memory_limit = '0',
-  $ports = false,
+  $ports = [],
+  $volumes = [],
   $running = true,
 ) {
 
@@ -13,6 +14,7 @@ define docker::run(
   validate_bool($running)
 
   $ports_array = any2array($ports)
+  $volumes_array = any2array($volumes)
 
   file { "/etc/init/docker-${title}.conf":
     ensure  => present,

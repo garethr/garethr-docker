@@ -29,6 +29,16 @@ describe 'docker::run', :type => :define do
     it { should contain_file('/etc/init/docker-sample.conf').with_content(/-p 4444 -p 4555/) }
   end
 
+  context 'when passing a data volume' do
+    let(:params) { {'command' => 'command', 'image' => 'base', 'volumes' => '/var/log'} }
+    it { should contain_file('/etc/init/docker-sample.conf').with_content(/-v \/var\/log/) }
+  end
+
+  context 'when passing serveral data volume' do
+    let(:params) { {'command' => 'command', 'image' => 'base', 'volumes' => ['/var/lib/couchdb', '/var/log']} }
+    it { should contain_file('/etc/init/docker-sample.conf').with_content(/-v \/var\/lib\/couchdb -v \/var\/log/) }
+  end
+
   context 'with an invalid title' do
     let(:title) { 'with spaces' }
     it do
