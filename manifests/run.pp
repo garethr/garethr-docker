@@ -5,6 +5,7 @@ define docker::run(
   $ports = [],
   $volumes = [],
   $running = true,
+  $volumes_from = false,
 ) {
 
   validate_re($image, '^[\S]*$')

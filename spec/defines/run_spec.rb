@@ -7,6 +7,10 @@ describe 'docker::run', :type => :define do
     let(:params) { {'command' => 'command', 'image' => 'base'} }
     it { should contain_file('/etc/init/docker-sample.conf').with_content(/docker run -m 0 base command/) }
     it { should contain_service('docker-sample') }
+
+    ['p', 'dns', 'u', 'v', 'volumes-from'].each do |search|
+      it { should_not contain_file('/etc/init/docker-sample.conf').with_content(/-${search}/) }
+    end
   end
 
   context 'when stopping the service' do
@@ -22,6 +26,11 @@ describe 'docker::run', :type => :define do
   context 'when passing a port number' do
     let(:params) { {'command' => 'command', 'image' => 'base', 'ports' => '4444'} }
     it { should contain_file('/etc/init/docker-sample.conf').with_content(/-p 4444/) }
+  end
+
+  context 'when connecting to shared data volumes' do
+    let(:params) { {'command' => 'command', 'image' => 'base', 'volumes_from' => '6446ea52fbc9'} }
+    it { should contain_file('/etc/init/docker-sample.conf').with_content(/-volumes-from 6446ea52fbc9/) }
   end
 
   context 'when passing serveral port numbers' do
