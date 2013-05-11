@@ -8,4 +8,4 @@ script: bundle exec rake spec
 env:
   matrix:
   - PUPPET_VERSION=3.1.1
-  - PUPPET_VERSION=3.2.0
+  - PUPPET_VERSION=2.7.20
