@@ -58,6 +58,18 @@ describe 'docker::run', :type => :define do
     it { should contain_file('/etc/init/docker-sample.conf').with_content(/-e FOO=BAR/) }
   end
 
+  context 'when passing serveral dns addresses' do
+    let(:params) { {'command' => 'command', 'image' => 'base', 'dns' => ['8.8.8.8', '8.8.4.4']} }
+    it { should contain_file('/etc/init/docker-sample.conf').with_content(/-dns 8.8.8.8/).with_content(/-dns 8.8.4.4/) }
+  end
+
+  context 'when passing a dns address' do
+    let(:params) { {'command' => 'command', 'image' => 'base', 'dns' => '8.8.8.8'} }
+    it { should contain_file('/etc/init/docker-sample.conf').with_content(/-dns 8.8.8.8/) }
+  end
+
+
+
   context 'when passing a data volume' do
     let(:params) { {'command' => 'command', 'image' => 'base', 'volumes' => '/var/log'} }
     it { should contain_file('/etc/init/docker-sample.conf').with_content(/-v \/var\/log/) }

@@ -58,7 +58,8 @@ Run also contains a number of optional parameters:
       username     => 'example',
       hostname     => 'example.com',
       env          => ['FOO=BAR', 'FOO2=BAR2'],
+      dns          => ['8.8.8.8', '8.8.4.4'],
     }
 
-Note that ports, env and volumes can be set with either a single string
+Note that ports, env, dns and volumes can be set with either a single string
 or as above with an array of values.

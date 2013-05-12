@@ -9,6 +9,7 @@ define docker::run(
   $username = '',
   $hostname = '',
   $env = [],
+  $dns = [],
 ) {
 
   validate_re($image, '^[\S]*$')
@@ -20,6 +21,7 @@ define docker::run(
   $ports_array = any2array($ports)
   $volumes_array = any2array($volumes)
   $env_array = any2array($env)
+  $dns_array = any2array($dns)
 
   file { "/etc/init/docker-${title}.conf":
     ensure  => present,
