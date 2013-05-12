@@ -15,15 +15,24 @@ The module includes a single class:
 
 By default this sets up the PPA and installs the lxc-docker package.
 
+### Images
+
 The next step is probably to install a docker image, for this we have a
 defined type which can be used like so:
 
-    docker::pull { 'base': }
+    docker::image { 'base': }
 
 This is equivalent to running `docker pull base`. Note that it will run
 only if the image of that name does not already exist. This is
 downloading a large binary so on first run can take a while. For that
-reason this define turns off the default 5 minute timeout for exec.
+reason this define turns off the default 5 minute timeout for exec. Note
+that you can also remove images you no longer need with:
+
+    docker::image { 'base':
+      ensure => 'absent',
+    }
+
+### Containers
 
 Now you have an image you can run commands within a container managed by
 docker.
