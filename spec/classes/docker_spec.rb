@@ -11,8 +11,7 @@ describe 'docker', :type => :class do
   context 'with no parameters' do
     it { should include_class('apt') }
     it { should contain_package('lxc-docker').with_ensure('present') }
-    it { should contain_package('lxc-docker').with_require('Apt::Ppa[ppa:dotcloud/lxc-docker]') }
-    it { should contain_apt__ppa('ppa:dotcloud/lxc-docker') }
+    it { should contain_package('lxc-docker').with_require('Apt::Source[docker]') }
   end
 
   context 'with a custom version' do

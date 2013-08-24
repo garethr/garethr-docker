@@ -12,12 +12,20 @@
 class docker::install {
   include apt
   validate_string($version)
-  validate_re($::osfamily, '^Debian$', 'This module uses PPA repos and only works with Debian based distros')
+  validate_re($::osfamily, '^Debian$', 'This module uses the docker apt repo and only works on Debian systems that support it.')
 
-  apt::ppa { 'ppa:dotcloud/lxc-docker': }
-
+  apt::source { 'docker':
+    location          => 'https://get.docker.io/ubuntu',
+    release           => 'docker',
+    repos             => 'main',
+    required_packages => 'debian-keyring debian-archive-keyring',
+    key               => 'A88D21E9',
+    key_source        => 'http://get.docker.io/gpg',
+    pin               => '10'
+  }
+    
   package { 'lxc-docker':
     ensure  => $docker::version,
-    require => Apt::Ppa['ppa:dotcloud/lxc-docker'],
+    require => Apt::Source['docker'],
   }
 }
