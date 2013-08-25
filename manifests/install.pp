@@ -10,8 +10,8 @@
 #   Defaults to present.
 #
 class docker::install (
-  $tcp_bind = undef,
-  $unix_socket = 'unix:///var/run/docker.sock',
+  $tcp_bind = $docker::params::tcp_bind,
+  $socket_bind = $docker::params::socket_bind,
 ){
   include apt
   validate_string($version)
