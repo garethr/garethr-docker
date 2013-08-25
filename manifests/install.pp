@@ -18,8 +18,8 @@ class docker::install (
   validate_re($::osfamily, '^Debian$', 'This module uses the docker apt repo and only works on Debian systems that support it.')
 
   apt::source { 'docker':
-    location          => 'https://get.docker.io/docker',
-    release           => 'ubuntu',
+    location          => 'https://get.docker.io/ubuntu',
+    release           => 'docker',
     repos             => 'main',
     required_packages => 'debian-keyring debian-archive-keyring',
     key               => 'A88D21E9',
