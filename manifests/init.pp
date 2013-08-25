@@ -27,11 +27,11 @@ class docker(
   validate_string($version)
   validate_re($::osfamily, '^Debian$', 'This module uses PPA repos and only works with Debian based distros')
 
-  class { 'docker::install': 
+  class { 'docker::install': } ->
+  class { 'docker::config': } ~>
+  class { 'docker::service': 
     tcp_bind    => $tcp_bind,
     socket_bind => $socket_bind,
   } ->
-  class { 'docker::config': } ~>
-  class { 'docker::service': } ->
   Class['docker']
 }

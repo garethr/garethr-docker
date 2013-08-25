@@ -9,10 +9,7 @@
 #   The package version to install, passed to ensure.
 #   Defaults to present.
 #
-class docker::install (
-  $tcp_bind = $docker::params::tcp_bind,
-  $socket_bind = $docker::params::socket_bind,
-){
+class docker::install {
   include apt
   validate_string($version)
   validate_re($::osfamily, '^Debian$', 'This module uses the docker apt repo and only works on Debian systems that support it.')
@@ -33,7 +30,4 @@ class docker::install (
     require => Apt::Source['docker'],
   }
 
-  file { '/etc/init/docker':
-    content => template('docker/etc/init/docker.conf.erb')
-  }
 }
