@@ -13,7 +13,7 @@ The module includes a single class:
 
     include 'docker'
 
-By default this sets up the PPA and installs the lxc-docker package.
+By default this sets up the docker hosted Apt repository and installs the lxc-docker package.
 
 ### Images
 
