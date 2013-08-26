@@ -15,16 +15,16 @@ class docker::install {
   validate_re($::operatingsystem, '^Ubuntu$', 'This module uses PPA repos and only works with Ubuntu based distros')
   validate_string($::kernelrelease)
 
-  apt::key { 'docker':
+  apt::key { 'lxc-docker':
     key        => 'A88D21E9',
     key_source => 'https://get.docker.io/gpg',
   }
 
-  apt::source { 'docker':
+  apt::source { 'lxc-docker':
     location => 'https://get.docker.io/ubuntu',
     release  => 'docker',
     repos    => 'main',
-    require  => Apt::Key['docker'],
+    require  => Apt::Key['lxc-docker'],
   }
 
   # determine the package name for 'linux-image-extra-$(uname -r)' based on the
@@ -37,6 +37,6 @@ class docker::install {
 
   package { 'lxc-docker':
     ensure  => $docker::version,
-    require => Apt::Source['docker'],
+    require => Apt::Source['lxc-docker'],
   }
 }
