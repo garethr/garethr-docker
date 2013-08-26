@@ -14,10 +14,20 @@ class docker::install {
   validate_string($version)
   validate_re($::osfamily, '^Debian$', 'This module uses PPA repos and only works with Debian based distros')
 
-  apt::ppa { 'ppa:dotcloud/lxc-docker': }
+  apt::key { 'docker':
+    key        => 'A88D21E9',
+    key_source => 'http://get.docker.io/gpg',
+  }
+
+  apt::source { 'docker':
+    location => 'https://get.docker.io/ubuntu/',
+    release  => 'docker',
+    repos    => 'main',
+    require  => Apt::Key['docker'],
+  }
 
   package { 'lxc-docker':
     ensure  => $docker::version,
-    require => Apt::Ppa['ppa:dotcloud/lxc-docker'],
+    require => Apt::Source['docker'],
   }
 }
