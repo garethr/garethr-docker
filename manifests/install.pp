@@ -12,7 +12,7 @@
 class docker::install {
   include apt
   validate_string($version)
-  validate_re($::operatingsystem, '^Ubuntu$', 'This module uses PPA repos and only works with Ubuntu based distros')
+  validate_re($::operatingsystem, '^Ubuntu$', 'This module works currently only with Ubuntu based distributions.')
   validate_string($::kernelrelease)
 
   apt::key { 'lxc-docker':
