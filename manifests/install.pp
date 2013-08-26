@@ -13,6 +13,7 @@ class docker::install {
   include apt
   validate_string($version)
   validate_re($::operatingsystem, '^Ubuntu$', 'This module uses PPA repos and only works with Ubuntu based distros')
+  validate_string($::kernelrelease)
 
   apt::key { 'docker':
     key        => 'A88D21E9',
@@ -24,6 +25,14 @@ class docker::install {
     release  => 'docker',
     repos    => 'main',
     require  => Apt::Key['docker'],
+  }
+
+  # determine the package name for 'linux-image-extra-$(uname -r)' based on the
+  # $::kernelrelease fact
+  $kernelpackage = "linux-image-extra-${::kernelrelease}"
+
+  package { $kernelpackage:
+    ensure => present,
   }
 
   package { 'lxc-docker':
