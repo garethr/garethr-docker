@@ -1,7 +1,11 @@
 require 'spec_helper'
 
 describe 'docker', :type => :class do
-  let(:facts) { {:osfamily => 'Debian', :lsbdistcodename => 'precise'} }
+  let(:facts) { {
+    :operatingsystem => 'Ubuntu',
+    :lsbdistcodename => 'raring',
+    :kernelrelease   => 'linux-image-extra-3.8.0-29-generic'
+  } }
 
   it { should include_class('docker::install') }
   it { should include_class('docker::service') }
@@ -11,8 +15,8 @@ describe 'docker', :type => :class do
   context 'with no parameters' do
     it { should include_class('apt') }
     it { should contain_package('lxc-docker').with_ensure('present') }
-    it { should contain_package('lxc-docker').with_require('Apt::Ppa[ppa:dotcloud/lxc-docker]') }
-    it { should contain_apt__ppa('ppa:dotcloud/lxc-docker') }
+    it { should contain_package('lxc-docker').with_require('Apt::Source[lxc-docker]') }
+    it { should contain_apt__source('lxc-docker') }
   end
 
   context 'with a custom version' do
