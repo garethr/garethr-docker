@@ -21,10 +21,11 @@ class docker::install {
   }
 
   apt::source { 'lxc-docker':
-    location => 'https://get.docker.io/ubuntu',
-    release  => 'docker',
-    repos    => 'main',
-    require  => Apt::Key['lxc-docker'],
+    location    => 'https://get.docker.io/ubuntu',
+    release     => 'docker',
+    repos       => 'main',
+    include_src => false,
+    require     => Apt::Key['lxc-docker'],
   }
 
   # determine the package name for 'linux-image-extra-$(uname -r)' based on the
