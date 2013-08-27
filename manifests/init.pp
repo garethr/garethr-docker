@@ -14,7 +14,7 @@ class docker(
 ) inherits docker::params {
 
   validate_string($version)
-  validate_re($::osfamily, '^Debian$', 'This module uses PPA repos and only works with Debian based distros')
+  validate_re($::operatingsystem, '^Ubuntu$', 'This module uses PPA repos and only works with Debian based distros')
 
   class { 'docker::install': } ->
   class { 'docker::config': } ~>
