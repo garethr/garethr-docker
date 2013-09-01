@@ -17,25 +17,35 @@ By default this sets up the docker hosted Apt repository and installs the lxc-do
 
 ### Images
 
-The next step is probably to install a docker image, for this we have a
-defined type which can be used like so:
+The next step is probably to install a docker image, for this we have a defined type which can be used like so:
 
     docker::image { 'base': }
 
-This is equivalent to running `docker pull base`. Note that it will run
-only if the image of that name does not already exist. This is
-downloading a large binary so on first run can take a while. For that
-reason this define turns off the default 5 minute timeout for exec. Note
-that you can also remove images you no longer need with:
+This is equivalent to running `docker pull base`.  
+This is downloading a large binary so on first run can take a while.  
+For that reason this define turns off the default 5 minute timeout for exec.  
+Takes an optional parameter for installing image tags that is the equivalent to running `docker pull -t="precise" ubuntu`:  
+
+    docker::image { 'ubuntu':
+      tag => 'precise'
+    }
+
+Note: images will only install if an image of that name does not already exist.  
+
+You can also remove images you no longer need with:  
 
     docker::image { 'base':
-      ensure => 'absent',
+      ensure => 'absent'
+    }
+
+    docker::image { 'ubuntu':
+      ensure  => 'absent',
+      tag     => 'precise'
     }
 
 ### Containers
 
-Now you have an image you can run commands within a container managed by
-docker.
+Now you have an image you can run commands within a container managed by docker.
 
     docker::run { 'helloworld':
       image   => 'base',
@@ -61,5 +71,15 @@ Run also contains a number of optional parameters:
       dns          => ['8.8.8.8', '8.8.4.4'],
     }
 
-Note that ports, env, dns and volumes can be set with either a single string
+Notes:
+
+* ports, env, dns and volumes can be set with either a single string  
 or as above with an array of values.
+
+* to use an image tag just append the tag name to the image name separated by a semicolon
+
+    docker::run { 'helloworld':
+      image   => 'ubuntu:precise',
+      command => '/bin/sh -c "while true; do echo hello world; sleep 1; done"',
+    }
+
