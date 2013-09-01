@@ -6,12 +6,22 @@ describe 'docker::image', :type => :define do
 
   context 'with ensure => absent' do
     let(:params) { { 'ensure' => 'absent' } }
-    it { should contain_exec('docker rm base') }
+    it { should contain_exec('docker rmi base') }
   end
 
-  context 'with ensure => absent' do
+  context 'with ensure => absent and tag => precise' do
+    let(:params) { { 'ensure' => 'absent', 'tag' => 'precise' } }
+    it { should contain_exec('docker rmi base:precise') }
+  end
+
+  context 'with ensure => present' do
     let(:params) { { 'ensure' => 'present' } }
     it { should contain_exec('docker pull base') }
+  end
+
+  context 'with ensure => present and tag => precise' do
+    let(:params) { { 'ensure' => 'present', 'tag' => 'precise' } }
+    it { should contain_exec('docker pull -t="precise" base') }
   end
 
   context 'with an invalid image name' do
@@ -27,9 +37,8 @@ describe 'docker::image', :type => :define do
     let(:params) { { 'ensure' => 'not present or absent' } }
     it do
       expect {
-        should contain_exec('docker rm base')
+        should contain_exec('docker rmi base')
       }.to raise_error(Puppet::Error)
     end
   end
-
 end
