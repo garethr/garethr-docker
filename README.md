@@ -75,7 +75,6 @@ Notes:
 
 * ports, env, dns and volumes can be set with either a single string  
 or as above with an array of values.
-
 * to use an image tag just append the tag name to the image name separated by a semicolon
 
     docker::run { 'helloworld':
