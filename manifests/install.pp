@@ -24,7 +24,7 @@ class docker::install {
     pin               => '10',
     include_src       => false,
   }
-    
+
   package { 'lxc-docker':
     ensure  => $docker::version,
     require => Apt::Source['docker'],
