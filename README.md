@@ -71,14 +71,14 @@ Run also contains a number of optional parameters:
       dns          => ['8.8.8.8', '8.8.4.4'],
     }
 
-Notes:
 
-* ports, env, dns and volumes can be set with either a single string  
-or as above with an array of values.
-* to use an image tag just append the tag name to the image name separated by a semicolon
+Ports, env, dns and volumes can be set with either a single string or as above with an array of values.
+
+To use an image tag just append the tag name to the image name separated by a semicolon:
 
     docker::run { 'helloworld':
       image   => 'ubuntu:precise',
       command => '/bin/sh -c "while true; do echo hello world; sleep 1; done"',
     }
+
 
