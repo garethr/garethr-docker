@@ -1,7 +1,11 @@
 require 'spec_helper'
 
 describe 'docker', :type => :class do
-  let(:facts) { {:osfamily => 'Debian', :lsbdistcodename => 'precise'} }
+  let(:facts) { {
+    :osfamily        => 'Debian',
+    :lsbdistcodename => 'precise',
+    :kernelrelease   => 'linux-image-extra-3.8.0-29-generic'
+  } }
 
   it { should include_class('docker::install') }
   it { should include_class('docker::service') }
