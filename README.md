@@ -1,5 +1,5 @@
 Puppet module for installing
-[Docker](https://github.com/dotcloud/docker) from the [official PPA](https://launchpad.net/~dotcloud/+archive/lxc-docker).
+[Docker](https://github.com/dotcloud/docker) from the [official repository](http://docs.docker.io/en/latest/installation/ubuntulinux/).
 
 This module is also available on the [Puppet
 Forge](https://forge.puppetlabs.com/garethr/docker)

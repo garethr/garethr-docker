@@ -1,8 +1,8 @@
 # == Class: docker
 #
 # Module to install an up-to-date version of Docker from the
-# official PPA. The use of the PPA means this only works
-# on Ubuntu.
+# official Apt repository. The use of this repository means, this module works
+# only on Debian based distributions.
 #
 # === Parameters
 # [*version*]
@@ -25,7 +25,7 @@ class docker(
 ) inherits docker::params {
 
   validate_string($version)
-  validate_re($::osfamily, '^Debian$', 'This module uses PPA repos and only works with Debian based distros')
+  validate_re($::osfamily, '^Debian$', 'This module uses the docker apt repo and only works on Debian systems that support it.')
 
   class { 'docker::install': } ->
   class { 'docker::config': } ~>
