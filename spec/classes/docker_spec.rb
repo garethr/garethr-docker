@@ -28,7 +28,7 @@ describe 'docker', :type => :class do
     it do
       expect {
         should contain_package('lxc-docker')
-      }.to raise_error(Puppet::Error, /This module uses PPA repos/)
+      }.to raise_error(Puppet::Error, /^This module uses the docker apt repo/)
     end
   end
 
