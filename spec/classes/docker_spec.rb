@@ -1,7 +1,11 @@
 require 'spec_helper'
 
 describe 'docker', :type => :class do
-  let(:facts) { {:osfamily => 'Debian', :lsbdistcodename => 'precise'} }
+  let(:facts) { {
+    :osfamily        => 'Debian',
+    :lsbdistcodename => 'precise',
+    :kernelrelease   => '3.8.0-29-generic'
+  } }
 
   it { should include_class('docker::install') }
   it { should include_class('docker::service') }
@@ -11,7 +15,7 @@ describe 'docker', :type => :class do
   context 'with no parameters' do
     it { should include_class('apt') }
     it { should contain_package('lxc-docker').with_ensure('present') }
-    it { should contain_package('lxc-docker').with_require('Apt::Source[docker]') }
+    it { should contain_package('lxc-docker').with_require(['Apt::Source[docker]', 'Package[linux-image-extra-3.8.0-29-generic]']) }
   end
 
   context 'with a custom version' do
@@ -24,7 +28,7 @@ describe 'docker', :type => :class do
     it do
       expect {
         should contain_package('lxc-docker')
-      }.to raise_error(Puppet::Error, /This module uses PPA repos/)
+      }.to raise_error(Puppet::Error, /^This module uses the docker apt repo/)
     end
   end
 
