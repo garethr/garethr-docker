@@ -4,7 +4,7 @@ describe 'docker', :type => :class do
   let(:facts) { {
     :osfamily        => 'Debian',
     :lsbdistcodename => 'precise',
-    :kernelrelease   => 'linux-image-extra-3.8.0-29-generic'
+    :kernelrelease   => '3.8.0-29-generic'
   } }
 
   it { should include_class('docker::install') }
@@ -15,7 +15,7 @@ describe 'docker', :type => :class do
   context 'with no parameters' do
     it { should include_class('apt') }
     it { should contain_package('lxc-docker').with_ensure('present') }
-    it { should contain_package('lxc-docker').with_require('Apt::Source[docker]') }
+    it { should contain_package('lxc-docker').with_require(['Apt::Source[docker]', 'Package[linux-image-extra-3.8.0-29-generic]']) }
   end
 
   context 'with a custom version' do
