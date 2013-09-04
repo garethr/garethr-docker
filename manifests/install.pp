@@ -13,6 +13,7 @@ class docker::install {
   include apt
   validate_string($version)
   validate_re($::osfamily, '^Debian$', 'This module uses the docker apt repo and only works on Debian systems that support it.')
+  validate_string($::kernelrelease)
 
   apt::source { 'docker':
     location          => 'https://get.docker.io/ubuntu',
@@ -25,9 +26,20 @@ class docker::install {
     include_src       => false,
   }
 
+  # determine the package name for 'linux-image-extra-$(uname -r)' based on the
+  # $::kernelrelease fact
+  $kernelpackage = "linux-image-extra-${::kernelrelease}"
+
+  package { $kernelpackage:
+    ensure => present,
+  }
+
   package { 'lxc-docker':
     ensure  => $docker::version,
-    require => Apt::Source['docker'],
+    require => [
+        Apt::Source['docker'],
+        Package[$kernelpackage],
+    ],
   }
 
 }
