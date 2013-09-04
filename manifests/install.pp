@@ -1,8 +1,8 @@
 # == Class: docker
 #
 # Module to install an up-to-date version of Docker from the
-# official PPA. The use of the PPA means this only works
-# on Ubuntu.
+# official Apt repository. The use of this repository means, this module works
+# only on Debian based distributions.
 #
 # === Parameters
 # [*version*]
