@@ -10,6 +10,7 @@ define docker::run(
   $hostname = '',
   $env = [],
   $dns = [],
+  $respawn = true,
 ) {
 
   validate_re($image, '^[\S]*$')

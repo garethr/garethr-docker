@@ -18,10 +18,14 @@
 #   The unix socket to bind to. Defaults to
 #   unix:///var/run/docker.sock.
 #
+# [*network_bridge*]
+#   Attach containers to pre-existing network
+#   bridge
 class docker(
-  $version     = $docker::params::version,
-  $tcp_bind    = $docker::params::tcp_bind,
-  $socket_bind = $docker::params::socket_bind
+  $version        = $docker::params::version,
+  $tcp_bind       = $docker::params::tcp_bind,
+  $socket_bind    = $docker::params::socket_bind,
+  $network_bridge = $docker::params::network_bridge,
 ) inherits docker::params {
 
   validate_string($version)
@@ -30,8 +34,9 @@ class docker(
   class { 'docker::install': } ->
   class { 'docker::config': } ~>
   class { 'docker::service':
-    tcp_bind    => $tcp_bind,
-    socket_bind => $socket_bind,
+    tcp_bind       => $tcp_bind,
+    socket_bind    => $socket_bind,
+    network_bridge => $network_bridge
   } ->
   Class['docker']
 }
