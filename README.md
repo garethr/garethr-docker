@@ -27,7 +27,7 @@ For that reason this define turns off the default 5 minute timeout for exec.
 Takes an optional parameter for installing image tags that is the equivalent to running `docker pull -t="precise" ubuntu`:  
 
     docker::image { 'ubuntu':
-      tag => 'precise'
+      image_tag => 'precise'
     }
 
 Note: images will only install if an image of that name does not already exist.  
@@ -40,7 +40,7 @@ You can also remove images you no longer need with:
 
     docker::image { 'ubuntu':
       ensure  => 'absent',
-      tag     => 'precise'
+      image_tag     => 'precise'
     }
 
 ### Containers
