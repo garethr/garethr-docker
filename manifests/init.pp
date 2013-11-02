@@ -31,6 +31,7 @@ class docker(
 
   validate_string($version)
   validate_re($::osfamily, '^Debian$', 'This module uses the docker apt repo and only works on Debian systems that support it.')
+  validate_bool($manage_kernel)
 
   class { 'docker::install': } ->
   class { 'docker::config': } ~>
