@@ -37,6 +37,9 @@ GEM
     puppet (2.7.21)
       facter (~> 1.5)
     puppet-lint (0.3.2)
+    puppet-syntax (1.0.0)
+      puppet (>= 2.7.0)
+      rake
     puppetlabs_spec_helper (0.4.1)
       mocha (>= 0.10.5)
       rake
@@ -73,6 +76,7 @@ PLATFORMS
 DEPENDENCIES
   puppet (~> 2.7.0)
   puppet-lint
+  puppet-syntax
   puppetlabs_spec_helper
   rake
   rspec-puppet
