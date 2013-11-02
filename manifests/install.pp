@@ -26,9 +26,18 @@ class docker::install {
     include_src       => false,
   }
 
-  # determine the package name for 'linux-image-extra-$(uname -r)' based on the
-  # $::kernelrelease fact
-  $kernelpackage = "linux-image-extra-${::kernelrelease}"
+  case $::operatingsystemrelease {
+    # On Ubuntu 12.04 (precise) install the backported 13.04 (raring) kernel
+    '12.04': { $kernelpackage = [
+                                  'linux-image-generic-lts-raring',
+                                  'linux-headers-generic-lts-raring'
+                                ]
+    }
+    # determine the package name for 'linux-image-extra-$(uname -r)' based on
+    # the $::kernelrelease fact
+    default: { $kernelpackage = "linux-image-extra-${::kernelrelease}" }
+  }
+
 
   package { $kernelpackage:
     ensure => present,
