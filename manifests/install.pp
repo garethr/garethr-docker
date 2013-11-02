@@ -4,11 +4,6 @@
 # official Apt repository. The use of this repository means, this module works
 # only on Debian based distributions.
 #
-# === Parameters
-# [*version*]
-#   The package version to install, passed to ensure.
-#   Defaults to present.
-#
 class docker::install {
   include apt
   validate_string($docker::version)
@@ -38,17 +33,16 @@ class docker::install {
     default: { $kernelpackage = "linux-image-extra-${::kernelrelease}" }
   }
 
-
-  package { $kernelpackage:
-    ensure => present,
+  if $docker::manage_kernel {
+    package { $kernelpackage:
+      ensure => present,
+    }
+    Package[$kernelpackage] -> Package['lxc-docker']
   }
 
   package { 'lxc-docker':
     ensure  => $docker::version,
-    require => [
-        Apt::Source['docker'],
-        Package[$kernelpackage],
-    ],
+    require => Apt::Source['docker'],
   }
 
 }

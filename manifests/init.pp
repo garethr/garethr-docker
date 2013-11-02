@@ -7,7 +7,7 @@
 # === Parameters
 # [*version*]
 #   The package version to install, passed to ensure.
-#   Defaults to present.
+#   Defaults to present
 #
 # [*tcp_bind*]
 #   The tcp socket to bind to in the format
@@ -18,10 +18,15 @@
 #   The unix socket to bind to. Defaults to
 #   unix:///var/run/docker.sock.
 #
+# [*manage_kernel*]
+#   Attempt to install the correct Kernel required by docker
+#   Defaults to true
+#
 class docker(
-  $version     = $docker::params::version,
-  $tcp_bind    = $docker::params::tcp_bind,
-  $socket_bind = $docker::params::socket_bind
+  $version       = $docker::params::version,
+  $tcp_bind      = $docker::params::tcp_bind,
+  $socket_bind   = $docker::params::socket_bind,
+  $manage_kernel = true
 ) inherits docker::params {
 
   validate_string($version)
@@ -29,9 +34,6 @@ class docker(
 
   class { 'docker::install': } ->
   class { 'docker::config': } ~>
-  class { 'docker::service':
-    tcp_bind    => $tcp_bind,
-    socket_bind => $socket_bind,
-  } ->
+  class { 'docker::service': } ->
   Class['docker']
 }
