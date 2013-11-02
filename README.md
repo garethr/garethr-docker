@@ -13,7 +13,24 @@ The module includes a single class:
 
     include 'docker'
 
-By default this sets up the docker hosted Apt repository and installs the lxc-docker package.
+By default this sets up the docker hosted Apt repository and installs
+the lxc-docker package and the required Kernel.
+
+If you don't want this module to mess about with your Kernel then you
+can disable this feature like so:
+
+  class { 'docker':
+    manage_kernel => false,
+  }
+
+By default the docker daemon will bind to a unix socket at
+/var/run/docker.sock. This can be changed, as well as binding to a tcp
+socket if required.
+
+  class { 'docker':
+    tcp_bind    => 'tcp://127.0.0.1:4243',
+    socket_bind => 'unix:///var/run/docker.sock',
+  }
 
 ### Images
 
