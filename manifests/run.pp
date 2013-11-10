@@ -4,6 +4,7 @@ define docker::run(
   $memory_limit = '0',
   $ports = [],
   $volumes = [],
+  $links = [],
   $running = true,
   $volumes_from = false,
   $username = '',
@@ -22,6 +23,7 @@ define docker::run(
   $volumes_array = any2array($volumes)
   $env_array = any2array($env)
   $dns_array = any2array($dns)
+  $links_array = any2array($links)
 
   file { "/etc/init/docker-${title}.conf":
     ensure  => present,
