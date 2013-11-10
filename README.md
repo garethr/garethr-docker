@@ -80,6 +80,7 @@ Run also contains a number of optional parameters:
       command      => '/bin/sh -c "while true; do echo hello world; sleep 1; done"',
       ports        => ['4444', '4555'],
       links        => ['mysql:db'],
+      use_name     => true,
       volumes      => ['/var/lib/couchdb', '/var/log'],
       volumes_from => '6446ea52fbc9',
       memory_limit => 10485760, # bytes 

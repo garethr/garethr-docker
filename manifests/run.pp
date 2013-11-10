@@ -5,6 +5,7 @@ define docker::run(
   $ports = [],
   $volumes = [],
   $links = [],
+  $use_name = false,
   $running = true,
   $volumes_from = false,
   $username = '',
