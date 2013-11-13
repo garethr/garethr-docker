@@ -8,9 +8,14 @@ describe 'docker::run', :type => :define do
     it { should contain_file('/etc/init/docker-sample.conf').with_content(/docker run/).with_content(/base command/) }
     it { should contain_service('docker-sample') }
 
-    ['p', 'dns', 'u', 'v', 'e', 'volumes-from'].each do |search|
+    ['p', 'dns', 'u', 'v', 'e', 'volumes-from', 'name'].each do |search|
       it { should_not contain_file('/etc/init/docker-sample.conf').with_content(/-${search}/) }
     end
+  end
+
+  context 'when `use_name` is true' do
+    let(:params) { {'command' => 'command', 'image' => 'base', 'use_name' => true } }
+    it { should contain_file('/etc/init/docker-sample.conf').with_content(/ -name sample /) }
   end
 
   context 'when stopping the service' do
@@ -21,6 +26,11 @@ describe 'docker::run', :type => :define do
   context 'when passing a memory limit in bytes' do
     let(:params) { {'command' => 'command', 'image' => 'base', 'memory_limit' => '1000'} }
     it { should contain_file('/etc/init/docker-sample.conf').with_content(/-m 1000/) }
+  end
+
+  context 'when passing a links option' do
+    let(:params) { {'command' => 'command', 'image' => 'base', 'links' => ['example:one', 'example:two']} }
+    it { should contain_file('/etc/init/docker-sample.conf').with_content(/ -link example:one -link example:two /) }
   end
 
   context 'when passing a hostname' do
