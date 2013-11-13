@@ -15,7 +15,7 @@ describe 'docker', :type => :class do
   context 'with no parameters' do
     it { should include_class('apt') }
     it { should contain_package('lxc-docker').with_ensure('present') }
-    it { should contain_package('lxc-docker').with_require('Apt::Source[docker]') }
+    it { should contain_apt__source('docker') }
     it { should contain_package('linux-image-extra-3.8.0-29-generic') }
   end
 
@@ -31,6 +31,13 @@ describe 'docker', :type => :class do
         should contain_package('lxc-docker')
       }.to raise_error(Puppet::Error, /^This module uses the docker apt repo/)
     end
+  end
+
+  context 'with no upstream apt source' do
+    let(:params) { {'use_upstream_apt_source' => false } }
+    it { should_not contain_apt__source('docker') }
+    it { should contain_package('lxc-docker') }
+    it { should contain_package('linux-image-extra-3.8.0-29-generic') }
   end
 
   context 'when not managing the kernel' do
