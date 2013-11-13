@@ -18,15 +18,20 @@
 #   The unix socket to bind to. Defaults to
 #   unix:///var/run/docker.sock.
 #
+# [*use_upstream_apt_source*]
+#   Whether or not to use the upstream apt source.
+#   If you run your own package mirror, you may set this
+#   to false.
 # [*manage_kernel*]
 #   Attempt to install the correct Kernel required by docker
 #   Defaults to true
 #
 class docker(
-  $version       = $docker::params::version,
-  $tcp_bind      = $docker::params::tcp_bind,
-  $socket_bind   = $docker::params::socket_bind,
-  $manage_kernel = true
+  $version                 = $docker::params::version,
+  $tcp_bind                = $docker::params::tcp_bind,
+  $socket_bind             = $docker::params::socket_bind,
+  $use_upstream_apt_source = $docker::params::use_upstream_apt_source,
+  $manage_kernel           = true
 ) inherits docker::params {
 
   validate_string($version)

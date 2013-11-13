@@ -5,20 +5,25 @@
 # only on Debian based distributions.
 #
 class docker::install {
-  include apt
   validate_string($docker::version)
   validate_re($::osfamily, '^Debian$', 'This module uses the docker apt repo and only works on Debian systems that support it.')
   validate_string($::kernelrelease)
+  validate_bool($docker::use_upstream_apt_source)
 
-  apt::source { 'docker':
-    location          => 'https://get.docker.io/ubuntu',
-    release           => 'docker',
-    repos             => 'main',
-    required_packages => 'debian-keyring debian-archive-keyring',
-    key               => 'A88D21E9',
-    key_source        => 'http://get.docker.io/gpg',
-    pin               => '10',
-    include_src       => false,
+  if ($docker::use_upstream_apt_source) {
+    include apt
+    apt::source { 'docker':
+      location          => 'https://get.docker.io/ubuntu',
+      release           => 'docker',
+      repos             => 'main',
+      required_packages => 'debian-keyring debian-archive-keyring',
+      key               => 'A88D21E9',
+      key_source        => 'http://get.docker.io/gpg',
+      pin               => '10',
+      include_src       => false,
+    }
+
+    Apt::Source['docker'] -> Package['lxc-docker']
   }
 
   case $::operatingsystemrelease {
@@ -42,7 +47,5 @@ class docker::install {
 
   package { 'lxc-docker':
     ensure  => $docker::version,
-    require => Apt::Source['docker'],
   }
-
 }
