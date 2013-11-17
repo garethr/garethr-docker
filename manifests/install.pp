@@ -41,8 +41,8 @@ class docker::install {
   if $docker::manage_kernel {
     package { $kernelpackage:
       ensure => present,
+      before => Package['lxc-docker'],
     }
-    Package[$kernelpackage] -> Package['lxc-docker']
   }
 
   package { 'lxc-docker':
