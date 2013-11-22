@@ -1,9 +1,10 @@
 class docker::service (
-  $tcp_bind    = $docker::tcp_bind,
-  $socket_bind = $docker::socket_bind,
+  $tcp_bind             = $docker::tcp_bind,
+  $socket_bind          = $docker::socket_bind,
+  $service_state        = $docker::service_state,
 ){
   service { 'docker':
-    ensure     => running,
+    ensure     => $service_state,
     enable     => true,
     hasstatus  => true,
     hasrestart => true,

@@ -31,6 +31,7 @@ class docker(
   $tcp_bind                = $docker::params::tcp_bind,
   $socket_bind             = $docker::params::socket_bind,
   $use_upstream_apt_source = $docker::params::use_upstream_apt_source,
+  $service_state           = $docker::params::service_state,
   $manage_kernel           = true
 ) inherits docker::params {
 

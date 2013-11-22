@@ -56,4 +56,9 @@ describe 'docker', :type => :class do
     it { should contain_package('linux-headers-generic-lts-raring') }
   end
 
+  context 'with service_state set to stopped' do
+    let(:params) { {'service_state' => 'stopped'} }
+
+    it { should contain_service('docker').with_ensure('stopped') }
+  end
 end
