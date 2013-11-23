@@ -32,6 +32,14 @@ socket if required.
       socket_bind => 'unix:///var/run/docker.sock',
     }
 
+Unless specified this installs the latest version of docker from the
+lxc-docker package. However if you want to specify a specific version
+you can do so:
+
+    class { 'docker':
+      version => '0.5.5',
+    }
+
 ### Images
 
 The next step is probably to install a docker image, for this we have a defined type which can be used like so:

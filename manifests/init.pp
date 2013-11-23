@@ -28,6 +28,7 @@
 #
 class docker(
   $version                 = $docker::params::version,
+  $ensure                  = $docker::params::ensure,
   $tcp_bind                = $docker::params::tcp_bind,
   $socket_bind             = $docker::params::socket_bind,
   $use_upstream_apt_source = $docker::params::use_upstream_apt_source,

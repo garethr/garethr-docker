@@ -45,7 +45,14 @@ class docker::install {
     }
   }
 
+  if $docker::version {
+    $dockerpackage = "lxc-docker-${docker::version}"
+  } else {
+    $dockerpackage = "lxc-docker"
+  }
+
   package { 'lxc-docker':
-    ensure  => $docker::version,
+    name   => $dockerpackage,
+    ensure => $docker::ensure,
   }
 }

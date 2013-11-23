@@ -20,7 +20,12 @@ describe 'docker', :type => :class do
   end
 
   context 'with a custom version' do
-    let(:params) { {'version' => 'absent' } }
+    let(:params) { {'version' => '0.5.5' } }
+    it { should contain_package('lxc-docker').with_name('lxc-docker-0.5.5').with_ensure('present') }
+  end
+
+  context 'with ensure absent' do
+    let(:params) { {'ensure' => 'absent' } }
     it { should contain_package('lxc-docker').with_ensure('absent') }
   end
 
