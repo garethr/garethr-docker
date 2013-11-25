@@ -5,4 +5,5 @@ class docker::params {
   $socket_bind             = 'unix:///var/run/docker.sock'
   $use_upstream_apt_source = true
   $service_state           = running
+  $root_dir                = undef
 }

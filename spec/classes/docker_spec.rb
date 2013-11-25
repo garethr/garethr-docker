@@ -66,4 +66,10 @@ describe 'docker', :type => :class do
 
     it { should contain_service('docker').with_ensure('stopped') }
   end
+
+  context 'with custom root dir' do
+    let(:params) { {'root_dir' => '/mnt/docker'} }
+
+    it { should contain_file('/etc/init/docker.conf').with_content(/-g \/mnt\/docker/) }
+  end
 end
