@@ -2,6 +2,7 @@ class docker::service (
   $tcp_bind             = $docker::tcp_bind,
   $socket_bind          = $docker::socket_bind,
   $service_state        = $docker::service_state,
+  $root_dir             = $docker::root_dir,
 ){
   service { 'docker':
     ensure     => $service_state,
