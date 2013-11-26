@@ -1,3 +1,7 @@
+# == Class: docker::paramrs
+#
+# Defaut parameter values for the docker module
+#
 class docker::params {
   $version                 = undef
   $ensure                  = present

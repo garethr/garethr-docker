@@ -64,8 +64,8 @@ You can also remove images you no longer need with:
     }
 
     docker::image { 'ubuntu':
-      ensure  => 'absent',
-      image_tag     => 'precise'
+      ensure    => 'absent',
+      image_tag => 'precise'
     }
 
 ### Containers

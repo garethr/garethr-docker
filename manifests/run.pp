@@ -1,3 +1,7 @@
+# == Define: docker:run
+#
+# A define which manages an upstart managed docker container
+#
 define docker::run(
   $image,
   $command,
