@@ -7,13 +7,15 @@ describe 'docker', :type => :class do
     :kernelrelease   => '3.8.0-29-generic'
   } }
 
-  it { should include_class('docker::install') }
-  it { should include_class('docker::service') }
-  it { should include_class('docker::config') }
+  it { should compile.with_all_deps }
+
+  it { should contain_class('docker::install').that_comes_before('docker::config') }
+  it { should contain_class('docker::service').that_subscribes_to('docker::config') }
+  it { should contain_class('docker::config') }
   it { should contain_service('docker').with_provider('upstart') }
 
   context 'with no parameters' do
-    it { should include_class('apt') }
+    it { should contain_class('apt') }
     it { should contain_package('lxc-docker').with_ensure('present') }
     it { should contain_apt__source('docker') }
     it { should contain_package('linux-image-extra-3.8.0-29-generic') }
