@@ -13,7 +13,7 @@ class docker::install {
   if ($docker::use_upstream_apt_source) {
     include apt
     apt::source { 'docker':
-      location          => 'https://get.docker.io/ubuntu',
+      location          => $docker::apt_source_location,
       release           => 'docker',
       repos             => 'main',
       required_packages => 'debian-keyring debian-archive-keyring',

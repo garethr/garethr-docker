@@ -10,4 +10,5 @@ class docker::params {
   $use_upstream_apt_source = true
   $service_state           = running
   $root_dir                = undef
+  $apt_source_location     = 'https://get.docker.io/ubuntu'
 }

@@ -22,6 +22,9 @@
 #   Whether or not to use the upstream apt source.
 #   If you run your own package mirror, you may set this
 #   to false.
+# [*apt_source_location*]
+#   If you're using an upstream apt source, what is it's
+#   location. Defaults to https://get.docker.io/ubuntu
 # [*manage_kernel*]
 #   Attempt to install the correct Kernel required by docker
 #   Defaults to true
@@ -32,6 +35,7 @@ class docker(
   $tcp_bind                = $docker::params::tcp_bind,
   $socket_bind             = $docker::params::socket_bind,
   $use_upstream_apt_source = $docker::params::use_upstream_apt_source,
+  $apt_source_location     = $docker::params::apt_source_location,
   $service_state           = $docker::params::service_state,
   $root_dir                = $docker::params::root_dir,
   $manage_kernel           = true
