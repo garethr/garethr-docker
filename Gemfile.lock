@@ -3,13 +3,26 @@ GEM
   specs:
     addressable (2.3.3)
     backports (2.8.2)
+    builder (3.2.2)
     coderay (1.0.9)
     diff-lcs (1.2.5)
+    excon (0.28.0)
     facter (1.6.18)
     faraday (0.8.7)
       multipart-post (~> 1.1)
     faraday_middleware (0.9.0)
       faraday (>= 0.7.4, < 0.9)
+    fog (1.18.0)
+      builder
+      excon (~> 0.28.0)
+      formatador (~> 0.2.0)
+      mime-types
+      multi_json (~> 1.0)
+      net-scp (~> 1.1)
+      net-ssh (>= 2.1.3)
+      nokogiri (~> 1.5)
+      ruby-hmac
+    formatador (0.2.4)
     gh (0.9.1)
       addressable
       backports (~> 2.3)
@@ -19,17 +32,23 @@ GEM
       net-http-pipeline
     hashr (0.0.22)
     highline (1.6.16)
+    kwalify (0.7.2)
     launchy (2.2.0)
       addressable (~> 2.3)
     metaclass (0.0.1)
     method_source (0.8.1)
+    mime-types (1.25.1)
     mocha (0.13.3)
       metaclass (~> 0.0.1)
     multi_json (1.7.2)
     multipart-post (1.2.0)
     net-http-persistent (2.8)
     net-http-pipeline (1.0.1)
+    net-scp (1.1.2)
+      net-ssh (>= 2.6.5)
+    net-ssh (2.7.0)
     netrc (0.7.7)
+    nokogiri (1.5.10)
     pry (0.9.12)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
@@ -46,6 +65,10 @@ GEM
       rspec (>= 2.9.0)
       rspec-puppet (>= 0.1.1)
     rake (10.0.4)
+    rbvmomi (1.6.0)
+      builder
+      nokogiri (>= 1.4.1)
+      trollop
     rspec (2.14.1)
       rspec-core (~> 2.14.0)
       rspec-expectations (~> 2.14.0)
@@ -56,7 +79,21 @@ GEM
     rspec-mocks (2.14.4)
     rspec-puppet (1.0.1)
       rspec
+    rspec-system (2.8.0)
+      fog (~> 1.18)
+      kwalify (~> 0.7.2)
+      mime-types (~> 1.16)
+      net-scp (~> 1.1)
+      net-ssh (~> 2.7)
+      nokogiri (~> 1.5.10)
+      rbvmomi (~> 1.6)
+      rspec (~> 2.14)
+      systemu (~> 2.5)
+    rspec-system-puppet (2.2.1)
+      rspec-system (~> 2.0)
+    ruby-hmac (0.4.0)
     slop (3.4.4)
+    systemu (2.6.0)
     travis (1.2.0)
       backports (~> 2.6)
       faraday (~> 0.8)
@@ -69,6 +106,8 @@ GEM
       pry (~> 0.9)
     travis-lint (1.6.0)
       hashr (~> 0.0.22)
+    trollop (2.0)
+    vagrant-wrapper (1.2.1.1)
 
 PLATFORMS
   ruby
@@ -80,5 +119,7 @@ DEPENDENCIES
   puppetlabs_spec_helper
   rake
   rspec-puppet (~> 1.0.0)
+  rspec-system-puppet
   travis
   travis-lint
+  vagrant-wrapper
