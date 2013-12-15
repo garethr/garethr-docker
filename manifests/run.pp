@@ -16,6 +16,7 @@ define docker::run(
   $hostname = '',
   $env = [],
   $dns = [],
+  $restart_service = true,
 ) {
 
   validate_re($image, '^[\S]*$')
@@ -40,8 +41,14 @@ define docker::run(
     enable     => true,
     hasstatus  => true,
     hasrestart => true,
-    provider   => upstart,
-    require    => File["/etc/init/docker-${title}.conf"],
+    provider   => upstart;
   }
 
+  if str2bool($restart_service) {
+    File["/etc/init/docker-${title}.conf"] ~> Service["docker-${title}"]
+  }
+  else {
+    File["/etc/init/docker-${title}.conf"] -> Service["docker-${title}"]
+  }
 }
+
