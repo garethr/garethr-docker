@@ -55,6 +55,10 @@ GEM
       slop (~> 3.4)
     puppet (2.7.21)
       facter (~> 1.5)
+    puppet-blacksmith (2.0.2)
+      nokogiri
+      puppet (>= 2.7.16)
+      rest-client
     puppet-lint (0.3.2)
     puppet-syntax (1.0.0)
       puppet (>= 2.7.0)
@@ -69,6 +73,8 @@ GEM
       builder
       nokogiri (>= 1.4.1)
       trollop
+    rest-client (1.6.7)
+      mime-types (>= 1.16)
     rspec (2.14.1)
       rspec-core (~> 2.14.0)
       rspec-expectations (~> 2.14.0)
@@ -114,6 +120,7 @@ PLATFORMS
 
 DEPENDENCIES
   puppet (~> 2.7.0)
+  puppet-blacksmith
   puppet-lint
   puppet-syntax
   puppetlabs_spec_helper
