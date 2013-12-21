@@ -1,8 +1,18 @@
 require 'puppetlabs_spec_helper/rake_tasks'
 require 'puppet-lint/tasks/puppet-lint'
 require 'puppet-syntax/tasks/puppet-syntax'
-require 'rspec-system/rake_task'
-require 'puppet_blacksmith/rake_tasks'
+
+# These two gems aren't always present, for instance
+# on Travis with --without development
+begin
+  require 'rspec-system/rake_task'
+rescue LoadError
+end
+
+begin
+  require 'puppet_blacksmith/rake_tasks'
+rescue LoadError
+end
 
 PuppetLint.configuration.send("disable_80chars")
 PuppetLint.configuration.log_format = "%{path}:%{linenumber}:%{check}:%{KIND}:%{message}"
