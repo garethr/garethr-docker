@@ -38,9 +38,19 @@ describe 'docker::run', :type => :define do
     it { should contain_file('/etc/init/docker-sample.conf').with_content(/-h 'example.com'/) }
   end
 
+  context 'when not passing a hostname' do
+    let(:params) { {'command' => 'command', 'image' => 'base'} }
+    it { should contain_file('/etc/init/docker-sample.conf').without_content(/-h ''/) }
+  end
+
   context 'when passing a username' do
     let(:params) { {'command' => 'command', 'image' => 'base', 'username' => 'bob'} }
     it { should contain_file('/etc/init/docker-sample.conf').with_content(/-u 'bob'/) }
+  end
+
+  context 'when not passing a username' do
+    let(:params) { {'command' => 'command', 'image' => 'base'} }
+    it { should contain_file('/etc/init/docker-sample.conf').without_content(/-u ''/) }
   end
 
   context 'when passing a port number' do
