@@ -12,8 +12,8 @@ define docker::run(
   $use_name = false,
   $running = true,
   $volumes_from = false,
-  $username = '',
-  $hostname = '',
+  $username = false,
+  $hostname = false,
   $env = [],
   $dns = [],
   $restart_service = true,
@@ -22,7 +22,13 @@ define docker::run(
   validate_re($image, '^[\S]*$')
   validate_re($title, '^[\S]*$')
   validate_re($memory_limit, '^[\d]*$')
-  validate_string($command, $username, $hostname)
+  validate_string($command)
+  if $username {
+    validate_string($username)
+  }
+  if $hostname {
+    validate_string($hostname)
+  }
   validate_bool($running)
 
   $ports_array = any2array($ports)
