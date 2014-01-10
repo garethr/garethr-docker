@@ -37,24 +37,47 @@ define docker::run(
   $dns_array = any2array($dns)
   $links_array = any2array($links)
 
-  file { "/etc/init/docker-${title}.conf":
-    ensure  => present,
-    content => template('docker/etc/init/docker-run.conf.erb')
-  }
+  case $::osfamily {
+    'Debian': {
+      $initscript = "/etc/init/docker-${title}.conf"
 
-  service { "docker-${title}":
-    ensure     => $running,
-    enable     => true,
-    hasstatus  => true,
-    hasrestart => true,
-    provider   => upstart;
+      file { $initscript:
+        ensure  => present,
+        content => template('docker/etc/init/docker-run.conf.erb')
+      }
+
+      service { "docker-${title}":
+        ensure     => $running,
+        enable     => true,
+        hasstatus  => true,
+        hasrestart => true,
+        provider   => upstart;
+      }
+    }
+    'RedHat': {
+      $initscript = "/etc/init.d/docker-${title}"
+
+      file { $initscript:
+        ensure  => present,
+        content => template('docker/etc/init.d/docker-run.erb'),
+        mode    => '0755',
+      }
+
+      service { "docker-${title}":
+        ensure     => $running,
+        enable     => true,
+      }
+    }
+    default: {
+      fail('Docker needs a RedHat or Debian based system.')
+    }
   }
 
   if str2bool($restart_service) {
-    File["/etc/init/docker-${title}.conf"] ~> Service["docker-${title}"]
+    File[$initscript] ~> Service["docker-${title}"]
   }
   else {
-    File["/etc/init/docker-${title}.conf"] -> Service["docker-${title}"]
+    File[$initscript] -> Service["docker-${title}"]
   }
 }
 

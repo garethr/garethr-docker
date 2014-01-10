@@ -18,18 +18,37 @@ class docker::service (
   $service_state        = $docker::service_state,
   $root_dir             = $docker::root_dir,
 ){
-  service { 'docker':
-    ensure     => $service_state,
-    enable     => true,
-    hasstatus  => true,
-    hasrestart => true,
-    provider   => upstart,
-  }
+  case $::osfamily {
+    'Debian': {
+      service { 'docker':
+        ensure     => $service_state,
+        enable     => true,
+        hasstatus  => true,
+        hasrestart => true,
+        provider   => upstart,
+      }
 
-  file { '/etc/init/docker.conf':
-    ensure  => present,
-    force   => true,
-    content => template('docker/etc/init/docker.conf.erb'),
-    notify  => Service['docker'],
+      file { '/etc/init/docker.conf':
+        ensure  => present,
+        force   => true,
+        content => template('docker/etc/init/docker.conf.erb'),
+        notify  => Service['docker'],
+      }
+    }
+    'RedHat': {
+      service { 'docker':
+        ensure     => $service_state,
+      }
+
+      file { '/etc/sysconfig/docker':
+        ensure  => present,
+        force   => true,
+        content => template('docker/etc/sysconfig/docker.erb'),
+        notify  => Service['docker'],
+      }
+    }
+    default: {
+      fail('Docker needs a RedHat or Debian based system.')
+    }
   }
 }

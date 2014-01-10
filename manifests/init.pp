@@ -1,8 +1,6 @@
 # == Class: docker
 #
-# Module to install an up-to-date version of Docker from the
-# official Apt repository. The use of this repository means, this module works
-# only on Debian based distributions.
+# Module to install an up-to-date version of Docker from package.
 #
 # === Parameters
 # [*version*]
@@ -18,32 +16,33 @@
 #   The unix socket to bind to. Defaults to
 #   unix:///var/run/docker.sock.
 #
-# [*use_upstream_apt_source*]
-#   Whether or not to use the upstream apt source.
+# [*use_upstream_package_source*]
+#   Whether or not to use the upstream package source.
 #   If you run your own package mirror, you may set this
 #   to false.
-# [*apt_source_location*]
-#   If you're using an upstream apt source, what is it's
-#   location. Defaults to https://get.docker.io/ubuntu
+# [*package_source_location*]
+#   If you're using an upstream package source, what is it's
+#   location. Defaults to https://get.docker.io/ubuntu on Debian
 # [*manage_kernel*]
 #   Attempt to install the correct Kernel required by docker
 #   Defaults to true
 #
 class docker(
-  $version                 = $docker::params::version,
-  $ensure                  = $docker::params::ensure,
-  $tcp_bind                = $docker::params::tcp_bind,
-  $socket_bind             = $docker::params::socket_bind,
-  $use_upstream_apt_source = $docker::params::use_upstream_apt_source,
-  $apt_source_location     = $docker::params::apt_source_location,
-  $service_state           = $docker::params::service_state,
-  $root_dir                = $docker::params::root_dir,
-  $manage_kernel           = true,
-  $dns                     = $docker::params::dns
+  $version                     = $docker::params::version,
+  $ensure                      = $docker::params::ensure,
+  $tcp_bind                    = $docker::params::tcp_bind,
+  $socket_bind                 = $docker::params::socket_bind,
+  $use_upstream_package_source = $docker::params::use_upstream_package_source,
+  $package_source_location     = $docker::params::package_source_location,
+  $service_state               = $docker::params::service_state,
+  $root_dir                    = $docker::params::root_dir,
+  $manage_kernel               = true,
+  $dns                         = $docker::params::dns,
+  $extra_parameters            = undef,
 ) inherits docker::params {
 
   validate_string($version)
-  validate_re($::osfamily, '^Debian$', 'This module uses the docker apt repo and only works on Debian systems that support it.')
+  validate_re($::osfamily, '^(Debian|RedHat)$', 'This module only works on Debian and Red Hat based systems.')
   validate_bool($manage_kernel)
 
   class { 'docker::install': } ->
