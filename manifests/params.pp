@@ -11,4 +11,5 @@ class docker::params {
   $service_state           = running
   $root_dir                = undef
   $apt_source_location     = 'https://get.docker.io/ubuntu'
+  $dns			   = undef
 }

@@ -38,7 +38,8 @@ class docker(
   $apt_source_location     = $docker::params::apt_source_location,
   $service_state           = $docker::params::service_state,
   $root_dir                = $docker::params::root_dir,
-  $manage_kernel           = true
+  $manage_kernel           = true,
+  $dns                     = $docker::params::dns
 ) inherits docker::params {
 
   validate_string($version)
