@@ -48,6 +48,12 @@ class { 'docker':
 }
 ```
 
+In some cases dns resolution won't work well in the container unless you give a dns server to the docker daemon like this:
+
+    class { 'docker':
+      dns => '8.8.8.8',
+    }
+
 ### Images
 
 The next step is probably to install a docker image, for this we have a defined type which can be used like so:
