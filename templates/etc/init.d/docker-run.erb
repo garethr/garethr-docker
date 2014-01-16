@@ -62,6 +62,9 @@ start() {
             -v <%= volume %><% end %> \
         <% end %> \
         <% if @volumes_from %> -volumes-from <%= @volumes_from %><% end %> \
+        <% if @lxc_conf_array %><% @lxc_conf_array.each do |lxcconf| %> \
+            -lxc-conf="<%=lxcconf%>"<% end %> \
+        <% end %> \
         -m <%= @memory_limit %> \
         <% if @links %><%= @links_array.map {|link| \
             "-link #{link}" }.join(' ') %> \

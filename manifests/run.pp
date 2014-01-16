@@ -16,6 +16,7 @@ define docker::run(
   $hostname = false,
   $env = [],
   $dns = [],
+  $lxc_conf = [],
   $restart_service = true,
 ) {
 
@@ -36,6 +37,7 @@ define docker::run(
   $env_array = any2array($env)
   $dns_array = any2array($dns)
   $links_array = any2array($links)
+  $lxc_conf_array = any2array($lxc_conf)
 
   case $::osfamily {
     'Debian': {
