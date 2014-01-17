@@ -26,6 +26,9 @@
 # [*manage_kernel*]
 #   Attempt to install the correct Kernel required by docker
 #   Defaults to true
+# [*extra_parameters*]
+#   Any extra parameters that should be passed to the docker daemon.
+#   Defaults to undefined
 #
 class docker(
   $version                     = $docker::params::version,

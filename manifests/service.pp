@@ -17,6 +17,7 @@ class docker::service (
   $socket_bind          = $docker::socket_bind,
   $service_state        = $docker::service_state,
   $root_dir             = $docker::root_dir,
+  $extra_parameters     = $docker::extra_parameters,
 ){
   case $::osfamily {
     'Debian': {
