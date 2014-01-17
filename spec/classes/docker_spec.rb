@@ -32,16 +32,16 @@ describe 'docker', :type => :class do
   end
 
   context 'with an invalid distro name' do
-    let(:facts) { {:osfamily => 'RedHat'} }
+    let(:facts) { {:osfamily => 'Gentoo'} }
     it do
       expect {
         should contain_package('lxc-docker')
-      }.to raise_error(Puppet::Error, /^This module uses the docker apt repo/)
+      }.to raise_error(Puppet::Error, /^This module only works on Debian and Red Hat based systems/)
     end
   end
 
-  context 'with no upstream apt source' do
-    let(:params) { {'use_upstream_apt_source' => false } }
+  context 'with no upstream package source' do
+    let(:params) { {'use_upstream_package_source' => false } }
     it { should_not contain_apt__source('docker') }
     it { should contain_package('lxc-docker') }
     it { should contain_package('linux-image-extra-3.8.0-29-generic') }
