@@ -14,5 +14,6 @@ class docker::params {
   case $::osfamily {
     'Debian': { $package_source_location = 'https://get.docker.io/ubuntu' }
     'RedHat': { $package_source_location = '' }
+    default:  { $package_source_location = '' }
   }
 }
