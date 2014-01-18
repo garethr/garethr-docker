@@ -15,7 +15,7 @@ class docker::install {
       if ($docker::use_upstream_package_source) {
         include apt
         apt::source { 'docker':
-          location          => $docker::apt_source_location,
+          location          => $docker::package_source_location,
           release           => 'docker',
           repos             => 'main',
           required_packages => 'debian-keyring debian-archive-keyring',
@@ -25,7 +25,7 @@ class docker::install {
           include_src       => false,
         }
 
-        Apt::Source['docker'] -> Package['lxc-docker']
+        Apt::Source['docker'] -> Package['docker']
       }
 
       case $::operatingsystemrelease {
@@ -54,7 +54,7 @@ class docker::install {
   if $docker::manage_kernel {
     package { $kernelpackage:
       ensure => present,
-      before => Package[$dockerbasepkg],
+      before => Package['docker'],
     }
   }
 
@@ -64,7 +64,7 @@ class docker::install {
     $dockerpackage = $dockerbasepkg
   }
 
-  package { $dockerbasepkg:
+  package { 'docker':
     ensure => $docker::ensure,
     name   => $dockerpackage,
   }
