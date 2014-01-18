@@ -5,3 +5,7 @@ sets:
     nodes:
       "main":
         prefab: 'ubuntu-server-12042-x64'
+  'centos-64-x64':
+    nodes:
+      'main':
+        prefab: 'centos-64-x64'
