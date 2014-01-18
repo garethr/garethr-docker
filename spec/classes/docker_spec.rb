@@ -35,7 +35,7 @@ describe 'docker', :type => :class do
     let(:facts) { {:osfamily => 'Gentoo'} }
     it do
       expect {
-        should contain_package('lxc-docker')
+        should contain_package('docker')
       }.to raise_error(Puppet::Error, /^This module only works on Debian and Red Hat based systems/)
     end
   end
