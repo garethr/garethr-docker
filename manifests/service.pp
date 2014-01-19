@@ -12,6 +12,9 @@
 # [*root_dir*]
 #   Specify a non-standard root directory for docker.
 #
+# [*extra_parameters*]
+#   Plain additional parameters to pass to the docker daemon
+#
 class docker::service (
   $tcp_bind             = $docker::tcp_bind,
   $socket_bind          = $docker::socket_bind,

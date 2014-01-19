@@ -3,8 +3,13 @@
 # Module to install an up-to-date version of Docker from package.
 #
 # === Parameters
+#
 # [*version*]
-#   The package version to install, passed to ensure.
+#   The package version to install, used to set the package name.
+#   Defaults to undefined
+#
+# [*ensure*]
+#   Passed to the docker package.
 #   Defaults to present
 #
 # [*tcp_bind*]
@@ -20,12 +25,27 @@
 #   Whether or not to use the upstream package source.
 #   If you run your own package mirror, you may set this
 #   to false.
+#
 # [*package_source_location*]
 #   If you're using an upstream package source, what is it's
 #   location. Defaults to https://get.docker.io/ubuntu on Debian
+#
+# [*service_state*]
+#   Whether you want to docker daemon to start up
+#   Defaults to running
+#
+# [*root_dir*]
+#   Custom root directory for containers
+#   Defaults to undefined
+#
 # [*manage_kernel*]
 #   Attempt to install the correct Kernel required by docker
 #   Defaults to true
+#
+# [*dns*]
+#   Custom dns server address
+#   Defaults to undefined
+#
 # [*extra_parameters*]
 #   Any extra parameters that should be passed to the docker daemon.
 #   Defaults to undefined
