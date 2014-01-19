@@ -102,8 +102,18 @@ GEM
       systemu (~> 2.5)
     rspec-system-puppet (2.2.1)
       rspec-system (~> 2.0)
+    rspec-system-serverspec (2.0.1)
+      rspec-system (~> 2.0)
+      serverspec (~> 0.0)
+      specinfra (~> 0.0)
     ruby-hmac (0.4.0)
+    serverspec (0.14.3)
+      highline
+      net-ssh
+      rspec (>= 2.13.0)
+      specinfra (>= 0.1.0)
     slop (3.4.7)
+    specinfra (0.4.1)
     systemu (2.6.0)
     travis (1.6.6)
       addressable (~> 2.3)
@@ -136,6 +146,7 @@ DEPENDENCIES
   rake
   rspec-puppet (~> 1.0.0)
   rspec-system-puppet
+  rspec-system-serverspec
   travis
   travis-lint
   vagrant-wrapper

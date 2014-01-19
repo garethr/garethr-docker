@@ -13,6 +13,7 @@ group :development do
   gem "travis"
   gem "travis-lint"
   gem "rspec-system-puppet"
+  gem "rspec-system-serverspec"
   gem "vagrant-wrapper"
   gem "puppet-blacksmith"
 end
