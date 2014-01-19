@@ -1,5 +1,5 @@
 Puppet module for installing
-[Docker](https://github.com/dotcloud/docker) from the [official repository](http://docs.docker.io/en/latest/installation/ubuntulinux/).
+[Docker](https://github.com/dotcloud/docker) from the [official repository](http://docs.docker.io/en/latest/installation/ubuntulinux/) on Ubuntu or from [EPEL on RedHat](http://docs.docker.io/en/latest/installation/rhel/) based distributions.
 
 This module is also available on the [Puppet
 Forge](https://forge.puppetlabs.com/garethr/docker)
@@ -50,9 +50,11 @@ class { 'docker':
 
 In some cases dns resolution won't work well in the container unless you give a dns server to the docker daemon like this:
 
-    class { 'docker':
-      dns => '8.8.8.8',
-    }
+```puppet
+class { 'docker':
+  dns => '8.8.8.8',
+}
+```
 
 ### Images
 
@@ -62,10 +64,7 @@ The next step is probably to install a docker image, for this we have a defined 
 docker::image { 'base': }
 ```
 
-This is equivalent to running `docker pull base`.  
-This is downloading a large binary so on first run can take a while.  
-For that reason this define turns off the default 5 minute timeout for exec.  
-Takes an optional parameter for installing image tags that is the equivalent to running `docker pull -t="precise" ubuntu`:  
+This is equivalent to running `docker pull base`. This is downloading a large binary so on first run can take a while. For that reason this define turns off the default 5 minute timeout for exec. Takes an optional parameter for installing image tags that is the equivalent to running `docker pull -t="precise" ubuntu`:  
 
 ```puppet
 docker::image { 'ubuntu':
