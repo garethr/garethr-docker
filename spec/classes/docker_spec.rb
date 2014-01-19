@@ -40,6 +40,29 @@ describe 'docker', :type => :class do
     end
   end
 
+  context 'if running on a RedHat based distro' do
+    let(:facts) { {
+      :osfamily => 'RedHat',
+      :operatingsystemrelease => '6.5'
+    } }
+    it { should contain_class('epel') }
+    it { should_not contain_apt__source('docker') }
+    it { should contain_package('docker').with_name('docker-io').with_ensure('present') }
+    it { should_not contain_package('linux-image-extra-3.8.0-29-generic') }
+  end
+
+  context 'if running an older RedHat based distro' do
+    let(:facts) { {
+      :osfamily => 'RedHat',
+      :operatingsystemrelease => '6.4'
+    } }
+    it do
+      expect {
+        should contain_package('docker')
+      }.to raise_error(Puppet::Error, /version to be at least 6.5/)
+    end
+  end
+
   context 'with no upstream package source' do
     let(:params) { {'use_upstream_package_source' => false } }
     it { should_not contain_apt__source('docker') }

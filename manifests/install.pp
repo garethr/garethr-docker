@@ -45,7 +45,7 @@ class docker::install {
     }
     'RedHat': {
       if versioncmp($::operatingsystemrelease, '6.5') < 0 {
-        fail('Docker needs RedHat/CentOS > 6.5.')
+        fail('Docker needs RedHat/CentOS version to be at least 6.5.')
       }
 
       $dockerbasepkg = 'docker-io'
