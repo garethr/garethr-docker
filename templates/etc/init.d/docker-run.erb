@@ -1,0 +1,127 @@
+#!/bin/sh
+#
+#    /etc/rc.d/init.d/<servicename>
+#
+#    Daemon for <%= @title %>
+#
+# chkconfig: 2345 97 97
+# description: Docker container for <%= @title %>
+
+### BEGIN INIT INFO
+## Provides:       docker-<%= @title %>
+## Required-Start: $network docker
+## Required-Stop:
+## Should-Start:
+## Should-Stop:
+## Default-Start: 2 3 4 5
+## Default-Stop:  0 1 6
+## Short-Description: start and stop docker container for <%= @title %>
+## Description: Docker container for <%= @title %>
+#### END INIT INFO
+
+. /etc/init.d/functions
+
+docker="/usr/bin/docker"
+prog="docker-<%= @title %>"
+cidfile="/var/run/$prog.cid"
+lockfile="/var/lock/subsys/$prog"
+
+start() {
+    [ -x $docker ] || exit 5
+
+    if [ -f $cidfile ]; then
+        cid="$(cat $cidfile)"
+        if [ -n $cid ]; then
+            docker ps|grep $cid
+            retval=$?
+            if [ $retval -eq 0 ]; then
+                failure
+                echo
+                printf "Container $cid is still running.\n"
+                exit 7
+            else
+                rm -f $lockfile $cidfile
+            fi
+        fi
+    fi
+
+    printf "Starting $prog:\t"
+    $docker run -cidfile=$cidfile -d=true \
+        <% if @username %>-u '<%= @username %>' <% end %> \
+        <% if @hostname %>-h '<%= @hostname %>'<% end %> \
+        <% if @dns %><% @dns_array.each do |address| %> \
+            -dns <%= address %><% end %> \
+        <% end %> \
+        <% if @env %><% @env_array.each do |env| %> \
+            -e <%= env %><% end %> \
+        <% end %> \
+        <% if @ports %><% @ports_array.each do |port| %> \
+            -p <%= port %><% end %> \
+        <% end %> \
+        <% if @volumes %><% @volumes_array.each do |volume| %> \
+            -v <%= volume %><% end %> \
+        <% end %> \
+        <% if @volumes_from %> -volumes-from <%= @volumes_from %><% end %> \
+        <% if @lxc_conf_array %><% @lxc_conf_array.each do |lxcconf| %> \
+            -lxc-conf="<%=lxcconf%>"<% end %> \
+        <% end %> \
+        -m <%= @memory_limit %> \
+        <% if @links %><%= @links_array.map {|link| \
+            "-link #{link}" }.join(' ') %> \
+        <% end %> \
+        <% if @use_name %>-name <%= @name %><% end %> \
+        <%= @image %> \
+        <% if @command %> <%= @command %><% end %>
+    retval=$?
+    echo
+    if [ $retval -eq 0 ]; then
+        touch $lockfile
+        success
+    else
+        failure
+    fi
+}
+
+stop() {
+    if ! [ -f $cidfile ]; then
+        failure
+        echo
+        printf "$cidfile does not exist.\n"
+        exit 7
+    else
+        cid="$(cat $cidfile)"
+        if [ -n $cid ]; then
+            echo -n $"Stopping $prog: "
+            docker stop $(cat $cidfile)
+            retval=$?
+            [ $retval -eq 0 ] && rm -f $lockfile $cidfile
+            return $retval
+        else
+            rm $cidfile
+        fi
+    fi
+}
+
+case "$1" in
+    start)
+    start
+    ;;
+    stop)
+    stop
+    ;;
+    status)
+    docker inspect $(cat $cidfile)
+    ;;
+    restart|reload)
+    stop
+    start
+    ;;
+    condrestart)
+    [ -f /var/lock/subsys/$prog ] && restart || :
+    ;;
+    *)
+    echo "Usage: $0 [start|stop|status|reload|restart|probe]"
+    exit 1
+    ;;
+esac
+exit $?

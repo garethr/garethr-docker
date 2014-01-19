@@ -1,0 +1,1 @@
+other_args="<% if @root_dir %>-g <%= @root_dir %><% end %> <% if @tcp_bind %>-H <%= @tcp_bind %><% end %><% if @socket_bind %> -H <%= @socket_bind %><% end %><% if @extra_parameters %><% @extra_parameters.each do |param| %> <%= param %><% end %><% end %>"
