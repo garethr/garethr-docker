@@ -35,12 +35,13 @@ class docker::install {
                                       'linux-headers-generic-lts-raring'
                                     ]
         }
-        # determine the package name for 'linux-image-extra-$(uname -r)' based on
-        # the $::kernelrelease fact
+        # determine the package name for 'linux-image-extra-$(uname -r)' based
+        # on the $::kernelrelease fact
         default: { $kernelpackage = "linux-image-extra-${::kernelrelease}" }
       }
 
       $dockerbasepkg = 'lxc-docker'
+      $manage_kernel = $docker::manage_kernel
     }
     'RedHat': {
       if versioncmp($::operatingsystemrelease, '6.5') < 0 {
@@ -48,10 +49,14 @@ class docker::install {
       }
 
       $dockerbasepkg = 'docker-io'
+      $manage_kernel = false
+
+      include 'epel'
+      Class['epel'] -> Package[$dockerbasepkg]
     }
   }
 
-  if $docker::manage_kernel {
+  if $manage_kernel {
     package { $kernelpackage:
       ensure => present,
       before => Package['docker'],
