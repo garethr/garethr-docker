@@ -8,3 +8,4 @@ license     'Apache License, Version 2.0'
 
 dependency  'puppetlabs/apt', '>= 1.1.0'
 dependency  'puppetlabs/stdlib', '>=4.1.0'
+dependency  'stahnma/epel'
