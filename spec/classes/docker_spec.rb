@@ -45,7 +45,16 @@ describe 'docker', :type => :class do
       :osfamily => 'RedHat',
       :operatingsystemrelease => '6.5'
     } }
-    it { should contain_class('epel') }
+
+    context 'by default' do
+      it { should contain_class('epel') }
+    end
+
+    context 'with no upstream package source' do
+      let(:params) { {'use_upstream_package_source' => false } }
+      it { should_not contain_class('epel') }
+    end
+
     it { should_not contain_apt__source('docker') }
     it { should contain_package('docker').with_name('docker-io').with_ensure('present') }
     it { should_not contain_package('linux-image-extra-3.8.0-29-generic') }
@@ -66,6 +75,7 @@ describe 'docker', :type => :class do
   context 'with no upstream package source' do
     let(:params) { {'use_upstream_package_source' => false } }
     it { should_not contain_apt__source('docker') }
+    it { should_not contain_class('epel') }
     it { should contain_package('docker') }
     it { should contain_package('linux-image-extra-3.8.0-29-generic') }
   end
