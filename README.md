@@ -27,6 +27,15 @@ class { 'docker':
 }
 ```
 
+If you want to configure your package sources independently,
+inform this module to not auto-include upstream sources:
+
+```puppet
+class { 'docker':
+  use_upstream_package_source => false,
+}
+```
+
 By default the docker daemon will bind to a unix socket at
 /var/run/docker.sock. This can be changed, as well as binding to a tcp
 socket if required.

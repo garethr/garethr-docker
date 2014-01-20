@@ -51,8 +51,10 @@ class docker::install {
       $dockerbasepkg = 'docker-io'
       $manage_kernel = false
 
-      include 'epel'
-      Class['epel'] -> Package[$dockerbasepkg]
+      if ($docker::use_upstream_package_source) {
+        include 'epel'
+        Class['epel'] -> Package[$dockerbasepkg]
+      }
     }
   }
 
