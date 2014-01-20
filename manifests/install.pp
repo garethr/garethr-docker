@@ -65,14 +65,31 @@ class docker::install {
     }
   }
 
-  if $docker::version {
-    $dockerpackage = "${dockerbasepkg}-${docker::version}"
-  } else {
+  $generic_versions = [
+    'absent',
+    'latest',
+    'present',
+  ]
+
+  if $docker::version and member($generic_versions, $docker::version) {
+    # Use distro-specific name with generic version.
+    # IOW generic version overrides ensure.
     $dockerpackage = $dockerbasepkg
+    $docker_ensure = $docker::version
+  } elsif $docker::version {
+    # Use distro-specific name with 'ensure present'
+    # to preserve backward compatibility.
+    $dockerpackage = "${dockerbasepkg}-${docker::version}"
+    $docker_ensure = 'present'
+  } else {
+    # Use distro-specific name with $docker::ensure
+    # to preserve backward compatibility.
+    $dockerpackage = $dockerbasepkg
+    $docker_ensure = $docker::ensure
   }
 
   package { 'docker':
-    ensure => $docker::ensure,
+    ensure => $docker_ensure,
     name   => $dockerpackage,
   }
 }

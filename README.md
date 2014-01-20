@@ -47,13 +47,32 @@ class { 'docker':
 }
 ```
 
-Unless specified this installs the latest version of docker from the
-lxc-docker package. However if you want to specify a specific version
-you can do so:
+By default, install the latest version of docker (but do not upgrade).
+However if you want to specify a specific version you can do so:
 
 ```puppet
 class { 'docker':
   version => '0.5.5',
+}
+```
+
+You can also uninstall docker via the `version` parameter.
+
+```puppet
+class { 'docker':
+  version => 'absent',
+}
+```
+
+You can use [hiera](http://docs.puppetlabs.com/hiera/1/) for
+DRY manifests to install or uninstall docker:
+
+```puppet
+# By default, uninstall docker. Override in hieradata.
+$docker_ver = hiera('docker_ver', absent)
+
+class {'docker':
+  version => $docker_ver,
 }
 ```
 

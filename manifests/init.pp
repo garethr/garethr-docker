@@ -10,7 +10,7 @@
 #
 # [*ensure*]
 #   Passed to the docker package.
-#   Defaults to present
+#   Defaults to present but is overridden by *version*
 #
 # [*tcp_bind*]
 #   The tcp socket to bind to in the format

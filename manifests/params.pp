@@ -2,6 +2,8 @@
 #
 # Defaut parameter values for the docker module
 #
+# If $version is defined, it overrides $ensure.
+#
 class docker::params {
   $version                      = undef
   $ensure                       = present
