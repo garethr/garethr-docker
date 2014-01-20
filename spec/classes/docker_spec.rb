@@ -31,12 +31,12 @@ describe 'docker', :type => :class do
 
   context 'with a custom version' do
     let(:params) { {'version' => '0.5.5' } }
-    it { should contain_package('docker').with_name('lxc-docker-0.5.5').with_ensure('present') }
+    it_behaves_like 'a custom version', '0.5.5'
   end
 
   context 'with ensure absent' do
     let(:params) { {'ensure' => 'absent' } }
-    it { should contain_package('docker').with_ensure('absent') }
+    it_behaves_like 'an ensure', 'absent'
   end
 
   context 'with generic version' do
