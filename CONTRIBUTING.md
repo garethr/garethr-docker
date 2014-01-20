@@ -21,10 +21,23 @@ will likely make it into a release a little quicker.
 
 ## Dependencies
 
-The testing and development tools have a bunch of dependencies. You can
-install them using [bundler](http://bundler.io/) like so:
+The testing and development tools have a bunch of dependencies,
+all managed by [bundler](http://bundler.io/) according to the
+[Puppet support matrix](http://docs.puppetlabs.com/guides/platforms.html#ruby-versions).
+By default the tests use a baseline version of Puppet.
+
+If you have Ruby 2.x or want a specific version of Puppet,
+you must set an environment variable such as:
+
+    export PUPPET_VERSION="~> 3.2.0"
+
+Install the dependencies like so...
 
     bundle install
+
+...or promote reuse of bundled gems across projects by running:
+
+    bundle install --path=~/.bundle
 
 ## Syntax and style
 
