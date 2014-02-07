@@ -7,6 +7,7 @@ class docker::params {
   $ensure                       = present
   $tcp_bind                     = undef
   $socket_bind                  = 'unix:///var/run/docker.sock'
+  $socket_group                 = undef
   $use_upstream_package_source  = true
   $service_state                = running
   $service_enable               = true
