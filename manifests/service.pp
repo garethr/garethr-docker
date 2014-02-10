@@ -19,6 +19,7 @@ class docker::service (
   $tcp_bind             = $docker::tcp_bind,
   $socket_bind          = $docker::socket_bind,
   $service_state        = $docker::service_state,
+  $service_enable       = $docker::service_enable,
   $root_dir             = $docker::root_dir,
   $extra_parameters     = $docker::extra_parameters,
 ){
@@ -26,7 +27,7 @@ class docker::service (
     'Debian': {
       service { 'docker':
         ensure     => $service_state,
-        enable     => true,
+        enable     => $service_enable,
         hasstatus  => true,
         hasrestart => true,
         provider   => upstart,
