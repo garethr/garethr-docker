@@ -102,6 +102,18 @@ describe 'docker', :type => :class do
     it { should contain_service('docker').with_ensure('stopped') }
   end
 
+  context 'with service_enable set to false' do
+    let(:params) { {'service_enable' => 'false'} }
+
+    it { should contain_service('docker').with_enable('false') }
+  end
+
+  context 'with service_enable set to true' do
+    let(:params) { {'service_enable' => 'true'} }
+
+    it { should contain_service('docker').with_enable('true') }
+  end
+
   context 'with custom root dir' do
     let(:params) { {'root_dir' => '/mnt/docker'} }
 

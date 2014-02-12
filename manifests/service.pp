@@ -43,6 +43,7 @@ class docker::service (
     'RedHat': {
       service { 'docker':
         ensure     => $service_state,
+        enable     => $service_enable,
       }
 
       file { '/etc/sysconfig/docker':

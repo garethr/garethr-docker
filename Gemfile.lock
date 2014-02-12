@@ -10,7 +10,7 @@ GEM
       ffi (>= 1.3.0)
       mime-types (~> 1.18)
     excon (0.31.0)
-    facter (1.7.4)
+    facter (1.7.5)
     faraday (0.8.9)
       multipart-post (~> 1.2.0)
     faraday_middleware (0.9.0)
