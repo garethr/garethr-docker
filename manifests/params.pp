@@ -9,6 +9,7 @@ class docker::params {
   $socket_bind                  = 'unix:///var/run/docker.sock'
   $use_upstream_package_source  = true
   $service_state                = running
+  $service_enable               = true
   $root_dir                     = undef
   $dns                          = undef
   case $::osfamily {

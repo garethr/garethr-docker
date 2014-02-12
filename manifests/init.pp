@@ -34,6 +34,10 @@
 #   Whether you want to docker daemon to start up
 #   Defaults to running
 #
+# [*service_enable*]
+#   Whether you want to docker daemon to start up at boot
+#   Defaults to true
+#
 # [*root_dir*]
 #   Custom root directory for containers
 #   Defaults to undefined
@@ -58,6 +62,7 @@ class docker(
   $use_upstream_package_source = $docker::params::use_upstream_package_source,
   $package_source_location     = $docker::params::package_source_location,
   $service_state               = $docker::params::service_state,
+  $service_enable              = $docker::params::service_enable,
   $root_dir                    = $docker::params::root_dir,
   $manage_kernel               = true,
   $dns                         = $docker::params::dns,
