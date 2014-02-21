@@ -1,4 +1,4 @@
-# == Class: docker::paramrs
+# == Class: docker::params
 #
 # Defaut parameter values for the docker module
 #
