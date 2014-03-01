@@ -3,6 +3,7 @@ require 'spec_helper'
 describe 'docker', :type => :class do
   let(:facts) { {
     :osfamily        => 'Debian',
+    :lsbdistid       => 'debian',
     :lsbdistcodename => 'maverick',
     :kernelrelease   => '3.8.0-29-generic'
   } }
@@ -88,6 +89,7 @@ describe 'docker', :type => :class do
   context 'for precise' do
     let(:facts) { {
       :osfamily        => 'Debian',
+      :lsbdistid       => 'debian',
       :lsbdistcodename => 'precise',
       :operatingsystemrelease => '12.04',
       :kernelrelease   => '3.8.0-29-generic'
