@@ -17,6 +17,7 @@ describe 'docker', :type => :class do
 
   context 'with no parameters' do
     it { should contain_class('apt') }
+    it { should contain_package('apt-transport-https').that_comes_before('Package[docker]') }
     it { should contain_package('docker').with_name('lxc-docker').with_ensure('present') }
     it { should contain_apt__source('docker').with_location('https://get.docker.io/ubuntu') }
     it { should contain_package('linux-image-extra-3.8.0-29-generic') }
