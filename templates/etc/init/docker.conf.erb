@@ -6,6 +6,6 @@ stop on runlevel [!2345]
 respawn
 
 script
-  /usr/bin/docker -d <% if @root_dir %>-g <%= @root_dir %><% end %> <% if @tcp_bind %>-H <%= @tcp_bind %><% end %><% if @socket_bind %> -H <%= @socket_bind %><% end %> <% if @dns %> -dns <%= @dns %><% end %>
+  /usr/bin/docker -d <% if @root_dir %>-g <%= @root_dir %><% end %> <% if @tcp_bind %>-H <%= @tcp_bind %><% end %><% if @socket_bind %> -H <%= @socket_bind %><% end %> <% if @dns %> -dns <%= @dns %><% end %><% if @extra_parameters %><% @extra_parameters.each do |param| %> <%= param %><% end %><% end %>
 end script
 
