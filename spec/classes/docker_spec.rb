@@ -3,6 +3,7 @@ require 'spec_helper'
 describe 'docker', :type => :class do
   let(:facts) { {
     :osfamily        => 'Debian',
+    :operatingsystem => 'Ubuntu',
     :lsbdistid       => 'debian',
     :lsbdistcodename => 'maverick',
     :kernelrelease   => '3.8.0-29-generic'
@@ -14,6 +15,21 @@ describe 'docker', :type => :class do
   it { should contain_class('docker::service').that_subscribes_to('docker::config') }
   it { should contain_class('docker::config') }
   it { should contain_service('docker').with_provider('upstart') }
+
+  context 'if running on Debian distro' do
+    let(:facts) { {
+      :osfamily        => 'Debian',
+      :operatingsystem => 'Debian',
+      :lsbdistid       => 'debian',
+      :lsbdistcodename => 'wheezy',
+      :kernelrelease   => '3.12-1-amd64'
+    } }
+    it { should contain_service('docker').without_provider }
+    it { should_not contain_package('linux-image-extra-3.8.0-29-generic') }
+    it { should_not contain_package('linux-image-generic-lts-raring') }
+    it { should_not contain_package('linux-headers-generic-lts-raring') }
+    it { should contain_package('apt-transport-https').that_comes_before('Package[docker]') }
+  end
 
   context 'with no parameters' do
     it { should contain_class('apt') }
