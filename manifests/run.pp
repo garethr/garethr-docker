@@ -18,6 +18,7 @@ define docker::run(
   $dns = [],
   $lxc_conf = [],
   $restart_service = true,
+  $disable_network = false,
 ) {
 
   validate_re($image, '^[\S]*$')
@@ -31,6 +32,7 @@ define docker::run(
     validate_string($hostname)
   }
   validate_bool($running)
+  validate_bool($disable_network)
 
   $ports_array = any2array($ports)
   $volumes_array = any2array($volumes)
