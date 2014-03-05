@@ -25,12 +25,18 @@ class docker::service (
 ){
   case $::osfamily {
     'Debian': {
+
+      $provider = $::operatingsystem ? {
+        'Ubuntu' => 'upstart',
+        default  => undef,
+      }
+
       service { 'docker':
         ensure     => $service_state,
         enable     => $service_enable,
         hasstatus  => true,
         hasrestart => true,
-        provider   => upstart,
+        provider   => $provider,
       }
 
       file { '/etc/init/docker.conf':

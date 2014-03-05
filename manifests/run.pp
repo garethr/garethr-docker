@@ -45,6 +45,11 @@ define docker::run(
     'Debian': {
       $initscript = "/etc/init/docker-${title}.conf"
 
+      $provider = $::operatingsystem ? {
+        'Ubuntu' => 'upstart',
+        default  => undef,
+      }
+
       file { $initscript:
         ensure  => present,
         content => template('docker/etc/init/docker-run.conf.erb')
@@ -55,7 +60,7 @@ define docker::run(
         enable     => true,
         hasstatus  => true,
         hasrestart => true,
-        provider   => upstart;
+        provider   => $provider,
       }
     }
     'RedHat': {
