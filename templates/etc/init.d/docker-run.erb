@@ -49,6 +49,7 @@ start() {
     $docker run -cidfile=$cidfile -d=true \
         <% if @username %>-u '<%= @username %>' <% end %> \
         <% if @hostname %>-h '<%= @hostname %>'<% end %> \
+        <% if @disable_network %>-n false<% end %> \
         <% if @dns %><% @dns_array.each do |address| %> \
             -dns <%= address %><% end %> \
         <% end %> \
