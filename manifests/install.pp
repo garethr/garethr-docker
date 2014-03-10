@@ -17,6 +17,13 @@ class docker::install {
       Package['apt-transport-https'] -> Package['docker']
 
       if ($docker::use_upstream_package_source) {
+
+        if $docker::version {
+          $dockerpackage = "lxc-docker-${docker::version}"
+        } else {
+          $dockerpackage = 'lxc-docker'
+        }
+
         include apt
         apt::source { 'docker':
           location          => $docker::package_source_location,
@@ -27,37 +34,53 @@ class docker::install {
           key_source        => 'http://get.docker.io/gpg',
           pin               => '10',
           include_src       => false,
+          before            => Package['docker'],
         }
+      } else {
+        $dockerpackage = 'docker.io'
 
-        Apt::Source['docker'] -> Package['docker']
+        if $docker::version and $docker::ensure != 'absent' {
+          $ensure = $docker::version
+        } else {
+          $ensure = $docker::ensure
+        }
       }
 
-      case $::operatingsystemrelease {
-        # On Ubuntu 12.04 (precise) install the backported 13.04 (raring) kernel
-        '12.04': { $kernelpackage = [
-                                      'linux-image-generic-lts-raring',
-                                      'linux-headers-generic-lts-raring'
-                                    ]
+      if $::operatingsystem == 'Ubuntu' {
+        case $::operatingsystemrelease {
+          # On Ubuntu 12.04 (precise) install the backported 13.04 (raring) kernel
+          '12.04': { $kernelpackage = [
+                                        'linux-image-generic-lts-raring',
+                                        'linux-headers-generic-lts-raring'
+                                      ]
+          }
+          # determine the package name for 'linux-image-extra-$(uname -r)' based
+          # on the $::kernelrelease fact
+          default: { $kernelpackage = "linux-image-extra-${::kernelrelease}" }
         }
-        # determine the package name for 'linux-image-extra-$(uname -r)' based
-        # on the $::kernelrelease fact
-        default: { $kernelpackage = "linux-image-extra-${::kernelrelease}" }
+  
+        $manage_kernel = $docker::manage_kernel
+      } else {
+        # Debian does not need extra kernel packages
+        $manage_kernel = false
       }
-
-      $dockerbasepkg = 'lxc-docker'
-      $manage_kernel = $docker::manage_kernel
     }
     'RedHat': {
       if versioncmp($::operatingsystemrelease, '6.5') < 0 {
         fail('Docker needs RedHat/CentOS version to be at least 6.5.')
       }
 
-      $dockerbasepkg = 'docker-io'
       $manage_kernel = false
+
+      if $docker::version {
+        $dockerpackage = "docker-io-${docker::version}"
+      } else {
+        $dockerpackage = 'docker-io'
+      }
 
       if ($docker::use_upstream_package_source) {
         include 'epel'
-        Class['epel'] -> Package[$dockerbasepkg]
+        Class['epel'] -> Package['docker']
       }
     }
   }
@@ -67,12 +90,6 @@ class docker::install {
       ensure => present,
       before => Package['docker'],
     }
-  }
-
-  if $docker::version {
-    $dockerpackage = "${dockerbasepkg}-${docker::version}"
-  } else {
-    $dockerpackage = $dockerbasepkg
   }
 
   package { 'docker':

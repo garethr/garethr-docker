@@ -41,52 +41,50 @@ define docker::run(
   $links_array = any2array($links)
   $lxc_conf_array = any2array($lxc_conf)
 
+  $provider = $::operatingsystem ? {
+    'Ubuntu' => 'upstart',
+    default  => undef,
+  }
+
+  $notify = str2bool($restart_service) ? {
+    true    => Service["docker-${title}"],
+    default => undef,
+  }
+
   case $::osfamily {
     'Debian': {
       $initscript = "/etc/init/docker-${title}.conf"
-
-      $provider = $::operatingsystem ? {
-        'Ubuntu' => 'upstart',
-        default  => undef,
-      }
-
-      file { $initscript:
-        ensure  => present,
-        content => template('docker/etc/init/docker-run.conf.erb')
-      }
-
-      service { "docker-${title}":
-        ensure     => $running,
-        enable     => true,
-        hasstatus  => true,
-        hasrestart => true,
-        provider   => $provider,
-      }
+      $init_template = 'docker/etc/init/docker-run.conf.erb'
+      $hasstatus  = true
+      $hasrestart = true
+      $mode = '0644'
     }
     'RedHat': {
       $initscript = "/etc/init.d/docker-${title}"
-
-      file { $initscript:
-        ensure  => present,
-        content => template('docker/etc/init.d/docker-run.erb'),
-        mode    => '0755',
-      }
-
-      service { "docker-${title}":
-        ensure     => $running,
-        enable     => true,
-      }
+      $init_template = 'docker/etc/init.d/docker-run.erb'
+      $hasstatus  = undef
+      $hasrestart = undef
+      $mode = '0755'
     }
     default: {
       fail('Docker needs a RedHat or Debian based system.')
     }
   }
 
-  if str2bool($restart_service) {
-    File[$initscript] ~> Service["docker-${title}"]
+  file { $initscript:
+    ensure  => present,
+    content => template($init_template),
+    mode    => $mode,
+    notify  => $notify,
   }
-  else {
-    File[$initscript] -> Service["docker-${title}"]
+
+  service { "docker-${title}":
+    ensure     => $running,
+    enable     => true,
+    hasstatus  => $hasstatus,
+    hasrestart => $hasrestart,
+    provider   => $provider,
+    require    => File[$initscript],
   }
 }
 
