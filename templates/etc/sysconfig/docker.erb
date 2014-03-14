@@ -1,1 +1,4 @@
 other_args="<% if @root_dir %>-g <%= @root_dir %><% end %> <% if @tcp_bind %>-H <%= @tcp_bind %><% end %><% if @socket_bind %> -H <%= @socket_bind %><% end %><% if @extra_parameters %><% @extra_parameters.each do |param| %> <%= param %><% end %><% end %>"
+<% if @proxy %>export http_proxy=<%= @proxy %>
+export https_proxy=<%= @proxy %><% end %>
+<% if @no_proxy %>export no_proxy=<%= @no_proxy %><% end %>

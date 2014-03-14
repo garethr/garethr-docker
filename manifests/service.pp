@@ -22,6 +22,8 @@ class docker::service (
   $service_enable       = $docker::service_enable,
   $root_dir             = $docker::root_dir,
   $extra_parameters     = $docker::extra_parameters,
+  $proxy                = $docker::proxy,
+  $no_proxy             = $docker::no_proxy,
 ){
   case $::osfamily {
     'Debian': {
