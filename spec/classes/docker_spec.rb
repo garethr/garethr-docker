@@ -24,6 +24,17 @@ describe 'docker', :type => :class do
       :lsbdistcodename => 'wheezy',
       :kernelrelease   => '3.12-1-amd64'
     } }
+
+    context 'with proxy param' do
+      let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
+      it { should contain_file('/etc/init/docker.conf').with_content(/http_proxy=http:\/\/127.0.0.1:3128 https_proxy=http:\/\/127.0.0.1:3128 \/usr\/bin\/docker/) }
+    end
+      
+    context 'with no_proxy param' do
+      let(:params) { {'no_proxy' => '.github.com' } }
+      it { should contain_file('/etc/init/docker.conf').with_content(/no_proxy=.github.com \/usr\/bin\/docker/) }
+    end
+
     it { should contain_service('docker').without_provider }
     it { should_not contain_package('linux-image-extra-3.8.0-29-generic') }
     it { should_not contain_package('linux-image-generic-lts-raring') }
@@ -83,6 +94,17 @@ describe 'docker', :type => :class do
     context 'with no upstream package source' do
       let(:params) { {'use_upstream_package_source' => false } }
       it { should_not contain_class('epel') }
+    end
+
+    context 'with proxy param' do
+      let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
+      it { should contain_file('/etc/sysconfig/docker').with_content(/export http_proxy=http:\/\/127.0.0.1:3128/) }
+      it { should contain_file('/etc/sysconfig/docker').with_content(/export https_proxy=http:\/\/127.0.0.1:3128/) }
+    end
+      
+    context 'with no_proxy param' do
+      let(:params) { {'no_proxy' => '.github.com' } }
+      it { should contain_file('/etc/sysconfig/docker').with_content(/export no_proxy=.github.com/) }
     end
 
     it { should_not contain_apt__source('docker') }
