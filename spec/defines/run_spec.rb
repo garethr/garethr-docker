@@ -23,6 +23,11 @@ require 'spec_helper'
       end
     end
 
+    context 'when lxc_conf disables swap' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'lxc_conf' => 'lxc.cgroup.memory.memsw.limit_in_bytes=536870912'} }
+      it { should contain_file(initscript).with_content(/-lxc-conf=\"lxc.cgroup.memory.memsw.limit_in_bytes=536870912\"/) }
+    end
+
     context 'when `use_name` is true' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'use_name' => true } }
       it { should contain_file(initscript).with_content(/ -name sample /) }
