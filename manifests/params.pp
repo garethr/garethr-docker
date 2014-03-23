@@ -18,4 +18,5 @@ class docker::params {
   }
   $proxy                        = undef
   $no_proxy                     = undef
+  $execdriver                   = undef
 }

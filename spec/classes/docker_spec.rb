@@ -35,6 +35,21 @@ describe 'docker', :type => :class do
       it { should contain_file('/etc/init/docker.conf').with_content(/no_proxy=.github.com \/usr\/bin\/docker/) }
     end
 
+    context 'with execdriver param lxc' do
+      let(:params) { { 'execdriver' => 'lxc' }}
+      it { should contain_file('/etc/init/docker.conf').with_content(/-e lxc/) }
+    end
+
+    context 'with execdriver param native' do
+      let(:params) { { 'execdriver' => 'native' }}
+      it { should contain_file('/etc/init/docker.conf').with_content(/-e native/) }
+    end
+
+    context 'without execdriver param' do
+      it { should_not contain_file('/etc/init/docker.conf').with_content(/-e lxc/) }
+      it { should_not contain_file('/etc/init/docker.conf').with_content(/-e native/) }
+    end
+
     it { should contain_service('docker').without_provider }
     it { should_not contain_package('linux-image-extra-3.8.0-29-generic') }
     it { should_not contain_package('linux-image-generic-lts-raring') }

@@ -24,6 +24,7 @@ class docker::service (
   $extra_parameters     = $docker::extra_parameters,
   $proxy                = $docker::proxy,
   $no_proxy             = $docker::no_proxy,
+  $execdriver           = $docker::execdriver,
 ){
   $provider = $::operatingsystem ? {
     'Ubuntu' => 'upstart',

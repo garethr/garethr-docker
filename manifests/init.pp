@@ -75,6 +75,7 @@ class docker(
   $extra_parameters            = undef,
   $proxy                       = $docker::params::proxy,
   $no_proxy                    = $docker::params::no_proxy,
+  $execdriver                  = $docker::params::execdriver,
 ) inherits docker::params {
 
   validate_string($version)
