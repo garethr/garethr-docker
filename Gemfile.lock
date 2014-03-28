@@ -1,5 +1,5 @@
 GIT
-  remote: git://github.com/jimweirich/rake.git
+  remote: https://github.com/jimweirich/rake.git
   revision: 0c375dbdfc6f942ec45065ad1d3cccfbf17d772d
   specs:
 
