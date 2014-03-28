@@ -1,7 +1,7 @@
 source "http://rubygems.org"
 
 group :test do
-  gem "rake", :git => 'https://github.com/jimweirich/rake.git'
+  gem "rake"
   gem "puppet", ENV['PUPPET_VERSION'] || '~> 2.7.0'
   gem "puppet-lint"
   gem "rspec-puppet", '~> 1.0.0'
