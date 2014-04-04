@@ -27,27 +27,27 @@ describe 'docker', :type => :class do
 
     context 'with proxy param' do
       let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
-      it { should contain_file('/etc/init/docker.conf').with_content(/http_proxy=http:\/\/127.0.0.1:3128 https_proxy=http:\/\/127.0.0.1:3128 \/usr\/bin\/docker/) }
+      it { should contain_file('/etc/default/docker').with_content(/export http_proxy=http:\/\/127.0.0.1:3128\nexport https_proxy=http:\/\/127.0.0.1:3128/) }
     end
       
     context 'with no_proxy param' do
       let(:params) { {'no_proxy' => '.github.com' } }
-      it { should contain_file('/etc/init/docker.conf').with_content(/no_proxy=.github.com \/usr\/bin\/docker/) }
+      it { should contain_file('/etc/default/docker').with_content(/export no_proxy=.github.com/) }
     end
 
     context 'with execdriver param lxc' do
       let(:params) { { 'execdriver' => 'lxc' }}
-      it { should contain_file('/etc/init/docker.conf').with_content(/-e lxc/) }
+      it { should contain_file('/etc/default/docker').with_content(/-e lxc/) }
     end
 
     context 'with execdriver param native' do
       let(:params) { { 'execdriver' => 'native' }}
-      it { should contain_file('/etc/init/docker.conf').with_content(/-e native/) }
+      it { should contain_file('/etc/default/docker').with_content(/-e native/) }
     end
 
     context 'without execdriver param' do
-      it { should_not contain_file('/etc/init/docker.conf').with_content(/-e lxc/) }
-      it { should_not contain_file('/etc/init/docker.conf').with_content(/-e native/) }
+      it { should_not contain_file('/etc/default/docker').with_content(/-e lxc/) }
+      it { should_not contain_file('/etc/default/docker').with_content(/-e native/) }
     end
 
     it { should contain_service('docker').without_provider }
@@ -173,6 +173,6 @@ describe 'docker', :type => :class do
   context 'with custom root dir' do
     let(:params) { {'root_dir' => '/mnt/docker'} }
 
-    it { should contain_file('/etc/init/docker.conf').with_content(/-g \/mnt\/docker/) }
+    it { should contain_file('/etc/default/docker').with_content(/-g \/mnt\/docker/) }
   end
 end

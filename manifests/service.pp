@@ -42,10 +42,10 @@ class docker::service (
         provider   => $provider,
       }
 
-      file { '/etc/init/docker.conf':
+      file { '/etc/default/docker':
         ensure  => present,
         force   => true,
-        content => template('docker/etc/init/docker.conf.erb'),
+        content => template('docker/etc/default/docker.erb'),
         notify  => Service['docker'],
       }
     }
