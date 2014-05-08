@@ -128,6 +128,7 @@ docker::run { 'helloworld':
   env             => ['FOO=BAR', 'FOO2=BAR2'],
   dns             => ['8.8.8.8', '8.8.4.4'],
   restart_service => true,
+  privileged      => false,
 }
 ```
 
