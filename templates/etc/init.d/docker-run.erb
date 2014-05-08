@@ -53,8 +53,9 @@ start() {
         <% if @dns %><% @dns_array.each do |address| %> \
             -dns <%= address %><% end %> \
         <% end %> \
-        <% if @env %><% @env_array.each do |env| %> \
-            -e <%= env %><% end %> \
+        <%- env_hash = @env.is_a?(Hash) ? @env : Hash[@env.map{|kv| kv.split('=', 2)}] -%>
+        <% env_hash.each do |name,value| %> \
+            -e <%= name %>='<%= value %>' \
         <% end %> \
         <% if @ports %><% @ports_array.each do |port| %> \
             -p <%= port %><% end %> \

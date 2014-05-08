@@ -14,7 +14,7 @@ define docker::run(
   $volumes_from = [],
   $username = false,
   $hostname = false,
-  $env = [],
+  $env = {},
   $dns = [],
   $lxc_conf = [],
   $restart_service = true,
@@ -33,10 +33,12 @@ define docker::run(
   }
   validate_bool($running)
   validate_bool($disable_network)
+  if !is_array($env) and !is_hash($env) {
+    fail('The "env" parameter must be a hash or array')
+  }
 
   $ports_array = any2array($ports)
   $volumes_array = any2array($volumes)
-  $env_array = any2array($env)
   $dns_array = any2array($dns)
   $links_array = any2array($links)
   $lxc_conf_array = any2array($lxc_conf)

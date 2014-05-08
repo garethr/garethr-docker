@@ -22,8 +22,9 @@ respawn limit 5 20
     args.concat ['-dns', addr]
   end
 
-  @env_array.each do |env|
-    args.concat ['-e', env]
+  env_hash = @env.is_a?(Hash) ? @env : Hash[@env.map{|kv| kv.split('=', 2)}]
+  env_hash.each do |name, value|
+    args.concat ['-e', "#{name}=#{value}"]
   end
 
   @ports_array.each do |port|
