@@ -2,7 +2,7 @@ description "start and stop <%= @title %> in docker"
 author "Gareth Rushgrove"
 
 start on (started docker)
-stop on runlevel [!2345]
+stop on stopping docker
 
 setuid root
 
