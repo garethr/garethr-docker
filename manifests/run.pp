@@ -62,7 +62,6 @@ define docker::run(
         ensure     => $running,
         enable     => true,
         hasstatus  => true,
-        hasrestart => true,
         provider   => $provider,
       }
     }
