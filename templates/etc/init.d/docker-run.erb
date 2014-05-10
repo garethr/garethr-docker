@@ -2,27 +2,27 @@
 #
 #    /etc/rc.d/init.d/<servicename>
 #
-#    Daemon for <%= @title %>
+#    Daemon for <%= @name %>
 #
 # chkconfig: 2345 97 97
-# description: Docker container for <%= @title %>
+# description: Docker container for <%= @name %>
 
 ### BEGIN INIT INFO
-## Provides:       docker-<%= @title %>
+## Provides:       docker-<%= @name %>
 ## Required-Start: $network docker
 ## Required-Stop:
 ## Should-Start:
 ## Should-Stop:
 ## Default-Start: 2 3 4 5
 ## Default-Stop:  0 1 6
-## Short-Description: start and stop docker container for <%= @title %>
-## Description: Docker container for <%= @title %>
+## Short-Description: start and stop docker container for <%= @name %>
+## Description: Docker container for <%= @name %>
 #### END INIT INFO
 
 . /etc/init.d/functions
 
 docker="/usr/bin/docker"
-prog="docker-<%= @title %>"
+prog="docker-<%= @name %>"
 cidfile="/var/run/$prog.cid"
 lockfile="/var/lock/subsys/$prog"
 
