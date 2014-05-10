@@ -21,7 +21,7 @@ define docker::run(
   $disable_network = false,
 ) {
   validate_re($image, '^[\S]*$')
-  validate_re($title, '^[\S]*$')
+  validate_re($name, '^[\S]*$')
   validate_re($memory_limit, '^[\d]*$')
   if $command {
     validate_string($command)
@@ -46,7 +46,7 @@ define docker::run(
 
   case $::osfamily {
     'Debian': {
-      $initscript = "/etc/init/docker-${title}.conf"
+      $initscript = "/etc/init/docker-${name}.conf"
 
       $provider = $::operatingsystem ? {
         'Ubuntu' => 'upstart',
@@ -58,7 +58,7 @@ define docker::run(
         content => template('docker/etc/init/docker-run.conf.erb')
       }
 
-      service { "docker-${title}":
+      service { "docker-${name}":
         ensure     => $running,
         enable     => true,
         hasstatus  => true,
@@ -66,7 +66,7 @@ define docker::run(
       }
     }
     'RedHat': {
-      $initscript = "/etc/init.d/docker-${title}"
+      $initscript = "/etc/init.d/docker-${name}"
 
       file { $initscript:
         ensure  => present,
@@ -74,7 +74,7 @@ define docker::run(
         mode    => '0755',
       }
 
-      service { "docker-${title}":
+      service { "docker-${name}":
         ensure     => $running,
         enable     => true,
       }
@@ -85,10 +85,10 @@ define docker::run(
   }
 
   if str2bool($restart_service) {
-    File[$initscript] ~> Service["docker-${title}"]
+    File[$initscript] ~> Service["docker-${name}"]
   }
   else {
-    File[$initscript] -> Service["docker-${title}"]
+    File[$initscript] -> Service["docker-${name}"]
   }
 }
 
