@@ -9,6 +9,13 @@ setuid root
 respawn
 respawn limit 5 20
 
+<% 
+  env_hash = @env.is_a?(Hash) ? @env : Hash[@env.map{|kv| kv.split('=', 2)}]
+  env_hash.each do |key,value|
+-%>
+env <%= key %>='<%= value.gsub(/'/, "'\"'\"'") %>'
+<% end -%>
+
 <%
   args = []
 
@@ -22,9 +29,8 @@ respawn limit 5 20
     args.concat ['-dns', addr]
   end
 
-  env_hash = @env.is_a?(Hash) ? @env : Hash[@env.map{|kv| kv.split('=', 2)}]
-  env_hash.each do |name, value|
-    args.concat ['-e', "#{name}=#{value}"]
+  env_hash.keys.each do |env_name|
+    args.concat ['-e', env_name]
   end
 
   @ports_array.each do |port|
