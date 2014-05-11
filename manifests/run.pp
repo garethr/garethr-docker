@@ -11,7 +11,7 @@ define docker::run(
   $links = [],
   $use_name = false,
   $running = true,
-  $volumes_from = false,
+  $volumes_from = [],
   $username = false,
   $hostname = false,
   $env = [],

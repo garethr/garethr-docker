@@ -9,4 +9,53 @@ setuid root
 respawn
 respawn limit 5 20
 
-exec docker run <% if @username %>-u '<%= @username %>' <% end %><% if @hostname %>-h '<%= @hostname %>'<% end %><% if @disable_network %> -n false<%end %><% if @dns %><% @dns_array.each do |address| %> -dns <%= address %><% end %><% end %><% if @env %><% @env_array.each do |env| %> -e <%= env %><% end %><% end %><% if @ports %><% @ports_array.each do |port| %> -p <%= port %><% end %><% end %><% if @volumes %><% @volumes_array.each do |volume| %> -v <%= volume %><% end %><% end %><% if @volumes_from %> -volumes-from <%= @volumes_from %><% end %> -m <%= @memory_limit %> <% if @links %><%= @links_array.map {|link| "-link #{link}" }.join(' ') %> <% end %><% if @use_name %>-name <%= @name %><% end %><% if @lxc_conf_array %><% @lxc_conf_array.each do |lxcconf| %> -lxc-conf="<%=lxcconf%>"<% end %><% end %> <%= @image %> <% if @command %><%= @command %><% end %>
+<%
+  args = []
+
+  args.concat ['-u', @username] if @username
+
+  args.concat ['-h', @hostname] if @hostname
+
+  args.concat ['-n', 'false'] if @disable_network
+
+  @dns_array.each do |addr|
+    args.concat ['-dns', addr]
+  end
+
+  @env_array.each do |env|
+    args.concat ['-e', env]
+  end
+
+  @ports_array.each do |port|
+    args.concat ['-p', port]
+  end
+
+  @volumes_array.each do |volume|
+    args.concat ['-v', volume]
+  end
+
+  @volumes_from.each do |volume_from|
+    args.concat ['--volumes-from', volume_from]
+  end
+
+  args.concat ['-m', @memory_limit]
+
+  @links_array.each do |link|
+    args.concat ['--link', link]
+  end
+
+  args.concat ['-name', @name] if @use_name
+
+  @lxc_conf_array.each do |lxc_conf|
+    args.concat ['--lxc-conf', lxc_conf]
+  end
+
+  args << @image
+
+  args << @command if @command
+
+  args.map!(&:to_s) # fix a ruby 1.9.3 issue where shellwords can't handle symbols
+  require 'shellwords'
+-%>
+
+exec docker run <%= Shellwords.shelljoin(args) %>
