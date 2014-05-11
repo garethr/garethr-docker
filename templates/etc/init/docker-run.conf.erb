@@ -1,12 +1,79 @@
-description "start and stop <%= @title %> in docker"
+description "start and stop <%= @name %> in docker"
 author "Gareth Rushgrove"
 
 start on (started docker)
-stop on runlevel [!2345]
+stop on stopping docker
 
 setuid root
 
 respawn
 respawn limit 5 20
 
-exec docker run <% if @username %>-u '<%= @username %>' <% end %><% if @hostname %>-h '<%= @hostname %>'<% end %><% if @disable_network %> -n false<%end %><% if @dns %><% @dns_array.each do |address| %> -dns <%= address %><% end %><% end %><% if @env %><% @env_array.each do |env| %> -e <%= env %><% end %><% end %><% if @ports %><% @ports_array.each do |port| %> -p <%= port %><% end %><% end %><% if @volumes %><% @volumes_array.each do |volume| %> -v <%= volume %><% end %><% end %><% if @volumes_from %> -volumes-from <%= @volumes_from %><% end %> -m <%= @memory_limit %> <% if @links %><%= @links_array.map {|link| "-link #{link}" }.join(' ') %> <% end %><% if @use_name %>-name <%= @name %><% end %><% if @lxc_conf_array %><% @lxc_conf_array.each do |lxcconf| %> -lxc-conf="<%=lxcconf%>"<% end %><% end %> <%= @image %> <% if @command %><%= @command %><% end %>
+<% 
+  env_hash = @env.is_a?(Hash) ? @env : Hash[@env.map{|kv| kv.split('=', 2)}]
+  env_hash.each do |key,value|
+-%>
+env <%= key %>='<%= value.gsub(/'/, "'\"'\"'") %>'
+<% end -%>
+
+<%
+  args = []
+
+  args.concat ['-u', @username] if @username
+
+  args.concat ['-h', @hostname] if @hostname
+
+  args.concat ['-n', 'false'] if @disable_network
+
+  @dns_array.each do |addr|
+    args.concat ['-dns', addr]
+  end
+
+  env_hash.keys.each do |env_name|
+    args.concat ['-e', env_name]
+  end
+
+  @ports_array.each do |port|
+    args.concat ['-p', port]
+  end
+
+  @volumes_array.each do |volume|
+    args.concat ['-v', volume]
+  end
+
+  @volumes_from.each do |volume_from|
+    args.concat ['--volumes-from', volume_from]
+  end
+
+  args.concat ['-m', @memory_limit]
+
+  @links_array.each do |link|
+    args.concat ['--link', link]
+  end
+
+  args.concat ['-name', @name] if @use_name
+
+  @lxc_conf_array.each do |lxc_conf|
+    args.concat ['--lxc-conf', lxc_conf]
+  end
+
+  args << '-d'
+
+  args << @image
+
+  args << @command if @command
+
+  require 'shellwords'
+-%>
+
+script
+docker run <%= Shellwords.shelljoin(args) %> > /var/run/docker-<%= @name %>.cid && \
+  exec docker wait "$(cat /var/run/docker-<%= @name %>.cid)"
+end script
+
+post-stop script
+if [ -e "/var/run/docker-<%= @name %>.cid" ]; then
+  docker kill "$(cat /var/run/docker-<%= @name %>.cid)" && \
+    rm "/var/run/docker-<%= @name %>.cid"
+fi
+end script

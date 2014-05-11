@@ -4,27 +4,28 @@
 #
 define docker::run(
   $image,
-  $command,
+  $command = undef,
   $memory_limit = '0',
   $ports = [],
   $volumes = [],
   $links = [],
   $use_name = false,
   $running = true,
-  $volumes_from = false,
+  $volumes_from = [],
   $username = false,
   $hostname = false,
-  $env = [],
+  $env = {},
   $dns = [],
   $lxc_conf = [],
   $restart_service = true,
   $disable_network = false,
 ) {
-
   validate_re($image, '^[\S]*$')
-  validate_re($title, '^[\S]*$')
+  validate_re($name, '^[\S]*$')
   validate_re($memory_limit, '^[\d]*$')
-  validate_string($command)
+  if $command {
+    validate_string($command)
+  }
   if $username {
     validate_string($username)
   }
@@ -33,17 +34,19 @@ define docker::run(
   }
   validate_bool($running)
   validate_bool($disable_network)
+  if !is_array($env) and !is_hash($env) {
+    fail('The "env" parameter must be a hash or array')
+  }
 
   $ports_array = any2array($ports)
   $volumes_array = any2array($volumes)
-  $env_array = any2array($env)
   $dns_array = any2array($dns)
   $links_array = any2array($links)
   $lxc_conf_array = any2array($lxc_conf)
 
   case $::osfamily {
     'Debian': {
-      $initscript = "/etc/init/docker-${title}.conf"
+      $initscript = "/etc/init/docker-${name}.conf"
 
       $provider = $::operatingsystem ? {
         'Ubuntu' => 'upstart',
@@ -55,16 +58,15 @@ define docker::run(
         content => template('docker/etc/init/docker-run.conf.erb')
       }
 
-      service { "docker-${title}":
+      service { "docker-${name}":
         ensure     => $running,
         enable     => true,
         hasstatus  => true,
-        hasrestart => true,
         provider   => $provider,
       }
     }
     'RedHat': {
-      $initscript = "/etc/init.d/docker-${title}"
+      $initscript = "/etc/init.d/docker-${name}"
 
       file { $initscript:
         ensure  => present,
@@ -72,7 +74,7 @@ define docker::run(
         mode    => '0755',
       }
 
-      service { "docker-${title}":
+      service { "docker-${name}":
         ensure     => $running,
         enable     => true,
       }
@@ -83,10 +85,10 @@ define docker::run(
   }
 
   if str2bool($restart_service) {
-    File[$initscript] ~> Service["docker-${title}"]
+    File[$initscript] ~> Service["docker-${name}"]
   }
   else {
-    File[$initscript] -> Service["docker-${title}"]
+    File[$initscript] -> Service["docker-${name}"]
   }
 }
 

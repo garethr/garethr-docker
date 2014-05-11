@@ -38,7 +38,6 @@ class docker::service (
         ensure     => $service_state,
         enable     => $service_enable,
         hasstatus  => true,
-        hasrestart => true,
         provider   => $provider,
       }
 
