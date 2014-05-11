@@ -57,6 +57,8 @@ env <%= key %>='<%= value.gsub(/'/, "'\"'\"'") %>'
     args.concat ['--lxc-conf', lxc_conf]
   end
 
+  args << '-d'
+
   args << @image
 
   args << @command if @command
@@ -65,4 +67,14 @@ env <%= key %>='<%= value.gsub(/'/, "'\"'\"'") %>'
   require 'shellwords'
 -%>
 
-exec docker run <%= Shellwords.shelljoin(args) %>
+script
+docker run <%= Shellwords.shelljoin(args) %> > /var/run/docker-<%= @name %>.cid && \
+  exec docker wait "$(cat /var/run/docker-<%= @name %>.cid)"
+end script
+
+post-stop script
+if [ -e "/var/run/docker-<%= @name %>.cid" ]; then
+  docker kill "$(cat /var/run/docker-<%= @name %>.cid)" && \
+    rm "/var/run/docker-<%= @name %>.cid"
+fi
+end script
