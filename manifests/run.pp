@@ -61,6 +61,7 @@ define docker::run(
         hasstatus  => true,
         hasrestart => true,
         provider   => $provider,
+        require    => Package['docker'],
       }
     }
     'RedHat': {
@@ -73,8 +74,9 @@ define docker::run(
       }
 
       service { "docker-${title}":
-        ensure     => $running,
-        enable     => true,
+        ensure  => $running,
+        enable  => true,
+        require => Package['docker'],
       }
     }
     default: {
