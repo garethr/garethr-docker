@@ -108,6 +108,10 @@ require 'spec_helper'
       it { should contain_file(initscript).with_content(/-n false/) }
     end
 
+    context 'when running privileged' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'privileged' => true} }
+      it { should contain_file(initscript).with_content(/--privileged/) }
+    end
 
 
     context 'when passing a data volume' do
