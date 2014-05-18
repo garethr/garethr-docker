@@ -10,10 +10,16 @@ class docker::install {
   validate_string($::kernelrelease)
   validate_bool($docker::use_upstream_package_source)
 
+$prerequired_packages = $::operatingsystem ? {
+  'Debian' => ['apt-transport-https', 'cgroupfs-mount'],
+  'Ubuntu' => ['apt-transport-https', 'cgroup-lite'],
+  default  => '',
+}
+
   case $::osfamily {
     'Debian': {
 
-      ensure_packages(['apt-transport-https', 'cgroup-lite'])
+      ensure_packages($prerequired_packages)
       Package['apt-transport-https'] -> Package['docker']
 
       if ($docker::use_upstream_package_source) {
