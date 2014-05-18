@@ -27,12 +27,12 @@ describe 'docker', :type => :class do
 
     context 'with proxy param' do
       let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
-      it { should contain_file('/etc/init/docker.conf').with_content(/http_proxy=http:\/\/127.0.0.1:3128 https_proxy=http:\/\/127.0.0.1:3128 \/usr\/bin\/docker/) }
+      it { should contain_file('/etc/init/docker.conf').with_content(/http_proxy=http:\/\/127.0.0.1:3128 https_proxy=http:\/\/127.0.0.1:3128  exec \/usr\/bin\/docker/) }
     end
-      
+
     context 'with no_proxy param' do
       let(:params) { {'no_proxy' => '.github.com' } }
-      it { should contain_file('/etc/init/docker.conf').with_content(/no_proxy=.github.com \/usr\/bin\/docker/) }
+      it { should contain_file('/etc/init/docker.conf').with_content(/no_proxy=.github.com  exec \/usr\/bin\/docker/) }
     end
 
     context 'with execdriver param lxc' do
@@ -116,7 +116,7 @@ describe 'docker', :type => :class do
       it { should contain_file('/etc/sysconfig/docker').with_content(/export http_proxy=http:\/\/127.0.0.1:3128/) }
       it { should contain_file('/etc/sysconfig/docker').with_content(/export https_proxy=http:\/\/127.0.0.1:3128/) }
     end
-      
+
     context 'with no_proxy param' do
       let(:params) { {'no_proxy' => '.github.com' } }
       it { should contain_file('/etc/sysconfig/docker').with_content(/export no_proxy=.github.com/) }

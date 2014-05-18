@@ -19,6 +19,7 @@ define docker::run(
   $lxc_conf = [],
   $restart_service = true,
   $disable_network = false,
+  $privileged = false,
 ) {
 
   validate_re($image, '^[\S]*$')
@@ -33,6 +34,7 @@ define docker::run(
   }
   validate_bool($running)
   validate_bool($disable_network)
+  validate_bool($privileged)
 
   $ports_array = any2array($ports)
   $volumes_array = any2array($volumes)
