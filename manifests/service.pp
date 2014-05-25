@@ -49,12 +49,12 @@ class docker::service (
         notify  => Service['docker'],
       }
 
-      file { "/etc/init.d/docker":
+      file { '/etc/init.d/docker':
           ensure => 'absent',
-          notify  => Service['docker'],
+          notify => Service['docker'],
       }
 
-      File ['/etc/init.d/docker'] -> 
+      File ['/etc/init.d/docker'] ->
         File ['/etc/init/docker.conf'] ->
           Service ['docker']
 
