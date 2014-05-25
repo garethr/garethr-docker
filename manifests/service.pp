@@ -38,7 +38,7 @@ class docker::service (
         ensure     => $service_state,
         enable     => $service_enable,
         hasstatus  => true,
-        hasrestart => true,
+        hasrestart => false,
         provider   => $provider,
       }
 
@@ -48,6 +48,16 @@ class docker::service (
         content => template('docker/etc/init/docker.conf.erb'),
         notify  => Service['docker'],
       }
+
+      file { "/etc/init.d/docker":
+          ensure => 'absent',
+          notify  => Service['docker'],
+      }
+
+      File ['/etc/init.d/docker'] -> 
+        File ['/etc/init/docker.conf'] ->
+          Service ['docker']
+
     }
     'RedHat': {
       service { 'docker':
