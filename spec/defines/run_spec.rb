@@ -30,7 +30,7 @@ require 'spec_helper'
 
     context 'when `use_name` is true' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'use_name' => true } }
-      it { should contain_file(initscript).with_content(/ -name sample /) }
+      it { should contain_file(initscript).with_content(/ --name sample /) }
     end
 
     context 'when stopping the service' do
@@ -45,7 +45,7 @@ require 'spec_helper'
 
     context 'when passing a links option' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'links' => ['example:one', 'example:two']} }
-      it { should contain_file(initscript).with_content(/ -link example:one -link example:two /) }
+      it { should contain_file(initscript).with_content(/ --link example:one --link example:two /) }
     end
 
     context 'when passing a hostname' do
@@ -75,7 +75,7 @@ require 'spec_helper'
 
     context 'when connecting to shared data volumes' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'volumes_from' => '6446ea52fbc9'} }
-      it { should contain_file(initscript).with_content(/-volumes-from 6446ea52fbc9/) }
+      it { should contain_file(initscript).with_content(/--volumes-from 6446ea52fbc9/) }
     end
 
     context 'when passing serveral port numbers' do
@@ -95,12 +95,12 @@ require 'spec_helper'
 
     context 'when passing serveral dns addresses' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'dns' => ['8.8.8.8', '8.8.4.4']} }
-      it { should contain_file(initscript).with_content(/-dns 8.8.8.8/).with_content(/-dns 8.8.4.4/) }
+      it { should contain_file(initscript).with_content(/--dns 8.8.8.8/).with_content(/--dns 8.8.4.4/) }
     end
 
     context 'when passing a dns address' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'dns' => '8.8.8.8'} }
-      it { should contain_file(initscript).with_content(/-dns 8.8.8.8/) }
+      it { should contain_file(initscript).with_content(/--dns 8.8.8.8/) }
     end
     
     context 'when disabling network' do
