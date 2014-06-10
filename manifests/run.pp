@@ -4,7 +4,7 @@
 #
 define docker::run(
   $image,
-  $command,
+  $command = undef,
   $memory_limit = '0',
   $ports = [],
   $volumes = [],
@@ -21,11 +21,12 @@ define docker::run(
   $disable_network = false,
   $privileged = false,
 ) {
-
   validate_re($image, '^[\S]*$')
   validate_re($title, '^[\S]*$')
   validate_re($memory_limit, '^[\d]*$')
-  validate_string($command)
+  if $command {
+    validate_string($command)
+  }
   if $username {
     validate_string($username)
   }
@@ -87,6 +88,13 @@ define docker::run(
     hasrestart => $hasrestart,
     provider   => $provider,
     require    => File[$initscript],
+  }
+
+  if str2bool($restart_service) {
+    File[$initscript] ~> Service["docker-${title}"]
+  }
+  else {
+    File[$initscript] -> Service["docker-${title}"]
   }
 }
 

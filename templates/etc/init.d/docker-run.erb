@@ -58,7 +58,7 @@ start() {
             -dns <%= address %><% end %> \
         <% end %> \
         <% if @env %><% @env_array.each do |env| %> \
-            -e <%= env %><% end %> \
+          -e <%= env %><% end %> \
         <% end %> \
         <% if @ports %><% @ports_array.each do |port| %> \
             -p <%= port %><% end %> \
