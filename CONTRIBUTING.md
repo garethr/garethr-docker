@@ -66,16 +66,16 @@ Note also you can run the syntax, style and unit tests in one go with:
 
 The unit tests just check the code runs, not that it does exactly what
 we want on a real machine. For that we're using
-[rspec-system-puppet](https://github.com/puppetlabs/rspec-system-puppet).
+[Beaker](https://github.com/puppetlabs/beaker).
 This fires up a new virtual machine (using vagrant) and runs a series of
 simple tests against it after applying the module. You can run this
 with:
 
-    bundle exec rake spec:system
+    bundle exec rake acceptance
 
 This will run the tests on an Ubuntu 12.04 virtual machine. You can also
 run the integration tests against Centos 6.5 with.
 
-    RS_SET=centos-65-x64 bundle exec rake spec:system
+    BEAKER_SET=centos-64-x64 bundle exec rake acceptance
 
 
