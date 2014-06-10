@@ -12,6 +12,40 @@ setuid root
 respawn
 respawn limit 5 20
 
+<% if @use_name %>
+script
+  docker inspect <%= @name %> && docker start -a -i <%= @name %>
+  docker inspect <%= @name %> || docker run -cidfile=/var/run/docker-<%= @title %>.cid && \
+    <% if @username %>-u '<%= @username %>' <% end %> \
+    <% if @hostname %>-h '<%= @hostname %>'<% end %> \
+    <% if @disable_network %>-n false<% end %> \
+    <% if @privileged %>--privileged<% end %> \
+    <% if @dns %><% @dns_array.each do |address| %> \
+        -dns <%= address %><% end %> \
+    <% end %> \
+    <% if @env %><% @env_array.each do |env| %> \
+      -e <%= env %><% end %> \
+    <% end %> \
+    <% if @ports %><% @ports_array.each do |port| %> \
+    -p <%= port %><% end %> \
+    <% end %> \
+    <% if @volumes %><% @volumes_array.each do |volume| %> \
+        -v <%= volume %><% end %> \
+    <% end %> \
+    <% if @volumes_from %> -volumes-from <%= @volumes_from %><% end %> \
+    <% if @lxc_conf_array %><% @lxc_conf_array.each do |lxcconf| %> \
+        -lxc-conf="<%=lxcconf%>"<% end %> \
+    <% end %> \
+    -m <%= @memory_limit %> \
+    <% if @links %><%= @links_array.map {|link| \
+        "-link #{link}" }.join(' ') %> \
+    <% end %> \
+    <% if @use_name %>-name <%= @name %><% end %> \
+    <%= @image %> \
+    <% if @command %> <%= @command %><% end %> &&
+  exec docker wait "$(cat /var/run/docker-<%= @title %>.cid)"
+end script
+<% else %>
 script
   docker run -cidfile=/var/run/docker-<%= @title %>.cid && \
     <% if @username %>-u '<%= @username %>' <% end %> \
@@ -43,6 +77,7 @@ script
     <% if @command %> <%= @command %><% end %> &&
   exec docker wait "$(cat /var/run/docker-<%= @title %>.cid)"
 end script
+<% end %>
 
 post-stop script
 if [ -e "/var/run/docker-<%= @title %>.cid" ]; then
@@ -50,6 +85,3 @@ if [ -e "/var/run/docker-<%= @title %>.cid" ]; then
     rm "/var/run/docker-<%= @title %>.cid"
 fi
 end script
-
-
-
