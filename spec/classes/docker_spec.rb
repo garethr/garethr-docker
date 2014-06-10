@@ -50,8 +50,13 @@ describe 'docker', :type => :class do
       it { should_not contain_file('/etc/init/docker.conf').with_content(/-e native/) }
     end
 
+    context 'with socket group set' do
+      let(:params) { { 'socket_group' => 'notdocker' }}
+      it { should contain_file('/etc/init/docker.conf').with_content(/-G notdocker/) }
+    end
+
     it { should contain_service('docker').without_provider }
-    it { should contain_service('docker').with_hasrestart('false') }    
+    it { should contain_service('docker').with_hasrestart('false') }
     it { should_not contain_package('linux-image-extra-3.8.0-29-generic') }
     it { should_not contain_package('linux-image-generic-lts-raring') }
     it { should_not contain_package('linux-headers-generic-lts-raring') }
