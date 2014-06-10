@@ -1,5 +1,13 @@
 require 'spec_helper'
 
+shared_examples 'an ensure' do |version|
+  it { should contain_package('docker').with_name('lxc-docker').with_ensure(version) }
+end
+
+shared_examples 'a custom version' do |version|
+  it { should contain_package('docker').with_name("lxc-docker-#{version}").with_ensure('present') }
+end
+
 describe 'docker', :type => :class do
   let(:facts) { {
     :osfamily        => 'Debian',
@@ -74,12 +82,43 @@ describe 'docker', :type => :class do
 
   context 'with a custom version' do
     let(:params) { {'version' => '0.5.5' } }
-    it { should contain_package('docker').with_name('lxc-docker-0.5.5').with_ensure('present') }
+    it_behaves_like 'a custom version', '0.5.5'
   end
 
   context 'with ensure absent' do
     let(:params) { {'ensure' => 'absent' } }
-    it { should contain_package('docker').with_ensure('absent') }
+    it_behaves_like 'an ensure', 'absent'
+  end
+
+  context 'with generic version' do
+    generics = ['absent', 'latest', 'present']
+
+    generics.each do |a_version|
+      context "version #{a_version}" do
+        let(:params) { {'version' => a_version } }
+        it_behaves_like 'an ensure', a_version
+      end
+    end
+  end
+
+  context 'version overrides ensure' do
+    generics = ['absent', 'latest', 'present']
+
+    generics.each do |an_ensure|
+      generics.each do |a_version|
+        context "version #{a_version} and ensure #{an_ensure}" do
+          # Version and ensure are both generic.
+          let(:params) { {'version' => a_version, 'ensure' => an_ensure } }
+          it_behaves_like 'an ensure', a_version
+        end
+      end
+
+      context "version 0.5.5 and ensure #{an_ensure}" do
+        # Version is custom.
+        let(:params) { {'version' => '0.5.5', 'ensure' => an_ensure } }
+        it_behaves_like 'a custom version', '0.5.5'
+      end
+    end
   end
 
   context 'with an invalid distro name' do
