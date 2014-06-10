@@ -10,7 +10,14 @@ describe 'docker class' do
 
   context 'default parameters' do
     it 'should work with no errors' do
-      pp = "class { 'docker': }"
+      pp = <<-EOS
+        class { 'docker': }
+        docker::image { 'busybox': }
+        docker::run { 'helloworld':
+          image   => 'busybox',
+          command => '/bin/sh -c "echo hello world"',
+        }
+      EOS
 
       # Run it twice and test for idempotency
       expect(apply_manifest(pp).exit_code).to_not eq(1)
@@ -30,5 +37,17 @@ describe 'docker class' do
       it { should return_exit_status 0 }
       it { should return_stdout(/Client version: /) }
     end
+
+    describe command('sudo docker images') do
+      it { should return_exit_status 0 }
+      it { should return_stdout(/busybox/) }
+    end
+
+    describe command('sudo docker ps -l --no-trunc=true') do
+      it { should return_exit_status 0 }
+      it { should return_stdout(/hello world/) }
+      it { should return_stdout(/Exited/) }
+    end
+
   end
 end
