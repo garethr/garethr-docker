@@ -45,6 +45,11 @@ describe 'docker', :type => :class do
       it { should contain_file('/etc/default/docker').with_content(/-e native/) }
     end
 
+    context 'with storage driver param' do
+      let(:params) { { 'storage_driver' => 'devicemapper' }}
+      it { should contain_file('/etc/default/docker').with_content(/--storage-driver=devicemapper/) }
+    end
+
     context 'without execdriver param' do
       it { should_not contain_file('/etc/default/docker').with_content(/-e lxc/) }
       it { should_not contain_file('/etc/default/docker').with_content(/-e native/) }

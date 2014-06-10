@@ -21,6 +21,7 @@ export no_proxy=<%= @no_proxy %>
 DOCKER_OPTS="\
 <% if @root_dir %>-g <%= @root_dir %> <% end -%>
 <% if @execdriver %>-e <%= @execdriver %> <% end -%>
+<% if @storage_driver %>--storage-driver=<%= @storage_driver %> <% end -%>
 <% if @tcp_bind %>-H <%= @tcp_bind %> <% end -%>
 <% if @socket_bind %> -H <%= @socket_bind %> <% end -%>
 <% if @socket_group %> -G <%= @socket_group %> <% end -%>

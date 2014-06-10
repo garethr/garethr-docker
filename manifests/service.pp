@@ -29,6 +29,7 @@ class docker::service (
   $proxy                = $docker::proxy,
   $no_proxy             = $docker::no_proxy,
   $execdriver           = $docker::execdriver,
+  $storage_driver       = $docker::storage_driver,
 ){
   case $::osfamily {
     'Debian': {

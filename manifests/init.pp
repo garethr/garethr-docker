@@ -80,6 +80,7 @@ class docker(
   $extra_parameters            = undef,
   $proxy                       = $docker::params::proxy,
   $no_proxy                    = $docker::params::no_proxy,
+  $storage_driver              = $docker::params::storage_driver,
   $execdriver                  = $docker::params::execdriver,
 ) inherits docker::params {
 
