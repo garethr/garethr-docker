@@ -51,10 +51,12 @@ describe 'docker', :type => :class do
     end
 
     it { should contain_service('docker').without_provider }
+    it { should contain_service('docker').with_hasrestart('false') }    
     it { should_not contain_package('linux-image-extra-3.8.0-29-generic') }
     it { should_not contain_package('linux-image-generic-lts-raring') }
     it { should_not contain_package('linux-headers-generic-lts-raring') }
     it { should contain_package('apt-transport-https').that_comes_before('Package[docker]') }
+    it { should contain_file('/etc/init.d/docker').with_ensure('absent') }
   end
 
   context 'with no parameters' do

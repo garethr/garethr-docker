@@ -17,6 +17,9 @@ require 'spec_helper'
       it { should contain_file(initscript).with_content(/docker run/).with_content(/base/) }
       it { should contain_file(initscript).with_content(/docker run/).with_content(/command/) }
       it { should contain_service('docker-sample') }
+      if (osfamily == 'Debian')
+        it { should contain_service('docker-sample').with_hasrestart('false') }  
+      end
 
       ['p', 'dns', 'u', 'v', 'e', 'n', 'volumes-from', 'name'].each do |search|
         it { should_not contain_file(initscript).with_content(/-${search}/) }
