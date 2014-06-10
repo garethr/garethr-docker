@@ -21,7 +21,7 @@ script
     <% if @disable_network %>-n false<% end %> \
     <% if @privileged %>--privileged<% end %> \
     <% if @dns %><% @dns_array.each do |address| %> \
-        -dns <%= address %><% end %> \
+        --dns <%= address %><% end %> \
     <% end %> \
     <% if @env %><% @env_array.each do |env| %> \
       -e <%= env %><% end %> \
@@ -34,13 +34,13 @@ script
     <% end %> \
     <% if @volumes_from %> -volumes-from <%= @volumes_from %><% end %> \
     <% if @lxc_conf_array %><% @lxc_conf_array.each do |lxcconf| %> \
-        -lxc-conf="<%=lxcconf%>"<% end %> \
+        --lxc-conf="<%=lxcconf%>"<% end %> \
     <% end %> \
     -m <%= @memory_limit %> \
     <% if @links %><%= @links_array.map {|link| \
-        "-link #{link}" }.join(' ') %> \
+        "--link #{link}" }.join(' ') %> \
     <% end %> \
-    <% if @use_name %>-name <%= @name %><% end %> \
+    <% if @use_name %>--name <%= @name %><% end %> \
     <%= @image %> \
     <% if @command %> <%= @command %><% end %> &&
   exec docker wait "$(cat /var/run/docker-<%= @title %>.cid)"
@@ -53,7 +53,7 @@ script
     <% if @disable_network %>-n false<% end %> \
     <% if @privileged %>--privileged<% end %> \
     <% if @dns %><% @dns_array.each do |address| %> \
-        -dns <%= address %><% end %> \
+        --dns <%= address %><% end %> \
     <% end %> \
     <% if @env %><% @env_array.each do |env| %> \
       -e <%= env %><% end %> \
@@ -64,15 +64,15 @@ script
     <% if @volumes %><% @volumes_array.each do |volume| %> \
         -v <%= volume %><% end %> \
     <% end %> \
-    <% if @volumes_from %> -volumes-from <%= @volumes_from %><% end %> \
+    <% if @volumes_from %> --volumes-from <%= @volumes_from %><% end %> \
     <% if @lxc_conf_array %><% @lxc_conf_array.each do |lxcconf| %> \
-        -lxc-conf="<%=lxcconf%>"<% end %> \
+        --lxc-conf="<%=lxcconf%>"<% end %> \
     <% end %> \
     -m <%= @memory_limit %> \
     <% if @links %><%= @links_array.map {|link| \
-        "-link #{link}" }.join(' ') %> \
+        "--link #{link}" }.join(' ') %> \
     <% end %> \
-    <% if @use_name %>-name <%= @name %><% end %> \
+    <% if @use_name %>--name <%= @name %><% end %> \
     <%= @image %> \
     <% if @command %> <%= @command %><% end %> &&
   exec docker wait "$(cat /var/run/docker-<%= @title %>.cid)"
