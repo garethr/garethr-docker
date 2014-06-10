@@ -1,0 +1,29 @@
+# Docker Upstart and SysVinit configuration file
+#
+# THIS FILE IS MANAGED BY PUPPET. Changes will be overwritten.
+
+# # Customize location of Docker binary (especially for development testing).
+# #DOCKER="/usr/local/bin/docker"
+
+# # If you need Docker to use an HTTP proxy, it can also be specified here.
+<% if @proxy -%>
+export http_proxy=<%= @proxy %>
+export https_proxy=<%= @proxy %>
+<% end -%>
+<% if @no_proxy -%>
+export no_proxy=<%= @no_proxy %>
+<% end -%>
+
+# # This is also a handy place to tweak where Docker's temporary files go.
+# #export TMPDIR="/mnt/bigdrive/docker-tmp"
+
+# # Use DOCKER_OPTS to modify the daemon startup options.
+DOCKER_OPTS="\
+<% if @root_dir %>-g <%= @root_dir %> <% end -%>
+<% if @execdriver %>-e <%= @execdriver %> <% end -%>
+<% if @tcp_bind %>-H <%= @tcp_bind %> <% end -%>
+<% if @socket_bind %> -H <%= @socket_bind %> <% end -%>
+<% if @socket_group %> -G <%= @socket_group %> <% end -%>
+<% if @dns %> -dns <%= @dns %> <% end -%>
+<% if @extra_parameters %><% @extra_parameters.each do |param| %> <%= param %> <% end %><% end -%>
+"
