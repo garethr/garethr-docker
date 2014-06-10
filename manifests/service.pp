@@ -30,28 +30,17 @@ class docker::service (
   $no_proxy             = $docker::no_proxy,
   $execdriver           = $docker::execdriver,
 ){
+  $provider = $::operatingsystem ? {
+    'Ubuntu' => 'upstart',
+    default  => undef,
+  }
+
   case $::osfamily {
     'Debian': {
-
-      $provider = $::operatingsystem ? {
-        'Ubuntu' => 'upstart',
-        default  => undef,
-      }
-
-      service { 'docker':
-        ensure     => $service_state,
-        enable     => $service_enable,
-        hasstatus  => true,
-        hasrestart => false,
-        provider   => $provider,
-      }
-
-      file { '/etc/init/docker.conf':
-        ensure  => present,
-        force   => true,
-        content => template('docker/etc/init/docker.conf.erb'),
-        notify  => Service['docker'],
-      }
+      $hasstatus     = true
+      $hasrestart    = false
+      $init_file     =  '/etc/init/docker.conf'
+      $init_template = 'docker/etc/init/docker.conf.erb'
 
       file { '/etc/init.d/docker':
           ensure => 'absent',
@@ -61,23 +50,31 @@ class docker::service (
       File ['/etc/init.d/docker'] ->
         File ['/etc/init/docker.conf'] ->
           Service ['docker']
-
     }
     'RedHat': {
-      service { 'docker':
-        ensure     => $service_state,
-        enable     => $service_enable,
-      }
-
-      file { '/etc/sysconfig/docker':
-        ensure  => present,
-        force   => true,
-        content => template('docker/etc/sysconfig/docker.erb'),
-        notify  => Service['docker'],
-      }
+      $hasstatus     = undef
+      $hasrestart    = undef
+      $init_file     = '/etc/sysconfig/docker'
+      $init_template = 'docker/etc/sysconfig/docker.erb'
     }
     default: {
       fail('Docker needs a RedHat or Debian based system.')
     }
   }
+
+  file { $init_file:
+    ensure  => present,
+    force   => true,
+    content => template($init_template),
+    notify  => Service['docker'],
+  }
+
+  service { 'docker':
+    ensure     => $service_state,
+    enable     => $service_enable,
+    hasstatus  => $hasstatus,
+    hasrestart => $hasrestart,
+    provider   => $provider,
+  }
+
 }

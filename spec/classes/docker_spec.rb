@@ -62,6 +62,12 @@ describe 'docker', :type => :class do
     it { should_not contain_package('linux-headers-generic-lts-raring') }
     it { should contain_package('apt-transport-https').that_comes_before('Package[docker]') }
     it { should contain_file('/etc/init.d/docker').with_ensure('absent') }
+
+    context 'with no upstream package source' do
+      let(:params) { {'use_upstream_package_source' => false } }
+      it { should_not contain_apt__source('docker') }
+      it { should contain_package('docker').with_name('docker.io') }
+    end
   end
 
   context 'with no parameters' do
@@ -70,6 +76,12 @@ describe 'docker', :type => :class do
     it { should contain_package('docker').with_name('lxc-docker').with_ensure('present') }
     it { should contain_apt__source('docker').with_location('https://get.docker.io/ubuntu') }
     it { should contain_package('linux-image-extra-3.8.0-29-generic') }
+  end
+
+  context 'with no upstream package source' do
+    let(:params) { {'use_upstream_package_source' => false } }
+    it { should_not contain_apt__source('docker') }
+    it { should contain_package('docker').with_name('docker.io') }
   end
 
   context 'with a custom version' do
@@ -151,6 +163,7 @@ describe 'docker', :type => :class do
     let(:facts) { {
       :osfamily        => 'Debian',
       :lsbdistid       => 'debian',
+      :operatingsystem => 'Ubuntu',
       :lsbdistcodename => 'precise',
       :operatingsystemrelease => '12.04',
       :kernelrelease   => '3.8.0-29-generic'
