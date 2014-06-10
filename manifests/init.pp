@@ -50,6 +50,10 @@
 #   Custom dns server address
 #   Defaults to undefined
 #
+# [*socket_group*]
+#   Group ownership of the unix control socket.
+#   Defaults to undefined
+#
 # [*extra_parameters*]
 #   Any extra parameters that should be passed to the docker daemon.
 #   Defaults to undefined
@@ -72,6 +76,7 @@ class docker(
   $root_dir                    = $docker::params::root_dir,
   $manage_kernel               = true,
   $dns                         = $docker::params::dns,
+  $socket_group                = $docker::params::socket_group,
   $extra_parameters            = undef,
   $proxy                       = $docker::params::proxy,
   $no_proxy                    = $docker::params::no_proxy,
