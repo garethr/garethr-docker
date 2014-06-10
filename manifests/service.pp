@@ -30,43 +30,42 @@ class docker::service (
   $no_proxy             = $docker::no_proxy,
   $execdriver           = $docker::execdriver,
 ){
-  $provider = $::operatingsystem ? {
-    'Ubuntu' => 'upstart',
-    default  => undef,
-  }
-
   case $::osfamily {
     'Debian': {
       $hasstatus     = true
       $hasrestart    = false
-      $init_file     =  '/etc/init/docker.conf'
-      $init_template = 'docker/etc/init/docker.conf.erb'
 
       file { '/etc/init.d/docker':
           ensure => 'absent',
           notify => Service['docker'],
       }
 
-      File ['/etc/init.d/docker'] ->
-        File ['/etc/init/docker.conf'] ->
-          Service ['docker']
+      file { '/etc/default/docker':
+        ensure  => present,
+        force   => true,
+        content => template('docker/etc/default/docker.erb'),
+        notify  => Service['docker'],
+      }
     }
     'RedHat': {
       $hasstatus     = undef
       $hasrestart    = undef
-      $init_file     = '/etc/sysconfig/docker'
-      $init_template = 'docker/etc/sysconfig/docker.erb'
+
+      file { '/etc/sysconfig/docker':
+        ensure  => present,
+        force   => true,
+        content => template('docker/etc/sysconfig/docker.erb'),
+        notify  => Service['docker'],
+      }
     }
     default: {
       fail('Docker needs a RedHat or Debian based system.')
     }
   }
 
-  file { $init_file:
-    ensure  => present,
-    force   => true,
-    content => template($init_template),
-    notify  => Service['docker'],
+  $provider = $::operatingsystem ? {
+    'Ubuntu' => 'upstart',
+    default  => undef,
   }
 
   service { 'docker':

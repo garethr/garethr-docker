@@ -59,10 +59,10 @@
 #   Defaults to undefined
 #
 # [*proxy*]
-#   Will set the http_proxy and https_proxy env variables in /etc/sysconfig/docker (redhat/centos) or /etc/init/docker.conf (debian)
+#   Will set the http_proxy and https_proxy env variables in /etc/sysconfig/docker (redhat/centos) or /etc/default/docker (debian)
 #
 # [*no_proxy*]
-#   Will set the no_proxy variable in /etc/sysconfig/docker (redhat/centos) or /etc/init/docker.conf (debian)
+#   Will set the no_proxy variable in /etc/sysconfig/docker (redhat/centos) or /etc/default/docker (debian)
 #
 class docker(
   $version                     = $docker::params::version,
