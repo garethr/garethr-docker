@@ -3,13 +3,51 @@ GEM
   specs:
     CFPropertyList (2.2.8)
     addressable (2.3.6)
+    archive-tar-minitar (0.5.2)
+    autoparse (0.3.3)
+      addressable (>= 2.3.1)
+      extlib (>= 0.9.15)
+      multi_json (>= 1.0.0)
+    aws-sdk (1.42.0)
+      json (~> 1.4)
+      nokogiri (>= 1.4.4)
     backports (3.6.0)
+    beaker (1.12.1)
+      aws-sdk (~> 1.38)
+      blimpy (~> 0.6)
+      docker-api
+      fission (~> 0.4)
+      google-api-client (~> 0.7.1)
+      inifile (~> 2.0)
+      json (~> 1.8)
+      mime-types (~> 1.25)
+      net-scp (~> 1.1)
+      net-ssh (~> 2.6)
+      nokogiri (= 1.5.10)
+      rbvmomi (= 1.8.1)
+      unf (~> 0.1)
+    beaker-rspec (2.2.4)
+      beaker (~> 1.10)
+      rspec (~> 2.14)
+      serverspec (~> 1.0)
+      specinfra (~> 1.0)
+    blimpy (0.6.7)
+      fog
+      minitar
+      thor
     builder (3.2.2)
+    celluloid (0.15.2)
+      timers (~> 1.1.0)
     coderay (1.1.0)
     diff-lcs (1.2.5)
+    docker-api (1.11.1)
+      archive-tar-minitar
+      excon (>= 0.34.0)
+      json
     ethon (0.7.0)
       ffi (>= 1.3.0)
     excon (0.37.0)
+    extlib (0.9.16)
     facter (2.0.1)
       CFPropertyList (~> 2.2.6)
     faraday (0.9.0)
@@ -17,24 +55,18 @@ GEM
     faraday_middleware (0.9.1)
       faraday (>= 0.7.4, < 0.10)
     ffi (1.9.3)
-    fog (1.22.1)
-      fog-brightbox
-      fog-core (~> 1.22)
-      fog-json
-      ipaddress (~> 0.5)
-      nokogiri (~> 1.5, >= 1.5.11)
-    fog-brightbox (0.0.2)
-      fog-core
-      fog-json
-    fog-core (1.22.0)
+    fission (0.5.0)
+      CFPropertyList (~> 2.2)
+    fog (1.11.1)
       builder
-      excon (~> 0.33)
-      formatador (~> 0.2)
+      excon (~> 0.20)
+      formatador (~> 0.2.0)
+      json (~> 1.7)
       mime-types
       net-scp (~> 1.1)
       net-ssh (>= 2.1.3)
-    fog-json (1.0.0)
-      multi_json (~> 1.0)
+      nokogiri (~> 1.5.0)
+      ruby-hmac
     formatador (0.2.5)
     gh (0.13.2)
       addressable
@@ -43,19 +75,45 @@ GEM
       multi_json (~> 1.0)
       net-http-persistent (>= 2.7)
       net-http-pipeline
+    google-api-client (0.7.1)
+      addressable (>= 2.3.2)
+      autoparse (>= 0.3.3)
+      extlib (>= 0.9.15)
+      faraday (>= 0.9.0)
+      jwt (>= 0.1.5)
+      launchy (>= 2.1.1)
+      multi_json (>= 1.0.0)
+      retriable (>= 1.4)
+      signet (>= 0.5.0)
+      uuidtools (>= 2.1.0)
+    guard (2.6.1)
+      formatador (>= 0.2.4)
+      listen (~> 2.7)
+      lumberjack (~> 1.0)
+      pry (>= 0.9.12)
+      thor (>= 0.18.1)
+    guard-rake (0.0.9)
+      guard
+      rake
     hashr (0.0.22)
     hiera (1.3.3)
       json_pure
     highline (1.6.21)
-    ipaddress (0.8.0)
+    inifile (2.0.2)
     json (1.8.1)
     json_pure (1.8.1)
-    kwalify (0.7.2)
+    jwt (1.0.0)
     launchy (2.4.2)
       addressable (~> 2.3)
+    listen (2.7.7)
+      celluloid (>= 0.15.2)
+      rb-fsevent (>= 0.9.3)
+      rb-inotify (>= 0.9)
+    lumberjack (1.0.6)
     metaclass (0.0.4)
     method_source (0.8.2)
     mime-types (1.25.1)
+    minitar (0.5.4)
     mocha (1.1.0)
       metaclass (~> 0.0.1)
     multi_json (1.10.1)
@@ -65,7 +123,7 @@ GEM
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (2.9.1)
-    nokogiri (1.5.11)
+    nokogiri (1.5.10)
     pry (0.10.0)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -94,12 +152,16 @@ GEM
       json
       websocket (~> 1.0)
     rake (10.3.2)
+    rb-fsevent (0.9.4)
+    rb-inotify (0.9.5)
+      ffi (>= 0.5.0)
     rbvmomi (1.8.1)
       builder
       nokogiri (>= 1.4.1)
       trollop
     rest-client (1.6.7)
       mime-types (>= 1.16)
+    retriable (1.4.1)
     rgen (0.6.6)
     rspec (2.99.0)
       rspec-core (~> 2.99.0)
@@ -108,34 +170,29 @@ GEM
     rspec-core (2.99.0)
     rspec-expectations (2.99.0)
       diff-lcs (>= 1.1.3, < 2.0)
+    rspec-its (1.0.1)
+      rspec-core (>= 2.99.0.beta1)
+      rspec-expectations (>= 2.99.0.beta1)
     rspec-mocks (2.99.0)
     rspec-puppet (1.0.1)
       rspec
-    rspec-system (2.8.0)
-      fog (~> 1.18)
-      kwalify (~> 0.7.2)
-      mime-types (~> 1.16)
-      net-scp (~> 1.1)
-      net-ssh (~> 2.7)
-      nokogiri (~> 1.5.10)
-      rbvmomi (~> 1.6)
-      rspec (~> 2.14)
-      systemu (~> 2.5)
-    rspec-system-puppet (2.2.1)
-      rspec-system (~> 2.0)
-    rspec-system-serverspec (2.0.1)
-      rspec-system (~> 2.0)
-      serverspec (~> 0.0)
-      specinfra (~> 0.0)
+    ruby-hmac (0.4.0)
     safe_yaml (0.9.7)
-    serverspec (0.16.0)
+    serverspec (1.7.1)
       highline
       net-ssh
       rspec (~> 2.13)
-      specinfra (>= 0.7.1)
+      rspec-its
+      specinfra (~> 1.13)
+    signet (0.5.1)
+      addressable (>= 2.2.3)
+      faraday (>= 0.9.0.rc5)
+      jwt (>= 0.1.5)
+      multi_json (>= 1.0.0)
     slop (3.5.0)
-    specinfra (0.8.0)
-    systemu (2.6.4)
+    specinfra (1.16.0)
+    thor (0.19.1)
+    timers (1.1.0)
     travis (1.6.11)
       addressable (~> 2.3)
       backports
@@ -153,6 +210,10 @@ GEM
     trollop (2.0)
     typhoeus (0.6.8)
       ethon (>= 0.7.0)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.6)
+    uuidtools (2.1.4)
     vagrant-wrapper (1.2.1.1)
     websocket (1.1.4)
 
@@ -160,6 +221,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  beaker
+  beaker-rspec
+  guard-rake
+  pry
   puppet (~> 3.6.0)
   puppet-blacksmith
   puppet-lint
@@ -167,8 +232,6 @@ DEPENDENCIES
   puppetlabs_spec_helper
   rake
   rspec-puppet (~> 1.0.0)
-  rspec-system-puppet
-  rspec-system-serverspec
   travis
   travis-lint
   vagrant-wrapper

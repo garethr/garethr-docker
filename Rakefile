@@ -4,10 +4,6 @@ require 'puppet-syntax/tasks/puppet-syntax'
 
 # These two gems aren't always present, for instance
 # on Travis with --without development
-begin
-  require 'rspec-system/rake_task'
-rescue LoadError
-end
 
 begin
   require 'puppet_blacksmith/rake_tasks'
@@ -31,6 +27,11 @@ exclude_paths = [
 ]
 PuppetLint.configuration.ignore_paths = exclude_paths
 PuppetSyntax.exclude_paths = exclude_paths
+
+desc "Run acceptance tests"
+RSpec::Core::RakeTask.new(:acceptance) do |t|
+  t.pattern = 'spec/acceptance'
+end
 
 desc "Run syntax, lint, and spec tests."
 task :test => [
