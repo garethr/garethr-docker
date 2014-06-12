@@ -22,7 +22,7 @@ define docker::image(
   $image_tag = undef
 ) {
 
-  validate_re($ensure, '^(present|absent)$')
+  validate_re($ensure, '^(present|absent|latest)$')
   validate_re($image, '^[\S]*$')
 
   if $image_tag {
@@ -39,6 +39,11 @@ define docker::image(
     exec { $image_remove:
       path    => ['/bin', '/usr/bin'],
       onlyif  => $image_find,
+      timeout => 0,
+    }
+  } elsif $ensure == 'latest' {
+    exec { $image_install:
+      path    => ['/bin', '/usr/bin'],
       timeout => 0,
     }
   } else {
