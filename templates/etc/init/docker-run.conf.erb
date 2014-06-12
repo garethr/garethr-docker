@@ -47,7 +47,7 @@ script
 end script
 <% else %>
 script
-  docker run --cidfile=/var/run/docker-<%= @title %>.cid && \
+  docker run --cidfile=/var/run/docker-<%= @title %>.cid \
     <% if @username %>-u '<%= @username %>' <% end %> \
     <% if @hostname %>-h '<%= @hostname %>'<% end %> \
     <% if @disable_network %>-n false<% end %> \
