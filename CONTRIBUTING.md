@@ -71,7 +71,7 @@ This fires up a new virtual machine (using vagrant) and runs a series of
 simple tests against it after applying the module. You can run this
 with:
 
-    bundle exec rake acceptance
+    bundle exec rake beaker
 
 This will run the tests on an Ubuntu 12.04 virtual machine. You can also
 run the integration tests against Centos 6.5 with.
