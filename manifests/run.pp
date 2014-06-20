@@ -12,6 +12,7 @@ define docker::run(
   $use_name = false,
   $running = true,
   $volumes_from = false,
+  $net = 'bridge'
   $username = false,
   $hostname = false,
   $env = [],
