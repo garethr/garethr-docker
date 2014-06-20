@@ -33,6 +33,7 @@ script
         -v <%= volume %><% end %> \
     <% end %> \
     <% if @volumes_from %> -volumes-from <%= @volumes_from %><% end %> \
+    <% if @net %> --net <%= @net %><% end %> \
     <% if @lxc_conf_array %><% @lxc_conf_array.each do |lxcconf| %> \
         --lxc-conf="<%=lxcconf%>"<% end %> \
     <% end %> \
@@ -65,6 +66,7 @@ script
         -v <%= volume %><% end %> \
     <% end %> \
     <% if @volumes_from %> --volumes-from <%= @volumes_from %><% end %> \
+    <% if @net %> --net <%= @net %><% end %> \
     <% if @lxc_conf_array %><% @lxc_conf_array.each do |lxcconf| %> \
         --lxc-conf="<%=lxcconf%>"<% end %> \
     <% end %> \
