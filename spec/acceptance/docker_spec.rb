@@ -12,10 +12,11 @@ describe 'docker class' do
     it 'should work with no errors' do
       pp = <<-EOS
         class { 'docker': }
-        docker::image { 'busybox': }
-        docker::run { 'helloworld':
-          image   => 'busybox',
-          command => '/bin/sh -c "echo hello world"',
+        docker::image { 'paintedfox/mariadb': }
+        docker::run { 'mariadb':
+          image   => 'paintedfox/mariadb',
+          env   => ['USER=test', 'PASS=test1'],
+          net   => 'host',
         }
       EOS
 
@@ -40,13 +41,17 @@ describe 'docker class' do
 
     describe command('sudo docker images') do
       it { should return_exit_status 0 }
-      it { should return_stdout(/busybox/) }
+      it { should return_stdout(/paintedfox\/mariadb/) }
     end
 
     describe command('sudo docker ps -l --no-trunc=true') do
       it { should return_exit_status 0 }
-      it { should return_stdout(/hello world/) }
-      it { should return_stdout(/Exited/) }
+      it { should return_stdout(/paintedfox\/mariadb\:latest/) }
+    end
+
+    describe command('netstat -tlndp') do
+      it { should return_exit_status 0 }
+      it { should return_stdout(/0\.0\.0\.0\:3306/) }
     end
 
   end
