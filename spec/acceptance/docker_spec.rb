@@ -12,10 +12,9 @@ describe 'docker class' do
     it 'should work with no errors' do
       pp = <<-EOS
         class { 'docker': }
-        docker::image { 'paintedfox/mariadb': }
-        docker::run { 'mariadb':
-          image   => 'paintedfox/mariadb',
-          env   => ['USER=test', 'PASS=test1'],
+        docker::image { 'nginx': }
+        docker::run { 'nginx':
+          image   => 'nginx',
           net   => 'host',
         }
       EOS
@@ -41,17 +40,17 @@ describe 'docker class' do
 
     describe command('sudo docker images') do
       it { should return_exit_status 0 }
-      it { should return_stdout(/paintedfox\/mariadb/) }
+      it { should return_stdout(/nginx/) }
     end
 
     describe command('sudo docker ps -l --no-trunc=true') do
       it { should return_exit_status 0 }
-      it { should return_stdout(/paintedfox\/mariadb\:latest/) }
+      it { should return_stdout(/nginx\:1/) }
     end
 
     describe command('netstat -tlndp') do
       it { should return_exit_status 0 }
-      it { should return_stdout(/0\.0\.0\.0\:3306/) }
+      it { should return_stdout(/0\.0\.0\.0\:80/) }
     end
 
   end
