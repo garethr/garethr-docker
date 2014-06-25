@@ -31,6 +31,8 @@ class docker::service (
   $execdriver           = $docker::execdriver,
   $storage_driver       = $docker::storage_driver,
 ){
+  $extra_parameters_array = any2array($extra_parameters)
+
   case $::osfamily {
     'Debian': {
       $hasstatus     = true

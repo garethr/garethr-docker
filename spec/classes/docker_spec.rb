@@ -95,6 +95,17 @@ describe 'docker', :type => :class do
         it { should_not contain_file(service_config_file).with_content(/-e native/) }
       end
 
+      context 'with multi extra parameters' do
+        let(:params) { {'extra_parameters' => ['--this this', '--that that'] } }
+        it { should contain_file(service_config_file).with_content(/--this this/) }
+        it { should contain_file(service_config_file).with_content(/--that that/) }
+      end
+
+      context 'with a string extra parameters' do
+        let(:params) { {'extra_parameters' => '--this this' } }
+        it { should contain_file(service_config_file).with_content(/--this this/) }
+      end
+
       context 'with socket group set' do
         let(:params) { { 'socket_group' => 'notdocker' }}
         it { should contain_file(service_config_file).with_content(/-G notdocker/) }
