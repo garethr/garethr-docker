@@ -34,7 +34,7 @@ start() {
 
     if [ -f $cidfile ]; then
         cid="$(cat $cidfile)"
-        if [ -n $cid ]; then
+        if [ -n "$cid" ]; then
             docker ps --no-trunc=true|grep $cid
             retval=$?
             if [ $retval -eq 0 ]; then
