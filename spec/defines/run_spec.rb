@@ -128,6 +128,11 @@ require 'spec_helper'
       it { should contain_file(initscript).with_content(/-v \/var\/log/) }
     end
 
+    context 'when using network mode' do
+      let(:params) { {'command' => 'command', 'image' => 'nginx', 'net' => 'host'} }
+      it { should contain_file(initscript).with_content(/--net host/) }
+    end
+
     context 'with an invalid title' do
       let(:title) { 'with spaces' }
       it do
