@@ -105,7 +105,7 @@ require 'spec_helper'
       let(:params) { {'command' => 'command', 'image' => 'base', 'dns' => '8.8.8.8'} }
       it { should contain_file(initscript).with_content(/--dns 8.8.8.8/) }
     end
-    
+
     context 'when disabling network' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'disable_network' => true} }
       it { should contain_file(initscript).with_content(/-n false/) }
@@ -131,6 +131,20 @@ require 'spec_helper'
     context 'when using network mode' do
       let(:params) { {'command' => 'command', 'image' => 'nginx', 'net' => 'host'} }
       it { should contain_file(initscript).with_content(/--net host/) }
+    end
+
+    context 'with an title that will not format into a path' do
+      let(:title) { 'this/that' }
+      let(:params) { {'image' => 'base'} }
+
+      if osfamily == 'Debian'
+        new_initscript = '/etc/init/docker-this-that.conf'
+      else
+        new_initscript = '/etc/init.d/docker-this-that'
+      end
+
+      it { should contain_service('docker-this-that') }
+      it { should contain_file(new_initscript) }
     end
 
     context 'with an invalid title' do

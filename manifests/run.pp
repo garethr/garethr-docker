@@ -45,26 +45,28 @@ define docker::run(
   $links_array = any2array($links)
   $lxc_conf_array = any2array($lxc_conf)
 
+  $sanitised_title = regsubst($title, '[^0-9A-Za-z.\-]', '-')
+
   $provider = $::operatingsystem ? {
     'Ubuntu' => 'upstart',
     default  => undef,
   }
 
   $notify = str2bool($restart_service) ? {
-    true    => Service["docker-${title}"],
+    true    => Service["docker-${sanitised_title}"],
     default => undef,
   }
 
   case $::osfamily {
     'Debian': {
-      $initscript = "/etc/init/docker-${title}.conf"
+      $initscript = "/etc/init/docker-${sanitised_title}.conf"
       $init_template = 'docker/etc/init/docker-run.conf.erb'
       $hasstatus  = true
       $hasrestart = false
       $mode = '0644'
     }
     'RedHat': {
-      $initscript = "/etc/init.d/docker-${title}"
+      $initscript = "/etc/init.d/docker-${sanitised_title}"
       $init_template = 'docker/etc/init.d/docker-run.erb'
       $hasstatus  = undef
       $hasrestart = undef
@@ -82,7 +84,7 @@ define docker::run(
     notify  => $notify,
   }
 
-  service { "docker-${title}":
+  service { "docker-${sanitised_title}":
     ensure     => $running,
     enable     => true,
     hasstatus  => $hasstatus,
@@ -92,10 +94,10 @@ define docker::run(
   }
 
   if str2bool($restart_service) {
-    File[$initscript] ~> Service["docker-${title}"]
+    File[$initscript] ~> Service["docker-${sanitised_title}"]
   }
   else {
-    File[$initscript] -> Service["docker-${title}"]
+    File[$initscript] -> Service["docker-${sanitised_title}"]
   }
 }
 
