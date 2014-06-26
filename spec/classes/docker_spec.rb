@@ -26,6 +26,11 @@ describe 'docker', :type => :class do
           it { should contain_package('docker').with_name('lxc-docker-0.5.5').with_ensure('present') }
         end
 
+        context 'when not managing the package' do
+          let(:params) { {'manage_package' => false } }
+          it { should_not contain_package('docker') }
+        end
+
         context 'with no upstream package source' do
           let(:params) { {'use_upstream_package_source' => false } }
           it { should_not contain_apt__source('docker') }

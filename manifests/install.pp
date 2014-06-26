@@ -20,7 +20,9 @@ class docker::install {
     'Debian': {
 
       ensure_packages($prerequired_packages)
-      Package['apt-transport-https'] -> Package['docker']
+      if $docker::manage_package {
+        Package['apt-transport-https'] -> Package['docker']
+      }
 
       if ($docker::use_upstream_package_source) {
 
@@ -40,7 +42,9 @@ class docker::install {
           key_source        => 'http://get.docker.io/gpg',
           pin               => '10',
           include_src       => false,
-          before            => Package['docker'],
+        }
+        if $docker::manage_package {
+          Apt::Source['docker'] -> Package['docker']
         }
       } else {
         $dockerpackage = 'docker.io'
@@ -86,7 +90,9 @@ class docker::install {
 
       if ($docker::use_upstream_package_source) {
         include 'epel'
-        Class['epel'] -> Package['docker']
+        if $docker::manage_package {
+          Class['epel'] -> Package['docker']
+        }
       }
     }
   }
@@ -94,12 +100,16 @@ class docker::install {
   if $manage_kernel {
     package { $kernelpackage:
       ensure => present,
-      before => Package['docker'],
+    }
+    if $docker::manage_package {
+      Package[$kernelpackage] -> Package['docker']
     }
   }
 
-  package { 'docker':
-    ensure => $docker::ensure,
-    name   => $dockerpackage,
+  if $docker::manage_package {
+    package { 'docker':
+      ensure => $docker::ensure,
+      name   => $dockerpackage,
+    }
   }
 }

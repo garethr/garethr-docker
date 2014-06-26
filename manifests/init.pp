@@ -64,6 +64,10 @@
 # [*no_proxy*]
 #   Will set the no_proxy variable in /etc/sysconfig/docker (redhat/centos) or /etc/default/docker (debian)
 #
+# [*manage_package*]
+#   Won't install or define the docker package, useful if you want to use your own package
+#   Defaults to true
+#
 class docker(
   $version                     = $docker::params::version,
   $ensure                      = $docker::params::ensure,
@@ -74,7 +78,7 @@ class docker(
   $service_state               = $docker::params::service_state,
   $service_enable              = $docker::params::service_enable,
   $root_dir                    = $docker::params::root_dir,
-  $manage_kernel               = true,
+  $manage_kernel               = $docker::params::manage_kernel,
   $dns                         = $docker::params::dns,
   $socket_group                = $docker::params::socket_group,
   $extra_parameters            = undef,
@@ -82,11 +86,13 @@ class docker(
   $no_proxy                    = $docker::params::no_proxy,
   $storage_driver              = $docker::params::storage_driver,
   $execdriver                  = $docker::params::execdriver,
+  $manage_package              = $docker::params::manage_package,
 ) inherits docker::params {
 
   validate_string($version)
   validate_re($::osfamily, '^(Debian|RedHat)$', 'This module only works on Debian and Red Hat based systems.')
   validate_bool($manage_kernel)
+  validate_bool($manage_package)
 
   class { 'docker::install': } ->
   class { 'docker::config': } ~>

@@ -21,4 +21,6 @@ class docker::params {
   $no_proxy                     = undef
   $execdriver                   = undef
   $storage_driver               = undef
+  $manage_package               = true
+  $manage_kernel                = true
 }
