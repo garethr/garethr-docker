@@ -6,11 +6,12 @@ describe 'docker', :type => :class do
     context "on #{osfamily}" do
       if osfamily == 'Debian'
         let(:facts) { {
-          :osfamily        => osfamily,
-          :operatingsystem => 'Ubuntu',
-          :lsbdistid       => 'debian',
-          :lsbdistcodename => 'maverick',
-          :kernelrelease   => '3.8.0-29-generic'
+          :osfamily               => osfamily,
+          :operatingsystem        => 'Ubuntu',
+          :lsbdistid              => 'Ubuntu',
+          :lsbdistcodename        => 'maverick',
+          :kernelrelease          => '3.8.0-29-generic',
+	  :operatingsystemrelease => '10.04',
         } }
         service_config_file = '/etc/default/docker'
 
@@ -26,6 +27,20 @@ describe 'docker', :type => :class do
           it { should contain_package('docker').with_name('lxc-docker-0.5.5').with_ensure('present') }
         end
 
+	context 'with a custom package name' do
+          let(:params) { {'package_name' => 'docker-custom-pkg-name' } }
+          it { should contain_package('docker').with_name('docker-custom-pkg-name').with_ensure('present') }
+        end
+
+	context 'with a custom package name and version' do
+	  let(:params) { {
+	     'version' => '0.5.5',
+	     'package_name' => 'docker-custom-pkg-name',
+	  } }
+          it { should contain_package('docker').with_name('docker-custom-pkg-name-0.5.5').with_ensure('present') }
+        end
+
+
         context 'when not managing the package' do
           let(:params) { {'manage_package' => false } }
           it { should_not contain_package('docker') }
@@ -34,7 +49,7 @@ describe 'docker', :type => :class do
         context 'with no upstream package source' do
           let(:params) { {'use_upstream_package_source' => false } }
           it { should_not contain_apt__source('docker') }
-          it { should contain_package('docker').with_name('docker.io') }
+          it { should contain_package('docker').with_name('lxc-docker') }
         end
 
         context 'with no upstream package source' do
@@ -147,11 +162,12 @@ describe 'docker', :type => :class do
 
   context 'specific to Ubuntu Maverick' do
     let(:facts) { {
-      :osfamily        => 'Debian',
-      :operatingsystem => 'Ubuntu',
-      :lsbdistid       => 'debian',
-      :lsbdistcodename => 'maverick',
-      :kernelrelease   => '3.8.0-29-generic'
+      :osfamily               => 'Debian',
+      :operatingsystem        => 'Ubuntu',
+      :lsbdistid              => 'Ubuntu',
+      :lsbdistcodename        => 'maverick',
+      :kernelrelease          => '3.8.0-29-generic',
+      :operatingsystemrelease => '10.04',
     } }
 
     context 'with no parameters' do
@@ -173,7 +189,7 @@ describe 'docker', :type => :class do
     let(:facts) { {
       :osfamily        => 'Debian',
       :operatingsystem => 'Debian',
-      :lsbdistid       => 'debian',
+      :lsbdistid       => 'Debian',
       :lsbdistcodename => 'wheezy',
       :kernelrelease   => '3.12-1-amd64'
     } }
@@ -209,17 +225,31 @@ describe 'docker', :type => :class do
 
   context 'specific to Ubuntu Precise' do
     let(:facts) { {
-      :osfamily        => 'Debian',
-      :lsbdistid       => 'debian',
-      :operatingsystem => 'Ubuntu',
-      :lsbdistcodename => 'precise',
+      :osfamily               => 'Debian',
+      :lsbdistid              => 'Ubuntu',
+      :operatingsystem        => 'Ubuntu',
+      :lsbdistcodename        => 'precise',
       :operatingsystemrelease => '12.04',
-      :kernelrelease   => '3.8.0-29-generic'
+      :kernelrelease          => '3.8.0-29-generic'
     } }
-    it { should contain_package('linux-image-generic-lts-raring') }
-    it { should contain_package('linux-headers-generic-lts-raring') }
+    it { should contain_package('linux-image-generic-lts-saucy') }
+    it { should contain_package('linux-headers-generic-lts-saucy') }
     it { should contain_service('docker').with_provider('upstart') }
   end
+
+  context 'specific to Ubuntu Trusty' do
+    let(:facts) { {
+      :osfamily               => 'Debian',
+      :lsbdistid              => 'Ubuntu',
+      :operatingsystem        => 'Ubuntu',
+      :lsbdistcodename        => 'trusty',
+      :operatingsystemrelease => '14.04',
+      :kernelrelease          => '3.8.0-29-generic'
+    } }
+    it { should contain_service('docker').with_provider('upstart') }
+    it { should contain_package('docker').with_name('docker.io').with_ensure('present')  }
+  end
+
 
   context 'specific to older RedHat based distros' do
     let(:facts) { {

@@ -68,6 +68,10 @@
 #   Won't install or define the docker package, useful if you want to use your own package
 #   Defaults to true
 #
+# [*package_name*]
+#   Specify custom package name
+#   Default is set on a per system basis in docker::params
+#
 class docker(
   $version                     = $docker::params::version,
   $ensure                      = $docker::params::ensure,
@@ -87,6 +91,7 @@ class docker(
   $storage_driver              = $docker::params::storage_driver,
   $execdriver                  = $docker::params::execdriver,
   $manage_package              = $docker::params::manage_package,
+  $package_name                = $docker::params::package_name,
 ) inherits docker::params {
 
   validate_string($version)
