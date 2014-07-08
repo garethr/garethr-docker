@@ -44,7 +44,8 @@ define docker::image(
   if $image_tag {
     $image_arg     = "${image}:${image_tag}"
     $image_remove  = "${docker_command} rmi ${image_force}${image}:${image_tag}"
-    $image_find    = "${docker_command} images | grep ^${image} | awk '{ print \$2 }' | grep ^${image_tag}$"
+    $image_find    = "${docker_command} images | grep ^${image} | awk '{ print \$2 }' | grep ^${image_tag}\$"
+    $image_find_special = "/usr/local/bin/check-for-docker-image ${image} ${image_tag}"
   } else {
     $image_arg     = $image
     $image_remove  = "${docker_command} rmi ${image_force}${image}"
@@ -70,6 +71,7 @@ define docker::image(
       environment => 'HOME=/root',
       path        => ['/bin', '/usr/bin'],
       timeout     => 0,
+      unless      => $image_find_special,
     }
   } else {
     exec { $image_install:
