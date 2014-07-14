@@ -21,7 +21,7 @@ class docker::install {
     'Debian': {
 
       if member(['present','installed','latest'], $docker::ensure) {
-          ensure_packages($prerequired_packages)
+          ensure_resource('package',$prerequired_packages,{ ensure => $docker::ensure })
       }
       if $docker::manage_package {
         Package['apt-transport-https'] -> Package['docker']
@@ -117,7 +117,7 @@ class docker::install {
   }
 
   if member(['absent','purged'], $docker::ensure) {
-    ensure_packages($prerequired_packages, { ensure => $docker::ensure })
+    ensure_resource('package',$prerequired_packages,{ ensure => $docker::ensure })
   }
 
 }
