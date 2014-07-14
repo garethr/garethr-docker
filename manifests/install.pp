@@ -2,7 +2,8 @@
 #
 # Module to install an up-to-date version of Docker from a package repository.
 # The use of this repository means, this module works only on Debian and Red
-# Hat based distributions.
+# Hat based distributions.  If $docker::params::ensure is set to absent or purge,
+# then docker and its dependencies will be uninstalled.
 #
 class docker::install {
   validate_string($docker::version)
@@ -19,7 +20,9 @@ class docker::install {
   case $::osfamily {
     'Debian': {
 
-      ensure_packages($prerequired_packages)
+      if member(['present','installed','latest'], $docker::ensure) {
+          ensure_packages($prerequired_packages)
+      }
       if $docker::manage_package {
         Package['apt-transport-https'] -> Package['docker']
       }
@@ -99,7 +102,7 @@ class docker::install {
 
   if $manage_kernel {
     package { $kernelpackage:
-      ensure => present,
+      ensure => $docker::ensure,
     }
     if $docker::manage_package {
       Package[$kernelpackage] -> Package['docker']
@@ -112,4 +115,9 @@ class docker::install {
       name   => $dockerpackage,
     }
   }
+
+  if member(['absent','purged'], $docker::ensure) {
+    ensure_packages($prerequired_packages, { ensure => $docker::ensure })
+  }
+
 }
