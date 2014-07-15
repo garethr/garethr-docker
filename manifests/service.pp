@@ -38,15 +38,6 @@ class docker::service (
       $hasstatus     = false
       $hasrestart    = true
 
-      if $::operatingsystem == 'Ubuntu' {
-
-          file { '/etc/init.d/docker':
-              ensure => 'absent',
-              notify => Service['docker'],
-          }
-
-      }
-
       file { '/etc/default/docker':
         ensure  => present,
         force   => true,
@@ -72,7 +63,10 @@ class docker::service (
 
   $provider = $::operatingsystem ? {
     'Ubuntu' => 'upstart',
-    'Debian' => 'debian',
+    'Debian' => $::lsbdistcodename ? {
+      'jessie' => 'debian',
+      'wheezy' => undef,
+    },
     default  => undef,
   }
 

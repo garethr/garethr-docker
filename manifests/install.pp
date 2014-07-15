@@ -60,6 +60,7 @@ class docker::install {
       }
 
       if $::operatingsystem == 'Ubuntu' {
+        $install_init_d_script = false
         case $::operatingsystemrelease {
           # On Ubuntu 12.04 (precise) install the backported 13.04 (raring) kernel
           '12.04': { $kernelpackage = [
@@ -123,6 +124,13 @@ class docker::install {
 
     file { '/etc/init.d/docker':
       ensure => 'absent',
+    } 
+
+  } elsif $install_init_d_script == false {
+
+    file { '/etc/init.d/docker':
+      ensure => 'absent',
+      notify => Service['docker'],
     }
 
   } elsif $install_init_d_script == true {
