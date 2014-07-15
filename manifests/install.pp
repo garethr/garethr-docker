@@ -129,8 +129,8 @@ class docker::install {
 
     file { '/etc/init.d/docker':
       source => 'puppet:///modules/docker/etc/init.d/docker',
-      owner => root,
-      group => root,
+      owner  => root,
+      group  => root,
     }
 
   }
