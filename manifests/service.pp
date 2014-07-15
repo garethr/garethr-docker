@@ -35,8 +35,8 @@ class docker::service (
 
   case $::osfamily {
     'Debian': {
-      $hasstatus     = false 
-      $hasrestart    = true 
+      $hasstatus     = false
+      $hasrestart    = true
 
       if $::operatingsystem == 'Ubuntu' {
 
