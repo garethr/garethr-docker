@@ -76,6 +76,7 @@ class docker::install {
       } else {
         # Debian does not need extra kernel packages
         $manage_kernel = false
+        $install_init_d_script = true
       }
     }
     'RedHat': {
@@ -117,7 +118,21 @@ class docker::install {
   }
 
   if member(['absent','purged'], $docker::ensure) {
+
     ensure_resource('package',$prerequired_packages,{ ensure => $docker::ensure })
+
+    file { '/etc/init.d/docker':
+      ensure => 'absent',
+    }
+
+  } elsif $install_init_d_script == true {
+
+    file { '/etc/init.d/docker':
+      source => 'puppet:///modules/docker/etc/init.d/docker',
+       owner => root,
+       group => root,
+    }
+
   }
 
 }
