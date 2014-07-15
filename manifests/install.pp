@@ -124,7 +124,6 @@ class docker::install {
 
     file { '/etc/init.d/docker':
       ensure => 'absent',
-    } 
 
   } elsif $install_init_d_script == false {
 
