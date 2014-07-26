@@ -17,11 +17,20 @@ class docker::install {
     default  => '',
   }
 
+  $recommended_packages = $::operatingsystem ? {
+    'Debian' => ['bridge-utils'],
+    'Ubuntu' => ['bridge-utils'],
+    default  => '',
+  }
+
   case $::osfamily {
     'Debian': {
 
       if member(['present','installed','latest'], $docker::ensure) {
           ensure_resource('package',$prerequired_packages,{ ensure => $docker::ensure })
+      }
+      if member(['present','installed','latest'], $docker::ensure_recommended) {
+          ensure_resource('package',$recommended_packages,{ ensure => $docker::ensure_recommended })
       }
       if $docker::manage_package {
         Package['apt-transport-https'] -> Package['docker']
@@ -116,6 +125,10 @@ class docker::install {
       ensure => $docker::ensure,
       name   => $dockerpackage,
     }
+  }
+
+  if member(['absent','purged'], $docker::ensure_recommended) {
+    ensure_resource('package',$recommended_packages,{ ensure => $docker::ensure_recommended })
   }
 
   if member(['absent','purged'], $docker::ensure) {

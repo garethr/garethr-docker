@@ -5,6 +5,7 @@
 class docker::params {
   $version                      = undef
   $ensure                       = present
+  $ensure_recommended           = present 
   $tcp_bind                     = undef
   $socket_bind                  = 'unix:///var/run/docker.sock'
   $socket_group                 = undef
