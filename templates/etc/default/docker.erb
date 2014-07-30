@@ -15,7 +15,7 @@ export no_proxy=<%= @no_proxy %>
 <% end -%>
 
 # # This is also a handy place to tweak where Docker's temporary files go.
-# #export TMPDIR="/mnt/bigdrive/docker-tmp"
+export TMPDIR="<%= @tmp_dir %>"
 
 # # Use DOCKER_OPTS to modify the daemon startup options.
 DOCKER_OPTS="\

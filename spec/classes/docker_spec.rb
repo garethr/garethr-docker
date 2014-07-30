@@ -59,6 +59,11 @@ describe 'docker', :type => :class do
           it { should contain_package('docker') }
         end
 
+        context 'when given a specific tmp_dir' do
+          let(:params) {{ 'tmp_dir' => '/bigtmp' }}
+          it { should contain_file('/etc/default/docker').with_content(/export TMPDIR="\/bigtmp"/) }
+        end
+
       end
 
       if osfamily == 'RedHat'
@@ -78,6 +83,12 @@ describe 'docker', :type => :class do
           let(:params) { {'no_proxy' => '.github.com' } }
           it { should contain_file(service_config_file).with_content(/export no_proxy=.github.com/) }
         end
+
+        context 'when given a specific tmp_dir' do
+          let(:params) {{ 'tmp_dir' => '/bigtmp' }}
+          it { should contain_file('/etc/sysconfig/docker').with_content(/export TMPDIR="\/bigtmp"/) }
+        end
+
       end
 
       it { should compile.with_all_deps }
