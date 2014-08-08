@@ -7,13 +7,13 @@
 #
 #    Daemon for <%= @title %>
 #
-# chkconfig: 2345 97 97
+# chkconfig: 2345 97 15
 # description: Docker container for <%= @title %>
 
 ### BEGIN INIT INFO
 ## Provides:       docker-<%= @title %>
 ## Required-Start: $network docker
-## Required-Stop:
+## Required-Stop: $network docker
 ## Should-Start:
 ## Should-Stop:
 ## Default-Start: 2 3 4 5
