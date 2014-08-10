@@ -12,6 +12,7 @@ class docker::params {
   $service_state                = running
   $service_enable               = true
   $root_dir                     = undef
+  $tmp_dir                      = '/tmp/'
   $dns                          = undef
   $proxy                        = undef
   $no_proxy                     = undef

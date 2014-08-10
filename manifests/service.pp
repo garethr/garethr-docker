@@ -30,6 +30,7 @@ class docker::service (
   $no_proxy             = $docker::no_proxy,
   $execdriver           = $docker::execdriver,
   $storage_driver       = $docker::storage_driver,
+  $tmp_dir              = $docker::tmp_dir,
 ){
   $extra_parameters_array = any2array($extra_parameters)
 

@@ -82,6 +82,7 @@ class docker(
   $service_state               = $docker::params::service_state,
   $service_enable              = $docker::params::service_enable,
   $root_dir                    = $docker::params::root_dir,
+  $tmp_dir                     = $docker::params::tmp_dir,
   $manage_kernel               = $docker::params::manage_kernel,
   $dns                         = $docker::params::dns,
   $socket_group                = $docker::params::socket_group,
