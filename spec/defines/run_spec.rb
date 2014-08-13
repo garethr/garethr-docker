@@ -93,7 +93,7 @@ require 'spec_helper'
 
     context 'when passing several ports to expose' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'expose' => ['4666', '4777']} }
-      it { should contain_file(initscript).with_content(/-p 4666/).with_content(/-p 4777/) }
+      it { should contain_file(initscript).with_content(/--expose=4666/).with_content(/--expose=4777/) }
     end
 
     context 'when passing serveral environment variables' do
