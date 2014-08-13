@@ -7,6 +7,7 @@ define docker::run(
   $command = undef,
   $memory_limit = '0',
   $ports = [],
+  $expose = [],
   $volumes = [],
   $links = [],
   $use_name = false,
@@ -39,6 +40,7 @@ define docker::run(
   validate_bool($privileged)
 
   $ports_array = any2array($ports)
+  $expose_array = any2array($expose)
   $volumes_array = any2array($volumes)
   $env_array = any2array($env)
   $dns_array = any2array($dns)
