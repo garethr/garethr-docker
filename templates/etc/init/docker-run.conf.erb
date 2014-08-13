@@ -24,10 +24,13 @@ script
         --dns <%= address %><% end %> \
     <% end %> \
     <% if @env %><% @env_array.each do |env| %> \
-      -e <%= env %><% end %> \
+        -e <%= env %><% end %> \
     <% end %> \
     <% if @ports %><% @ports_array.each do |port| %> \
-    -p <%= port %><% end %> \
+        -p <%= port %><% end %> \
+    <% end %> \
+    <% if @expose %><% @expose_array.each do |expose_port| %> \
+        --expose=<%= expose_port %><% end %> \
     <% end %> \
     <% if @volumes %><% @volumes_array.each do |volume| %> \
         -v <%= volume %><% end %> \
@@ -57,10 +60,13 @@ script
         --dns <%= address %><% end %> \
     <% end %> \
     <% if @env %><% @env_array.each do |env| %> \
-      -e <%= env %><% end %> \
+        -e <%= env %><% end %> \
     <% end %> \
     <% if @ports %><% @ports_array.each do |port| %> \
-    -p <%= port %><% end %> \
+        -p <%= port %><% end %> \
+    <% end %> \
+    <% if @expose %><% @expose_array.each do |expose_port| %> \
+        --expose=<%= expose_port %><% end %> \
     <% end %> \
     <% if @volumes %><% @volumes_array.each do |volume| %> \
         -v <%= volume %><% end %> \

@@ -118,6 +118,7 @@ docker::run { 'helloworld':
   image           => 'base',
   command         => '/bin/sh -c "while true; do echo hello world; sleep 1; done"',
   ports           => ['4444', '4555'],
+  expose          => ['4666', '4777'],
   links           => ['mysql:db'],
   use_name        => true,
   volumes         => ['/var/lib/couchdb', '/var/log'],
@@ -132,7 +133,7 @@ docker::run { 'helloworld':
 }
 ```
 
-Ports, env, dns and volumes can be set with either a single string or as above with an array of values.
+Ports, expose, env, dns and volumes can be set with either a single string or as above with an array of values.
 
 To use an image tag just append the tag name to the image name separated by a semicolon:
 
