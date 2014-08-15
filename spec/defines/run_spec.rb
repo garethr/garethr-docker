@@ -76,14 +76,24 @@ require 'spec_helper'
       it { should contain_file(initscript).with_content(/-p 4444/) }
     end
 
+    context 'when passing a port to expose' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'expose' => '4666'} }
+      it { should contain_file(initscript).with_content(/--expose=4666/) }
+    end
+
     context 'when connecting to shared data volumes' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'volumes_from' => '6446ea52fbc9'} }
       it { should contain_file(initscript).with_content(/--volumes-from 6446ea52fbc9/) }
     end
 
-    context 'when passing serveral port numbers' do
+    context 'when passing several port numbers' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'ports' => ['4444', '4555']} }
       it { should contain_file(initscript).with_content(/-p 4444/).with_content(/-p 4555/) }
+    end
+
+    context 'when passing several ports to expose' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'expose' => ['4666', '4777']} }
+      it { should contain_file(initscript).with_content(/--expose=4666/).with_content(/--expose=4777/) }
     end
 
     context 'when passing serveral environment variables' do
