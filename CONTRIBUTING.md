@@ -74,8 +74,11 @@ with:
     bundle exec rake beaker
 
 This will run the tests on an Ubuntu 12.04 virtual machine. You can also
-run the integration tests against Centos 6.5 with.
+run the integration tests against Centos 6.5 with:
 
-    BEAKER_set=centos-64-x64 bundle exec rake acceptance
+    BEAKER_set=centos-64-x64 bundle exec rake beaker
 
+Or with Ubuntu 14.04 with:
+
+    BEAKER_set=ubuntu-server-1404-x64 bundle exec rake beaker
 
