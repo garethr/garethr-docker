@@ -4,8 +4,8 @@
 description "start and stop <%= @title %> in docker"
 author "Gareth Rushgrove"
 
-start on (started docker)
-stop on stopping docker
+start on (started <%= @service_name %>)
+stop on stopping <%= @service_name %>
 
 setuid root
 
@@ -14,8 +14,8 @@ respawn limit 5 20
 
 <% if @use_name %>
 script
-  docker inspect <%= @name %> && docker start -a -i <%= @name %>
-  docker inspect <%= @name %> || docker run --cidfile=/var/run/docker-<%= @title %>.cid \
+<%= @docker_command %> inspect <%= @name %> && <%= @docker_command %> start -a -i <%= @name %>
+  <%= @docker_command %> inspect <%= @name %> || <%= @docker_command %> run --cidfile=/var/run/docker-<%= @title %>.cid \
     <% if @username %>-u '<%= @username %>' <% end %> \
     <% if @hostname %>-h '<%= @hostname %>'<% end %> \
     <% if @disable_network %>-n false<% end %> \
@@ -47,11 +47,11 @@ script
     <% if @use_name %>--name <%= @name %><% end %> \
     <%= @image %> \
     <% if @command %> <%= @command %><% end %> &&
-  exec docker wait "$(cat /var/run/docker-<%= @title %>.cid)"
+  exec <%= @docker_command %> wait "$(cat /var/run/docker-<%= @title %>.cid)"
 end script
 <% else %>
 script
-  docker run --cidfile=/var/run/docker-<%= @title %>.cid \
+  <%= @docker_command %> run --cidfile=/var/run/docker-<%= @title %>.cid \
     <% if @username %>-u '<%= @username %>' <% end %> \
     <% if @hostname %>-h '<%= @hostname %>'<% end %> \
     <% if @disable_network %>-n false<% end %> \
@@ -83,13 +83,13 @@ script
     <% if @use_name %>--name <%= @name %><% end %> \
     <%= @image %> \
     <% if @command %> <%= @command %><% end %> &&
-  exec docker wait "$(cat /var/run/docker-<%= @title %>.cid)"
+  exec <%= @docker_command %> wait "$(cat /var/run/docker-<%= @title %>.cid)"
 end script
 <% end %>
 
 post-stop script
 if [ -e "/var/run/docker-<%= @title %>.cid" ]; then
-  docker kill "$(cat /var/run/docker-<%= @title %>.cid)" && \
+  <%= @docker_command %> kill "$(cat /var/run/docker-<%= @title %>.cid)" && \
     rm "/var/run/docker-<%= @title %>.cid"
 fi
 end script

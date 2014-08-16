@@ -11,7 +11,7 @@ describe 'docker', :type => :class do
           :lsbdistid              => 'Ubuntu',
           :lsbdistcodename        => 'maverick',
           :kernelrelease          => '3.8.0-29-generic',
-	  :operatingsystemrelease => '10.04',
+	        :operatingsystemrelease => '10.04',
         } }
         service_config_file = '/etc/default/docker'
 
@@ -27,19 +27,18 @@ describe 'docker', :type => :class do
           it { should contain_package('docker').with_name('lxc-docker-0.5.5').with_ensure('present') }
         end
 
-	context 'with a custom package name' do
+	      context 'with a custom package name' do
           let(:params) { {'package_name' => 'docker-custom-pkg-name' } }
           it { should contain_package('docker').with_name('docker-custom-pkg-name').with_ensure('present') }
         end
 
-	context 'with a custom package name and version' do
-	  let(:params) { {
-	     'version' => '0.5.5',
-	     'package_name' => 'docker-custom-pkg-name',
-	  } }
+	      context 'with a custom package name and version' do
+	        let(:params) { {
+             'version'      => '0.5.5',
+             'package_name' => 'docker-custom-pkg-name',
+          } }
           it { should contain_package('docker').with_name('docker-custom-pkg-name-0.5.5').with_ensure('present') }
         end
-
 
         context 'when not managing the package' do
           let(:params) { {'manage_package' => false } }
@@ -96,6 +95,11 @@ describe 'docker', :type => :class do
       it { should contain_class('docker::service').that_subscribes_to('docker::config') }
       it { should contain_class('docker::config') }
 
+      context 'with a specific docker command' do
+        let(:params) {{ 'docker_command' => 'docker.io' }}
+        it { should contain_file(service_config_file).with_content(/docker.io/) }
+      end
+
       context 'with proxy param' do
         let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
         it { should contain_file(service_config_file).with_content(/export http_proxy=http:\/\/127.0.0.1:3128\nexport https_proxy=http:\/\/127.0.0.1:3128/) }
@@ -145,6 +149,11 @@ describe 'docker', :type => :class do
       context 'with service_state set to stopped' do
         let(:params) { {'service_state' => 'stopped'} }
         it { should contain_service('docker').with_ensure('stopped') }
+      end
+
+      context 'with a custom service name' do
+        let(:params) { {'service_name' => 'docker.io'} }
+        it { should contain_service('docker').with_name('docker.io') }
       end
 
       context 'with service_enable set to false' do
@@ -234,6 +243,15 @@ describe 'docker', :type => :class do
     end
   end
 
+  context 'specific to RedHat 7 or above' do
+    let(:facts) { {
+      :osfamily => 'RedHat',
+      :operatingsystemrelease => '7.0'
+    } }
+
+    it { should contain_package('docker').with_name('docker') }
+  end
+
   context 'specific to Ubuntu Precise' do
     let(:facts) { {
       :osfamily               => 'Debian',
@@ -258,7 +276,7 @@ describe 'docker', :type => :class do
       :kernelrelease          => '3.8.0-29-generic'
     } }
     it { should contain_service('docker').with_provider('upstart') }
-    it { should contain_package('docker').with_name('docker.io').with_ensure('present')  }
+    it { should contain_package('docker').with_name('lxc-docker').with_ensure('present')  }
   end
 
 
@@ -282,6 +300,5 @@ describe 'docker', :type => :class do
       }.to raise_error(Puppet::Error, /^This module only works on Debian and Red Hat based systems/)
     end
   end
-
 
 end

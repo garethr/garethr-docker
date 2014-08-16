@@ -20,31 +20,40 @@ class docker::params {
   $storage_driver               = undef
   $manage_package               = true
   $manage_kernel                = true
-  $package_name_default         = 'docker.io'
+  $package_name_default         = 'lxc-docker'
+  $service_name_default         = 'docker'
+  $docker_command_default       = 'docker'
   case $::osfamily {
     'Debian' : {
       case $::operatingsystem {
         'Ubuntu' : {
-          case $::operatingsystemrelease {
-            '10.04','12.04','13.04','13.10' : { $package_name = 'lxc-docker' }
-            default: {
-              $package_name = $package_name_default
-            }
-          }
+          $package_name   = $package_name_default
+          $service_name   = $service_name_default
+          $docker_command = $docker_command_default
         }
         default: {
-          $package_name = $package_name_default
+          $package_name   = 'docker.io'
+          $service_name   = 'docker.io'
+          $docker_command = 'docker.io'
         }
       }
       $package_source_location = 'https://get.docker.io/ubuntu'
     }
     'RedHat' : {
+      if (versioncmp($::operatingsystemrelease, '7.0') < 0) {
+        $package_name   = 'docker-io'
+      } else {
+        $package_name   = 'docker'
+      }
       $package_source_location = ''
-      $package_name = 'docker-io'
+      $service_name   = $service_name_default
+      $docker_command = $docker_command_default
     }
     default: {
       $package_source_location = ''
-      $package_name = $package_name_default
+      $package_name   = $package_name_default
+      $service_name   = $service_name_default
+      $docker_command = $docker_command_default
     }
   }
 }

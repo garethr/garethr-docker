@@ -23,9 +23,15 @@ define docker::run(
   $disable_network = false,
   $privileged = false,
 ) {
+  include docker::params
+  $docker_command = $docker::params::docker_command
+  $service_name = $docker::params::service_name
+
   validate_re($image, '^[\S]*$')
   validate_re($title, '^[\S]*$')
   validate_re($memory_limit, '^[\d]*$')
+  validate_string($docker_command)
+  validate_string($service_name)
   if $command {
     validate_string($command)
   }

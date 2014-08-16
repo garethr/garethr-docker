@@ -19,6 +19,7 @@
 #   Plain additional parameters to pass to the docker daemon
 #
 class docker::service (
+  $service_name         = $docker::service_name,
   $tcp_bind             = $docker::tcp_bind,
   $socket_bind          = $docker::socket_bind,
   $socket_group         = $docker::socket_group,
@@ -74,6 +75,7 @@ class docker::service (
 
   service { 'docker':
     ensure     => $service_state,
+    name       => $service_name,
     enable     => $service_enable,
     hasstatus  => $hasstatus,
     hasrestart => $hasrestart,

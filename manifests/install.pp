@@ -18,7 +18,6 @@ class docker::install {
 
   case $::osfamily {
     'Debian': {
-
       ensure_packages($prerequired_packages)
       if $docker::manage_package {
         Package['apt-transport-https'] -> Package['docker']
@@ -30,9 +29,7 @@ class docker::install {
         $dockerpackage = $docker::package_name
       }
 
-
       if ($docker::use_upstream_package_source) {
-
         include apt
         apt::source { 'docker':
           location          => $docker::package_source_location,
@@ -67,7 +64,6 @@ class docker::install {
           # on the $::kernelrelease fact
           default: { $kernelpackage = "linux-image-extra-${::kernelrelease}" }
         }
-
         $manage_kernel = $docker::manage_kernel
       } else {
         # Debian does not need extra kernel packages

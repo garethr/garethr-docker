@@ -8,17 +8,19 @@ require 'spec_helper'
 
     if osfamily == 'Debian'
       initscript = '/etc/init/docker-sample.conf'
+      command = 'docker.io'
     else
       initscript = '/etc/init.d/docker-sample'
+      command = 'docker'
     end
 
     context 'passing the required params' do
       let(:params) { {'command' => 'command', 'image' => 'base'} }
-      it { should contain_file(initscript).with_content(/docker run/).with_content(/base/) }
-      it { should contain_file(initscript).with_content(/docker run/).with_content(/command/) }
+      it { should contain_file(initscript).with_content(/#{command} run/).with_content(/base/) }
+      it { should contain_file(initscript).with_content(/#{command} run/).with_content(/command/) }
       it { should contain_service('docker-sample') }
       if (osfamily == 'Debian')
-        it { should contain_service('docker-sample').with_hasrestart('false') }  
+        it { should contain_service('docker-sample').with_hasrestart('false') }
       end
 
       ['p', 'dns', 'u', 'v', 'e', 'n', 'volumes-from', 'name'].each do |search|

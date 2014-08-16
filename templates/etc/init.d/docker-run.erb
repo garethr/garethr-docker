@@ -24,7 +24,7 @@
 
 . /etc/init.d/functions
 
-docker="/usr/bin/docker"
+docker="/usr/bin/<%= docker_command %>"
 prog="docker-<%= @title %>"
 cidfile="/var/run/$prog.cid"
 lockfile="/var/lock/subsys/$prog"
@@ -35,7 +35,7 @@ start() {
     if [ -f $cidfile ]; then
         cid="$(cat $cidfile)"
         if [ -n "$cid" ]; then
-            docker ps --no-trunc=true|grep $cid
+            $docker ps --no-trunc=true|grep $cid
             retval=$?
             if [ $retval -eq 0 ]; then
                 failure
@@ -101,7 +101,7 @@ stop() {
         cid="$(cat $cidfile)"
         if [ -n $cid ]; then
             echo -n $"Stopping $prog: "
-            docker stop $(cat $cidfile)
+            $docker stop $(cat $cidfile)
             retval=$?
             [ $retval -eq 0 ] && rm -f $lockfile $cidfile
             return $retval

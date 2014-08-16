@@ -72,6 +72,14 @@
 #   Specify custom package name
 #   Default is set on a per system basis in docker::params
 #
+# [*service_name*]
+#   Specify custom service name
+#   Default is set on a per system basis in docker::params
+#
+# [*docker_command*]
+#   Specify a custom docker command name
+#   Default is set on a per system basis in docker::params
+#
 class docker(
   $version                     = $docker::params::version,
   $ensure                      = $docker::params::ensure,
@@ -93,6 +101,8 @@ class docker(
   $execdriver                  = $docker::params::execdriver,
   $manage_package              = $docker::params::manage_package,
   $package_name                = $docker::params::package_name,
+  $service_name                = $docker::params::service_name,
+  $docker_command              = $docker::params::docker_command,
 ) inherits docker::params {
 
   validate_string($version)
