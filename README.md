@@ -7,6 +7,17 @@ Forge](https://forge.puppetlabs.com/garethr/docker)
 [![Build
 Status](https://secure.travis-ci.org/garethr/garethr-docker.png)](http://travis-ci.org/garethr/garethr-docker)
 
+## Support
+
+This modules is currently tested on:
+
+* Ubuntu 14.04
+* Centos 6.5
+* Ubuntu 12.04
+
+It may work on other distros and other operating systems will be
+supported in the future.
+
 ## Usage
 
 The module includes a single class:
@@ -16,7 +27,7 @@ include 'docker'
 ```
 
 By default this sets up the docker hosted Apt repository and installs
-the lxc-docker package and the required Kernel.
+the lxc-docker package and any required Kernel extensions.
 
 If you don't want this module to mess about with your Kernel then you
 can disable this feature like so:
@@ -48,7 +59,7 @@ class { 'docker':
 ```
 
 Unless specified this installs the latest version of docker from the
-lxc-docker package. However if you want to specify a specific version
+docker inc repository. However if you want to specify a specific version
 you can do so:
 
 ```puppet
@@ -64,6 +75,9 @@ class { 'docker':
   dns => '8.8.8.8',
 }
 ```
+
+The class contains lots of other options, please see the inline code
+documentation for the full options.
 
 ### Images
 
@@ -123,7 +137,7 @@ docker::run { 'helloworld':
   use_name        => true,
   volumes         => ['/var/lib/couchdb', '/var/log'],
   volumes_from    => '6446ea52fbc9',
-  memory_limit    => 10485760, # bytes 
+  memory_limit    => 10485760, # bytes
   username        => 'example',
   hostname        => 'example.com',
   env             => ['FOO=BAR', 'FOO2=BAR2'],
