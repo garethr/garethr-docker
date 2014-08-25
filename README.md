@@ -4,7 +4,8 @@ Puppet module for installing
 This module is also available on the [Puppet
 Forge](https://forge.puppetlabs.com/garethr/docker)
 
-[![Build
+[![Puppet
+Forge](http://img.shields.io/puppetforge/v/garethr/docker.svg)](https://forge.puppetlabs.com/garethr/docker) [![Build
 Status](https://secure.travis-ci.org/garethr/garethr-docker.png)](http://travis-ci.org/garethr/garethr-docker)
 
 ## Support
