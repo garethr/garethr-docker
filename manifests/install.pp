@@ -38,19 +38,20 @@ class docker::install {
           required_packages => 'debian-keyring debian-archive-keyring',
           key               => 'A88D21E9',
           key_source        => 'http://get.docker.io/gpg',
-          pin               => $docker::apt_source_pin_level,
           include_src       => false,
         }
-        if $docker::apt_source_pin_level == undef {
 
-          # remove any existing origin-based pin
-          apt::pin { 'docker':
-              ensure => 'absent',
-              origin => 'get.docker.io',
-          }
-          -> Package['docker']
+        apt::pin { 'docker':
+          ensure => $docker::pin_upstream_package_source ? {
+              true    => 'present',
+              default => 'absent',
+          },
+          origin   => 'get.docker.io',
+          priority => $docker::apt_source_pin_level,
         }
+
         if $docker::manage_package {
+          Apt::Pin['docker']    -> Package['docker']
           Apt::Source['docker'] -> Package['docker']
         }
       } else {

@@ -94,6 +94,7 @@ class docker(
   $tcp_bind                    = $docker::params::tcp_bind,
   $socket_bind                 = $docker::params::socket_bind,
   $use_upstream_package_source = $docker::params::use_upstream_package_source,
+  $pin_upstream_package_source = true,
   $apt_source_pin_level        = 10,
   $package_source_location     = $docker::params::package_source_location,
   $service_state               = $docker::params::service_state,
@@ -118,6 +119,7 @@ class docker(
   validate_re($::osfamily, '^(Debian|RedHat)$', 'This module only works on Debian and Red Hat based systems.')
   validate_bool($manage_kernel)
   validate_bool($manage_package)
+  validate_bool($pin_upstream_package_source)
 
   class { 'docker::install': } ->
   class { 'docker::config': } ~>
