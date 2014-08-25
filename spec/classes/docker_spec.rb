@@ -192,6 +192,7 @@ describe 'docker', :type => :class do
 
     context 'with no parameters' do
       it { should contain_package('linux-image-extra-3.8.0-29-generic') }
+      it { should contain_package('apparmor') }
     end
 
     context 'with no upstream package source' do
@@ -264,6 +265,7 @@ describe 'docker', :type => :class do
     it { should contain_package('linux-image-generic-lts-saucy') }
     it { should contain_package('linux-headers-generic-lts-saucy') }
     it { should contain_service('docker').with_provider('upstart') }
+    it { should contain_package('apparmor') }
   end
 
   context 'specific to Ubuntu Trusty' do
@@ -277,6 +279,7 @@ describe 'docker', :type => :class do
     } }
     it { should contain_service('docker').with_provider('upstart') }
     it { should contain_package('docker').with_name('lxc-docker').with_ensure('present')  }
+    it { should contain_package('apparmor') }
   end
 
 
