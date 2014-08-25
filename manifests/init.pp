@@ -94,7 +94,7 @@ class docker(
   $tcp_bind                    = $docker::params::tcp_bind,
   $socket_bind                 = $docker::params::socket_bind,
   $use_upstream_package_source = $docker::params::use_upstream_package_source,
-  $apt_source_pin_level        = $docker::params::apt_source_pin_level,
+  $apt_source_pin_level        = 10,
   $package_source_location     = $docker::params::package_source_location,
   $service_state               = $docker::params::service_state,
   $service_enable              = $docker::params::service_enable,
