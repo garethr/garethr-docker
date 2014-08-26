@@ -26,6 +26,20 @@
 #   If you run your own package mirror, you may set this
 #   to false.
 #
+# [*pin_upstream_package_source*]
+#   Pin upstream package source; this option currently only has any effect on
+#   apt-based distributions.  Set to false to remove pinning on the upstream
+#   package repository.  See also "apt_source_pin_level".
+#   Defaults to true
+#
+# [*apt_source_pin_level*]
+#   What level to pin our source package repository to; this only is relevent
+#   if you're on an apt-based system (Debian, Ubuntu, etc) and
+#   $use_upstream_package_source is set to true.  Set this to false to disable
+#   pinning, and undef to ensure the apt preferences file apt::source uses to
+#   define pins is removed.
+#   Defaults to 10
+#
 # [*package_source_location*]
 #   If you're using an upstream package source, what is it's
 #   location. Defaults to https://get.docker.io/ubuntu on Debian
@@ -67,14 +81,6 @@
 # [*manage_package*]
 #   Won't install or define the docker package, useful if you want to use your own package
 #   Defaults to true
-#
-# [*apt_source_pin_level*]
-#   What level to pin our source package repository to; this only is relevent
-#   if you're on an apt-based system (Debian, Ubuntu, etc) and
-#   $use_upstream_package_source is set to true.  Set this to false to disable
-#   pinning, and undef to ensure the apt preferences file apt::source uses to
-#   define pins is removed.
-#   Defaults to 10
 #
 # [*package_name*]
 #   Specify custom package name
