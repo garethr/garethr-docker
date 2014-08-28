@@ -19,6 +19,7 @@
 #   Plain additional parameters to pass to the docker daemon
 #
 class docker::service (
+  $docker_command       = $docker::docker_command,
   $service_name         = $docker::service_name,
   $tcp_bind             = $docker::tcp_bind,
   $socket_bind          = $docker::socket_bind,
