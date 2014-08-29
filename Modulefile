@@ -1,5 +1,5 @@
 name        'garethr-docker'
-version     '1.2.0'
+version     '1.2.2'
 source      'git://github.com/garethr/garethr-docker.git'
 author      'Gareth Rushgrove'
 summary     'Module for installing docker from the official docker repository'
