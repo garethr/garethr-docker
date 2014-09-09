@@ -5,7 +5,7 @@
 define docker::run(
   $image,
   $command = undef,
-  $memory_limit = '0',
+  $memory_limit = '0b',
   $ports = [],
   $expose = [],
   $volumes = [],
