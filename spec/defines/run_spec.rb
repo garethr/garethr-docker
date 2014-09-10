@@ -197,6 +197,16 @@ require 'spec_helper'
       end
     end
 
+    context 'with a missing memory unit' do
+      let(:title) { 'with spaces' }
+      let(:params) { {'command' => 'command', 'image' => 'base', 'memory' => '10240'} }
+      it do
+        expect {
+          should contain_service('docker-sample')
+        }.to raise_error(Puppet::Error)
+      end
+    end
+
   end
 
 end
