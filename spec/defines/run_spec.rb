@@ -44,8 +44,8 @@ require 'spec_helper'
     end
 
     context 'when passing a memory limit in bytes' do
-      let(:params) { {'command' => 'command', 'image' => 'base', 'memory_limit' => '1000'} }
-      it { should contain_file(initscript).with_content(/-m 1000/) }
+      let(:params) { {'command' => 'command', 'image' => 'base', 'memory_limit' => '1000b'} }
+      it { should contain_file(initscript).with_content(/-m 1000b/) }
     end
 
     context 'when passing a links option' do
