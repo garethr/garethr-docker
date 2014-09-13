@@ -33,6 +33,7 @@ class docker::service (
   $execdriver           = $docker::execdriver,
   $storage_driver       = $docker::storage_driver,
   $tmp_dir              = $docker::tmp_dir,
+  $service_provider     = $docker::service_provider,
 ){
   $extra_parameters_array = any2array($extra_parameters)
 
@@ -70,7 +71,7 @@ class docker::service (
   }
 
   $provider = $::operatingsystem ? {
-    'Ubuntu' => 'upstart',
+    'Ubuntu' => $service_provider,
     default  => undef,
   }
 
