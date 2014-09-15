@@ -12,6 +12,10 @@
 #   Passed to the docker package.
 #   Defaults to present
 #
+# [*prerequired_packages*]
+#   An array of additional packages that need to be installed to support
+#   docker. Defaults change depending on the operating system.
+#
 # [*tcp_bind*]
 #   The tcp socket to bind to in the format
 #   tcp://127.0.0.1:4243
@@ -83,6 +87,7 @@
 class docker(
   $version                     = $docker::params::version,
   $ensure                      = $docker::params::ensure,
+  $prerequired_packages        = $docker::params::prerequired_packages,
   $tcp_bind                    = $docker::params::tcp_bind,
   $socket_bind                 = $docker::params::socket_bind,
   $use_upstream_package_source = $docker::params::use_upstream_package_source,

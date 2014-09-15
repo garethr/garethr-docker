@@ -11,7 +11,7 @@ describe 'docker', :type => :class do
           :lsbdistid              => 'Ubuntu',
           :lsbdistcodename        => 'maverick',
           :kernelrelease          => '3.8.0-29-generic',
-	        :operatingsystemrelease => '10.04',
+          :operatingsystemrelease => '10.04',
         } }
         service_config_file = '/etc/default/docker'
 
@@ -27,13 +27,13 @@ describe 'docker', :type => :class do
           it { should contain_package('docker').with_name('lxc-docker-0.5.5').with_ensure('present') }
         end
 
-	      context 'with a custom package name' do
+        context 'with a custom package name' do
           let(:params) { {'package_name' => 'docker-custom-pkg-name' } }
           it { should contain_package('docker').with_name('docker-custom-pkg-name').with_ensure('present') }
         end
 
-	      context 'with a custom package name and version' do
-	        let(:params) { {
+        context 'with a custom package name and version' do
+          let(:params) { {
              'version'      => '0.5.5',
              'package_name' => 'docker-custom-pkg-name',
           } }
@@ -43,6 +43,12 @@ describe 'docker', :type => :class do
         context 'when not managing the package' do
           let(:params) { {'manage_package' => false } }
           it { should_not contain_package('docker') }
+        end
+
+        context 'It should accept custom prerequired_packages' do
+          let(:params) { {'prerequired_packages' => [ 'test_package' ],
+                          'manage_package'       => false,  } }
+          it { should contain_package('test_package').with_ensure('present') }
         end
 
         context 'with no upstream package source' do
