@@ -22,6 +22,7 @@ define docker::run(
   $restart_service = true,
   $disable_network = false,
   $privileged = false,
+  $extra_parameters = undef,
 ) {
   include docker::params
   $docker_command = $docker::params::docker_command
@@ -52,6 +53,7 @@ define docker::run(
   $dns_array = any2array($dns)
   $links_array = any2array($links)
   $lxc_conf_array = any2array($lxc_conf)
+  $extra_parameters_array = any2array($extra_parameters)
 
   $sanitised_title = regsubst($title, '[^0-9A-Za-z.\-]', '-')
 
@@ -108,4 +110,3 @@ define docker::run(
     File[$initscript] -> Service["docker-${sanitised_title}"]
   }
 }
-

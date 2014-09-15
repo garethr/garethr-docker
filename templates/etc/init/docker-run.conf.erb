@@ -45,6 +45,9 @@ script
         "--link #{link}" }.join(' ') %> \
     <% end %> \
     <% if @use_name %>--name <%= @name %><% end %> \
+    <% if @extra_parameters %><% @extra_parameters_array.each do |param| %>  \
+      <%= param %> <% end %> \
+    <% end -%> \
     <%= @image %> \
     <% if @command %> <%= @command %><% end %> &&
   exec <%= @docker_command %> wait "$(cat /var/run/docker-<%= @title %>.cid)"
@@ -81,6 +84,9 @@ script
         "--link #{link}" }.join(' ') %> \
     <% end %> \
     <% if @use_name %>--name <%= @name %><% end %> \
+    <% if @extra_parameters %><% @extra_parameters_array.each do |param| %>  \
+      <%= param %> <% end %> \
+    <% end -%> \
     <%= @image %> \
     <% if @command %> <%= @command %><% end %> &&
   exec <%= @docker_command %> wait "$(cat /var/run/docker-<%= @title %>.cid)"
