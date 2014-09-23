@@ -44,6 +44,7 @@ define docker::run(
   validate_bool($running)
   validate_bool($disable_network)
   validate_bool($privileged)
+  validate_bool($restart_service)
 
   $ports_array = any2array($ports)
   $expose_array = any2array($expose)
@@ -60,7 +61,7 @@ define docker::run(
     default  => undef,
   }
 
-  $notify = str2bool($restart_service) ? {
+  $notify = $restart_service ? {
     true    => Service["docker-${sanitised_title}"],
     default => undef,
   }
@@ -101,7 +102,7 @@ define docker::run(
     require    => File[$initscript],
   }
 
-  if str2bool($restart_service) {
+  if $restart_service {
     File[$initscript] ~> Service["docker-${sanitised_title}"]
   }
   else {
