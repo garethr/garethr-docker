@@ -61,11 +61,6 @@ define docker::run(
     default  => undef,
   }
 
-  $notify = $restart_service ? {
-    true    => Service["docker-${sanitised_title}"],
-    default => undef,
-  }
-
   case $::osfamily {
     'Debian': {
       $initscript = "/etc/init/docker-${sanitised_title}.conf"
@@ -90,7 +85,6 @@ define docker::run(
     ensure  => present,
     content => template($init_template),
     mode    => $mode,
-    notify  => $notify,
   }
 
   service { "docker-${sanitised_title}":
