@@ -46,7 +46,7 @@ class docker::service (
           notify => Service['docker'],
       }
 
-      file { '/etc/default/docker':
+      file { "/etc/default/${service_name}":
         ensure  => present,
         force   => true,
         content => template('docker/etc/default/docker.erb'),
