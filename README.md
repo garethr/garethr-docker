@@ -60,7 +60,7 @@ class { 'docker':
 ```
 
 Unless specified this installs the latest version of docker from the
-docker inc repository. However if you want to specify a specific version
+docker inc repository on first run. However if you want to specify a specific version
 you can do so:
 
 ```puppet
@@ -68,6 +68,15 @@ class { 'docker':
   version => '0.5.5',
 }
 ```
+
+And if you want to track the latest version you can do so:
+
+```puppet
+class { 'docker':
+  version => 'latest',
+}
+```
+
 
 In some cases dns resolution won't work well in the container unless you give a dns server to the docker daemon like this:
 

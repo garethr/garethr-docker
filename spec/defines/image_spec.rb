@@ -9,6 +9,11 @@ describe 'docker::image', :type => :define do
     it { should contain_exec('docker rmi base') }
   end
 
+  context 'with ensure => absent and force => true' do
+    let(:params) { { 'ensure' => 'absent', 'force' => true } }
+    it { should contain_exec('docker rmi -f base') }
+  end
+
   context 'with ensure => absent and image_tag => precise' do
     let(:params) { { 'ensure' => 'absent', 'image_tag' => 'precise' } }
     it { should contain_exec('docker rmi base:precise') }

@@ -19,19 +19,27 @@ define docker::image(
   $ensure    = 'present',
   $image     = $title,
   $image_tag = undef,
+  $force     = false,
 ) {
   include docker::params
   $docker_command = $docker::params::docker_command
   validate_re($ensure, '^(present|absent|latest)$')
   validate_re($image, '^[\S]*$')
+  validate_bool($force)
+
+  if $force {
+    $image_force   = '-f '
+  } else {
+    $image_force   = ''
+  }
 
   if $image_tag {
     $image_install = "${docker_command} pull -t=\"${image_tag}\" ${image}"
-    $image_remove  = "${docker_command} rmi ${image}:${image_tag}"
+    $image_remove  = "${docker_command} rmi ${image_force}${image}:${image_tag}"
     $image_find    = "${docker_command} images | grep ^${image} | awk '{ print \$2 }' | grep ${image_tag}"
   } else {
     $image_install = "${docker_command} pull ${image}"
-    $image_remove  = "${docker_command} rmi ${image}"
+    $image_remove  = "${docker_command} rmi ${image_force}${image}"
     $image_find    = "${docker_command} images | grep ^${image}"
   }
 
