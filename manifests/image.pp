@@ -34,7 +34,7 @@ define docker::image(
   }
 
   if $image_tag {
-    $image_install = "${docker_command} pull -t=\"${image_tag}\" ${image}"
+    $image_install = "${docker_command} pull ${image}:${image_tag}"
     $image_remove  = "${docker_command} rmi ${image_force}${image}:${image_tag}"
     $image_find    = "${docker_command} images | grep ^${image} | awk '{ print \$2 }' | grep ${image_tag}"
   } else {
