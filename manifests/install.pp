@@ -50,8 +50,8 @@ class docker::install {
         case $::operatingsystemrelease {
           # On Ubuntu 12.04 (precise) install the backported 13.10 (saucy) kernel
           '12.04': { $kernelpackage = [
-                                        'linux-image-generic-lts-saucy',
-                                        'linux-headers-generic-lts-saucy'
+                                        'linux-image-generic-lts-trusty',
+                                        'linux-headers-generic-lts-trusty'
                                       ]
           }
           # determine the package name for 'linux-image-extra-$(uname -r)' based

@@ -268,8 +268,8 @@ describe 'docker', :type => :class do
       :operatingsystemrelease => '12.04',
       :kernelrelease          => '3.8.0-29-generic'
     } }
-    it { should contain_package('linux-image-generic-lts-saucy') }
-    it { should contain_package('linux-headers-generic-lts-saucy') }
+    it { should contain_package('linux-image-generic-lts-trusty') }
+    it { should contain_package('linux-headers-generic-lts-trusty') }
     it { should contain_service('docker').with_provider('upstart') }
     it { should contain_package('apparmor') }
   end
