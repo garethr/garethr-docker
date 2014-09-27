@@ -45,6 +45,7 @@ define docker::run(
   validate_bool($running)
   validate_bool($disable_network)
   validate_bool($privileged)
+  validate_bool($restart_service)
 
   $ports_array = any2array($ports)
   $expose_array = any2array($expose)
@@ -60,11 +61,6 @@ define docker::run(
   $provider = $::operatingsystem ? {
     'Ubuntu' => 'upstart',
     default  => undef,
-  }
-
-  $notify = str2bool($restart_service) ? {
-    true    => Service["docker-${sanitised_title}"],
-    default => undef,
   }
 
   case $::osfamily {
@@ -91,7 +87,6 @@ define docker::run(
     ensure  => present,
     content => template($init_template),
     mode    => $mode,
-    notify  => $notify,
   }
 
   service { "docker-${sanitised_title}":
@@ -103,7 +98,7 @@ define docker::run(
     require    => File[$initscript],
   }
 
-  if str2bool($restart_service) {
+  if $restart_service {
     File[$initscript] ~> Service["docker-${sanitised_title}"]
   }
   else {
