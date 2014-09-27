@@ -44,8 +44,8 @@ require 'spec_helper'
     end
 
     context 'when passing a memory limit in bytes' do
-      let(:params) { {'command' => 'command', 'image' => 'base', 'memory_limit' => '1000'} }
-      it { should contain_file(initscript).with_content(/-m 1000/) }
+      let(:params) { {'command' => 'command', 'image' => 'base', 'memory_limit' => '1000b'} }
+      it { should contain_file(initscript).with_content(/-m 1000b/) }
     end
 
     context 'when passing a links option' do
@@ -190,6 +190,16 @@ require 'spec_helper'
     context 'with an invalid memory value' do
       let(:title) { 'with spaces' }
       let(:params) { {'command' => 'command', 'image' => 'base', 'memory' => 'not a number'} }
+      it do
+        expect {
+          should contain_service('docker-sample')
+        }.to raise_error(Puppet::Error)
+      end
+    end
+
+    context 'with a missing memory unit' do
+      let(:title) { 'with spaces' }
+      let(:params) { {'command' => 'command', 'image' => 'base', 'memory' => '10240'} }
       it do
         expect {
           should contain_service('docker-sample')

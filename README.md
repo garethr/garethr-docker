@@ -147,7 +147,7 @@ docker::run { 'helloworld':
   use_name        => true,
   volumes         => ['/var/lib/couchdb', '/var/log'],
   volumes_from    => '6446ea52fbc9',
-  memory_limit    => 10485760, # bytes
+  memory_limit    => 10m, # (format: <number><unit>, where unit = b, k, m or g)
   username        => 'example',
   hostname        => 'example.com',
   env             => ['FOO=BAR', 'FOO2=BAR2'],
