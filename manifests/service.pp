@@ -42,7 +42,9 @@ class docker::service (
       $hasrestart    = false
 
       file { '/etc/init.d/docker':
-          ensure => 'absent',
+          ensure => 'link',
+          target => '/lib/init/upstart-job',
+          force  => true,
           notify => Service['docker'],
       }
 
