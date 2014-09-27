@@ -7,8 +7,6 @@ author "Gareth Rushgrove"
 start on (started <%= @service_name %>)
 stop on stopping <%= @service_name %>
 
-setuid root
-
 respawn
 respawn limit 5 20
 
