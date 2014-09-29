@@ -76,13 +76,19 @@ class docker::service (
 
         '/etc/systemd/system/docker.service.d/service-overrides.conf':
           ensure => present,
-          source => 'puppet:///modules/docker/service-overrides-archlinux.conf';
+          source => 'puppet:///modules/docker/service-overrides-archlinux.conf'
+          notify => Exec['docker-systemd-reload'];
 
         '/etc/conf.d/docker':
           ensure  => present,
           force   => true,
           content => template('docker/etc/conf.d/docker.erb'),
           notify  => Service['docker'];
+      }
+
+      exec { 'docker-systemd-reload':
+        command     => '/usr/bin/systemctl daemon-reload'
+        refreshonly => true,
       }
     }
     default: {
