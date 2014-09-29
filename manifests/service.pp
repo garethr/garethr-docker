@@ -66,8 +66,27 @@ class docker::service (
         notify  => Service['docker'],
       }
     }
+    'Archlinux': {
+      $hasstatus  = true
+      $hasrestart = true
+
+      file {
+        '/etc/systemd/system/docker.service.d':
+          ensure => directory;
+
+        '/etc/systemd/system/docker.service.d/service-overrides.conf':
+          ensure => present,
+          source => 'puppet:///modules/docker/service-overrides-archlinux.conf';
+
+        '/etc/conf.d/docker':
+          ensure  => present,
+          force   => true,
+          content => template('docker/etc/conf.d/docker.erb'),
+          notify  => Service['docker'];
+      }
+    }
     default: {
-      fail('Docker needs a RedHat or Debian based system.')
+      fail('Docker needs a Debian, RedHat or Archlinux based system.')
     }
   }
 

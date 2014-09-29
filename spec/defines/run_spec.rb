@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-['Debian', 'RedHat'].each do |osfamily|
+['Debian', 'RedHat', 'Archlinux'].each do |osfamily|
 
   describe 'docker::run', :type => :define do
     let(:facts) { {:osfamily => osfamily} }

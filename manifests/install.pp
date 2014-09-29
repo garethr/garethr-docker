@@ -1,12 +1,12 @@
 # == Class: docker
 #
 # Module to install an up-to-date version of Docker from a package repository.
-# The use of this repository means, this module works only on Debian and Red
-# Hat based distributions.
+# This module currently works only on Debian, Red Hat
+# and Archlinux based distributions.
 #
 class docker::install {
   validate_string($docker::version)
-  validate_re($::osfamily, '^(Debian|RedHat)$', 'This module only works on Debian and Red Hat based systems.')
+  validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', 'This module only works on Debian, Red Hat and Archlinux based systems.')
   validate_string($::kernelrelease)
   validate_bool($docker::use_upstream_package_source)
 
@@ -81,6 +81,15 @@ class docker::install {
         include 'epel'
         if $docker::manage_package {
           Class['epel'] -> Package['docker']
+        }
+      }
+    }
+    'Archlinux': {
+      $manage_kernel = false
+
+      if $docker::version {
+        notify { 'docker::version unsupported on Archlinux':
+          message => 'Versions other than latest are not supported on Arch Linux. This setting will be ignored.'
         }
       }
     }

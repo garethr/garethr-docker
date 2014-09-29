@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'docker', :type => :class do
 
-  ['Debian', 'RedHat'].each do |osfamily|
+  ['Debian', 'RedHat', 'Archlinux'].each do |osfamily|
     context "on #{osfamily}" do
       if osfamily == 'Debian'
         let(:facts) { {
@@ -94,6 +94,13 @@ describe 'docker', :type => :class do
           it { should contain_file('/etc/sysconfig/docker').with_content(/export TMPDIR="\/bigtmp"/) }
         end
 
+      end
+
+      if osfamily == 'Archlinux'
+        let(:facts) { {
+          :osfamily => osfamily,
+        } }
+        service_config_file = '/etc/conf.d/docker'
       end
 
       it { should compile.with_all_deps }
