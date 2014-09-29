@@ -1,8 +1,7 @@
 # == Class: docker
 #
-# Module to install an up-to-date version of Docker from the
-# official Apt repository. The use of this repository means, this module works
-# only on Debian based distributions.
+# Module to install an up-to-date version of a Docker image
+# from the registry
 #
 # === Parameters
 # [*ensure*]
