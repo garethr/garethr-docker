@@ -10,13 +10,10 @@ Requires=docker.service
 <%- if @user -%>User=<%= @username %><%- end -%>
 <%- if @user -%>User=<%= @username %><%- end -%>
 TimeoutStartSec=0
-<%- if @use_name -%>
 ExecStartPre=-/usr/bin/<%= @docker_command %> kill docker-<%= @sanitised_title %>
 ExecStartPre=-/usr/bin/<%= @docker_command %> rm docker-<%= @sanitised_title %>
-<%- end -%>
 ExecStartPre=/usr/bin/<%= @docker_command %> pull <%= @image %>
 ExecStart=/usr/bin/<%= @docker_command %> run \
-        --cidfile=/run/docker-<%= @sanitised_title %>
         <% if @username %>-u '<%= @username %>' <% end %> \
         <% if @hostname %>-h '<%= @hostname %>'<% end %> \
         <% if @disable_network %>-n false<% end %> \
@@ -45,13 +42,13 @@ ExecStart=/usr/bin/<%= @docker_command %> run \
         <% if @links %><%= @links_array.map {|link| \
             "--link #{link}" }.join(' ') %> \
         <% end %> \
-        <% if @use_name %>--name <%= @name %><% end %> \
+        --name docker-<%= @sanitised_title %> \
         <%= @image %> \
         <% if @extra_parameters %><% @extra_parameters_array.each do |param| %>  \
             <%= param %> <% end %> \
         <% end -%> \
         <% if @command %> <%= @command %><% end %>
-ExecStop=-/usr/bin<%= @docker_command %> stop $(cat /run/docker-<%= @sanitised_title %>)
+ExecStop=-/usr/bin/<%= @docker_command %> stop docker-<%= @sanitised_title %>
 
 [Install]
 WantedBy=multi-user.target
