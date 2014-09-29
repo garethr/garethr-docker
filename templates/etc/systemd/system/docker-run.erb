@@ -16,6 +16,7 @@ ExecStartPre=-/usr/bin/<%= @docker_command %> rm docker-<%= @sanitised_title %>
 <%- end -%>
 ExecStartPre=/usr/bin/<%= @docker_command %> pull <%= @image %>
 ExecStart=/usr/bin/<%= @docker_command %> run \
+        --cidfile=/run/docker-<%= @sanitised_title %>
         <% if @username %>-u '<%= @username %>' <% end %> \
         <% if @hostname %>-h '<%= @hostname %>'<% end %> \
         <% if @disable_network %>-n false<% end %> \
@@ -50,6 +51,7 @@ ExecStart=/usr/bin/<%= @docker_command %> run \
             <%= param %> <% end %> \
         <% end -%> \
         <% if @command %> <%= @command %><% end %>
+ExecStop=-/usr/bin<%= @docker_command %> stop $(cat /run/docker-<%= @sanitised_title %>)
 
 [Install]
 WantedBy=multi-user.target
