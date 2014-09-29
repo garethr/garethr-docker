@@ -105,7 +105,7 @@ define docker::run(
     require    => File[$initscript],
   }
 
-  if $osfamily == 'Archlinux' {
+  if $::osfamily == 'Archlinux' {
     File[$initscript] ~> Exec['docker-systemd-reload']
     Exec['docker-systemd-reload'] -> Service["docker-${sanitised_title}"]
   }

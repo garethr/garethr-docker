@@ -85,11 +85,6 @@ class docker::service (
           content => template('docker/etc/conf.d/docker.erb'),
           notify  => Service['docker'];
       }
-
-      exec { 'docker-systemd-reload':
-        command     => '/usr/bin/systemctl daemon-reload',
-        refreshonly => true,
-      }
     }
     default: {
       fail('Docker needs a Debian, RedHat or Archlinux based system.')

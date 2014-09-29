@@ -54,6 +54,10 @@ class docker::params {
       $package_source_location = ''
       $service_name   = $service_name_default
       $docker_command = $docker_command_default
+      exec { 'docker-systemd-reload':
+        command     => '/usr/bin/systemctl daemon-reload',
+        refreshonly => true,
+      }
       }
     default: {
       $package_source_location = ''
