@@ -2,3 +2,6 @@ pkg
 spec/fixtures
 .bundle/
 .vagrant
+/.project
+/.gitignore
+/metadata.json

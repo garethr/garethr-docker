@@ -104,6 +104,11 @@ class docker(
   $service_name                = $docker::params::service_name,
   $docker_command              = $docker::params::docker_command,
   $service_provider            = $docker::params::service_provider,
+  $service_binary              = undef,
+  $service_start               = undef,
+  $service_stop                = undef,
+  $service_status              = undef,
+  $service_restart             = undef,
 ) inherits docker::params {
 
   validate_string($version)
