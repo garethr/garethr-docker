@@ -12,7 +12,7 @@ class docker::install {
 
   case $::osfamily {
     'Debian': {
-      ensure_packages($docker::prerequired_packages)
+      ensure_packages($docker::prerequired_packages, {'ensure' => 'latest'})
       if $docker::manage_package {
         Package['apt-transport-https'] -> Package['docker']
       }
