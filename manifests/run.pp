@@ -78,8 +78,15 @@ define docker::run(
       $hasrestart = undef
       $mode = '0755'
     }
+    'Archlinux': {
+      $initscript    = "/etc/systemd/system/docker-${sanitised_title}.service"
+      $init_template = 'docker/etc/systemd/system/docker-run.erb'
+      $hasstatus     = true
+      $hasrestart    = true
+      $mode          = '0644'
+    }
     default: {
-      fail('Docker needs a RedHat or Debian based system.')
+      fail('Docker needs a Debian, RedHat or Archlinux based system.')
     }
   }
 
@@ -96,6 +103,11 @@ define docker::run(
     hasrestart => $hasrestart,
     provider   => $provider,
     require    => File[$initscript],
+  }
+
+  if $::osfamily == 'Archlinux' {
+    File[$initscript] ~> Exec['docker-systemd-reload']
+    Exec['docker-systemd-reload'] -> Service["docker-${sanitised_title}"]
   }
 
   if $restart_service {

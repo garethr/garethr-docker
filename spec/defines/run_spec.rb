@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-['Debian', 'RedHat'].each do |osfamily|
+['Debian', 'RedHat', 'Archlinux'].each do |osfamily|
 
   describe 'docker::run', :type => :define do
     let(:facts) { {:osfamily => osfamily} }
@@ -9,6 +9,9 @@ require 'spec_helper'
     if osfamily == 'Debian'
       initscript = '/etc/init/docker-sample.conf'
       command = 'docker.io'
+    elsif osfamily == 'Archlinux'
+      initscript = '/etc/systemd/system/docker-sample.service'
+      command = 'docker'
     else
       initscript = '/etc/init.d/docker-sample'
       command = 'docker'
@@ -160,6 +163,8 @@ require 'spec_helper'
 
       if osfamily == 'Debian'
         new_initscript = '/etc/init/docker-this-that.conf'
+      elsif osfamily == 'Archlinux'
+        new_initscript = '/etc/systemd/system/docker-this-that.service'
       else
         new_initscript = '/etc/init.d/docker-this-that'
       end

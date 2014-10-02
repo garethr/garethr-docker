@@ -1,0 +1,54 @@
+# This file is managed by Puppet and local changes
+# may be overwritten
+
+[Unit]
+Description=Daemon for <%= @title %>
+After=docker.service
+Requires=docker.service
+
+[Service]
+<%- if @user -%>User=<%= @username %><%- end -%>
+<%- if @user -%>User=<%= @username %><%- end -%>
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/<%= @docker_command %> kill <%= @sanitised_title %>
+ExecStartPre=-/usr/bin/<%= @docker_command %> rm <%= @sanitised_title %>
+ExecStartPre=/usr/bin/<%= @docker_command %> pull <%= @image %>
+ExecStart=/usr/bin/<%= @docker_command %> run \
+        <% if @username %>-u '<%= @username %>' <% end %> \
+        <% if @hostname %>-h '<%= @hostname %>'<% end %> \
+        <% if @disable_network %>-n false<% end %> \
+        <% if @privileged %>--privileged<% end %> \
+        <% if @dns %><% @dns_array.each do |address| %> \
+            --dns <%= address %><% end %> \
+        <% end %> \
+        <% if @env %><% @env_array.each do |env| %> \
+            -e <%= env %><% end %> \
+        <% end %> \
+        <% if @ports %><% @ports_array.each do |port| %> \
+            -p <%= port %><% end %> \
+        <% end %> \
+        <% if @expose %><% @expose_array.each do |expose_port| %> \
+            --expose=<%= expose_port %><% end %> \
+        <% end %> \
+        <% if @volumes %><% @volumes_array.each do |volume| %> \
+            -v <%= volume %><% end %> \
+        <% end %> \
+        <% if @volumes_from %> --volumes-from <%= @volumes_from %><% end %> \
+        <% if @net %>--net <%= @net %><% end %> \
+        <% if @lxc_conf_array %><% @lxc_conf_array.each do |lxcconf| %> \
+            --lxc-conf="<%=lxcconf%>"<% end %> \
+        <% end %> \
+        -m <%= @memory_limit %> \
+        <% if @links %><%= @links_array.map {|link| \
+            "--link #{link}" }.join(' ') %> \
+        <% end %> \
+        --name <%= @sanitised_title %> \
+        <%= @image %> \
+        <% if @extra_parameters %><% @extra_parameters_array.each do |param| %>  \
+            <%= param %> <% end %> \
+        <% end -%> \
+        <% if @command %> <%= @command %><% end %>
+ExecStop=-/usr/bin/<%= @docker_command %> stop <%= @sanitised_title %>
+
+[Install]
+WantedBy=multi-user.target
