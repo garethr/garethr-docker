@@ -10,7 +10,7 @@ class docker::install {
   validate_string($::kernelrelease)
   validate_bool($docker::use_upstream_package_source)
 
-  ensure_packages($docker::prerequired_packages)
+  ensure_packages($docker::prerequired_packages, {'ensure' => 'latest'})
 
   case $::osfamily {
     'Debian': {
