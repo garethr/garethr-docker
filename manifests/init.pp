@@ -30,6 +30,20 @@
 #   If you run your own package mirror, you may set this
 #   to false.
 #
+# [*pin_upstream_package_source*]
+#   Pin upstream package source; this option currently only has any effect on
+#   apt-based distributions.  Set to false to remove pinning on the upstream
+#   package repository.  See also "apt_source_pin_level".
+#   Defaults to true
+#
+# [*apt_source_pin_level*]
+#   What level to pin our source package repository to; this only is relevent
+#   if you're on an apt-based system (Debian, Ubuntu, etc) and
+#   $use_upstream_package_source is set to true.  Set this to false to disable
+#   pinning, and undef to ensure the apt preferences file apt::source uses to
+#   define pins is removed.
+#   Defaults to 10
+#
 # [*package_source_location*]
 #   If you're using an upstream package source, what is it's
 #   location. Defaults to https://get.docker.io/ubuntu on Debian
@@ -91,6 +105,8 @@ class docker(
   $tcp_bind                    = $docker::params::tcp_bind,
   $socket_bind                 = $docker::params::socket_bind,
   $use_upstream_package_source = $docker::params::use_upstream_package_source,
+  $pin_upstream_package_source = true,
+  $apt_source_pin_level        = 10,
   $package_source_location     = $docker::params::package_source_location,
   $service_state               = $docker::params::service_state,
   $service_enable              = $docker::params::service_enable,
@@ -114,6 +130,7 @@ class docker(
   validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', 'This module only works on Debian and Red Hat based systems.')
   validate_bool($manage_kernel)
   validate_bool($manage_package)
+  validate_bool($pin_upstream_package_source)
 
   class { 'docker::install': } ->
   class { 'docker::config': } ~>
