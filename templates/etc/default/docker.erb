@@ -7,11 +7,11 @@ DOCKER="/usr/bin/<%= @docker_command %>"
 
 # # If you need Docker to use an HTTP proxy, it can also be specified here.
 <% if @proxy -%>
-export http_proxy=<%= @proxy %>
-export https_proxy=<%= @proxy %>
+export http_proxy='<%= @proxy %>'
+export https_proxy='<%= @proxy %>'
 <% end -%>
 <% if @no_proxy -%>
-export no_proxy=<%= @no_proxy %>
+export no_proxy='<%= @no_proxy %>'
 <% end -%>
 
 # # This is also a handy place to tweak where Docker's temporary files go.
