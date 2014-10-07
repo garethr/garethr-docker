@@ -80,13 +80,13 @@ describe 'docker', :type => :class do
 
         context 'with proxy param' do
           let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
-          it { should contain_file(service_config_file).with_content(/export http_proxy=http:\/\/127.0.0.1:3128/) }
-          it { should contain_file(service_config_file).with_content(/export https_proxy=http:\/\/127.0.0.1:3128/) }
+          it { should contain_file(service_config_file).with_content(/export http_proxy='http:\/\/127.0.0.1:3128'/) }
+          it { should contain_file(service_config_file).with_content(/export https_proxy='http:\/\/127.0.0.1:3128'/) }
         end
 
         context 'with no_proxy param' do
           let(:params) { {'no_proxy' => '.github.com' } }
-          it { should contain_file(service_config_file).with_content(/export no_proxy=.github.com/) }
+          it { should contain_file(service_config_file).with_content(/export no_proxy='.github.com'/) }
         end
 
         context 'when given a specific tmp_dir' do
@@ -115,12 +115,12 @@ describe 'docker', :type => :class do
 
       context 'with proxy param' do
         let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
-        it { should contain_file(service_config_file).with_content(/export http_proxy=http:\/\/127.0.0.1:3128\nexport https_proxy=http:\/\/127.0.0.1:3128/) }
+        it { should contain_file(service_config_file).with_content(/export http_proxy='http:\/\/127.0.0.1:3128'\nexport https_proxy='http:\/\/127.0.0.1:3128'/) }
       end
 
       context 'with no_proxy param' do
         let(:params) { {'no_proxy' => '.github.com' } }
-        it { should contain_file(service_config_file).with_content(/export no_proxy=.github.com/) }
+        it { should contain_file(service_config_file).with_content(/export no_proxy='.github.com'/) }
       end
 
       context 'with execdriver param lxc' do
