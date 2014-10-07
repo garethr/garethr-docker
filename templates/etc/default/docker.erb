@@ -11,7 +11,7 @@ export http_proxy='<%= @proxy %>'
 export https_proxy='<%= @proxy %>'
 <% end -%>
 <% if @no_proxy -%>
-export no_proxy='<%= @no_proxy %>'
+export no_proxy='<%= Array(@no_proxy).join(',') %>'
 <% end -%>
 
 # # This is also a handy place to tweak where Docker's temporary files go.
