@@ -65,7 +65,12 @@ class docker::install {
       }
     }
     'RedHat': {
-      if versioncmp($::operatingsystemrelease, '6.5') < 0 {
+      if $::operatingsystem == 'Amazon' {
+        if versioncmp($::operatingsystemrelease, '3.10.37-47.135') < 0 {
+          fail('Docker needs Amazon version to be at least 3.10.37-47.135.')
+        }
+      }
+      elsif versioncmp($::operatingsystemrelease, '6.5') < 0 {
         fail('Docker needs RedHat/CentOS version to be at least 6.5.')
       }
 
@@ -76,11 +81,12 @@ class docker::install {
       } else {
         $dockerpackage = $docker::package_name
       }
-
-      if ($docker::use_upstream_package_source) {
-        include 'epel'
-        if $docker::manage_package {
-          Class['epel'] -> Package['docker']
+      if $::operatingsystem != 'Amazon' {
+        if ($docker::use_upstream_package_source) {
+          include 'epel'
+          if $docker::manage_package {
+            Class['epel'] -> Package['docker']
+          }
         }
       }
     }
