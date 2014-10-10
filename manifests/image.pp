@@ -50,14 +50,16 @@ define docker::image(
     }
   } elsif $ensure == 'latest' {
     exec { $image_install:
-      path    => ['/bin', '/usr/bin'],
-      timeout => 0,
+      environment => 'HOME=/root',
+      path        => ['/bin', '/usr/bin'],
+      timeout     => 0,
     }
   } else {
     exec { $image_install:
-      path    => ['/bin', '/usr/bin'],
-      unless  => $image_find,
-      timeout => 0,
+      environment => 'HOME=/root',
+      path        => ['/bin', '/usr/bin'],
+      unless      => $image_find,
+      timeout     => 0,
     }
   }
 }
