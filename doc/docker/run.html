@@ -1,0 +1,400 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Definedtype: docker::run
+  
+    &mdash; Documentation by YARD 0.8.7.4
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '../';
+  framesUrl = "../frames.html#!docker/run.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="../_index.html">Index (r)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../docker.html" title="docker (hostclass)">docker</a></span></span>
+     &raquo; 
+    <span class="title">run</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="puppet_manifest_list_link"
+        href="../puppet_manifest_list.html">
+      Puppet Manifest List
+    </a>
+  
+    <a class="full_list_link" id="puppet_plugin_list_link"
+        href="../puppet_plugin_list.html">
+      Puppet Plugin List
+    </a>
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="../method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="../file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Definedtype: docker::run
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+  
+    
+  
+    
+  
+  
+  
+    <dt class="r1 last">Defined in:</dt>
+    <dd class="r1 last">manifests/run.pp</dd>
+  
+</dl>
+<div class="clear"></div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<h2 id="label-Define%3A+docker%3Arun">Define: docker:run</h2>
+
+<p>A define which manages an upstart managed docker container</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><h2>Parameter Summary<small>(<a href="#" class="summary_toggle">collapse</a>)</small></h2>
+<ul class="summary">
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>image</strong>
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>command</strong>
+          
+            
+            => undef
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>memory_limit</strong>
+          
+            
+            => &#39;0b&#39;
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>ports</strong>
+          
+            
+            => [
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>expose</strong>
+          
+            
+            => [
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>volumes</strong>
+          
+            
+            => [
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>links</strong>
+          
+            
+            => [
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>use_name</strong>
+          
+            
+            => false
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>running</strong>
+          
+            
+            => true
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>volumes_from</strong>
+          
+            
+            => false
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>net</strong>
+          
+            
+            => &#39;bridge&#39;
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>username</strong>
+          
+            
+            => false
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>hostname</strong>
+          
+            
+            => false
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>env</strong>
+          
+            
+            => [
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>dns</strong>
+          
+            
+            => [
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>lxc_conf</strong>
+          
+            
+            => [
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>restart_service</strong>
+          
+            
+            => true
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>disable_network</strong>
+          
+            
+            => false
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>privileged</strong>
+          
+            
+            => false
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>extra_parameters</strong>
+          
+            
+            => undef
+          
+        </span>
+        
+      </a>
+    </li>
+  
+</ul>
+</div>
+
+    <div id="footer">
+  Generated on Fri Oct 10 12:18:39 2014 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.4 (ruby-2.1.1).
+</div>
+
+  </body>
+</html>

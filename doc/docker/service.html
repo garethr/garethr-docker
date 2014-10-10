@@ -1,0 +1,331 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Hostclass: docker::service
+  
+    &mdash; Documentation by YARD 0.8.7.4
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '../';
+  framesUrl = "../frames.html#!docker/service.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="../_index.html">Index (s)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../docker.html" title="docker (hostclass)">docker</a></span></span>
+     &raquo; 
+    <span class="title">service</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="puppet_manifest_list_link"
+        href="../puppet_manifest_list.html">
+      Puppet Manifest List
+    </a>
+  
+    <a class="full_list_link" id="puppet_plugin_list_link"
+        href="../puppet_plugin_list.html">
+      Puppet Plugin List
+    </a>
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="../method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="../file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Hostclass: docker::service
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+  
+    <dt class="r1 last">Defined in:</dt>
+    <dd class="r1 last">manifests/service.pp</dd>
+  
+</dl>
+<div class="clear"></div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<h2 id="label-Class%3A+docker%3A%3Aservice">Class: docker::service</h2>
+
+<p>Class to manage the docker service daemon</p>
+
+<h3 id="label-Parameters">Parameters</h3>
+<dl class="rdoc-list label-list"><dt><strong>tcp_bind</strong>
+<dd>
+<p>Which tcp port, if any, to bind the docker service to.</p>
+</dd><dt><strong>socket_bind</strong>
+<dd>
+<p>Which local unix socket to bind the docker service to.</p>
+</dd><dt><strong>socket_group</strong>
+<dd>
+<p>Which local unix socket to bind the docker service to.</p>
+</dd><dt><strong>root_dir</strong>
+<dd>
+<p>Specify a non-standard root directory for docker.</p>
+</dd><dt><strong>extra_parameters</strong>
+<dd>
+<p>Plain additional parameters to pass to the docker daemon</p>
+</dd></dl>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><h2>Parameter Summary<small>(<a href="#" class="summary_toggle">collapse</a>)</small></h2>
+<ul class="summary">
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>docker_command</strong>
+          
+            
+            => $docker::docker_command
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>service_name</strong>
+          
+            
+            => $docker::service_name
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>tcp_bind</strong>
+          
+            
+            => $docker::tcp_bind
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>socket_bind</strong>
+          
+            
+            => $docker::socket_bind
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>socket_group</strong>
+          
+            
+            => $docker::socket_group
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>service_state</strong>
+          
+            
+            => $docker::service_state
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>service_enable</strong>
+          
+            
+            => $docker::service_enable
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>root_dir</strong>
+          
+            
+            => $docker::root_dir
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>extra_parameters</strong>
+          
+            
+            => $docker::extra_parameters
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>proxy</strong>
+          
+            
+            => $docker::proxy
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>no_proxy</strong>
+          
+            
+            => $docker::no_proxy
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>execdriver</strong>
+          
+            
+            => $docker::execdriver
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>storage_driver</strong>
+          
+            
+            => $docker::storage_driver
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>tmp_dir</strong>
+          
+            
+            => $docker::tmp_dir
+          
+        </span>
+        
+      </a>
+    </li>
+  
+</ul>
+</div>
+
+    <div id="footer">
+  Generated on Fri Oct 10 12:18:39 2014 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.4 (ruby-2.1.1).
+</div>
+
+  </body>
+</html>

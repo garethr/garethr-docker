@@ -1,0 +1,245 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>
+  File: README
+  
+    &mdash; Documentation by YARD 0.8.7.4
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '';
+  framesUrl = "frames.html#!file.README.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="puppet_manifest_list_link"
+        href="puppet_manifest_list.html">
+      Puppet Manifest List
+    </a>
+  
+    <a class="full_list_link" id="puppet_plugin_list_link"
+        href="puppet_plugin_list.html">
+      Puppet Plugin List
+    </a>
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><div id='filecontents'><p>Puppet module for installing, configuring and managing
+<a href="https://github.com/dotcloud/docker">Docker</a> from the <a href="http://docs.docker.io/en/latest/installation/ubuntulinux/">official repository</a> on Ubuntu, from <a href="http://docs.docker.io/en/latest/installation/rhel/">EPEL on RedHat</a> based distributions or the <a href="http://docs.docker.com/installation/archlinux/">standard repositories</a> for Archlinux.</p>
+
+<p>This module is also available on the <a href="https://forge.puppetlabs.com/garethr/docker">Puppet
+Forge</a></p>
+
+<p><a href="https://forge.puppetlabs.com/garethr/docker"><img src="http://img.shields.io/puppetforge/v/garethr/docker.svg" alt="Puppet
+Forge"></a> <a href="http://travis-ci.org/garethr/garethr-docker"><img src="https://secure.travis-ci.org/garethr/garethr-docker.png" alt="Build
+Status"></a></p>
+
+<h2>Support</h2>
+
+<p>This module is currently tested on:</p>
+
+<ul>
+<li>Ubuntu 14.04</li>
+<li>Centos 6.5</li>
+<li>Ubuntu 12.04</li>
+<li>Archlinux</li>
+</ul>
+
+<p>It may work on other distros and other operating systems will be
+supported in the future.</p>
+
+<h2>Usage</h2>
+
+<p>The module includes a single class:</p>
+
+<pre class="code puppet"><code class="puppet">include &#39;docker&#39;
+</code></pre>
+
+<p>By default this sets up the docker hosted repository if necessary for your OS
+and installs the docker package and on Ubuntu, any required Kernel extensions.</p>
+
+<p>If you don&#39;t want this module to mess about with your Kernel then you can disabl
+this feature like so. It is only enabled (and supported) by default on Ubuntu:</p>
+
+<pre class="code puppet"><code class="puppet">class { &#39;docker&#39;:
+  manage_kernel =&gt; false,
+}
+</code></pre>
+
+<p>If you want to configure your package sources independently, inform this module
+to not auto-include upstream sources (This is already disabled on Archlinux
+as there is no further upstream):</p>
+
+<pre class="code puppet"><code class="puppet">class { &#39;docker&#39;:
+  use_upstream_package_source =&gt; false,
+}
+</code></pre>
+
+<p>By default the docker daemon will bind to a unix socket at
+/var/run/docker.sock. This can be changed, as well as binding to a tcp
+socket if required.</p>
+
+<pre class="code puppet"><code class="puppet">class { &#39;docker&#39;:
+  tcp_bind    =&gt; &#39;tcp://127.0.0.1:4243&#39;,
+  socket_bind =&gt; &#39;unix:///var/run/docker.sock&#39;,
+}
+</code></pre>
+
+<p>Unless specified this installs the latest version of docker from the docker inc
+repository on first run. However if you want to specify a specific version you
+can do so, unless you are using Archlinux which only supports the latest release:</p>
+
+<pre class="code puppet"><code class="puppet">class { &#39;docker&#39;:
+  version =&gt; &#39;0.5.5&#39;,
+}
+</code></pre>
+
+<p>And if you want to track the latest version you can do so:</p>
+
+<pre class="code puppet"><code class="puppet">class { &#39;docker&#39;:
+  version =&gt; &#39;latest&#39;,
+}
+</code></pre>
+
+<p>In some cases dns resolution won&#39;t work well in the container unless you give a dns server to the docker daemon like this:</p>
+
+<pre class="code puppet"><code class="puppet">class { &#39;docker&#39;:
+  dns =&gt; &#39;8.8.8.8&#39;,
+}
+</code></pre>
+
+<p>The class contains lots of other options, please see the inline code
+documentation for the full options.</p>
+
+<h3>Images</h3>
+
+<p>The next step is probably to install a docker image, for this we have a defined type which can be used like so:</p>
+
+<pre class="code puppet"><code class="puppet">docker::image { &#39;base&#39;: }
+</code></pre>
+
+<p>This is equivalent to running <code>docker pull base</code>. This is downloading a large binary so on first run can take a while. For that reason this define turns off the default 5 minute timeout for exec. Takes an optional parameter for installing image tags that is the equivalent to running <code>docker pull -t=&quot;precise&quot; ubuntu</code>:  </p>
+
+<pre class="code puppet"><code class="puppet">docker::image { &#39;ubuntu&#39;:
+  image_tag =&gt; &#39;precise&#39;
+}
+</code></pre>
+
+<p>Note: images will only install if an image of that name does not already exist.  </p>
+
+<p>You can also remove images you no longer need with:  </p>
+
+<pre class="code puppet"><code class="puppet">docker::image { &#39;base&#39;:
+  ensure =&gt; &#39;absent&#39;
+}
+
+docker::image { &#39;ubuntu&#39;:
+  ensure    =&gt; &#39;absent&#39;,
+  image_tag =&gt; &#39;precise&#39;
+}
+</code></pre>
+
+<h3>Containers</h3>
+
+<p>Now you have an image you can run commands within a container managed by docker.</p>
+
+<pre class="code puppet"><code class="puppet">docker::run { &#39;helloworld&#39;:
+  image   =&gt; &#39;base&#39;,
+  command =&gt; &#39;/bin/sh -c &quot;while true; do echo hello world; sleep 1; done&quot;&#39;,
+}
+</code></pre>
+
+<p>This is equivalent to running the following under upstart:</p>
+
+<pre class="code ruby"><code class="ruby">docker run -d base /bin/sh -c &quot;while true; do echo hello world; sleep 1; done&quot;
+</code></pre>
+
+<p>Run also contains a number of optional parameters:</p>
+
+<pre class="code puppet"><code class="puppet">docker::run { &#39;helloworld&#39;:
+  image           =&gt; &#39;base&#39;,
+  command         =&gt; &#39;/bin/sh -c &quot;while true; do echo hello world; sleep 1; done&quot;&#39;,
+  ports           =&gt; [&#39;4444&#39;, &#39;4555&#39;],
+  expose          =&gt; [&#39;4666&#39;, &#39;4777&#39;],
+  links           =&gt; [&#39;mysql:db&#39;],
+  use_name        =&gt; true,
+  volumes         =&gt; [&#39;/var/lib/couchdb&#39;, &#39;/var/log&#39;],
+  volumes_from    =&gt; &#39;6446ea52fbc9&#39;,
+  memory_limit    =&gt; 10m, # (format: &lt;number&gt;&lt;unit&gt;, where unit = b, k, m or g)
+  username        =&gt; &#39;example&#39;,
+  hostname        =&gt; &#39;example.com&#39;,
+  env             =&gt; [&#39;FOO=BAR&#39;, &#39;FOO2=BAR2&#39;],
+  dns             =&gt; [&#39;8.8.8.8&#39;, &#39;8.8.4.4&#39;],
+  restart_service =&gt; true,
+  privileged      =&gt; false,
+  pull_on_start   =&gt; true,
+}
+</code></pre>
+
+<p>Ports, expose, env, dns and volumes can be set with either a single string or as above with an array of values.
+Specifying pull_on_start will pull the image before each time it is started</p>
+
+<p>To use an image tag just append the tag name to the image name separated by a semicolon:</p>
+
+<pre class="code puppet"><code class="puppet">docker::run { &#39;helloworld&#39;:
+  image   =&gt; &#39;ubuntu:precise&#39;,
+  command =&gt; &#39;/bin/sh -c &quot;while true; do echo hello world; sleep 1; done&quot;&#39;,
+}
+</code></pre>
+</div></div>
+
+    <div id="footer">
+  Generated on Fri Oct 10 12:18:38 2014 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.4 (ruby-2.1.1).
+</div>
+
+  </body>
+</html>

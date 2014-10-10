@@ -2,3 +2,4 @@ pkg
 spec/fixtures
 .bundle/
 .vagrant
+.yardoc

@@ -1,0 +1,529 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Hostclass: docker
+  
+    &mdash; Documentation by YARD 0.8.7.4
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '';
+  framesUrl = "frames.html#!docker.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="_index.html">Index (d)</a> &raquo;
+    
+    
+    <span class="title">docker</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="puppet_manifest_list_link"
+        href="puppet_manifest_list.html">
+      Puppet Manifest List
+    </a>
+  
+    <a class="full_list_link" id="puppet_plugin_list_link"
+        href="puppet_plugin_list.html">
+      Puppet Plugin List
+    </a>
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Hostclass: docker
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+    <dt class="r1">Inherits:</dt>
+    <dd class="r1">
+      <span class="inheritName"><span class='object_link'><a href="docker/params.html" title="docker::params (hostclass)">docker::params</a></span></span>
+      <ul class="fullTree">
+        
+          <li class="next"><span class='object_link'><a href="docker/params.html" title="docker::params (hostclass)">docker::params</a></span></li>
+        
+          <li class="next">docker</li>
+        
+      </ul>
+      <a href="#" class="inheritanceTree">show all</a>
+    </dd>
+    
+  
+  
+    <dt class="r2 last">Defined in:</dt>
+    <dd class="r2 last">manifests/init.pp</dd>
+  
+</dl>
+<div class="clear"></div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<h2 id="label-Class%3A+docker">Class: docker</h2>
+
+<p>Module to install an up-to-date version of Docker from package.</p>
+
+<h3 id="label-Parameters">Parameters</h3>
+<dl class="rdoc-list label-list"><dt><strong>version</strong>
+<dd>
+<p>The package version to install, used to set the package name. Defaults to
+undefined</p>
+</dd><dt><strong>ensure</strong>
+<dd>
+<p>Passed to the docker package. Defaults to present</p>
+</dd><dt><strong>prerequired_packages</strong>
+<dd>
+<p>An array of additional packages that need to be installed to support
+docker. Defaults change depending on the operating system.</p>
+</dd><dt><strong>tcp_bind</strong>
+<dd>
+<p>The tcp socket to bind to in the format tcp://127.0.0.1:4243 Defaults to
+undefined</p>
+</dd><dt><strong>socket_bind</strong>
+<dd>
+<p>The unix socket to bind to. Defaults to unix:///var/run/docker.sock.</p>
+</dd><dt><strong>use_upstream_package_source</strong>
+<dd>
+<p>Whether or not to use the upstream package source. If you run your own
+package mirror, you may set this to false.</p>
+</dd><dt><strong>package_source_location</strong>
+<dd>
+<p>If you&#39;re using an upstream package source, what is it&#39;s location.
+Defaults to <a href="https://get.docker.io/ubuntu">get.docker.io/ubuntu</a>
+on Debian</p>
+</dd><dt><strong>service_state</strong>
+<dd>
+<p>Whether you want to docker daemon to start up Defaults to running</p>
+</dd><dt><strong>service_enable</strong>
+<dd>
+<p>Whether you want to docker daemon to start up at boot Defaults to true</p>
+</dd><dt><strong>root_dir</strong>
+<dd>
+<p>Custom root directory for containers Defaults to undefined</p>
+</dd><dt><strong>manage_kernel</strong>
+<dd>
+<p>Attempt to install the correct Kernel required by docker Defaults to true</p>
+</dd><dt><strong>dns</strong>
+<dd>
+<p>Custom dns server address Defaults to undefined</p>
+</dd><dt><strong>socket_group</strong>
+<dd>
+<p>Group ownership of the unix control socket. Defaults to undefined</p>
+</dd><dt><strong>extra_parameters</strong>
+<dd>
+<p>Any extra parameters that should be passed to the docker daemon. Defaults
+to undefined</p>
+</dd><dt><strong>proxy</strong>
+<dd>
+<p>Will set the http_proxy and https_proxy env variables in
+/etc/sysconfig/docker (redhat/centos) or /etc/default/docker (debian)</p>
+</dd><dt><strong>no_proxy</strong>
+<dd>
+<p>Will set the no_proxy variable in /etc/sysconfig/docker (redhat/centos) or
+/etc/default/docker (debian)</p>
+</dd><dt><strong>manage_package</strong>
+<dd>
+<p>Won&#39;t install or define the docker package, useful if you want to use
+your own package Defaults to true</p>
+</dd><dt><strong>package_name</strong>
+<dd>
+<p>Specify custom package name Default is set on a per system basis in
+docker::params</p>
+</dd><dt><strong>service_name</strong>
+<dd>
+<p>Specify custom service name Default is set on a per system basis in
+docker::params</p>
+</dd><dt><strong>docker_command</strong>
+<dd>
+<p>Specify a custom docker command name Default is set on a per system basis
+in docker::params</p>
+</dd></dl>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><h2>Parameter Summary<small>(<a href="#" class="summary_toggle">collapse</a>)</small></h2>
+<ul class="summary">
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>version</strong>
+          
+            
+            => $docker::params::version
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>ensure</strong>
+          
+            
+            => $docker::params::ensure
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>prerequired_packages</strong>
+          
+            
+            => $docker::params::prerequired_packages
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>tcp_bind</strong>
+          
+            
+            => $docker::params::tcp_bind
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>socket_bind</strong>
+          
+            
+            => $docker::params::socket_bind
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>use_upstream_package_source</strong>
+          
+            
+            => $docker::params::use_upstream_package_source
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>package_source_location</strong>
+          
+            
+            => $docker::params::package_source_location
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>service_state</strong>
+          
+            
+            => $docker::params::service_state
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>service_enable</strong>
+          
+            
+            => $docker::params::service_enable
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>root_dir</strong>
+          
+            
+            => $docker::params::root_dir
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>tmp_dir</strong>
+          
+            
+            => $docker::params::tmp_dir
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>manage_kernel</strong>
+          
+            
+            => $docker::params::manage_kernel
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>dns</strong>
+          
+            
+            => $docker::params::dns
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>socket_group</strong>
+          
+            
+            => $docker::params::socket_group
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>extra_parameters</strong>
+          
+            
+            => undef
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>proxy</strong>
+          
+            
+            => $docker::params::proxy
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>no_proxy</strong>
+          
+            
+            => $docker::params::no_proxy
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>storage_driver</strong>
+          
+            
+            => $docker::params::storage_driver
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>execdriver</strong>
+          
+            
+            => $docker::params::execdriver
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>manage_package</strong>
+          
+            
+            => $docker::params::manage_package
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>package_name</strong>
+          
+            
+            => $docker::params::package_name
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>service_name</strong>
+          
+            
+            => $docker::params::service_name
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>docker_command</strong>
+          
+            
+            => $docker::params::docker_command
+          
+        </span>
+        
+      </a>
+    </li>
+  
+</ul>
+</div>
+
+    <div id="footer">
+  Generated on Fri Oct 10 12:18:39 2014 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.4 (ruby-2.1.1).
+</div>
+
+  </body>
+</html>
