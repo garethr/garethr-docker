@@ -1,21 +1,20 @@
 Puppet module for installing, configuring and managing
 [Docker](https://github.com/dotcloud/docker) from the [official repository](http://docs.docker.io/en/latest/installation/ubuntulinux/) on Ubuntu, from [EPEL on RedHat](http://docs.docker.io/en/latest/installation/rhel/) based distributions or the [standard repositories](http://docs.docker.com/installation/archlinux/) for Archlinux.
 
-This module is also available on the [Puppet
-Forge](https://forge.puppetlabs.com/garethr/docker)
-
 [![Puppet
 Forge](http://img.shields.io/puppetforge/v/garethr/docker.svg)](https://forge.puppetlabs.com/garethr/docker) [![Build
-Status](https://secure.travis-ci.org/garethr/garethr-docker.png)](http://travis-ci.org/garethr/garethr-docker)
+Status](https://secure.travis-ci.org/garethr/garethr-docker.png)](http://travis-ci.org/garethr/garethr-docker) [![Documentation
+Status](http://img.shields.io/badge/docs-puppet--strings-lightgrey.svg)](httos://garethr.github.io/garethr-docker)
 
 ## Support
 
 This module is currently tested on:
 
+* Ubuntu 12.04
 * Ubuntu 14.04
 * Centos 6.5
-* Ubuntu 12.04
 * Archlinux
+* Amazon Linux
 
 It may work on other distros and other operating systems will be
 supported in the future.
