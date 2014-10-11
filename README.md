@@ -30,7 +30,7 @@ include 'docker'
 By default this sets up the docker hosted repository if necessary for your OS
 and installs the docker package and on Ubuntu, any required Kernel extensions.
 
-If you don't want this module to mess about with your Kernel then you can disabl
+If you don't want this module to mess about with your Kernel then you can disable
 this feature like so. It is only enabled (and supported) by default on Ubuntu:
 
 ```puppet
@@ -92,7 +92,7 @@ documentation for the full options.
 
 ### Images
 
-The next step is probably to install a docker image, for this we have a defined type which can be used like so:
+The next step is probably to install a docker image; for this we have a defined type which can be used like so:
 
 ```puppet
 docker::image { 'base': }
