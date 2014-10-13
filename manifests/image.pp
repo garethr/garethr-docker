@@ -36,19 +36,21 @@ define docker::image(
     $image_force   = ''
   }
 
-  if $docker_file {
-    $docker_add_image_command = "${docker_command} build ${docker_file} -t"
-  } else{
-    $docker_add_image_command = "${docker_command} pull"
-  }
-
 
   if $image_tag {
-    $image_install = "${$docker_add_image_command} ${image}:${image_tag}"
+    if $docker_file{
+      $image_install = "${docker_command} build -t ${image}:${image_tag} - < ${docker_file} "
+    } else{
+      $image_install = "${docker_command} pull ${image}:${image_tag}"
+    }
     $image_remove  = "${docker_command} rmi ${image_force}${image}:${image_tag}"
     $image_find    = "${docker_command} images | grep ^${image} | awk '{ print \$2 }' | grep ${image_tag}"
   } else {
-    $image_install = "${$docker_add_image_command} ${image}"
+    if $docker_file{
+      $image_install = "${docker_command} build -t ${image}:${image_tag} - < ${docker_file} "
+    } else{
+      $image_install = "${docker_command} pull ${image}:${image_tag}"
+    }
     $image_remove  = "${docker_command} rmi ${image_force}${image}"
     $image_find    = "${docker_command} images | grep ^${image}"
   }
