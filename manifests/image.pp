@@ -14,11 +14,15 @@
 # [*image_tag*]
 #   If you want a specific tag of the image to be installed
 #
+# [*docker_file*]
+#   If you want to add a docker image from specific docker file
+#
 define docker::image(
   $ensure    = 'present',
   $image     = $title,
   $image_tag = undef,
   $force     = false,
+  $docker_file = undef
 ) {
   include docker::params
   $docker_command = $docker::params::docker_command
@@ -32,12 +36,19 @@ define docker::image(
     $image_force   = ''
   }
 
+  if $docker_file {
+    $docker_add_image_command = "${docker_command} build ${docker_file} -t"
+  } else{
+    $docker_add_image_command = "${docker_command} pull"
+  }
+
+
   if $image_tag {
-    $image_install = "${docker_command} pull ${image}:${image_tag}"
+    $image_install = "${$docker_add_image_command} ${image}:${image_tag}"
     $image_remove  = "${docker_command} rmi ${image_force}${image}:${image_tag}"
     $image_find    = "${docker_command} images | grep ^${image} | awk '{ print \$2 }' | grep ${image_tag}"
   } else {
-    $image_install = "${docker_command} pull ${image}"
+    $image_install = "${$docker_add_image_command} ${image}"
     $image_remove  = "${docker_command} rmi ${image_force}${image}"
     $image_find    = "${docker_command} images | grep ^${image}"
   }
