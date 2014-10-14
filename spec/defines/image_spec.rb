@@ -24,9 +24,26 @@ describe 'docker::image', :type => :define do
     it { should contain_exec('docker pull base') }
   end
 
+  context 'with docker_file => Dockerfile' do
+    let(:params) { { 'docker_file' => 'Dockerfile' }}
+    it { should contain_exec('docker build -t base - < Dockerfile') }
+  end
+
+
+  context 'with ensure => present and docker_file => Dockerfile' do
+    let(:params) { { 'ensure' => 'present', 'docker_file' => 'Dockerfile' } }
+    it { should contain_exec('docker build -t base - < Dockerfile') }
+  end
+
+
   context 'with ensure => present and image_tag => precise' do
     let(:params) { { 'ensure' => 'present', 'image_tag' => 'precise' } }
     it { should contain_exec('docker pull base:precise') }
+  end
+
+  context 'with ensure => present and image_tag => precise and docker_file => Dockerfile' do
+    let(:params) { { 'ensure' => 'present', 'image_tag' => 'precise', 'docker_file' => 'Dockerfile' } }
+    it { should contain_exec('docker build -t base:precise - < Dockerfile') }
   end
 
   context 'with ensure => latest' do

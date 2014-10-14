@@ -108,6 +108,14 @@ docker::image { 'ubuntu':
 
 Note: images will only install if an image of that name does not already exist.  
 
+A images can also be added/build from a dockerfile with the `docker_file` property, this equivalent to running `docker build -t ubuntu - < /tmp/Dockerfile`
+
+```puppet
+docker::image { 'ubuntu':
+  docker_file => '/tmp/Dockerfile'
+}
+```
+
 You can also remove images you no longer need with:  
 
 ```puppet
