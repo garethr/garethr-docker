@@ -30,6 +30,7 @@ class docker::params {
           $package_name   = $package_name_default
           $service_name   = $service_name_default
           $docker_command = $docker_command_default
+          $service_provider = 'upstart'
         }
         default: {
           $package_name   = 'docker.io'
