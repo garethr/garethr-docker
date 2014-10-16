@@ -7,8 +7,7 @@ After=docker.service
 Requires=docker.service
 
 [Service]
-<%- if @user -%>User=<%= @username %><%- end -%>
-<%- if @user -%>User=<%= @username %><%- end -%>
+<%- if @username -%>User=<%= @username %><%- end -%>
 TimeoutStartSec=0
 ExecStartPre=-/usr/bin/<%= @docker_command %> kill <%= @sanitised_title %>
 ExecStartPre=-/usr/bin/<%= @docker_command %> rm <%= @sanitised_title %>
