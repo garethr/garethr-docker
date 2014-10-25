@@ -69,6 +69,11 @@ describe 'docker', :type => :class do
           it { should contain_file('/etc/default/docker').with_content(/export TMPDIR="\/bigtmp"/) }
         end
 
+        context 'with custom service_name' do
+          let(:params) {{ 'service_name' => 'docker.io' }}
+          it { should contain_file('/etc/default/docker.io') }
+        end
+
       end
 
       if osfamily == 'RedHat'
