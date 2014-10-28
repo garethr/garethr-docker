@@ -79,11 +79,11 @@ start() {
             "--link #{link}" }.join(' ') %> \
         <% end %> \
         <% if @use_name %>--name <%= @name %><% end %> \
-        <%= @image %> \
         <% if @extra_parameters %><% @extra_parameters_array.each do |param| %>  \
             <%= param %> <% end %> \
         <% end -%> \
-        <% if @command %> <%= @command %><% end %>
+        <%= @image %> \
+       <% if @command %> <%= @command %><% end %>
     retval=$?
     echo
     if [ $retval -eq 0 ]; then
