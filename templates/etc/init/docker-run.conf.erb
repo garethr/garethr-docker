@@ -13,7 +13,7 @@ respawn limit 5 20
 <% if @use_name %>
 script
 <%= @docker_command %> inspect <%= @name %> && <%= @docker_command %> start -a -i <%= @name %>
-  <%= @docker_command %> inspect <%= @name %> || <%= @docker_command %> run --cidfile=/var/run/docker-<%= @title %>.cid \
+  <%= @docker_command %> inspect <%= @name %> || <%= @docker_command %> run --cidfile=/var/run/docker-<%= @sanitised_title %>.cid \
     <% if @username %>-u '<%= @username %>' <% end %> \
     <% if @hostname %>-h '<%= @hostname %>'<% end %> \
     <% if @disable_network %>-n false<% end %> \
@@ -48,11 +48,11 @@ script
     <% end -%> \
     <%= @image %> \
     <% if @command %> <%= @command %><% end %> &&
-  exec <%= @docker_command %> wait "$(cat /var/run/docker-<%= @title %>.cid)"
+  exec <%= @docker_command %> wait "$(cat /var/run/docker-<%= @sanitised_title %>.cid)"
 end script
 <% else %>
 script
-  <%= @docker_command %> run --cidfile=/var/run/docker-<%= @title %>.cid \
+  <%= @docker_command %> run --cidfile=/var/run/docker-<%= @sanitised_title %>.cid \
     <% if @username %>-u '<%= @username %>' <% end %> \
     <% if @hostname %>-h '<%= @hostname %>'<% end %> \
     <% if @disable_network %>-n false<% end %> \
@@ -87,13 +87,13 @@ script
     <% end -%> \
     <%= @image %> \
     <% if @command %> <%= @command %><% end %> &&
-  exec <%= @docker_command %> wait "$(cat /var/run/docker-<%= @title %>.cid)"
+  exec <%= @docker_command %> wait "$(cat /var/run/docker-<%= @sanitised_title %>.cid)"
 end script
 <% end %>
 
 post-stop script
-if [ -e "/var/run/docker-<%= @title %>.cid" ]; then
-  <%= @docker_command %> kill "$(cat /var/run/docker-<%= @title %>.cid)" && \
-    rm "/var/run/docker-<%= @title %>.cid"
+if [ -e "/var/run/docker-<%= @sanitised_title %>.cid" ]; then
+  <%= @docker_command %> kill "$(cat /var/run/docker-<%= @sanitised_title %>.cid)" && \
+    rm "/var/run/docker-<%= @sanitised_title %>.cid"
 fi
 end script
