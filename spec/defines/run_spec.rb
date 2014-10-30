@@ -91,6 +91,12 @@ require 'spec_helper'
       it { should contain_file(initscript).with_content(/--volumes-from 6446ea52fbc9/) }
     end
 
+    context 'when connecting to several shared data volumes' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'volumes_from' => ['sample-linked-container-1', 'sample-linked-container-2']} }
+      it { should contain_file(initscript).with_content(/--volumes-from sample-linked-container-1/) }
+      it { should contain_file(initscript).with_content(/--volumes-from sample-linked-container-2/) }
+    end
+
     context 'when passing several port numbers' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'ports' => ['4444', '4555']} }
       it { should contain_file(initscript).with_content(/-p 4444/).with_content(/-p 4555/) }
