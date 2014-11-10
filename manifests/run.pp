@@ -56,7 +56,7 @@ define docker::run(
   $lxc_conf_array = any2array($lxc_conf)
   $extra_parameters_array = any2array($extra_parameters)
 
-  $sanitised_title = regsubst($title, '[^0-9A-Za-z.\-]', '-')
+  $sanitised_title = regsubst($title, '[^0-9A-Za-z.\-]', '-', 'G')
 
   $provider = $::operatingsystem ? {
     'Ubuntu' => 'upstart',
