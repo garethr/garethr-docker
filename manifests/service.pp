@@ -19,6 +19,8 @@
 #   Plain additional parameters to pass to the docker daemon
 #
 class docker::service (
+  $docker_command       = $docker::docker_command,
+  $service_name         = $docker::service_name,
   $tcp_bind             = $docker::tcp_bind,
   $socket_bind          = $docker::socket_bind,
   $socket_group         = $docker::socket_group,
@@ -30,6 +32,7 @@ class docker::service (
   $no_proxy             = $docker::no_proxy,
   $execdriver           = $docker::execdriver,
   $storage_driver       = $docker::storage_driver,
+  $tmp_dir              = $docker::tmp_dir,
 ){
   $extra_parameters_array = any2array($extra_parameters)
 
@@ -38,7 +41,7 @@ class docker::service (
       $hasstatus     = false
       $hasrestart    = true
 
-      file { '/etc/default/docker':
+      file { "/etc/default/${service_name}":
         ensure  => present,
         force   => true,
         content => template('docker/etc/default/docker.erb'),
@@ -56,8 +59,28 @@ class docker::service (
         notify  => Service['docker'],
       }
     }
+    'Archlinux': {
+      $hasstatus  = true
+      $hasrestart = true
+
+      file {
+        '/etc/systemd/system/docker.service.d':
+          ensure => directory;
+
+        '/etc/systemd/system/docker.service.d/service-overrides.conf':
+          ensure => present,
+          source => 'puppet:///modules/docker/service-overrides-archlinux.conf',
+          notify => Exec['docker-systemd-reload'];
+
+        '/etc/conf.d/docker':
+          ensure  => present,
+          force   => true,
+          content => template('docker/etc/conf.d/docker.erb'),
+          notify  => Service['docker'];
+      }
+    }
     default: {
-      fail('Docker needs a RedHat or Debian based system.')
+      fail('Docker needs a Debian, RedHat or Archlinux based system.')
     }
   }
 
@@ -72,6 +95,7 @@ class docker::service (
 
   service { 'docker':
     ensure     => $service_state,
+    name       => $service_name,
     enable     => $service_enable,
     hasstatus  => $hasstatus,
     hasrestart => $hasrestart,

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-['Debian', 'RedHat'].each do |osfamily|
+['Debian', 'RedHat', 'Archlinux'].each do |osfamily|
 
   describe 'docker::run', :type => :define do
     let(:facts) { {:osfamily => osfamily} }
@@ -8,17 +8,22 @@ require 'spec_helper'
 
     if osfamily == 'Debian'
       initscript = '/etc/init/docker-sample.conf'
+      command = 'docker.io'
+    elsif osfamily == 'Archlinux'
+      initscript = '/etc/systemd/system/docker-sample.service'
+      command = 'docker'
     else
       initscript = '/etc/init.d/docker-sample'
+      command = 'docker'
     end
 
     context 'passing the required params' do
       let(:params) { {'command' => 'command', 'image' => 'base'} }
-      it { should contain_file(initscript).with_content(/docker run/).with_content(/base/) }
-      it { should contain_file(initscript).with_content(/docker run/).with_content(/command/) }
+      it { should contain_file(initscript).with_content(/#{command} run/).with_content(/base/) }
+      it { should contain_file(initscript).with_content(/#{command} run/).with_content(/command/) }
       it { should contain_service('docker-sample') }
       if (osfamily == 'Debian')
-        it { should contain_service('docker-sample').with_hasrestart('false') }  
+        it { should contain_service('docker-sample').with_hasrestart('false') }
       end
 
       ['p', 'dns', 'u', 'v', 'e', 'n', 'volumes-from', 'name'].each do |search|
@@ -42,8 +47,8 @@ require 'spec_helper'
     end
 
     context 'when passing a memory limit in bytes' do
-      let(:params) { {'command' => 'command', 'image' => 'base', 'memory_limit' => '1000'} }
-      it { should contain_file(initscript).with_content(/-m 1000/) }
+      let(:params) { {'command' => 'command', 'image' => 'base', 'memory_limit' => '1000b'} }
+      it { should contain_file(initscript).with_content(/-m 1000b/) }
     end
 
     context 'when passing a links option' do
@@ -76,14 +81,24 @@ require 'spec_helper'
       it { should contain_file(initscript).with_content(/-p 4444/) }
     end
 
+    context 'when passing a port to expose' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'expose' => '4666'} }
+      it { should contain_file(initscript).with_content(/--expose=4666/) }
+    end
+
     context 'when connecting to shared data volumes' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'volumes_from' => '6446ea52fbc9'} }
       it { should contain_file(initscript).with_content(/--volumes-from 6446ea52fbc9/) }
     end
 
-    context 'when passing serveral port numbers' do
+    context 'when passing several port numbers' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'ports' => ['4444', '4555']} }
       it { should contain_file(initscript).with_content(/-p 4444/).with_content(/-p 4555/) }
+    end
+
+    context 'when passing several ports to expose' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'expose' => ['4666', '4777']} }
+      it { should contain_file(initscript).with_content(/--expose=4666/).with_content(/--expose=4777/) }
     end
 
     context 'when passing serveral environment variables' do
@@ -116,6 +131,15 @@ require 'spec_helper'
       it { should contain_file(initscript).with_content(/--privileged/) }
     end
 
+    context 'when passing serveral extra parameters' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'extra_parameters' => ['--rm', '-w /tmp']} }
+      it { should contain_file(initscript).with_content(/--rm/).with_content(/-w \/tmp/) }
+    end
+
+    context 'when passing an extra parameter' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'extra_parameters' => '-c 4'} }
+      it { should contain_file(initscript).with_content(/-c 4/) }
+    end
 
     context 'when passing a data volume' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'volumes' => '/var/log'} }
@@ -139,6 +163,8 @@ require 'spec_helper'
 
       if osfamily == 'Debian'
         new_initscript = '/etc/init/docker-this-that.conf'
+      elsif osfamily == 'Archlinux'
+        new_initscript = '/etc/systemd/system/docker-this-that.service'
       else
         new_initscript = '/etc/init.d/docker-this-that'
       end
@@ -178,6 +204,16 @@ require 'spec_helper'
     context 'with an invalid memory value' do
       let(:title) { 'with spaces' }
       let(:params) { {'command' => 'command', 'image' => 'base', 'memory' => 'not a number'} }
+      it do
+        expect {
+          should contain_service('docker-sample')
+        }.to raise_error(Puppet::Error)
+      end
+    end
+
+    context 'with a missing memory unit' do
+      let(:title) { 'with spaces' }
+      let(:params) { {'command' => 'command', 'image' => 'base', 'memory' => '10240'} }
       it do
         expect {
           should contain_service('docker-sample')

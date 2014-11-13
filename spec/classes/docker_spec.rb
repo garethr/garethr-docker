@@ -2,15 +2,16 @@ require 'spec_helper'
 
 describe 'docker', :type => :class do
 
-  ['Debian', 'RedHat'].each do |osfamily|
+  ['Debian', 'RedHat', 'Archlinux'].each do |osfamily|
     context "on #{osfamily}" do
       if osfamily == 'Debian'
         let(:facts) { {
-          :osfamily        => osfamily,
-          :operatingsystem => 'Ubuntu',
-          :lsbdistid       => 'debian',
-          :lsbdistcodename => 'maverick',
-          :kernelrelease   => '3.8.0-29-generic'
+          :osfamily               => osfamily,
+          :operatingsystem        => 'Ubuntu',
+          :lsbdistid              => 'Ubuntu',
+          :lsbdistcodename        => 'maverick',
+          :kernelrelease          => '3.8.0-29-generic',
+          :operatingsystemrelease => '10.04',
         } }
         service_config_file = '/etc/default/docker'
 
@@ -29,11 +30,24 @@ describe 'docker', :type => :class do
         it { should contain_package('apt-transport-https').that_comes_before('Package[docker]') }
         it { should contain_package('docker').with_name('lxc-docker').with_ensure('present') }
         it { should contain_apt__source('docker').with_location('https://get.docker.io/ubuntu') }
-        it { should contain_file('/etc/init.d/docker').with_ensure('absent') }
+        it { should contain_file('/etc/init.d/docker').with_ensure('link').with_target('/lib/init/upstart-job') }
 
         context 'with a custom version' do
           let(:params) { {'version' => '0.5.5' } }
           it { should contain_package('docker').with_name('lxc-docker-0.5.5').with_ensure('present') }
+        end
+
+        context 'with a custom package name' do
+          let(:params) { {'package_name' => 'docker-custom-pkg-name' } }
+          it { should contain_package('docker').with_name('docker-custom-pkg-name').with_ensure('present') }
+        end
+
+        context 'with a custom package name and version' do
+          let(:params) { {
+             'version'      => '0.5.5',
+             'package_name' => 'docker-custom-pkg-name',
+          } }
+          it { should contain_package('docker').with_name('docker-custom-pkg-name-0.5.5').with_ensure('present') }
         end
 
         context 'when not managing the package' do
@@ -41,10 +55,16 @@ describe 'docker', :type => :class do
           it { should_not contain_package('docker') }
         end
 
+        context 'It should accept custom prerequired_packages' do
+          let(:params) { {'prerequired_packages' => [ 'test_package' ],
+                          'manage_package'       => false,  } }
+          it { should contain_package('test_package').with_ensure('present') }
+        end
+
         context 'with no upstream package source' do
           let(:params) { {'use_upstream_package_source' => false } }
           it { should_not contain_apt__source('docker') }
-          it { should contain_package('docker').with_name('docker.io') }
+          it { should contain_package('docker').with_name('lxc-docker') }
         end
 
         context 'with no upstream package source' do
@@ -52,6 +72,16 @@ describe 'docker', :type => :class do
           it { should_not contain_apt__source('docker') }
           it { should_not contain_class('epel') }
           it { should contain_package('docker') }
+        end
+
+        context 'when given a specific tmp_dir' do
+          let(:params) {{ 'tmp_dir' => '/bigtmp' }}
+          it { should contain_file('/etc/default/docker').with_content(/export TMPDIR="\/bigtmp"/) }
+        end
+
+        context 'with custom service_name' do
+          let(:params) {{ 'service_name' => 'docker.io' }}
+          it { should contain_file('/etc/default/docker.io') }
         end
 
       end
@@ -65,14 +95,27 @@ describe 'docker', :type => :class do
 
         context 'with proxy param' do
           let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
-          it { should contain_file(service_config_file).with_content(/export http_proxy=http:\/\/127.0.0.1:3128/) }
-          it { should contain_file(service_config_file).with_content(/export https_proxy=http:\/\/127.0.0.1:3128/) }
+          it { should contain_file(service_config_file).with_content(/export http_proxy='http:\/\/127.0.0.1:3128'/) }
+          it { should contain_file(service_config_file).with_content(/export https_proxy='http:\/\/127.0.0.1:3128'/) }
         end
 
         context 'with no_proxy param' do
           let(:params) { {'no_proxy' => '.github.com' } }
-          it { should contain_file(service_config_file).with_content(/export no_proxy=.github.com/) }
+          it { should contain_file(service_config_file).with_content(/export no_proxy='.github.com'/) }
         end
+
+        context 'when given a specific tmp_dir' do
+          let(:params) {{ 'tmp_dir' => '/bigtmp' }}
+          it { should contain_file('/etc/sysconfig/docker').with_content(/export TMPDIR="\/bigtmp"/) }
+        end
+
+      end
+
+      if osfamily == 'Archlinux'
+        let(:facts) { {
+          :osfamily => osfamily,
+        } }
+        service_config_file = '/etc/conf.d/docker'
       end
 
       it { should compile.with_all_deps }
@@ -80,14 +123,19 @@ describe 'docker', :type => :class do
       it { should contain_class('docker::service').that_subscribes_to('docker::config') }
       it { should contain_class('docker::config') }
 
+      context 'with a specific docker command' do
+        let(:params) {{ 'docker_command' => 'docker.io' }}
+        it { should contain_file(service_config_file).with_content(/docker.io/) }
+      end
+
       context 'with proxy param' do
         let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
-        it { should contain_file(service_config_file).with_content(/export http_proxy=http:\/\/127.0.0.1:3128\nexport https_proxy=http:\/\/127.0.0.1:3128/) }
+        it { should contain_file(service_config_file).with_content(/export http_proxy='http:\/\/127.0.0.1:3128'\nexport https_proxy='http:\/\/127.0.0.1:3128'/) }
       end
 
       context 'with no_proxy param' do
         let(:params) { {'no_proxy' => '.github.com' } }
-        it { should contain_file(service_config_file).with_content(/export no_proxy=.github.com/) }
+        it { should contain_file(service_config_file).with_content(/export no_proxy='.github.com'/) }
       end
 
       context 'with execdriver param lxc' do
@@ -131,6 +179,11 @@ describe 'docker', :type => :class do
         it { should contain_service('docker').with_ensure('stopped') }
       end
 
+      context 'with a custom service name' do
+        let(:params) { {'service_name' => 'docker.io'} }
+        it { should contain_service('docker').with_name('docker.io') }
+      end
+
       context 'with service_enable set to false' do
         let(:params) { {'service_enable' => 'false'} }
         it { should contain_service('docker').with_enable('false') }
@@ -170,15 +223,17 @@ describe 'docker', :type => :class do
 
   context 'specific to Ubuntu Maverick' do
     let(:facts) { {
-      :osfamily        => 'Debian',
-      :operatingsystem => 'Ubuntu',
-      :lsbdistid       => 'debian',
-      :lsbdistcodename => 'maverick',
-      :kernelrelease   => '3.8.0-29-generic'
+      :osfamily               => 'Debian',
+      :operatingsystem        => 'Ubuntu',
+      :lsbdistid              => 'Ubuntu',
+      :lsbdistcodename        => 'maverick',
+      :kernelrelease          => '3.8.0-29-generic',
+      :operatingsystemrelease => '10.04',
     } }
 
     context 'with no parameters' do
       it { should contain_package('linux-image-extra-3.8.0-29-generic') }
+      it { should contain_package('apparmor') }
     end
 
     context 'with no upstream package source' do
@@ -196,7 +251,7 @@ describe 'docker', :type => :class do
     let(:facts) { {
       :osfamily        => 'Debian',
       :operatingsystem => 'Debian',
-      :lsbdistid       => 'debian',
+      :lsbdistid       => 'Debian',
       :lsbdistcodename => 'wheezy',
       :kernelrelease   => '3.12-1-amd64'
     } }
@@ -236,19 +291,44 @@ describe 'docker', :type => :class do
     end
   end
 
+  context 'specific to RedHat 7 or above' do
+    let(:facts) { {
+      :osfamily => 'RedHat',
+      :operatingsystemrelease => '7.0'
+    } }
+
+    it { should contain_package('docker').with_name('docker') }
+  end
+
   context 'specific to Ubuntu Precise' do
     let(:facts) { {
-      :osfamily        => 'Debian',
-      :lsbdistid       => 'debian',
-      :operatingsystem => 'Ubuntu',
-      :lsbdistcodename => 'precise',
+      :osfamily               => 'Debian',
+      :lsbdistid              => 'Ubuntu',
+      :operatingsystem        => 'Ubuntu',
+      :lsbdistcodename        => 'precise',
       :operatingsystemrelease => '12.04',
-      :kernelrelease   => '3.8.0-29-generic'
+      :kernelrelease          => '3.8.0-29-generic'
     } }
-    it { should contain_package('linux-image-generic-lts-raring') }
-    it { should contain_package('linux-headers-generic-lts-raring') }
+    it { should contain_package('linux-image-generic-lts-trusty') }
+    it { should contain_package('linux-headers-generic-lts-trusty') }
     it { should contain_service('docker').with_provider('upstart') }
+    it { should contain_package('apparmor') }
   end
+
+  context 'specific to Ubuntu Trusty' do
+    let(:facts) { {
+      :osfamily               => 'Debian',
+      :lsbdistid              => 'Ubuntu',
+      :operatingsystem        => 'Ubuntu',
+      :lsbdistcodename        => 'trusty',
+      :operatingsystemrelease => '14.04',
+      :kernelrelease          => '3.8.0-29-generic'
+    } }
+    it { should contain_service('docker').with_provider('upstart') }
+    it { should contain_package('docker').with_name('lxc-docker').with_ensure('present')  }
+    it { should contain_package('apparmor') }
+  end
+
 
   context 'specific to older RedHat based distros' do
     let(:facts) { {
@@ -270,6 +350,5 @@ describe 'docker', :type => :class do
       }.to raise_error(Puppet::Error, /^This module only works on Debian and Red Hat based systems/)
     end
   end
-
 
 end

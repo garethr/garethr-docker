@@ -5,8 +5,9 @@
 define docker::run(
   $image,
   $command = undef,
-  $memory_limit = '0',
+  $memory_limit = '0b',
   $ports = [],
+  $expose = [],
   $volumes = [],
   $links = [],
   $use_name = false,
@@ -21,10 +22,17 @@ define docker::run(
   $restart_service = true,
   $disable_network = false,
   $privileged = false,
+  $extra_parameters = undef,
 ) {
+  include docker::params
+  $docker_command = $docker::params::docker_command
+  $service_name = $docker::params::service_name
+
   validate_re($image, '^[\S]*$')
   validate_re($title, '^[\S]*$')
-  validate_re($memory_limit, '^[\d]*$')
+  validate_re($memory_limit, '^[\d]*(b|k|m|g)$')
+  validate_string($docker_command)
+  validate_string($service_name)
   if $command {
     validate_string($command)
   }
@@ -37,24 +45,22 @@ define docker::run(
   validate_bool($running)
   validate_bool($disable_network)
   validate_bool($privileged)
+  validate_bool($restart_service)
 
   $ports_array = any2array($ports)
+  $expose_array = any2array($expose)
   $volumes_array = any2array($volumes)
   $env_array = any2array($env)
   $dns_array = any2array($dns)
   $links_array = any2array($links)
   $lxc_conf_array = any2array($lxc_conf)
+  $extra_parameters_array = any2array($extra_parameters)
 
   $sanitised_title = regsubst($title, '[^0-9A-Za-z.\-]', '-')
 
   $provider = $::operatingsystem ? {
     'Ubuntu' => 'upstart',
     default  => undef,
-  }
-
-  $notify = str2bool($restart_service) ? {
-    true    => Service["docker-${sanitised_title}"],
-    default => undef,
   }
 
   case $::osfamily {
@@ -72,8 +78,15 @@ define docker::run(
       $hasrestart = undef
       $mode = '0755'
     }
+    'Archlinux': {
+      $initscript    = "/etc/systemd/system/docker-${sanitised_title}.service"
+      $init_template = 'docker/etc/systemd/system/docker-run.erb'
+      $hasstatus     = true
+      $hasrestart    = true
+      $mode          = '0644'
+    }
     default: {
-      fail('Docker needs a RedHat or Debian based system.')
+      fail('Docker needs a Debian, RedHat or Archlinux based system.')
     }
   }
 
@@ -81,7 +94,6 @@ define docker::run(
     ensure  => present,
     content => template($init_template),
     mode    => $mode,
-    notify  => $notify,
   }
 
   service { "docker-${sanitised_title}":
@@ -93,11 +105,15 @@ define docker::run(
     require    => File[$initscript],
   }
 
-  if str2bool($restart_service) {
+  if $::osfamily == 'Archlinux' {
+    File[$initscript] ~> Exec['docker-systemd-reload']
+    Exec['docker-systemd-reload'] -> Service["docker-${sanitised_title}"]
+  }
+
+  if $restart_service {
     File[$initscript] ~> Service["docker-${sanitised_title}"]
   }
   else {
     File[$initscript] -> Service["docker-${sanitised_title}"]
   }
 }
-
