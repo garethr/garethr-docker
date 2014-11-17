@@ -20,6 +20,8 @@ class docker::params {
   $storage_driver               = undef
   $manage_package               = true
   $manage_kernel                = true
+  $ensure_recommended           = 'present'
+  $manage_recommended_packages  = true
   $package_name_default         = 'lxc-docker'
   $service_name_default         = 'docker'
   $docker_command_default       = 'docker'
@@ -38,6 +40,7 @@ class docker::params {
         }
       }
       $package_source_location = 'https://get.docker.io/ubuntu'
+      $recommended_packages    = ['bridge-utils']
     }
     'RedHat' : {
       if (versioncmp($::operatingsystemrelease, '7.0') < 0) and $::operatingsystem != 'Amazon' {
