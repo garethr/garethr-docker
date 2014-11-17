@@ -113,6 +113,9 @@ class docker(
   $package_name                = $docker::params::package_name,
   $service_name                = $docker::params::service_name,
   $docker_command              = $docker::params::docker_command,
+  $ensure_recommended          = $docker::params::ensure_recommended,
+  $recommended_packages        = $docker::params::recommended_packages,
+  $manage_recommended_packages = $docker::params::manage_recommended_packages,
 ) inherits docker::params {
 
   validate_string($version)

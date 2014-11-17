@@ -27,6 +27,11 @@ describe 'docker', :type => :class do
           it { should contain_package('docker').with_name('lxc-docker-0.5.5').with_ensure('present') }
         end
 
+        context 'with managed_recommended_packages set' do
+          let(:params) { {'manage_recommended_packages' => true } }
+          it { should contain_package('bridge-utils').with_ensure('present') }
+        end
+
         context 'with a custom package name' do
           let(:params) { {'package_name' => 'docker-custom-pkg-name' } }
           it { should contain_package('docker').with_name('docker-custom-pkg-name').with_ensure('present') }
@@ -97,6 +102,11 @@ describe 'docker', :type => :class do
         context 'when given a specific tmp_dir' do
           let(:params) {{ 'tmp_dir' => '/bigtmp' }}
           it { should contain_file('/etc/sysconfig/docker').with_content(/export TMPDIR="\/bigtmp"/) }
+        end
+
+        context 'with managed_recommended_packages set' do
+          let(:params) { {'manage_recommended_packages' => true } }
+          it { should_not contain_package('bridge-utils').with_ensure('present') }
         end
 
       end

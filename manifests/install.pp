@@ -116,4 +116,10 @@ class docker::install {
       name   => $dockerpackage,
     }
   }
+
+  $recommended_packages = $docker::recommended_packages
+  if $docker::manage_recommended_packages {
+    ensure_resource('package',$recommended_packages,{ ensure => $docker::ensure_recommended })
+  }
+
 }
