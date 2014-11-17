@@ -87,8 +87,9 @@
 # [*docker_command*]
 #   Specify a custom docker command name
 #   Default is set on a per system basis in docker::params
-#
+
 class docker(
+
   $version                     = $docker::params::version,
   $ensure                      = $docker::params::ensure,
   $prerequired_packages        = $docker::params::prerequired_packages,
@@ -116,6 +117,7 @@ class docker(
   $ensure_recommended          = $docker::params::ensure_recommended,
   $recommended_packages        = $docker::params::recommended_packages,
   $manage_recommended_packages = $docker::params::manage_recommended_packages,
+
 ) inherits docker::params {
 
   validate_string($version)
@@ -123,8 +125,12 @@ class docker(
   validate_bool($manage_kernel)
   validate_bool($manage_package)
 
+  anchor { 'docker::begin': } ->
+  class { 'docker::repos': } ->
   class { 'docker::install': } ->
   class { 'docker::config': } ~>
   class { 'docker::service': } ->
-  Class['docker']
+  anchor { 'docker::end': }
+
 }
+
