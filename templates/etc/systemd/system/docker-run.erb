@@ -20,6 +20,9 @@ ExecStart=/usr/bin/<%= @docker_command %> run \
         <% if @dns %><% @dns_array.each do |address| %> \
             --dns <%= address %><% end %> \
         <% end %> \
+        <% if @dns_search %><% @dns_search_array.each do |domain| %> \
+            --dns-search <%= domain %><% end %> \
+        <% end %> \
         <% if @env %><% @env_array.each do |env| %> \
             -e <%= env %><% end %> \
         <% end %> \

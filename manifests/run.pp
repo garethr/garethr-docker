@@ -18,6 +18,7 @@ define docker::run(
   $hostname = false,
   $env = [],
   $dns = [],
+  $dns_search = [],
   $lxc_conf = [],
   $restart_service = true,
   $disable_network = false,
@@ -52,6 +53,7 @@ define docker::run(
   $volumes_array = any2array($volumes)
   $env_array = any2array($env)
   $dns_array = any2array($dns)
+  $dns_search_array = any2array($dns_search)
   $links_array = any2array($links)
   $lxc_conf_array = any2array($lxc_conf)
   $extra_parameters_array = any2array($extra_parameters)
