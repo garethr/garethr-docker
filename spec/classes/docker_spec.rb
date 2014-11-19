@@ -158,6 +158,16 @@ describe 'docker', :type => :class do
         it { should contain_file(service_config_file).with_content(/--dns 8.8.8.8/) }
       end
 
+      context 'with multi dns_search param' do
+        let(:params) { {'dns_search' => ['my.domain.local', 'other-domain.de']} }
+        it { should contain_file(service_config_file).with_content(/--dns-search my.domain.local/).with_content(/--dns-search other-domain.de/) }
+      end
+
+      context 'with dns_search param' do
+        let(:params) { {'dns_search' => 'my.domain.local'} }
+        it { should contain_file(service_config_file).with_content(/--dns-search my.domain.local/) }
+      end
+
       context 'with multi extra parameters' do
         let(:params) { {'extra_parameters' => ['--this this', '--that that'] } }
         it { should contain_file(service_config_file).with_content(/--this this/) }

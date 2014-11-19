@@ -54,6 +54,10 @@
 #   Custom dns server address
 #   Defaults to undefined
 #
+# [*dns_search*]
+#   Custom dns search domains
+#   Defaults to undefined
+#
 # [*socket_group*]
 #   Group ownership of the unix control socket.
 #   Defaults to undefined
@@ -98,6 +102,7 @@ class docker(
   $tmp_dir                     = $docker::params::tmp_dir,
   $manage_kernel               = $docker::params::manage_kernel,
   $dns                         = $docker::params::dns,
+  $dns_search                  = $docker::params::dns_search,
   $socket_group                = $docker::params::socket_group,
   $extra_parameters            = undef,
   $proxy                       = $docker::params::proxy,

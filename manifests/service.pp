@@ -25,6 +25,7 @@ class docker::service (
   $socket_bind          = $docker::socket_bind,
   $socket_group         = $docker::socket_group,
   $dns                  = $docker::dns,
+  $dns_search           = $docker::dns_search,
   $service_state        = $docker::service_state,
   $service_enable       = $docker::service_enable,
   $root_dir             = $docker::root_dir,
@@ -36,6 +37,7 @@ class docker::service (
   $tmp_dir              = $docker::tmp_dir,
 ) {
   $dns_array = any2array($dns)
+  $dns_search_array = any2array($dns_search)
   $extra_parameters_array = any2array($extra_parameters)
 
   case $::osfamily {
