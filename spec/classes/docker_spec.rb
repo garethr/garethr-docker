@@ -148,6 +148,16 @@ describe 'docker', :type => :class do
         it { should_not contain_file(service_config_file).with_content(/-e native/) }
       end
 
+      context 'with multi dns param' do
+        let(:params) { {'dns' => ['8.8.8.8', '8.8.4.4']} }
+        it { should contain_file(service_config_file).with_content(/--dns 8.8.8.8/).with_content(/--dns 8.8.4.4/) }
+      end
+
+      context 'with dns param' do
+        let(:params) { {'dns' => '8.8.8.8'} }
+        it { should contain_file(service_config_file).with_content(/--dns 8.8.8.8/) }
+      end
+
       context 'with multi extra parameters' do
         let(:params) { {'extra_parameters' => ['--this this', '--that that'] } }
         it { should contain_file(service_config_file).with_content(/--this this/) }
