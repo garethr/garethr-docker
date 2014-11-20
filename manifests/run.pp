@@ -35,7 +35,7 @@ define docker::run(
   validate_string($docker_command)
   validate_string($service_name)
 	if $cpuset {
-		validate_re($cpuset, '^[\d]*$')
+		validate_string($cpuset)
 	}
   if $command {
     validate_string($command)
