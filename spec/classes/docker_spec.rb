@@ -5,8 +5,10 @@ describe 'docker', :type => :class do
   ['Debian', 'RedHat', 'Archlinux'].each do |osfamily|
     context "on #{osfamily} os family" do
       if osfamily == 'Debian'
-        ['Ubuntu'].each do |operatingsystem|
-        ### ['Ubuntu', 'Debian'].each do |operatingsystem|
+=begin
+        ### ['Ubuntu'].each do |operatingsystem|
+=end
+        ['Ubuntu', 'Debian'].each do |operatingsystem|
           context "on #{operatingsystem} operating system" do
             if operatingsystem == 'Ubuntu'
               let(:facts) { {
@@ -38,7 +40,7 @@ describe 'docker', :type => :class do
             if operatingsystem == 'Ubuntu'
               it { should contain_file('/etc/init.d/docker').with_ensure('link').with_target('/lib/init/upstart-job') }
             elsif operatingsystem == 'Debian'
-              it { should contain_file('/etc/init.d/docker').with_ensure('present').with_source('puppet:///modules/docker/etc/init.d/docker.io') }
+              it { should contain_file('/etc/init.d/docker').with_source('puppet:///modules/docker/etc/init.d/docker.io') }
             else
               it { should_not contain_file('/etc/init.d/docker') }
             end
