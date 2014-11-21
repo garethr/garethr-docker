@@ -1,6 +1,7 @@
 source "http://rubygems.org"
 
 group :test do
+  gem "nokogiri", '~> 1.6.4.1'
   gem "rake"
   gem "puppet", ENV['PUPPET_VERSION'] || '~> 3.6.0'
   gem "puppet-lint"
@@ -12,8 +13,8 @@ end
 group :development do
   gem "travis"
   gem "travis-lint"
-  gem "beaker"
-  gem "beaker-rspec"
+  # gem "beaker"
+  # gem "beaker-rspec"
   gem "vagrant-wrapper"
   gem "puppet-blacksmith"
   gem "guard-rake"
