@@ -5,7 +5,7 @@
 define docker::run(
   $image,
   $command = undef,
-	$cpuset = false,
+  $cpuset = false,
   $memory_limit = '0b',
   $ports = [],
   $expose = [],
@@ -34,9 +34,9 @@ define docker::run(
   validate_re($memory_limit, '^[\d]*(b|k|m|g)$')
   validate_string($docker_command)
   validate_string($service_name)
-	if $cpuset {
-		validate_string($cpuset)
-	}
+  if $cpuset {
+    validate_string($cpuset)
+  }
   if $command {
     validate_string($command)
   }
