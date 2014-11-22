@@ -39,7 +39,7 @@ script
         --lxc-conf="<%=lxcconf%>"<% end %> \
     <% end %> \
     -m <%= @memory_limit %> \
-    <% if @cpuset %>--cpuset=<%= @cpuset %> <% end %> \
+    <% if @cpuset %>--cpuset=<%= @cpuset %><% end %> \
     <% if @links %><%= @links_array.map {|link| \
         "--link #{link}" }.join(' ') %> \
     <% end %> \
