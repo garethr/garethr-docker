@@ -3,7 +3,17 @@
 
 DOCKER="/usr/bin/<%= @docker_command %>"
 
-other_args="<% if @root_dir %>-g <%= @root_dir %><% end %> <% if @tcp_bind %>-H <%= @tcp_bind %><% end %><% if @socket_bind %> -H <%= @socket_bind %><% end %> <% if @socket_group %> -G <%= @socket_group %><% end %> <% if @execdriver %> -e <%= @execdriver %> <% end %> <% if @storage_driver %> --storage-driver=<%= @storage_driver %><% end %> <% if @extra_parameters %><% @extra_parameters_array.each do |param| %> <%= param %><% end %><% end %>"
+other_args="<% -%>
+<% if @root_dir %> -g <%= @root_dir %><% end -%>
+<% if @tcp_bind %> -H <%= @tcp_bind %><% end -%>
+<% if @socket_bind %> -H <%= @socket_bind %><% end -%>
+<% if @socket_group %> -G <%= @socket_group %><% end -%>
+<% if @dns %><% @dns_array.each do |address| %> --dns <%= address %><% end %><% end -%>
+<% if @dns_search %><% @dns_search_array.each do |domain| %> --dns-search <%= domain %><% end %><% end -%>
+<% if @execdriver %> -e <%= @execdriver %> <% end -%>
+<% if @storage_driver %> --storage-driver=<%= @storage_driver %><% end -%>
+<% if @extra_parameters %><% @extra_parameters_array.each do |param| %> <%= param %><% end %><% end -%>
+"
 <% if @proxy %>export http_proxy='<%= @proxy %>'
 export https_proxy='<%= @proxy %>'<% end %>
 <% if @no_proxy %>export no_proxy='<%= @no_proxy %>'<% end %>

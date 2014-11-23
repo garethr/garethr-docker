@@ -127,6 +127,16 @@ require 'spec_helper'
       it { should contain_file(initscript).with_content(/--dns 8.8.8.8/) }
     end
 
+    context 'when passing serveral dns search domains' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'dns_search' => ['my.domain.local', 'other-domain.de']} }
+      it { should contain_file(initscript).with_content(/--dns-search my.domain.local/).with_content(/--dns-search other-domain.de/) }
+    end
+
+    context 'when passing a dns search domain' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'dns_search' => 'my.domain.local'} }
+      it { should contain_file(initscript).with_content(/--dns-search my.domain.local/) }
+    end
+
     context 'when disabling network' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'disable_network' => true} }
       it { should contain_file(initscript).with_content(/-n false/) }

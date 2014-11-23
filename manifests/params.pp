@@ -1,6 +1,6 @@
 # == Class: docker::params
 #
-# Defaut parameter values for the docker module
+# Default parameter values for the docker module
 #
 class docker::params {
   $version                      = undef
@@ -14,6 +14,7 @@ class docker::params {
   $root_dir                     = undef
   $tmp_dir                      = '/tmp/'
   $dns                          = undef
+  $dns_search                   = undef
   $proxy                        = undef
   $no_proxy                     = undef
   $execdriver                   = undef
