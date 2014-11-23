@@ -12,7 +12,7 @@ define docker::run(
   $links = [],
   $use_name = false,
   $running = true,
-  $volumes_from = false,
+  $volumes_from = [],
   $net = 'bridge',
   $username = false,
   $hostname = false,
@@ -50,6 +50,7 @@ define docker::run(
   $ports_array = any2array($ports)
   $expose_array = any2array($expose)
   $volumes_array = any2array($volumes)
+  $volumes_from_array = any2array($volumes_from)
   $env_array = any2array($env)
   $dns_array = any2array($dns)
   $links_array = any2array($links)

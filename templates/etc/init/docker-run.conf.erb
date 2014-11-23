@@ -10,48 +10,11 @@ stop on stopping <%= @service_name %>
 respawn
 respawn limit 5 20
 
+script
 <% if @use_name %>
-script
 <%= @docker_command %> inspect <%= @name %> && <%= @docker_command %> start -a -i <%= @name %>
-  <%= @docker_command %> inspect <%= @name %> || <%= @docker_command %> run --cidfile=/var/run/docker-<%= @title %>.cid \
-    <% if @username %>-u '<%= @username %>' <% end %> \
-    <% if @hostname %>-h '<%= @hostname %>'<% end %> \
-    <% if @disable_network %>-n false<% end %> \
-    <% if @privileged %>--privileged<% end %> \
-    <% if @dns %><% @dns_array.each do |address| %> \
-        --dns <%= address %><% end %> \
-    <% end %> \
-    <% if @env %><% @env_array.each do |env| %> \
-        -e <%= env %><% end %> \
-    <% end %> \
-    <% if @ports %><% @ports_array.each do |port| %> \
-        -p <%= port %><% end %> \
-    <% end %> \
-    <% if @expose %><% @expose_array.each do |expose_port| %> \
-        --expose=<%= expose_port %><% end %> \
-    <% end %> \
-    <% if @volumes %><% @volumes_array.each do |volume| %> \
-        -v <%= volume %><% end %> \
-    <% end %> \
-    <% if @volumes_from %> -volumes-from <%= @volumes_from %><% end %> \
-    <% if @net %>--net <%= @net %><% end %> \
-    <% if @lxc_conf_array %><% @lxc_conf_array.each do |lxcconf| %> \
-        --lxc-conf="<%=lxcconf%>"<% end %> \
-    <% end %> \
-    -m <%= @memory_limit %> \
-    <% if @links %><%= @links_array.map {|link| \
-        "--link #{link}" }.join(' ') %> \
-    <% end %> \
-    <% if @use_name %>--name <%= @name %><% end %> \
-    <% if @extra_parameters %><% @extra_parameters_array.each do |param| %>  \
-      <%= param %> <% end %> \
-    <% end -%> \
-    <%= @image %> \
-    <% if @command %> <%= @command %><% end %> &&
-  exec <%= @docker_command %> wait "$(cat /var/run/docker-<%= @title %>.cid)"
-end script
-<% else %>
-script
+  <%= @docker_command %> inspect <%= @name %> || \
+<% end %>
   <%= @docker_command %> run --cidfile=/var/run/docker-<%= @title %>.cid \
     <% if @username %>-u '<%= @username %>' <% end %> \
     <% if @hostname %>-h '<%= @hostname %>'<% end %> \
@@ -72,7 +35,9 @@ script
     <% if @volumes %><% @volumes_array.each do |volume| %> \
         -v <%= volume %><% end %> \
     <% end %> \
-    <% if @volumes_from %> --volumes-from <%= @volumes_from %><% end %> \
+    <% if @volumes_from %><% @volumes_from_array.each do |container| %> \
+        --volumes-from <%= container %><% end %> \
+    <% end %> \
     <% if @net %>--net <%= @net %><% end %> \
     <% if @lxc_conf_array %><% @lxc_conf_array.each do |lxcconf| %> \
         --lxc-conf="<%=lxcconf%>"<% end %> \
@@ -89,7 +54,6 @@ script
     <% if @command %> <%= @command %><% end %> &&
   exec <%= @docker_command %> wait "$(cat /var/run/docker-<%= @title %>.cid)"
 end script
-<% end %>
 
 post-stop script
 if [ -e "/var/run/docker-<%= @title %>.cid" ]; then
