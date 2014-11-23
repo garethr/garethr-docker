@@ -72,11 +72,22 @@ define docker::run(
       $mode = '0644'
     }
     'RedHat': {
-      $initscript = "/etc/init.d/docker-${sanitised_title}"
-      $init_template = 'docker/etc/init.d/docker-run.erb'
-      $hasstatus  = undef
-      $hasrestart = undef
-      $mode = '0755'
+      case $::operatingsystemmajrelease {
+        '7': {
+          $initscript    = "/etc/systemd/system/docker-${sanitised_title}.service"
+          $init_template = 'docker/etc/systemd/system/docker-run.erb'
+          $hasstatus     = true
+          $hasrestart    = true
+          $mode          = '0644'
+        }
+        default: {
+          $initscript = "/etc/init.d/docker-${sanitised_title}"
+          $init_template = 'docker/etc/init.d/docker-run.erb'
+          $hasstatus  = undef
+          $hasrestart = undef
+          $mode = '0755'
+        }
+      }
     }
     'Archlinux': {
       $initscript    = "/etc/systemd/system/docker-${sanitised_title}.service"
