@@ -51,6 +51,21 @@ require 'spec_helper'
       it { should contain_file(initscript).with_content(/-m 1000b/) }
     end
 
+    context 'when passing a cpuset' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'cpuset' => '3'} }
+      it { should contain_file(initscript).with_content(/--cpuset=3/) }
+    end
+
+    context 'when passing a multiple cpu cpuset' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'cpuset' => ['0', '3']} }
+      it { should contain_file(initscript).with_content(/--cpuset=0,3/) }
+    end
+
+    context 'when not passing a cpuset' do
+      let(:params) { {'command' => 'command', 'image' => 'base'} }
+      it { should contain_file(initscript).without_content(/--cpuset=/) }
+    end
+
     context 'when passing a links option' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'links' => ['example:one', 'example:two']} }
       it { should contain_file(initscript).with_content(/ --link example:one --link example:two /) }

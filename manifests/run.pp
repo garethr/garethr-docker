@@ -6,6 +6,7 @@ define docker::run(
   $image,
   $command = undef,
   $memory_limit = '0b',
+  $cpuset = [],
   $ports = [],
   $expose = [],
   $volumes = [],
@@ -56,6 +57,7 @@ define docker::run(
   $dns_array = any2array($dns)
   $dns_search_array = any2array($dns_search)
   $links_array = any2array($links)
+  $cpuset_array = any2array($cpuset)
   $lxc_conf_array = any2array($lxc_conf)
   $extra_parameters_array = any2array($extra_parameters)
 

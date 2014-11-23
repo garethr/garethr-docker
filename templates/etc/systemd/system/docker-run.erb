@@ -43,6 +43,7 @@ ExecStart=/usr/bin/<%= @docker_command %> run \
             --lxc-conf="<%=lxcconf%>"<% end %> \
         <% end %> \
         -m <%= @memory_limit %> \
+        <% if not @cpuset_array.empty? %>--cpuset=<%= @cpuset_array.join(',') %><% end %> \
         <% if @links %><%= @links_array.map {|link| \
             "--link #{link}" }.join(' ') %> \
         <% end %> \
