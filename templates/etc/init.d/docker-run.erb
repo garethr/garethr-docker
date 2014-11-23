@@ -25,7 +25,7 @@
 . /etc/init.d/functions
 
 docker="/usr/bin/<%= docker_command %>"
-prog="docker-<%= @title %>"
+prog="docker-<%= @sanitised_title %>"
 cidfile="/var/run/$prog.cid"
 lockfile="/var/lock/subsys/$prog"
 
