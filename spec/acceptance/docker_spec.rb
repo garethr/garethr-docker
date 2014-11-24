@@ -47,7 +47,7 @@ describe 'docker class' do
 
     describe command("sudo #{command} ps -l --no-trunc=true") do
       it { should return_exit_status 0 }
-      it { should return_stdout(/nginx\:1/) }
+      it { should return_stdout(/nginx\:latest/) }
     end
 
     describe command('netstat -tlndp') do
