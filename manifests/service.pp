@@ -70,7 +70,7 @@ class docker::service (
       file { '/etc/sysconfig/docker':
         ensure  => present,
         force   => true,
-        content => template("docker/etc/sysconfig/$template"),
+        content => template("docker/etc/sysconfig/${template}"),
         notify  => Service['docker'],
       }
     }
