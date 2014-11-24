@@ -132,6 +132,7 @@ GEM
       rb-inotify (>= 0.9)
     lumberjack (1.0.9)
     metaclass (0.0.4)
+    metadata-json-lint (0.0.2)
     method_source (0.8.2)
     mime-types (1.25.1)
     minitar (0.5.4)
@@ -241,6 +242,7 @@ DEPENDENCIES
   beaker
   beaker-rspec
   guard-rake
+  metadata-json-lint
   pry
   puppet (~> 3.6.0)
   puppet-blacksmith

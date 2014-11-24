@@ -17,5 +17,6 @@ group :development do
   gem "vagrant-wrapper"
   gem "puppet-blacksmith"
   gem "guard-rake"
+  gem "metadata-json-lint"
   gem "pry"
 end
