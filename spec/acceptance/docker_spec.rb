@@ -3,7 +3,7 @@ require 'spec_helper_acceptance'
 describe 'docker class' do
   case fact('osfamily')
   when 'RedHat'
-    package_name = 'docker-io'
+    package_name = 'docker'
   else
     package_name = 'lxc-docker'
   end
@@ -16,7 +16,7 @@ describe 'docker class' do
         class { 'docker': }
         docker::image { 'nginx': }
         docker::run { 'nginx':
-          image   => 'nginx',
+          image => 'nginx',
           net   => 'host',
         }
       EOS
@@ -47,7 +47,7 @@ describe 'docker class' do
 
     describe command("sudo #{command} ps -l --no-trunc=true") do
       it { should return_exit_status 0 }
-      it { should return_stdout(/nginx\:latest/) }
+      it { should return_stdout(/nginx\:/) }
     end
 
     describe command('netstat -tlndp') do
