@@ -6,7 +6,7 @@
 <title>
   Hostclass: docker
   
-    &mdash; Documentation by YARD 0.8.7.4
+    &mdash; Documentation by YARD 0.8.7.6
   
 </title>
 
@@ -152,6 +152,9 @@ on Debian</p>
 </dd><dt><strong>dns</strong>
 <dd>
 <p>Custom dns server address Defaults to undefined</p>
+</dd><dt><strong>dns_search</strong>
+<dd>
+<p>Custom dns search domains Defaults to undefined</p>
 </dd><dt><strong>socket_group</strong>
 <dd>
 <p>Group ownership of the unix control socket. Defaults to undefined</p>
@@ -380,6 +383,20 @@ in docker::params</p>
       <a href="#">
         <span class="summary_signature">
           -
+          <strong>dns_search</strong>
+          
+            
+            => $docker::params::dns_search
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
           <strong>socket_group</strong>
           
             
@@ -520,9 +537,9 @@ in docker::params</p>
 </div>
 
     <div id="footer">
-  Generated on Sat Oct 11 11:25:23 2014 by
+  Generated on Mon Nov 24 13:46:34 2014 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.8.7.4 (ruby-2.1.1).
+  0.8.7.6 (ruby-2.1.4).
 </div>
 
   </body>

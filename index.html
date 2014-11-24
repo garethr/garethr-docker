@@ -6,7 +6,7 @@
 <title>
   File: README
   
-    &mdash; Documentation by YARD 0.8.7.4
+    &mdash; Documentation by YARD 0.8.7.6
   
 </title>
 
@@ -71,52 +71,65 @@
 
     <iframe id="search_frame"></iframe>
 
-    <div id="content"><div id='filecontents'><p>Puppet module for installing, configuring and managing
-<a href="https://github.com/dotcloud/docker">Docker</a> from the <a href="http://docs.docker.io/en/latest/installation/ubuntulinux/">official repository</a> on Ubuntu, from <a href="http://docs.docker.io/en/latest/installation/rhel/">EPEL on RedHat</a> based distributions or the <a href="http://docs.docker.com/installation/archlinux/">standard repositories</a> for Archlinux.</p>
+    <div id="content"><div id='filecontents'>
+<p>Puppet module for installing, configuring and managing <a
+href="https://github.com/dotcloud/docker">Docker</a> from the <a
+href="http://docs.docker.io/en/latest/installation/ubuntulinux/">official
+repository</a> on Ubuntu, from <a
+href="http://docs.docker.io/en/latest/installation/rhel/">EPEL on
+RedHat</a> based distributions or the <a
+href="http://docs.docker.com/installation/archlinux/">standard
+repositories</a> for Archlinux.</p>
 
-<p><a href="https://forge.puppetlabs.com/garethr/docker"><img src="http://img.shields.io/puppetforge/v/garethr/docker.svg" alt="Puppet
-Forge"></a> <a href="http://travis-ci.org/garethr/garethr-docker"><img src="https://secure.travis-ci.org/garethr/garethr-docker.png" alt="Build
-Status"></a> <a href="https://garethr.github.io/garethr-docker"><img src="http://img.shields.io/badge/docs-puppet--strings-lightgrey.svg" alt="Documentation
-Status"></a></p>
+<p><a href="https://forge.puppetlabs.com/garethr/docker"><img
+src="http://img.shields.io/puppetforge/v/garethr/docker.svg"></a> <a
+href="http://travis-ci.org/garethr/garethr-docker"><img
+src="https://secure.travis-ci.org/garethr/garethr-docker.png"></a> <a
+href="https://garethr.github.io/garethr-docker"><img
+src="http://img.shields.io/badge/docs-puppet--strings-lightgrey.svg"></a></p>
 
-<h2>Support</h2>
+<h2 id="label-Support">Support</h2>
 
 <p>This module is currently tested on:</p>
+<ul><li>
+<p>Ubuntu 12.04</p>
+</li><li>
+<p>Ubuntu 14.04</p>
+</li><li>
+<p>Centos 6.5</p>
+</li><li>
+<p>Archlinux</p>
+</li><li>
+<p>Amazon Linux</p>
+</li></ul>
 
-<ul>
-<li>Ubuntu 12.04</li>
-<li>Ubuntu 14.04</li>
-<li>Centos 6.5</li>
-<li>Archlinux</li>
-<li>Amazon Linux</li>
-</ul>
+<p>It may work on other distros and other operating systems will be supported
+in the future.</p>
 
-<p>It may work on other distros and other operating systems will be
-supported in the future.</p>
-
-<h2>Usage</h2>
+<h2 id="label-Usage">Usage</h2>
 
 <p>The module includes a single class:</p>
 
-<pre class="code puppet"><code class="puppet">include &#39;docker&#39;
-</code></pre>
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_include'>include</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>docker</span><span class='tstring_end'>&#39;</span></span></code></pre>
 
-<p>By default this sets up the docker hosted repository if necessary for your OS
-and installs the docker package and on Ubuntu, any required Kernel extensions.</p>
+<p>By default this sets up the docker hosted repository if necessary for your
+OS and installs the docker package and on Ubuntu, any required Kernel
+extensions.</p>
 
-<p>If you don&#39;t want this module to mess about with your Kernel then you can disabl
-this feature like so. It is only enabled (and supported) by default on Ubuntu:</p>
+<p>If you don&#39;t want this module to mess about with your Kernel then you
+can disable this feature like so. It is only enabled (and supported) by
+default on Ubuntu:</p>
 
-<pre class="code puppet"><code class="puppet">class { &#39;docker&#39;:
+<pre class="code ruby"><code class="ruby">class { &#39;docker&#39;:
   manage_kernel =&gt; false,
 }
 </code></pre>
 
-<p>If you want to configure your package sources independently, inform this module
-to not auto-include upstream sources (This is already disabled on Archlinux
-as there is no further upstream):</p>
+<p>If you want to configure your package sources independently, inform this
+module to not auto-include upstream sources (This is already disabled on
+Archlinux as there is no further upstream):</p>
 
-<pre class="code puppet"><code class="puppet">class { &#39;docker&#39;:
+<pre class="code ruby"><code class="ruby">class { &#39;docker&#39;:
   use_upstream_package_source =&gt; false,
 }
 </code></pre>
@@ -125,31 +138,33 @@ as there is no further upstream):</p>
 /var/run/docker.sock. This can be changed, as well as binding to a tcp
 socket if required.</p>
 
-<pre class="code puppet"><code class="puppet">class { &#39;docker&#39;:
+<pre class="code ruby"><code class="ruby">class { &#39;docker&#39;:
   tcp_bind    =&gt; &#39;tcp://127.0.0.1:4243&#39;,
   socket_bind =&gt; &#39;unix:///var/run/docker.sock&#39;,
 }
 </code></pre>
 
-<p>Unless specified this installs the latest version of docker from the docker inc
-repository on first run. However if you want to specify a specific version you
-can do so, unless you are using Archlinux which only supports the latest release:</p>
+<p>Unless specified this installs the latest version of docker from the docker
+inc repository on first run. However if you want to specify a specific
+version you can do so, unless you are using Archlinux which only supports
+the latest release:</p>
 
-<pre class="code puppet"><code class="puppet">class { &#39;docker&#39;:
+<pre class="code ruby"><code class="ruby">class { &#39;docker&#39;:
   version =&gt; &#39;0.5.5&#39;,
 }
 </code></pre>
 
 <p>And if you want to track the latest version you can do so:</p>
 
-<pre class="code puppet"><code class="puppet">class { &#39;docker&#39;:
+<pre class="code ruby"><code class="ruby">class { &#39;docker&#39;:
   version =&gt; &#39;latest&#39;,
 }
 </code></pre>
 
-<p>In some cases dns resolution won&#39;t work well in the container unless you give a dns server to the docker daemon like this:</p>
+<p>In some cases dns resolution won&#39;t work well in the container unless
+you give a dns server to the docker daemon like this:</p>
 
-<pre class="code puppet"><code class="puppet">class { &#39;docker&#39;:
+<pre class="code ruby"><code class="ruby">class { &#39;docker&#39;:
   dns =&gt; &#39;8.8.8.8&#39;,
 }
 </code></pre>
@@ -157,25 +172,30 @@ can do so, unless you are using Archlinux which only supports the latest release
 <p>The class contains lots of other options, please see the inline code
 documentation for the full options.</p>
 
-<h3>Images</h3>
+<h3 id="label-Images">Images</h3>
 
-<p>The next step is probably to install a docker image, for this we have a defined type which can be used like so:</p>
+<p>The next step is probably to install a docker image; for this we have a
+defined type which can be used like so:</p>
 
-<pre class="code puppet"><code class="puppet">docker::image { &#39;base&#39;: }
-</code></pre>
+<pre class="code ruby"><code class="ruby">docker::image { &#39;base&#39;: }</code></pre>
 
-<p>This is equivalent to running <code>docker pull base</code>. This is downloading a large binary so on first run can take a while. For that reason this define turns off the default 5 minute timeout for exec. Takes an optional parameter for installing image tags that is the equivalent to running <code>docker pull -t=&quot;precise&quot; ubuntu</code>:  </p>
+<p>This is equivalent to running <code>docker pull base</code>. This is
+downloading a large binary so on first run can take a while. For that
+reason this define turns off the default 5 minute timeout for exec. Takes
+an optional parameter for installing image tags that is the equivalent to
+running <code>docker pull -t=&quot;precise&quot; ubuntu</code>:</p>
 
-<pre class="code puppet"><code class="puppet">docker::image { &#39;ubuntu&#39;:
+<pre class="code ruby"><code class="ruby">docker::image { &#39;ubuntu&#39;:
   image_tag =&gt; &#39;precise&#39;
 }
 </code></pre>
 
-<p>Note: images will only install if an image of that name does not already exist.  </p>
+<p>Note: images will only install if an image of that name does not already
+exist.</p>
 
-<p>You can also remove images you no longer need with:  </p>
+<p>You can also remove images you no longer need with:</p>
 
-<pre class="code puppet"><code class="puppet">docker::image { &#39;base&#39;:
+<pre class="code ruby"><code class="ruby">docker::image { &#39;base&#39;:
   ensure =&gt; &#39;absent&#39;
 }
 
@@ -185,11 +205,12 @@ docker::image { &#39;ubuntu&#39;:
 }
 </code></pre>
 
-<h3>Containers</h3>
+<h3 id="label-Containers">Containers</h3>
 
-<p>Now you have an image you can run commands within a container managed by docker.</p>
+<p>Now you have an image you can run commands within a container managed by
+docker.</p>
 
-<pre class="code puppet"><code class="puppet">docker::run { &#39;helloworld&#39;:
+<pre class="code ruby"><code class="ruby">docker::run { &#39;helloworld&#39;:
   image   =&gt; &#39;base&#39;,
   command =&gt; &#39;/bin/sh -c &quot;while true; do echo hello world; sleep 1; done&quot;&#39;,
 }
@@ -197,12 +218,11 @@ docker::image { &#39;ubuntu&#39;:
 
 <p>This is equivalent to running the following under upstart:</p>
 
-<pre class="code ruby"><code class="ruby">docker run -d base /bin/sh -c &quot;while true; do echo hello world; sleep 1; done&quot;
-</code></pre>
+<pre class="code ruby"><code class="ruby">docker run -d base /bin/sh -c &quot;while true; do echo hello world; sleep 1; done&quot;</code></pre>
 
 <p>Run also contains a number of optional parameters:</p>
 
-<pre class="code puppet"><code class="puppet">docker::run { &#39;helloworld&#39;:
+<pre class="code ruby"><code class="ruby">docker::run { &#39;helloworld&#39;:
   image           =&gt; &#39;base&#39;,
   command         =&gt; &#39;/bin/sh -c &quot;while true; do echo hello world; sleep 1; done&quot;&#39;,
   ports           =&gt; [&#39;4444&#39;, &#39;4555&#39;],
@@ -212,6 +232,7 @@ docker::image { &#39;ubuntu&#39;:
   volumes         =&gt; [&#39;/var/lib/couchdb&#39;, &#39;/var/log&#39;],
   volumes_from    =&gt; &#39;6446ea52fbc9&#39;,
   memory_limit    =&gt; 10m, # (format: &lt;number&gt;&lt;unit&gt;, where unit = b, k, m or g)
+  cpuset          =&gt; [&#39;0&#39;, &#39;3&#39;],
   username        =&gt; &#39;example&#39;,
   hostname        =&gt; &#39;example.com&#39;,
   env             =&gt; [&#39;FOO=BAR&#39;, &#39;FOO2=BAR2&#39;],
@@ -222,12 +243,14 @@ docker::image { &#39;ubuntu&#39;:
 }
 </code></pre>
 
-<p>Ports, expose, env, dns and volumes can be set with either a single string or as above with an array of values.
-Specifying pull_on_start will pull the image before each time it is started</p>
+<p>Ports, expose, env, dns and volumes can be set with either a single string
+or as above with an array of values. Specifying pull_on_start will pull the
+image before each time it is started</p>
 
-<p>To use an image tag just append the tag name to the image name separated by a semicolon:</p>
+<p>To use an image tag just append the tag name to the image name separated by
+a semicolon:</p>
 
-<pre class="code puppet"><code class="puppet">docker::run { &#39;helloworld&#39;:
+<pre class="code ruby"><code class="ruby">docker::run { &#39;helloworld&#39;:
   image   =&gt; &#39;ubuntu:precise&#39;,
   command =&gt; &#39;/bin/sh -c &quot;while true; do echo hello world; sleep 1; done&quot;&#39;,
 }
@@ -235,9 +258,9 @@ Specifying pull_on_start will pull the image before each time it is started</p>
 </div></div>
 
     <div id="footer">
-  Generated on Sat Oct 11 11:25:23 2014 by
+  Generated on Mon Nov 24 13:46:33 2014 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.8.7.4 (ruby-2.1.1).
+  0.8.7.6 (ruby-2.1.4).
 </div>
 
   </body>
