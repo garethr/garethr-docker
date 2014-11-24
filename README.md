@@ -12,12 +12,15 @@ This module is currently tested on:
 
 * Ubuntu 12.04
 * Ubuntu 14.04
+* Centos 7.0
+
+It may work on other distros and additional operating systems will be
+supported in the future. It's definitely been used with the following
+too:
+
 * Centos 6.5
 * Archlinux
 * Amazon Linux
-
-It may work on other distros and other operating systems will be
-supported in the future.
 
 ## Usage
 
