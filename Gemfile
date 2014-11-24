@@ -19,4 +19,5 @@ group :development do
   gem "guard-rake"
   gem "metadata-json-lint"
   gem "pry"
+  gem "yard"
 end
