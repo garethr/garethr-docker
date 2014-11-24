@@ -1,6 +1,6 @@
 {
   "name": "garethr-docker",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "author": "Gareth Rushgrove",
   "summary": "Module for installing and managing docker",
   "license": "Apache License, Version 2.0",
@@ -11,13 +11,11 @@
     {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
-        "6.5",
         "7"
       ]
     },{
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
-        "6.5",
         "7"
       ]
     },{
