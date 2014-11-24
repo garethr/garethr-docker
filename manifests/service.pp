@@ -60,13 +60,17 @@ class docker::service (
       }
     }
     'RedHat': {
+      case $::operatingsystemmajrelease {
+        '7': { $template = 'docker.rhel7.erb' }
+        default: { $template = 'docker.erb' }
+      }
       $hasstatus     = undef
       $hasrestart    = undef
 
       file { '/etc/sysconfig/docker':
         ensure  => present,
         force   => true,
-        content => template('docker/etc/sysconfig/docker.erb'),
+        content => template("docker/etc/sysconfig/${template}"),
         notify  => Service['docker'],
       }
     }
