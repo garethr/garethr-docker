@@ -39,6 +39,11 @@ Install the dependencies like so...
 
     bundle install --path=~/.bundle
 
+If you are testing in a Debian environment, avoid the 'nokogiri pit of doom and despair' 
+by installing these debian packages: 
+
+	apt-get install build-essential libxml2-dev libxslt1-dev
+
 ## Syntax and style
 
 The test suite will run [Puppet Lint](http://puppet-lint.com/) and
