@@ -76,7 +76,7 @@ define docker::run(
       # we want to stop the service using the old init script. Since `service` will
       # prefer a sysvinit style script over an upstart one if both exist, we need
       # to stop the service before adding the sysvinit script.
-      exec { "service docker-${sanitised_title} stop":
+      exec { "/usr/sbin/service docker-${sanitised_title} stop":
         onlyif  => "test -f ${deprecated_initscript}"
       } ->
       file { $deprecated_initscript:
