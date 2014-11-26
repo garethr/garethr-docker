@@ -5,14 +5,14 @@ describe 'docker', :type => :class do
   ['Debian', 'RedHat', 'Archlinux'].each do |osfamily|
     context "on #{osfamily} os family" do
       if osfamily == 'Debian'
+        ['Ubuntu'].each do |operatingsystem|
 =begin
-        ### ['Ubuntu'].each do |operatingsystem|
-=end
         ['Ubuntu', 'Debian'].each do |operatingsystem|
+=end
           context "on #{operatingsystem} operating system" do
             if operatingsystem == 'Ubuntu'
               let(:facts) { {
-                :osfamily               => osfamily,
+                :osfamily               => 'Debian',
                 :operatingsystem        => 'Ubuntu',
                 :lsbdistid              => 'Ubuntu',
                 :lsbdistcodename        => 'maverick',
@@ -21,7 +21,7 @@ describe 'docker', :type => :class do
               } }
             elsif operatingsystem == 'Debian'
               let(:facts) { {
-                :osfamily               => osfamily,
+                :osfamily               => 'Debian',
                 :operatingsystem        => 'Debian',
                 :lsbdistid              => 'Debian',
                 :lsbdistcodename        => 'jessie',
