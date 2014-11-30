@@ -11,6 +11,10 @@ class docker::install {
   validate_string($::kernelrelease)
   validate_bool($docker::use_upstream_package_source)
 
+  # $kernelpackage         = $docker::param::kernelpackage
+  # $manage_kernel         = $docker::manage_kernel
+  # $install_init_d_script = $docker::param::install_init_d_script 
+
   case $::osfamily {
     'Debian': {
       ensure_packages($docker::prerequired_packages)
@@ -50,9 +54,10 @@ class docker::install {
           $install_init_d_script = true
           }
         'Debian': {
-          # Debian does not need extra kernel packages
-          $manage_kernel = false
+          # Debian requires a kernel of at least version 3.8.0 
+          $manage_kernel = $docker::manage_kernel
           $install_init_d_script = true
+          $kernelpackage = [ 'linux-image-3.16.0-4-amd64' ]
           }
         }
       }
@@ -74,7 +79,7 @@ class docker::install {
       } else {
         $dockerpackage = $docker::package_name
       }
-      }
+    }
     'Archlinux': {
       $manage_kernel = false
 

@@ -3,6 +3,7 @@
 # Default parameter values for the docker module
 #
 class docker::params {
+<<<<<<< HEAD
   $version                      = undef
   $ensure                       = present
   $tcp_bind                     = undef
@@ -26,18 +27,53 @@ class docker::params {
   $package_name_default         = 'lxc-docker'
   $service_name_default         = 'docker'
   $docker_command_default       = 'docker'
+=======
+  $version                       = undef
+  $ensure                        = present
+  $tcp_bind                      = undef
+  $socket_bind                   = 'unix:///var/run/docker.sock'
+  $socket_group                  = undef
+  $use_upstream_package_source   = true
+  $service_state                 = running
+  $service_enable                = true
+  $root_dir                      = undef
+  $tmp_dir                       = '/tmp/'
+  $dns                           = undef
+  $proxy                         = undef
+  $no_proxy                      = undef
+  $execdriver                    = undef
+  $storage_driver                = undef
+  $manage_package                = true
+  $manage_kernel                 = true
+  $ensure_recommended            = 'present'
+  $manage_recommended_packages   = true
+  $package_name_default          = 'lxc-docker'
+  $service_name_default          = 'docker'
+  $docker_command_default        = 'docker'
+  $install_init_d_script_default = false 
+>>>>>>> Require minimum kernel for Debian, begin refactor from ::install to ::params
   case $::osfamily {
     'Debian' : {
       case $::operatingsystem {
         'Ubuntu' : {
-          $package_name   = $package_name_default
-          $service_name   = $service_name_default
-          $docker_command = $docker_command_default
+          $install_init_d_script = true
+          $package_name          = $package_name_default
+          $service_name          = $service_name_default
+          $docker_command        = $docker_command_default
+          $kernelpackage         = [ 'linux-image-generic-lts-trusty', 'linux-headers-generic-lts-trusty' ]
+        }
+        'Debian' : {
+          $install_init_d_script = true
+          $package_name          = $package_name_default
+          $service_name          = $service_name_default
+          $docker_command        = $docker_command_default
+          $kernelpackage         = 'linux-image-3.16.0-4-amd64'
         }
         default: {
           $package_name   = 'docker.io'
           $service_name   = 'docker.io'
           $docker_command = 'docker.io'
+          $kernelpackage  = "linux-image-extra-${::kernelrelease}"
         }
       }
       $package_source_location = 'https://get.docker.io/ubuntu'
@@ -50,14 +86,16 @@ class docker::params {
         $package_name   = 'docker'
       }
       $package_source_location = ''
-      $service_name   = $service_name_default
-      $docker_command = $docker_command_default
+      $service_name            = $service_name_default
+      $docker_command          = $docker_command_default
+      $install_init_d_script   = false 
     }
     'Archlinux' : {
-      $package_name   = 'docker'
+      $package_name            = 'docker'
       $package_source_location = ''
-      $service_name   = $service_name_default
-      $docker_command = $docker_command_default
+      $service_name            = $service_name_default
+      $docker_command          = $docker_command_default
+      $install_init_d_script   = false 
       exec { 'docker-systemd-reload':
         command     => '/usr/bin/systemctl daemon-reload',
         refreshonly => true,
@@ -65,9 +103,10 @@ class docker::params {
       }
     default: {
       $package_source_location = ''
-      $package_name   = $package_name_default
-      $service_name   = $service_name_default
-      $docker_command = $docker_command_default
+      $package_name            = $package_name_default
+      $service_name            = $service_name_default
+      $docker_command          = $docker_command_default
+      $install_init_d_script   = false 
     }
   }
 
