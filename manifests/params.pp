@@ -1,8 +1,6 @@
 # == Class: docker::params
 #
 # Default parameter values for the docker module
-#
- 
 class docker::params {
   $version                       = undef
   $ensure                        = present
@@ -26,7 +24,7 @@ class docker::params {
   $package_name_default          = 'lxc-docker'
   $service_name_default          = 'docker'
   $docker_command_default        = 'docker'
-  $install_init_d_script_default = false 
+  $install_init_d_script_default = false
   case $::osfamily {
     'Debian' : {
       case $::operatingsystem {
@@ -65,14 +63,14 @@ class docker::params {
       $package_source_location = ''
       $service_name            = $service_name_default
       $docker_command          = $docker_command_default
-      $install_init_d_script   = false 
+      $install_init_d_script   = false
     }
     'Archlinux' : {
       $package_name            = 'docker'
       $package_source_location = ''
       $service_name            = $service_name_default
       $docker_command          = $docker_command_default
-      $install_init_d_script   = false 
+      $install_init_d_script   = false
       exec { 'docker-systemd-reload':
         command     => '/usr/bin/systemctl daemon-reload',
         refreshonly => true,
@@ -83,7 +81,7 @@ class docker::params {
       $package_name            = $package_name_default
       $service_name            = $service_name_default
       $docker_command          = $docker_command_default
-      $install_init_d_script   = false 
+      $install_init_d_script   = false
     }
   }
 

@@ -3,7 +3,6 @@
 # Module to install an up-to-date version of Docker from a package repository.
 # This module currently works only on Debian, Red Hat
 # and Archlinux based distributions.
- 
 class docker::install {
   validate_string($docker::version)
   $compatibility_error_message = 'This module only works on Debian, Red Hat and Archlinux based systems.'
@@ -62,6 +61,7 @@ class docker::install {
         }
       }
     }
+    default: {}
   }
 
   if $install_init_d_script {
