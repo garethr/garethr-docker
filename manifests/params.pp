@@ -1,7 +1,12 @@
 # == Class: docker::params
 #
+<<<<<<< HEAD
 # Default parameter values for the docker module
 #
+=======
+# Defaut parameter values for the docker module
+ 
+>>>>>>> Refactor parameters from ::install to ::params, no regression
 class docker::params {
 <<<<<<< HEAD
   $version                      = undef
@@ -60,7 +65,10 @@ class docker::params {
           $package_name          = $package_name_default
           $service_name          = $service_name_default
           $docker_command        = $docker_command_default
-          $kernelpackage         = [ 'linux-image-generic-lts-trusty', 'linux-headers-generic-lts-trusty' ]
+          $kernelpackage         = $::operatingsystemrelease ? {
+            '12.04' => [ 'linux-image-generic-lts-trusty', 'linux-headers-generic-lts-trusty' ],
+            default => "linux-image-extra-${::kernelrelease}",
+          }
         }
         'Debian' : {
           $install_init_d_script = true
@@ -73,7 +81,6 @@ class docker::params {
           $package_name   = 'docker.io'
           $service_name   = 'docker.io'
           $docker_command = 'docker.io'
-          $kernelpackage  = "linux-image-extra-${::kernelrelease}"
         }
       }
       $package_source_location = 'https://get.docker.io/ubuntu'
