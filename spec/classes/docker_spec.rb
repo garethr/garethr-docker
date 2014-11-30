@@ -11,6 +11,7 @@ describe 'docker', :type => :class do
           :lsbdistid              => 'Ubuntu',
           :lsbdistcodename        => 'maverick',
           :kernelrelease          => '3.8.0-29-generic',
+          :architecture           => 'amd64',
           :operatingsystemrelease => '10.04',
         } }
         service_config_file = '/etc/default/docker'
@@ -89,9 +90,12 @@ describe 'docker', :type => :class do
             :lsbdistid              => 'Debian',
             :lsbdistcodename        => 'jessie',
             :kernelrelease          => '3.14-1-amd64',
+            :architecture           => 'amd64',
             :operatingsystemrelease => 'jessie/sid',
           } }
           it { should contain_file('/etc/init.d/docker').with_source('puppet:///modules/docker/etc/init.d/docker.io').with_mode('0754') }
+          it { should contain_service('docker').with_provider('init') }
+          it { should contain_package('linux-image-3.16.0-4-amd64') }
         end
 
       end
@@ -99,7 +103,8 @@ describe 'docker', :type => :class do
       if osfamily == 'RedHat'
         let(:facts) { {
           :osfamily => osfamily,
-          :operatingsystemrelease => '6.5'
+          :operatingsystemrelease => '6.5',
+          :architecture           => 'amd64',
         } }
         service_config_file = '/etc/sysconfig/docker'
         it { should_not contain_file('/etc/init.d/docker') }
@@ -129,7 +134,8 @@ describe 'docker', :type => :class do
 
       if osfamily == 'Archlinux'
         let(:facts) { {
-          :osfamily => osfamily,
+          :osfamily     => osfamily,
+          :architecture => 'amd64',
         } }
         service_config_file = '/etc/conf.d/docker'
       end
@@ -232,6 +238,7 @@ describe 'docker', :type => :class do
       :lsbdistid              => 'Ubuntu',
       :lsbdistcodename        => 'maverick',
       :kernelrelease          => '3.8.0-29-generic',
+      :architecture           => 'amd64',
       :operatingsystemrelease => '10.04',
     } }
 
@@ -257,25 +264,28 @@ describe 'docker', :type => :class do
       :operatingsystem => 'Debian',
       :lsbdistid       => 'Debian',
       :lsbdistcodename => 'wheezy',
+      :architecture    => 'amd64',
       :kernelrelease   => '3.12-1-amd64'
     } }
 
+    it { should contain_package('linux-image-3.16.0-4-amd64') }
     it { should_not contain_package('linux-image-extra-3.8.0-29-generic') }
     it { should_not contain_package('linux-image-generic-lts-raring') }
     it { should_not contain_package('linux-headers-generic-lts-raring') }
-    it { should contain_service('docker').without_provider }
+    it { should contain_service('docker').with_provider('init') }
 
     context 'with no upstream package source' do
       let(:params) { {'use_upstream_package_source' => false } }
       it { should_not contain_apt__source('docker') }
-      it { should contain_package('docker').with_name('docker.io') }
+      it { should contain_package('docker').with_name('lxc-docker') }
     end
   end
 
   context 'specific to RedHat' do
     let(:facts) { {
       :osfamily => 'RedHat',
-      :operatingsystemrelease => '6.5'
+      :operatingsystemrelease => '6.5',
+      :architecture           => 'amd64',
     } }
 
     it { should contain_class('epel') }
@@ -296,7 +306,8 @@ describe 'docker', :type => :class do
   context 'specific to RedHat 7 or above' do
     let(:facts) { {
       :osfamily => 'RedHat',
-      :operatingsystemrelease => '7.0'
+      :operatingsystemrelease => '7.0',
+      :architecture           => 'amd64',
     } }
 
     it { should contain_package('docker').with_name('docker') }
@@ -309,6 +320,7 @@ describe 'docker', :type => :class do
       :operatingsystem        => 'Ubuntu',
       :lsbdistcodename        => 'precise',
       :operatingsystemrelease => '12.04',
+      :architecture           => 'amd64',
       :kernelrelease          => '3.8.0-29-generic'
     } }
     it { should contain_package('linux-image-generic-lts-trusty') }
@@ -324,6 +336,7 @@ describe 'docker', :type => :class do
       :operatingsystem        => 'Ubuntu',
       :lsbdistcodename        => 'trusty',
       :operatingsystemrelease => '14.04',
+      :architecture           => 'amd64',
       :kernelrelease          => '3.8.0-29-generic'
     } }
     it { should contain_service('docker').with_provider('upstart') }
@@ -335,7 +348,8 @@ describe 'docker', :type => :class do
   context 'specific to older RedHat based distros' do
     let(:facts) { {
       :osfamily => 'RedHat',
-      :operatingsystemrelease => '6.4'
+      :operatingsystemrelease => '6.4',
+      :architecture           => 'amd64',
     } }
     it do
       expect {
