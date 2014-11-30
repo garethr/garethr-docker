@@ -17,6 +17,9 @@ describe 'docker', :type => :class do
 
         it { should contain_service('docker').with_hasrestart('false') }
         it { should contain_class('apt') }
+        it { should_not contain_class('epel') }
+        it { should contain_class('docker::repo::deb_packages') }
+        it { should_not contain_class('docker::repo::yum_packages') }
         it { should contain_package('apt-transport-https').that_comes_before('Package[docker]') }
         it { should contain_package('docker').with_name('lxc-docker').with_ensure('present') }
         it { should contain_apt__source('docker').with_location('https://get.docker.io/ubuntu') }
@@ -119,6 +122,7 @@ describe 'docker', :type => :class do
       end
 
       it { should compile.with_all_deps }
+      it { should contain_class('docker::repos').that_comes_before('docker::install') }
       it { should contain_class('docker::install').that_comes_before('docker::config') }
       it { should contain_class('docker::service').that_subscribes_to('docker::config') }
       it { should contain_class('docker::config') }
@@ -262,12 +266,16 @@ describe 'docker', :type => :class do
     } }
 
     it { should contain_class('epel') }
+    it { should_not contain_class('apt') }
+    it { should contain_class('docker::repo::yum_packages') }
+    it { should_not contain_class('docker::repo::deb_packages') }
     it { should contain_package('docker').with_name('docker-io').with_ensure('present') }
     it { should_not contain_apt__source('docker') }
     it { should_not contain_package('linux-image-extra-3.8.0-29-generic') }
 
     context 'with no upstream package source' do
       let(:params) { {'use_upstream_package_source' => false } }
+      it { should contain_class('docker::repo::yum_packages') }
       it { should_not contain_class('epel') }
     end
   end
