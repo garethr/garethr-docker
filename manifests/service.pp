@@ -98,7 +98,7 @@ class docker::service (
     default  => undef,
   }
 
-  if versioncmp( $::kernelversion, '3.8.0' ) > 0 {
+  if versioncmp( $::kernelversion, '3.8.0' ) >= 0 {
     service { 'docker':
       ensure     => $service_state,
       name       => $service_name,
