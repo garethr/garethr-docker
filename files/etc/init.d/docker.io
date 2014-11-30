@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/sh
+
+###!/bin/bash
 # https://github.com/dotcloud/docker/raw/master/contrib/init/sysvinit-debian/docker
 # 2014-07-14
 
@@ -91,7 +93,11 @@ case "$1" in
 		chgrp docker "$DOCKER_LOGFILE"
 
 		ulimit -n 1048576
-		ulimit -u 1048576
+                if [ "$BASH" ]; then
+                        ulimit -u 1048576
+                else
+                        ulimit -p 1048576
+                fi
 
 		log_begin_msg "Starting $DOCKER_DESC: $BASE"
 		start-stop-daemon --start --background \
@@ -128,7 +134,7 @@ case "$1" in
 		;;
 
 	status)
-		status_of_proc -p "$DOCKER_SSD_PIDFILE" "$DOCKER" docker
+		status_of_proc -p "$DOCKER_SSD_PIDFILE" "$DOCKER" "$DOCKER_DESC"
 		;;
 
 	*)
