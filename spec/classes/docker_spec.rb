@@ -11,6 +11,7 @@ describe 'docker', :type => :class do
           :lsbdistid              => 'Ubuntu',
           :lsbdistcodename        => 'maverick',
           :kernelrelease          => '3.8.0-29-generic',
+          :kernelversion          => '3.8.0',
           :architecture           => 'amd64',
           :operatingsystemrelease => '10.04',
         } }
@@ -90,6 +91,7 @@ describe 'docker', :type => :class do
             :lsbdistid              => 'Debian',
             :lsbdistcodename        => 'jessie',
             :kernelrelease          => '3.14-1-amd64',
+            :kernelversion          => '3.14',
             :architecture           => 'amd64',
             :operatingsystemrelease => 'jessie/sid',
           } }
@@ -105,6 +107,7 @@ describe 'docker', :type => :class do
           :osfamily => osfamily,
           :operatingsystemrelease => '6.5',
           :architecture           => 'amd64',
+          :kernelversion          => '3.8.0',
         } }
         service_config_file = '/etc/sysconfig/docker'
         it { should_not contain_file('/etc/init.d/docker') }
@@ -134,8 +137,9 @@ describe 'docker', :type => :class do
 
       if osfamily == 'Archlinux'
         let(:facts) { {
-          :osfamily     => osfamily,
-          :architecture => 'amd64',
+          :osfamily      => osfamily,
+          :architecture  => 'amd64',
+          :kernelversion => '3.8.0',
         } }
         service_config_file = '/etc/conf.d/docker'
       end
@@ -265,7 +269,8 @@ describe 'docker', :type => :class do
       :lsbdistid       => 'Debian',
       :lsbdistcodename => 'wheezy',
       :architecture    => 'amd64',
-      :kernelrelease   => '3.12-1-amd64'
+      :kernelrelease   => '3.12-1-amd64',
+      :kernelversion   => '3.12',
     } }
 
     it { should contain_package('linux-image-3.16.0-4-amd64') }
@@ -321,7 +326,8 @@ describe 'docker', :type => :class do
       :lsbdistcodename        => 'precise',
       :operatingsystemrelease => '12.04',
       :architecture           => 'amd64',
-      :kernelrelease          => '3.8.0-29-generic'
+      :kernelrelease          => '3.8.0-29-generic',
+      :kernelversion          => '3.8.0',
     } }
     it { should contain_package('linux-image-generic-lts-trusty') }
     it { should contain_package('linux-headers-generic-lts-trusty') }
@@ -337,13 +343,25 @@ describe 'docker', :type => :class do
       :lsbdistcodename        => 'trusty',
       :operatingsystemrelease => '14.04',
       :architecture           => 'amd64',
-      :kernelrelease          => '3.8.0-29-generic'
+      :kernelrelease          => '3.8.0-29-generic',
+      :kernelversion          => '3.8.0',
     } }
     it { should contain_service('docker').with_provider('upstart') }
     it { should contain_package('docker').with_name('lxc-docker').with_ensure('present')  }
     it { should contain_package('apparmor') }
   end
 
+
+  context 'Docker will not run on older kernels' do
+    let(:facts) { {
+      :osfamily => 'RedHat',
+      :operatingsystemrelease => '6.6',
+      :architecture           => 'amd64',
+      :kernelversion          => '3.2.0',
+    } }
+    it { should contain_notify('Reboot_required') }
+    # it { should contain_notify('Reboot_required').with_message(/system reboot is required to enable the new kernel/) } 
+  end
 
   context 'specific to older RedHat based distros' do
     let(:facts) { {

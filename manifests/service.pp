@@ -100,7 +100,13 @@ class docker::service (
       provider   => $provider,
     }
   } else {
-    notice( "A system reboot is required to enable the new kernel before docker can be used, currently running ${::kernelversion}, on reboot will be running " )
+
+    notify { 'Reboot_required':
+      message => "A system reboot is required to enable the new kernel before docker can be used, currently running ${::kernelversion}"
+    }
+
+    service { 'docker': ensure => 'stopped' }
+
   }
 
 }
