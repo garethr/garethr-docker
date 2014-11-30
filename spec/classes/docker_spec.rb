@@ -3,107 +3,80 @@ require 'spec_helper'
 describe 'docker', :type => :class do
 
   ['Debian', 'RedHat', 'Archlinux'].each do |osfamily|
-    context "on #{osfamily} os family" do
+    context "on #{osfamily}" do
       if osfamily == 'Debian'
-        ['Ubuntu'].each do |operatingsystem|
-=begin
-        ['Ubuntu', 'Debian'].each do |operatingsystem|
-=end
-          context "on #{operatingsystem} operating system" do
-            if operatingsystem == 'Ubuntu'
-              let(:facts) { {
-                :osfamily               => 'Debian',
-                :operatingsystem        => 'Ubuntu',
-                :lsbdistid              => 'Ubuntu',
-                :lsbdistcodename        => 'maverick',
-                :kernelrelease          => '3.8.0-29-generic',
-                :operatingsystemrelease => '10.04',
-              } }
-            elsif operatingsystem == 'Debian'
-              let(:facts) { {
-                :osfamily               => 'Debian',
-                :operatingsystem        => 'Debian',
-                :lsbdistid              => 'Debian',
-                :lsbdistcodename        => 'jessie',
-                :kernelrelease          => '3.16-2-amd64',
-                :operatingsystemrelease => 'jessie/sid',
-              } }
-            end
-            service_config_file = '/etc/default/docker'
+        let(:facts) { {
+          :osfamily               => osfamily,
+          :operatingsystem        => 'Ubuntu',
+          :lsbdistid              => 'Ubuntu',
+          :lsbdistcodename        => 'maverick',
+          :kernelrelease          => '3.8.0-29-generic',
+          :operatingsystemrelease => '10.04',
+        } }
+        service_config_file = '/etc/default/docker'
 
-            it { should contain_service('docker').with_hasrestart('false') }
-            it { should contain_class('apt') }
-            it { should contain_package('apt-transport-https').that_comes_before('Package[docker]') }
-            it { should contain_package('docker').with_name('lxc-docker').with_ensure('present') }
-            it { should contain_apt__source('docker').with_location('https://get.docker.io/ubuntu') }
+        it { should contain_service('docker').with_hasrestart('false') }
+        it { should contain_class('apt') }
+        it { should contain_package('apt-transport-https').that_comes_before('Package[docker]') }
+        it { should contain_package('docker').with_name('lxc-docker').with_ensure('present') }
+        it { should contain_apt__source('docker').with_location('https://get.docker.io/ubuntu') }
+        it { should contain_file('/etc/init.d/docker').with_ensure('link').with_target('/lib/init/upstart-job') }
 
-            if operatingsystem == 'Ubuntu'
-              it { should contain_file('/etc/init.d/docker').with_ensure('link').with_target('/lib/init/upstart-job') }
-            elsif operatingsystem == 'Debian'
-              it { should contain_file('/etc/init.d/docker').with_source('puppet:///modules/docker/etc/init.d/docker.io') }
-            else
-              it { should_not contain_file('/etc/init.d/docker') }
-            end
+        context 'with a custom version' do
+          let(:params) { {'version' => '0.5.5' } }
+          it { should contain_package('docker').with_name('lxc-docker-0.5.5').with_ensure('present') }
+        end
 
-            context 'with a custom version' do
-              let(:params) { {'version' => '0.5.5' } }
-              it { should contain_package('docker').with_name('lxc-docker-0.5.5').with_ensure('present') }
-            end
+        context 'with managed_recommended_packages set' do
+          let(:params) { {'manage_recommended_packages' => true } }
+          it { should contain_package('bridge-utils').with_ensure('present') }
+        end
 
-            context 'with managed_recommended_packages set' do
-              let(:params) { {'manage_recommended_packages' => true } }
-              it { should contain_package('bridge-utils').with_ensure('present') }
-            end
+        context 'with a custom package name' do
+          let(:params) { {'package_name' => 'docker-custom-pkg-name' } }
+          it { should contain_package('docker').with_name('docker-custom-pkg-name').with_ensure('present') }
+        end
 
-            context 'with a custom package name' do
-              let(:params) { {'package_name' => 'docker-custom-pkg-name' } }
-              it { should contain_package('docker').with_name('docker-custom-pkg-name').with_ensure('present') }
-            end
+        context 'with a custom package name and version' do
+          let(:params) { {
+             'version'      => '0.5.5',
+             'package_name' => 'docker-custom-pkg-name',
+          } }
+          it { should contain_package('docker').with_name('docker-custom-pkg-name-0.5.5').with_ensure('present') }
+        end
 
-            context 'with a custom package name and version' do
-              let(:params) { {
-                 'version'      => '0.5.5',
-                 'package_name' => 'docker-custom-pkg-name',
-              } }
-              it { should contain_package('docker').with_name('docker-custom-pkg-name-0.5.5').with_ensure('present') }
-            end
+        context 'when not managing the package' do
+          let(:params) { {'manage_package' => false } }
+          it { should_not contain_package('docker') }
+        end
 
-            context 'when not managing the package' do
-              let(:params) { {'manage_package' => false } }
-              it { should_not contain_package('docker') }
-            end
+        context 'It should accept custom prerequired_packages' do
+          let(:params) { {'prerequired_packages' => [ 'test_package' ],
+                          'manage_package'       => false,  } }
+          it { should contain_package('test_package').with_ensure('present') }
+        end
 
-            context 'It should accept custom prerequired_packages' do
-              let(:params) { {'prerequired_packages' => [ 'test_package' ],
-                              'manage_package'       => false,  } }
-              it { should contain_package('test_package').with_ensure('present') }
-            end
+        context 'with no upstream package source' do
+          let(:params) { {'use_upstream_package_source' => false } }
+          it { should_not contain_apt__source('docker') }
+          it { should contain_package('docker').with_name('lxc-docker') }
+        end
 
-            context 'with no upstream package source' do
-              let(:params) { {'use_upstream_package_source' => false } }
-              it { should_not contain_apt__source('docker') }
-              it { should contain_package('docker').with_name('lxc-docker') }
-            end
+        context 'with no upstream package source' do
+          let(:params) { {'use_upstream_package_source' => false } }
+          it { should_not contain_apt__source('docker') }
+          it { should_not contain_class('epel') }
+          it { should contain_package('docker') }
+        end
 
-            context 'with no upstream package source' do
-              let(:params) { {'use_upstream_package_source' => false } }
-              it { should_not contain_apt__source('docker') }
-              it { should_not contain_class('epel') }
-              it { should contain_package('docker') }
-            end
+        context 'when given a specific tmp_dir' do
+          let(:params) {{ 'tmp_dir' => '/bigtmp' }}
+          it { should contain_file('/etc/default/docker').with_content(/export TMPDIR="\/bigtmp"/) }
+        end
 
-            context 'when given a specific tmp_dir' do
-              let(:params) {{ 'tmp_dir' => '/bigtmp' }}
-              it { should contain_file('/etc/default/docker').with_content(/export TMPDIR="\/bigtmp"/) }
-            end
-
-            context 'with custom service_name' do
-              let(:params) {{ 'service_name' => 'docker.io' }}
-              it { should contain_file('/etc/default/docker.io') }
-            end
-
-          end
-
+        context 'with custom service_name' do
+          let(:params) {{ 'service_name' => 'docker.io' }}
+          it { should contain_file('/etc/default/docker.io') }
         end
 
       end
