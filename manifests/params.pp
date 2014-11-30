@@ -1,38 +1,9 @@
 # == Class: docker::params
 #
-<<<<<<< HEAD
 # Default parameter values for the docker module
 #
-=======
-# Defaut parameter values for the docker module
  
->>>>>>> Refactor parameters from ::install to ::params, no regression
 class docker::params {
-<<<<<<< HEAD
-  $version                      = undef
-  $ensure                       = present
-  $tcp_bind                     = undef
-  $socket_bind                  = 'unix:///var/run/docker.sock'
-  $socket_group                 = undef
-  $use_upstream_package_source  = true
-  $service_state                = running
-  $service_enable               = true
-  $root_dir                     = undef
-  $tmp_dir                      = '/tmp/'
-  $dns                          = undef
-  $dns_search                   = undef
-  $proxy                        = undef
-  $no_proxy                     = undef
-  $execdriver                   = undef
-  $storage_driver               = undef
-  $manage_package               = true
-  $manage_kernel                = true
-  $ensure_recommended           = 'present'
-  $manage_recommended_packages  = true
-  $package_name_default         = 'lxc-docker'
-  $service_name_default         = 'docker'
-  $docker_command_default       = 'docker'
-=======
   $version                       = undef
   $ensure                        = present
   $tcp_bind                      = undef
@@ -56,7 +27,6 @@ class docker::params {
   $service_name_default          = 'docker'
   $docker_command_default        = 'docker'
   $install_init_d_script_default = false 
->>>>>>> Require minimum kernel for Debian, begin refactor from ::install to ::params
   case $::osfamily {
     'Debian' : {
       case $::operatingsystem {
