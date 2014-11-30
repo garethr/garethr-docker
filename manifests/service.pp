@@ -90,13 +90,17 @@ class docker::service (
     default  => undef,
   }
 
-  service { 'docker':
-    ensure     => $service_state,
-    name       => $service_name,
-    enable     => $service_enable,
-    hasstatus  => $hasstatus,
-    hasrestart => $hasrestart,
-    provider   => $provider,
+  if versioncmp( $::kernelversion, '3.8.0' ) > 0 {
+    service { 'docker':
+      ensure     => $service_state,
+      name       => $service_name,
+      enable     => $service_enable,
+      hasstatus  => $hasstatus,
+      hasrestart => $hasrestart,
+      provider   => $provider,
+    }
+  } else {
+    notice( "A system reboot is required to enable the new kernel before docker can be used, currently running ${::kernelversion}, on reboot will be running " )
   }
 
 }
