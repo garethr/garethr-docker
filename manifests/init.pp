@@ -122,6 +122,7 @@ class docker(
 
   validate_string($version)
   validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', 'This module only works on Debian and Red Hat based systems.')
+  validate_re($::architecture, '^amd64$', 'Docker requires a 64bit cpu and kernel')
   validate_bool($manage_kernel)
   validate_bool($manage_package)
 
