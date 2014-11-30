@@ -82,6 +82,18 @@ describe 'docker', :type => :class do
           it { should contain_file('/etc/default/docker.io') }
         end
 
+        context 'using the Debian operating system' do
+          let(:facts) { {
+            :osfamily               => osfamily,
+            :operatingsystem        => 'Debian',
+            :lsbdistid              => 'Debian',
+            :lsbdistcodename        => 'jessie',
+            :kernelrelease          => '3.14-1-amd64',
+            :operatingsystemrelease => 'jessie/sid',
+          } }
+          it { should contain_file('/etc/init.d/docker').with_source('puppet:///modules/docker/etc/init.d/docker.io').with_mode('0754') }
+        end
+
       end
 
       if osfamily == 'RedHat'
@@ -90,6 +102,7 @@ describe 'docker', :type => :class do
           :operatingsystemrelease => '6.5'
         } }
         service_config_file = '/etc/sysconfig/docker'
+        it { should_not contain_file('/etc/init.d/docker') }
 
         context 'with proxy param' do
           let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
