@@ -161,6 +161,11 @@ require 'spec_helper'
       let(:params) { {'command' => 'command', 'image' => 'base', 'privileged' => true} }
       it { should contain_file(initscript).with_content(/--privileged/) }
     end
+    
+    context 'when running detached' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'detach' => true} }
+      it { should contain_file(initscript).with_content(/--detach=true/) }
+    end
 
     context 'when passing serveral extra parameters' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'extra_parameters' => ['--rm', '-w /tmp']} }
