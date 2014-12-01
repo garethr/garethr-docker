@@ -21,6 +21,7 @@ script
     <% if @hostname %>-h '<%= @hostname %>'<% end %> \
     <% if @disable_network %>-n false<% end %> \
     <% if @privileged %>--privileged<% end %> \
+    <% if @detach %>--detach=true<% end %> \
     <% if @dns %><% @dns_array.each do |address| %> \
         --dns <%= address %><% end %> \
     <% end %> \

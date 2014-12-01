@@ -24,6 +24,7 @@ define docker::run(
   $restart_service = true,
   $disable_network = false,
   $privileged = false,
+  $detach = false,
   $extra_parameters = undef,
 ) {
   include docker::params
@@ -47,6 +48,7 @@ define docker::run(
   validate_bool($running)
   validate_bool($disable_network)
   validate_bool($privileged)
+  validate_bool($detach)
   validate_bool($restart_service)
 
   $ports_array = any2array($ports)
