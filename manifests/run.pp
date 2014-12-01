@@ -24,6 +24,7 @@ define docker::run(
   $restart_service = true,
   $disable_network = false,
   $privileged = false,
+  $detach = false,
   $extra_parameters = undef,
 ) {
   include docker::params
