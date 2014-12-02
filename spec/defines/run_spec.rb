@@ -6,13 +6,8 @@ require 'spec_helper'
     let(:facts) { {:osfamily => osfamily} }
     let(:title) { 'sample' }
 
-    if osfamily == 'Debian'
-      initscript = '/etc/init/docker-sample.conf'
-      command = 'docker.io'
-    else
-      initscript = '/etc/init.d/docker-sample'
-      command = 'docker'
-    end
+    initscript = '/etc/init.d/docker-sample'
+    command = '\$docker'
 
     context 'passing the required params' do
       let(:params) { {'command' => 'command', 'image' => 'base'} }
