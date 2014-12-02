@@ -124,4 +124,10 @@ class docker(
   class { 'docker::config': } ~>
   class { 'docker::service': } ->
   Class['docker']
+
+  # Only bother trying to extra docker stuff after docker has been installed,
+  # and is running.
+  Class['docker'] -> Docker::Run <||>
+  Class['docker'] -> Docker::Image <||>
+
 }

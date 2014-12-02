@@ -7,8 +7,8 @@ require 'spec_helper'
     let(:title) { 'sample' }
 
     if osfamily == 'Debian'
-      initscript = '/etc/init/docker-sample.conf'
-      command = 'docker.io'
+      initscript = '/etc/init.d/docker-sample'
+      command = '\$docker'
     elsif osfamily == 'Archlinux'
       initscript = '/etc/systemd/system/docker-sample.service'
       command = 'docker'
