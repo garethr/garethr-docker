@@ -45,13 +45,6 @@ class docker::service (
       $hasstatus     = true
       $hasrestart    = false
 
-      file { '/etc/init.d/docker':
-          ensure => 'link',
-          target => '/lib/init/upstart-job',
-          force  => true,
-          notify => Service['docker'],
-      }
-
       file { "/etc/default/${service_name}":
         ensure  => present,
         force   => true,
@@ -101,16 +94,27 @@ class docker::service (
 
   $provider = $::operatingsystem ? {
     'Ubuntu' => 'upstart',
+    'Debian' => 'init',
     default  => undef,
   }
 
-  service { 'docker':
-    ensure     => $service_state,
-    name       => $service_name,
-    enable     => $service_enable,
-    hasstatus  => $hasstatus,
-    hasrestart => $hasrestart,
-    provider   => $provider,
+  if versioncmp( $::kernelversion, '3.8.0' ) >= 0 {
+    service { 'docker':
+      ensure     => $service_state,
+      name       => $service_name,
+      enable     => $service_enable,
+      hasstatus  => $hasstatus,
+      hasrestart => $hasrestart,
+      provider   => $provider,
+    }
+  } else {
+
+    notify { 'Reboot_required':
+      message => "A system reboot is required to enable the new kernel before docker can be used, currently running ${::kernelversion}"
+    }
+
+    service { 'docker': ensure => 'stopped' }
+
   }
 
 }

@@ -10,6 +10,8 @@ Status](http://img.shields.io/badge/docs-puppet--strings-lightgrey.svg)](https:/
 
 This module is currently tested on:
 
+* Debian Wheezy
+* Debian Jessie
 * Ubuntu 12.04
 * Ubuntu 14.04
 * Centos 7.0
@@ -32,6 +34,10 @@ include 'docker'
 
 By default this sets up the docker hosted repository if necessary for your OS
 and installs the docker package and on Ubuntu, any required Kernel extensions.
+If your kernel <3.8.0, it will install a later version of the kernel and notify 
+you of the need to reboot on the new kernel to support docker.  If you lack the 
+64bit architecture required by docker, this class will simply abort with an 
+error message.  
 
 If you don't want this module to mess about with your Kernel then you can disable
 this feature like so. It is only enabled (and supported) by default on Ubuntu:
@@ -51,6 +57,9 @@ class { 'docker':
   use_upstream_package_source => false,
 }
 ```
+
+There are also manage_recommended_packages and manage_package options 
+also available.  
 
 By default the docker daemon will bind to a unix socket at
 /var/run/docker.sock. This can be changed, as well as binding to a tcp

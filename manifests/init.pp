@@ -87,8 +87,9 @@
 # [*docker_command*]
 #   Specify a custom docker command name
 #   Default is set on a per system basis in docker::params
-#
+
 class docker(
+
   $version                     = $docker::params::version,
   $ensure                      = $docker::params::ensure,
   $prerequired_packages        = $docker::params::prerequired_packages,
@@ -113,15 +114,24 @@ class docker(
   $package_name                = $docker::params::package_name,
   $service_name                = $docker::params::service_name,
   $docker_command              = $docker::params::docker_command,
+  $ensure_recommended          = $docker::params::ensure_recommended,
+  $recommended_packages        = $docker::params::recommended_packages,
+  $manage_recommended_packages = $docker::params::manage_recommended_packages,
+
 ) inherits docker::params {
 
   validate_string($version)
   validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', 'This module only works on Debian and Red Hat based systems.')
+  validate_re($::architecture, '^amd64$', 'Docker requires a 64bit cpu and kernel')
   validate_bool($manage_kernel)
   validate_bool($manage_package)
 
+  anchor { 'docker::begin': } ->
+  class { 'docker::repos': } ->
   class { 'docker::install': } ->
   class { 'docker::config': } ~>
   class { 'docker::service': } ->
-  Class['docker']
+  anchor { 'docker::end': }
+
 }
+

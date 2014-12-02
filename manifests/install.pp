@@ -3,16 +3,21 @@
 # Module to install an up-to-date version of Docker from a package repository.
 # This module currently works only on Debian, Red Hat
 # and Archlinux based distributions.
-#
 class docker::install {
   validate_string($docker::version)
-  validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', 'This module only works on Debian, Red Hat and Archlinux based systems.')
+  $compatibility_error_message = 'This module only works on Debian, Red Hat and Archlinux based systems.'
+  validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', $compatibility_error_message)
   validate_string($::kernelrelease)
   validate_bool($docker::use_upstream_package_source)
+
+  $kernelpackage         = getvar('docker::params::kernelpackage')
+  $manage_kernel         = getvar('docker::manage_kernel')
+  $install_init_d_script = getvar('docker::params::install_init_d_script')
 
   case $::osfamily {
     'Debian': {
       ensure_packages($docker::prerequired_packages)
+
       if $docker::manage_package {
         Package['apt-transport-https'] -> Package['docker']
       }
@@ -23,22 +28,7 @@ class docker::install {
         $dockerpackage = $docker::package_name
       }
 
-      if ($docker::use_upstream_package_source) {
-        include apt
-        apt::source { 'docker':
-          location          => $docker::package_source_location,
-          release           => 'docker',
-          repos             => 'main',
-          required_packages => 'debian-keyring debian-archive-keyring',
-          key               => 'A88D21E9',
-          key_source        => 'https://get.docker.io/gpg',
-          pin               => '10',
-          include_src       => false,
-        }
-        if $docker::manage_package {
-          Apt::Source['docker'] -> Package['docker']
-        }
-      } else {
+      if (! $docker::use_upstream_package_source) {
         if $docker::version and $docker::ensure != 'absent' {
           $ensure = $docker::version
         } else {
@@ -46,23 +36,6 @@ class docker::install {
         }
       }
 
-      if $::operatingsystem == 'Ubuntu' {
-        case $::operatingsystemrelease {
-          # On Ubuntu 12.04 (precise) install the backported 13.10 (saucy) kernel
-          '12.04': { $kernelpackage = [
-                                        'linux-image-generic-lts-trusty',
-                                        'linux-headers-generic-lts-trusty'
-                                      ]
-          }
-          # determine the package name for 'linux-image-extra-$(uname -r)' based
-          # on the $::kernelrelease fact
-          default: { $kernelpackage = "linux-image-extra-${::kernelrelease}" }
-        }
-        $manage_kernel = $docker::manage_kernel
-      } else {
-        # Debian does not need extra kernel packages
-        $manage_kernel = false
-      }
     }
     'RedHat': {
       if $::operatingsystem == 'Amazon' {
@@ -74,29 +47,37 @@ class docker::install {
         fail('Docker needs RedHat/CentOS version to be at least 6.5.')
       }
 
-      $manage_kernel = false
-
       if $docker::version {
         $dockerpackage = "${docker::package_name}-${docker::version}"
       } else {
         $dockerpackage = $docker::package_name
       }
-      if $::operatingsystem != 'Amazon' {
-        if ($docker::use_upstream_package_source) {
-          include 'epel'
-          if $docker::manage_package {
-            Class['epel'] -> Package['docker']
-          }
-        }
-      }
     }
     'Archlinux': {
-      $manage_kernel = false
 
       if $docker::version {
         notify { 'docker::version unsupported on Archlinux':
           message => 'Versions other than latest are not supported on Arch Linux. This setting will be ignored.'
         }
+      }
+    }
+    default: {}
+  }
+
+  if $install_init_d_script {
+    if $::operatingsystem == 'Ubuntu' {
+      file { '/etc/init.d/docker':
+        ensure => 'link',
+        target => '/lib/init/upstart-job',
+        force  => true,
+        notify => Service['docker'],
+      }
+    } elsif $::operatingsystem == 'Debian' {
+      file { '/etc/init.d/docker':
+        source => 'puppet:///modules/docker/etc/init.d/docker.io',
+        owner  => root,
+        group  => root,
+        mode   => '0754',
       }
     }
   }
@@ -116,4 +97,11 @@ class docker::install {
       name   => $dockerpackage,
     }
   }
+
+  $recommended_packages = $docker::recommended_packages
+  if $docker::manage_recommended_packages {
+    ensure_resource('package',$recommended_packages,{ ensure => $docker::ensure_recommended })
+  }
+
 }
+

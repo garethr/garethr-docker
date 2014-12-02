@@ -4,3 +4,6 @@ spec/fixtures
 .vagrant
 .yardoc
 doc
+rake_test/
+vendor/
+
