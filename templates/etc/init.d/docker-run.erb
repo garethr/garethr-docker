@@ -76,6 +76,18 @@ start() {
         fi
     fi
 
+    <% if @use_name %>
+    # If a container with this name already exists, we need to remove it
+    # before we can spin up a new container with that name. This avoids an
+    # error like this:
+    #
+    # Conflict, The name <%= @name %> is already assigned to $some_sha. You
+    # have to delete (or rename) that container to be able to assign
+    # <%= @name %> to a container again.
+    #
+    $docker rm <%= @name %> > /dev/null 2>&1
+    <% end %>
+
     printf "Starting $prog:\t"
     $docker run --cidfile=$cidfile -d=true \
         <% if @username %>-u '<%= @username %>' <% end %> \

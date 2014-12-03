@@ -1,7 +1,7 @@
 # This file is managed by Puppet and local changes
 # may be overwritten
 
-description "start and stop <%= @title %> in docker"
+description "start and stop <%= @sanitised_title %> in docker"
 author "Gareth Rushgrove"
 
 start on (started <%= @service_name %>)

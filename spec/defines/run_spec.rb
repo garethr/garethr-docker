@@ -39,6 +39,10 @@ require 'spec_helper'
     context 'when `use_name` is true' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'use_name' => true } }
       it { should contain_file(initscript).with_content(/ --name sample /) }
+      # We only care about Debian for now
+      if osfamily == 'Debian'
+        it { should contain_file(initscript).with_content(%r|\$docker rm sample > /dev/null 2>&1|) }
+      end
     end
 
     context 'when stopping the service' do
