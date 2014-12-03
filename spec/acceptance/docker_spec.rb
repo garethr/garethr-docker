@@ -11,19 +11,19 @@ describe 'docker class' do
   command = 'docker'
 
   context 'default parameters' do
-    it 'should work with no errors' do
-      pp = <<-EOS
+    let(:pp) {"
         class { 'docker': }
         docker::image { 'nginx': }
         docker::run { 'nginx':
           image => 'nginx',
           net   => 'host',
         }
-      EOS
-
-      # Run it twice and test for idempotency
-      expect(apply_manifest(pp).exit_code).to_not eq(1)
-      expect(apply_manifest(pp).exit_code).to eq(0)
+    "}
+    it 'should apply with no errors' do
+      apply_manifest(pp, :catch_failures=>true)
+    end
+    it 'should be idempotent' do
+      apply_manifest(pp, :catch_changes=>true)
     end
 
     describe package(package_name) do
