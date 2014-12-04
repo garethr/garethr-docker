@@ -1,8 +1,9 @@
 # == Class: docker
 #
 # Module to install an up-to-date version of Docker from a package repository.
-# This module currently works only on Debian, Red Hat
-# and Archlinux based distributions.
+# The use of this repository means, this module works only on Debian and Red
+# Hat based distributions.  If $docker::params::ensure is set to absent or purge,
+# then docker and its dependencies will be uninstalled.
 #
 class docker::install {
   validate_string($docker::version)
@@ -10,9 +11,27 @@ class docker::install {
   validate_string($::kernelrelease)
   validate_bool($docker::use_upstream_package_source)
 
+  $prerequired_packages = $::operatingsystem ? {
+    'Debian' => ['apt-transport-https', 'cgroupfs-mount'],
+    'Ubuntu' => ['apt-transport-https', 'cgroup-lite'],
+    default  => '',
+  }
+
+  $recommended_packages = $::operatingsystem ? {
+    'Debian' => ['bridge-utils'],
+    'Ubuntu' => ['bridge-utils'],
+    default  => '',
+  }
+
   case $::osfamily {
     'Debian': {
-      ensure_packages($docker::prerequired_packages)
+
+      if member(['present','installed','latest'], $docker::ensure) {
+          ensure_resource('package',$prerequired_packages,{ ensure => $docker::ensure })
+      }
+      if member(['present','installed','latest'], $docker::ensure_recommended) {
+          ensure_resource('package',$recommended_packages,{ ensure => $docker::ensure_recommended })
+      }
       if $docker::manage_package {
         Package['apt-transport-https'] -> Package['docker']
       }
@@ -47,6 +66,7 @@ class docker::install {
       }
 
       if $::operatingsystem == 'Ubuntu' {
+        $install_init_d_script = false
         case $::operatingsystemrelease {
           # On Ubuntu 12.04 (precise) install the backported 13.10 (saucy) kernel
           '12.04': { $kernelpackage = [
@@ -62,6 +82,7 @@ class docker::install {
       } else {
         # Debian does not need extra kernel packages
         $manage_kernel = false
+        $install_init_d_script = true
       }
     }
     'RedHat': {
@@ -103,7 +124,7 @@ class docker::install {
 
   if $manage_kernel {
     package { $kernelpackage:
-      ensure => present,
+      ensure => $docker::ensure,
     }
     if $docker::manage_package {
       Package[$kernelpackage] -> Package['docker']
@@ -116,4 +137,34 @@ class docker::install {
       name   => $dockerpackage,
     }
   }
+
+  if member(['absent','purged'], $docker::ensure_recommended) {
+    ensure_resource('package',$recommended_packages,{ ensure => $docker::ensure_recommended })
+  }
+
+  if member(['absent','purged'], $docker::ensure) {
+
+    ensure_resource('package',$prerequired_packages,{ ensure => $docker::ensure })
+
+    file { '/etc/init.d/docker':
+      ensure => 'absent',
+    }
+
+  } elsif $install_init_d_script == false {
+
+    file { '/etc/init.d/docker':
+      ensure => 'absent',
+      notify => Service['docker'],
+    }
+
+  } elsif $install_init_d_script == true {
+
+    file { '/etc/init.d/docker':
+      source => 'puppet:///modules/docker/etc/init.d/docker',
+      owner  => root,
+      group  => root,
+    }
+
+  }
+
 }

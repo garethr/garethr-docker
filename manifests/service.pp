@@ -42,15 +42,8 @@ class docker::service (
 
   case $::osfamily {
     'Debian': {
-      $hasstatus     = true
-      $hasrestart    = false
-
-      file { '/etc/init.d/docker':
-          ensure => 'link',
-          target => '/lib/init/upstart-job',
-          force  => true,
-          notify => Service['docker'],
-      }
+      $hasstatus     = false
+      $hasrestart    = true
 
       file { "/etc/default/${service_name}":
         ensure  => present,
@@ -101,6 +94,10 @@ class docker::service (
 
   $provider = $::operatingsystem ? {
     'Ubuntu' => 'upstart',
+    'Debian' => $::lsbdistcodename ? {
+      'jessie' => 'debian',
+      'wheezy' => undef,
+    },
     default  => undef,
   }
 

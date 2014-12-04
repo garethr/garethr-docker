@@ -15,7 +15,17 @@ describe 'docker', :type => :class do
         } }
         service_config_file = '/etc/default/docker'
 
-        it { should contain_service('docker').with_hasrestart('false') }
+        ['Debian', 'Ubuntu'].each do |operatingsystem|
+          context "on #{operatingsystem}" do
+            if operatingsystem == 'Debian'
+              it { should contain_service('docker').with_hasrestart('true') }
+            end
+            if operatingsystem == 'Ubuntu'
+              it { should contain_service('docker').with_hasrestart('false') }
+            end
+          end
+        end
+
         it { should contain_class('apt') }
         it { should contain_package('apt-transport-https').that_comes_before('Package[docker]') }
         it { should contain_package('docker').with_name('lxc-docker').with_ensure('present') }
@@ -209,9 +219,22 @@ describe 'docker', :type => :class do
         it { should contain_file(service_config_file).with_content(/-g \/mnt\/docker/) }
       end
 
-      context 'with ensure absent' do
-        let(:params) { {'ensure' => 'absent' } }
-        it { should contain_package('docker').with_ensure('absent') }
+      ['Debian', 'Ubuntu'].each do |operatingsystem|
+        context "on #{operatingsystem}" do
+          if operatingsystem == 'Ubuntu'
+            context 'with ensure absent' do
+              let(:params) { {'ensure' => 'absent' } }
+              it { should contain_package('docker').with_ensure('absent') }
+            end
+          end
+        end
+      end
+
+      if operatingsystem == 'Debian'
+        context 'with ensure present' do
+          let(:params) { {'ensure' => 'present' } }
+          it { should contain_package('docker').with_ensure('present') }
+        end
       end
 
     end
@@ -256,7 +279,13 @@ describe 'docker', :type => :class do
     it { should_not contain_package('linux-image-extra-3.8.0-29-generic') }
     it { should_not contain_package('linux-image-generic-lts-raring') }
     it { should_not contain_package('linux-headers-generic-lts-raring') }
-    it { should contain_service('docker').without_provider }
+    if lsbdistcodename == 'wheezy'
+      it { should contain_service('docker').without_provider }
+    end
+
+    if lsbdistcodename == 'jessie'
+      it { should contain_service('docker').with_provider }
+    end
 
     context 'with no upstream package source' do
       let(:params) { {'use_upstream_package_source' => false } }
