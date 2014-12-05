@@ -87,7 +87,7 @@ define docker::run(
         $hasrestart     = undef
         $mode           = '0755'
         $uses_systemd   = false
-      } else {  
+      } else {
         $initscript     = "/etc/systemd/system/docker-${sanitised_title}.service"
         $init_template  = 'docker/etc/systemd/system/docker-run.erb'
         $hasstatus      = true
