@@ -77,31 +77,35 @@ define docker::run(
       $hasstatus  = true
       $hasrestart = false
       $mode = '0644'
+      $uses_systemd = false
     }
     'RedHat': {
       case $::operatingsystemmajrelease {
         '7': {
-          $initscript    = "/etc/systemd/system/docker-${sanitised_title}.service"
-          $init_template = 'docker/etc/systemd/system/docker-run.erb'
-          $hasstatus     = true
-          $hasrestart    = true
-          $mode          = '0644'
+          $initscript     = "/etc/systemd/system/docker-${sanitised_title}.service"
+          $init_template  = 'docker/etc/systemd/system/docker-run.erb'
+          $hasstatus      = true
+          $hasrestart     = true
+          $mode           = '0644'
+          $uses_systemd   = true
         }
         default: {
-          $initscript = "/etc/init.d/docker-${sanitised_title}"
-          $init_template = 'docker/etc/init.d/docker-run.erb'
-          $hasstatus  = undef
-          $hasrestart = undef
-          $mode = '0755'
+          $initscript     = "/etc/init.d/docker-${sanitised_title}"
+          $init_template  = 'docker/etc/init.d/docker-run.erb'
+          $hasstatus      = undef
+          $hasrestart     = undef
+          $mode           = '0755'
+          $uses_systemd   = false
         }
       }
     }
     'Archlinux': {
-      $initscript    = "/etc/systemd/system/docker-${sanitised_title}.service"
-      $init_template = 'docker/etc/systemd/system/docker-run.erb'
-      $hasstatus     = true
-      $hasrestart    = true
-      $mode          = '0644'
+      $initscript     = "/etc/systemd/system/docker-${sanitised_title}.service"
+      $init_template  = 'docker/etc/systemd/system/docker-run.erb'
+      $hasstatus      = true
+      $hasrestart     = true
+      $mode           = '0644'
+      $uses_systemd   = true
     }
     default: {
       fail('Docker needs a Debian, RedHat or Archlinux based system.')
@@ -123,7 +127,7 @@ define docker::run(
     require    => File[$initscript],
   }
 
-  if $::osfamily == 'Archlinux' {
+  if $uses_systemd {
     File[$initscript] ~> Exec['docker-systemd-reload']
     Exec['docker-systemd-reload'] -> Service["docker-${sanitised_title}"]
   }
