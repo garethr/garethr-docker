@@ -49,7 +49,7 @@ class docker::params {
       $package_source_location = ''
       $service_name   = $service_name_default
       $docker_command = $docker_command_default
-      if $::operatingsystemmajrelease == '7' {
+      unless versioncmp($::operatingsystemrelease, '7.0') < 0 {
         include docker::systemd_reload
       }
     }

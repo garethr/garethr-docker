@@ -80,23 +80,20 @@ define docker::run(
       $uses_systemd = false
     }
     'RedHat': {
-      case $::operatingsystemmajrelease {
-        '7': {
-          $initscript     = "/etc/systemd/system/docker-${sanitised_title}.service"
-          $init_template  = 'docker/etc/systemd/system/docker-run.erb'
-          $hasstatus      = true
-          $hasrestart     = true
-          $mode           = '0644'
-          $uses_systemd   = true
-        }
-        default: {
-          $initscript     = "/etc/init.d/docker-${sanitised_title}"
-          $init_template  = 'docker/etc/init.d/docker-run.erb'
-          $hasstatus      = undef
-          $hasrestart     = undef
-          $mode           = '0755'
-          $uses_systemd   = false
-        }
+      if versioncmp($::operatingsystemrelease, '7.0') < 0 {
+        $initscript     = "/etc/init.d/docker-${sanitised_title}"
+        $init_template  = 'docker/etc/init.d/docker-run.erb'
+        $hasstatus      = undef
+        $hasrestart     = undef
+        $mode           = '0755'
+        $uses_systemd   = false
+      } else {  
+        $initscript     = "/etc/systemd/system/docker-${sanitised_title}.service"
+        $init_template  = 'docker/etc/systemd/system/docker-run.erb'
+        $hasstatus      = true
+        $hasrestart     = true
+        $mode           = '0644'
+        $uses_systemd   = true
       }
     }
     'Archlinux': {
