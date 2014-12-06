@@ -72,11 +72,24 @@ define docker::run(
 
   case $::osfamily {
     'Debian': {
-      $initscript = "/etc/init/docker-${sanitised_title}.conf"
-      $init_template = 'docker/etc/init/docker-run.conf.erb'
+      $initscript = "/etc/init.d/docker-${sanitised_title}"
+      $init_template = 'docker/etc/init.d/docker-run.erb'
+      $deprecated_initscript = "/etc/init/docker-${sanitised_title}.conf"
       $hasstatus  = true
       $hasrestart = false
-      $mode = '0644'
+      $mode = '0755'
+
+      # When switching between styles of init scripts (e.g. upstart and sysvinit),
+      # we want to stop the service using the old init script. Since `service` will
+      # prefer a sysvinit style script over an upstart one if both exist, we need
+      # to stop the service before adding the sysvinit script.
+      exec { "/usr/sbin/service docker-${sanitised_title} stop":
+        onlyif  => "/usr/bin/test -f ${deprecated_initscript}"
+      } ->
+      file { $deprecated_initscript:
+        ensure => absent
+      } ->
+      File[$initscript]
     }
     'RedHat': {
       case $::operatingsystemmajrelease {

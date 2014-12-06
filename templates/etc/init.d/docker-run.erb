@@ -22,12 +22,38 @@
 ## Description: Docker container for <%= @title %>
 #### END INIT INFO
 
-. /etc/init.d/functions
+if [ -e /etc/init.d/functions ]; then
+    . /etc/init.d/functions
+elif [ -e /lib/lsb/init-functions ]; then
+    . /lib/lsb/init-functions
+    failure() {
+        log_failure_msg "$@"
+        return 1
+    }
+    success() {
+        log_success_msg "$@"
+        return 0
+    }
+else
+    failure() {
+        echo "fail: $@" >&2
+        exit 1
+    }
+    success() {
+        echo "success: $@" >&2
+        exit 0
+    }
+fi
 
-docker="/usr/bin/<%= docker_command %>"
+HOME=/root/
+docker="/usr/bin/<%= @docker_command %>"
 prog="docker-<%= @sanitised_title %>"
 cidfile="/var/run/$prog.cid"
-lockfile="/var/lock/subsys/$prog"
+if [ -d /var/lock/subsys ]; then
+    lockfile="/var/lock/subsys/$prog"
+else
+    unset lockfile
+fi
 
 start() {
     [ -x $docker ] || exit 5
@@ -49,7 +75,7 @@ start() {
     fi
 
     printf "Starting $prog:\t"
-    $docker run --cidfile=$cidfile -d=true \
+    /usr/bin/<%= @docker_command %> run --cidfile=$cidfile -d=true \
         <% if @username %>-u '<%= @username %>' <% end %> \
         <% if @hostname %>-h '<%= @hostname %>'<% end %> \
         <% if @disable_network %>-n false<% end %> \
@@ -94,7 +120,7 @@ start() {
     retval=$?
     echo
     if [ $retval -eq 0 ]; then
-        touch $lockfile
+	[ -n "$lockfile" ] && touch $lockfile
         success
     else
         failure
