@@ -75,7 +75,12 @@ start() {
     fi
 
     printf "Starting $prog:\t"
-    /usr/bin/<%= @docker_command %> run --cidfile=$cidfile -d=true \
+    <% if @use_name -%>
+        $docker inspect <%= @name %> && $docker start -a -i <%= @name %>
+        $docker inspect <%= @name %> || $docker run --cidfile=$cidfile -d=true \
+    <% else -%>
+        $docker run --cidfile=$cidfile -d=true \
+    <% end -%>
         <% if @username %>-u '<%= @username %>' <% end %> \
         <% if @hostname %>-h '<%= @hostname %>'<% end %> \
         <% if @disable_network %>-n false<% end %> \
