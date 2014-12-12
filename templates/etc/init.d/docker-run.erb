@@ -76,7 +76,7 @@ start() {
 
     printf "Starting $prog:\t"
     <% if @use_name -%>
-        $docker inspect <%= @name %> && $docker start -a <%= @name %>
+        $docker inspect <%= @name %> && $docker start <%= @name %>
         $docker inspect <%= @name %> || $docker run --cidfile=$cidfile -d=true \
     <% else -%>
         $docker run --cidfile=$cidfile -d=true \
