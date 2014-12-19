@@ -71,7 +71,7 @@ class docker::install {
 
       $manage_kernel = false
 
-      if $::operatingsystem != 'Amazon' {
+      if ($::operatingsystem != 'Amazon') and ($::operatingsystem != 'Fedora') {
         if ($docker::use_upstream_package_source) {
           include 'epel'
           if $docker::manage_package {

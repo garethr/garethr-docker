@@ -41,7 +41,9 @@ class docker::params {
       $package_source_location = 'https://get.docker.io/ubuntu'
     }
     'RedHat' : {
-      if (versioncmp($::operatingsystemrelease, '7.0') < 0) and $::operatingsystem != 'Amazon' {
+      if $::operatingsystem == 'Fedora' {
+        $package_name   = 'docker-io'
+      } elsif (versioncmp($::operatingsystemrelease, '7.0') < 0) and $::operatingsystem != 'Amazon' {
         $package_name   = 'docker-io'
       } else {
         $package_name   = 'docker'
