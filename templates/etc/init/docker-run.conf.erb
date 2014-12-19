@@ -10,6 +10,21 @@ stop on stopping <%= @service_name %>
 respawn
 respawn limit 5 20
 
+pre-start script
+  cidfile=/var/run/docker-<%= @sanitised_title %>.cid
+  if [ -f $cidfile ]; then
+    cid="$(cat $cidfile)"
+    if [ -n "$cid" ]; then
+        if [ <%= @docker_command %> ps --no-trunc=true|grep -q $cid ]; then
+            echo "Container $cid is still running.\n" >&2
+            exit 1
+        else
+            rm -f $cidfile
+        fi
+    fi
+fi
+end script
+
 script
 <% if @use_name -%>
   <%= @docker_command %> inspect <%= @name %> && <%= @docker_command %> start -a -i <%= @name %>
