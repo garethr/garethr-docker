@@ -7,7 +7,7 @@ require 'spec_helper'
     let(:title) { 'sample' }
 
     if osfamily == 'Debian'
-      initscript = '/etc/init/docker-sample.conf'
+      initscript = '/etc/init.d/docker-sample'
       command = 'docker.io'
     elsif osfamily == 'Archlinux'
       initscript = '/etc/systemd/system/docker-sample.service'
@@ -198,7 +198,7 @@ require 'spec_helper'
       let(:params) { {'image' => 'base'} }
 
       if osfamily == 'Debian'
-        new_initscript = '/etc/init/docker-this-that.conf'
+        new_initscript = '/etc/init.d/docker-this-that'
       elsif osfamily == 'Archlinux'
         new_initscript = '/etc/systemd/system/docker-this-that.service'
       else
