@@ -6,6 +6,8 @@ require 'spec_helper'
     let(:facts) { {:osfamily => osfamily} }
     let(:title) { 'sample' }
 
+    context "on #{osfamily}" do
+
     if osfamily == 'Debian'
       initscript = '/etc/init.d/docker-sample'
       command = 'docker.io'
@@ -19,11 +21,14 @@ require 'spec_helper'
 
     context 'passing the required params' do
       let(:params) { {'command' => 'command', 'image' => 'base'} }
-      it { should contain_file(initscript).with_content(/#{command} run/).with_content(/base/) }
-      it { should contain_file(initscript).with_content(/#{command} run/).with_content(/command/) }
       it { should contain_service('docker-sample') }
       if (osfamily == 'Debian')
         it { should contain_service('docker-sample').with_hasrestart('false') }
+        it { should contain_file(initscript).with_content(/\$docker run/) }
+        it { should contain_file(initscript).with_content(/#{command}/) }
+      else
+        it { should contain_file(initscript).with_content(/#{command} run/).with_content(/base/) }
+        it { should contain_file(initscript).with_content(/#{command} run/).with_content(/command/) }
       end
 
       ['p', 'dns', 'u', 'v', 'e', 'n', 'volumes-from', 'name'].each do |search|
@@ -257,6 +262,7 @@ require 'spec_helper'
       end
     end
 
+  end
   end
 
 end
