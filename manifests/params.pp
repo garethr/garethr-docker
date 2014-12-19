@@ -49,16 +49,16 @@ class docker::params {
       $package_source_location = ''
       $service_name   = $service_name_default
       $docker_command = $docker_command_default
+      unless versioncmp($::operatingsystemrelease, '7.0') < 0 {
+        include docker::systemd_reload
+      }
     }
     'Archlinux' : {
       $package_name   = 'docker'
       $package_source_location = ''
       $service_name   = $service_name_default
       $docker_command = $docker_command_default
-      exec { 'docker-systemd-reload':
-        command     => '/usr/bin/systemctl daemon-reload',
-        refreshonly => true,
-      }
+      include docker::systemd_reload
       }
     default: {
       $package_source_location = ''
