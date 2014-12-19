@@ -23,6 +23,7 @@ define docker::image(
   $image_tag = undef,
   $force     = false,
   $docker_file = undef,
+  $docker_dir = undef,
 ) {
   include docker::params
   $docker_command = $docker::params::docker_command
@@ -30,29 +31,32 @@ define docker::image(
   validate_re($image, '^[\S]*$')
   validate_bool($force)
 
+  if ($docker_file) and ($docker_dir) {
+    fail 'docker::image must not have both $docker_file and $docker_dir set'
+  }
+
   if $force {
     $image_force   = '-f '
   } else {
     $image_force   = ''
   }
 
-
   if $image_tag {
-    if $docker_file {
-      $image_install = "${docker_command} build -t ${image}:${image_tag} - < ${docker_file}"
-    } else{
-      $image_install = "${docker_command} pull ${image}:${image_tag}"
-    }
+    $image_arg     = "${image}:${image_tag}"
     $image_remove  = "${docker_command} rmi ${image_force}${image}:${image_tag}"
     $image_find    = "${docker_command} images | grep ^${image} | awk '{ print \$2 }' | grep ^${image_tag}$"
   } else {
-    if $docker_file {
-      $image_install = "${docker_command} build -t ${image} - < ${docker_file}"
-    } else{
-      $image_install = "${docker_command} pull ${image}"
-    }
+    $image_arg     = $image
     $image_remove  = "${docker_command} rmi ${image_force}${image}"
     $image_find    = "${docker_command} images | grep ^${image}"
+  }
+
+  if $docker_dir {
+    $image_install = "${docker_command} build -t ${image_arg} ${docker_dir}"
+  } elsif $docker_file {
+    $image_install = "${docker_command} build -t ${image_arg} - < ${docker_file}"
+  } else {
+    $image_install = "${docker_command} pull ${image_arg}"
   }
 
   if $ensure == 'absent' {
