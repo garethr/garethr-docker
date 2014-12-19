@@ -175,12 +175,10 @@ docker::run { 'helloworld':
   dns             => ['8.8.8.8', '8.8.4.4'],
   restart_service => true,
   privileged      => false,
-  pull_on_start   => true,
 }
 ```
 
 Ports, expose, env, dns and volumes can be set with either a single string or as above with an array of values.
-Specifying pull_on_start will pull the image before each time it is started
 
 To use an image tag just append the tag name to the image name separated by a semicolon:
 
