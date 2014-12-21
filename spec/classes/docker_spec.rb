@@ -27,30 +27,6 @@ describe 'docker', :type => :class do
           it { should contain_package('docker').with_name('lxc-docker-0.5.5').with_ensure('present') }
         end
 
-        context 'with a custom package name' do
-          let(:params) { {'package_name' => 'docker-custom-pkg-name' } }
-          it { should contain_package('docker').with_name('docker-custom-pkg-name').with_ensure('present') }
-        end
-
-        context 'with a custom package name and version' do
-          let(:params) { {
-             'version'      => '0.5.5',
-             'package_name' => 'docker-custom-pkg-name',
-          } }
-          it { should contain_package('docker').with_name('docker-custom-pkg-name-0.5.5').with_ensure('present') }
-        end
-
-        context 'when not managing the package' do
-          let(:params) { {'manage_package' => false } }
-          it { should_not contain_package('docker') }
-        end
-
-        context 'It should accept custom prerequired_packages' do
-          let(:params) { {'prerequired_packages' => [ 'test_package' ],
-                          'manage_package'       => false,  } }
-          it { should contain_package('test_package').with_ensure('present') }
-        end
-
         context 'with no upstream package source' do
           let(:params) { {'use_upstream_package_source' => false } }
           it { should_not contain_apt__source('docker') }
@@ -116,6 +92,30 @@ describe 'docker', :type => :class do
       context 'with a specific docker command' do
         let(:params) {{ 'docker_command' => 'docker.io' }}
         it { should contain_file(service_config_file).with_content(/docker.io/) }
+      end
+
+     context 'with a custom package name' do
+        let(:params) { {'package_name' => 'docker-custom-pkg-name' } }
+        it { should contain_package('docker').with_name('docker-custom-pkg-name').with_ensure('present') }
+      end
+
+      context 'with a custom package name and version' do
+        let(:params) { {
+           'version'      => '0.5.5',
+           'package_name' => 'docker-custom-pkg-name',
+        } }
+        it { should contain_package('docker').with_name('docker-custom-pkg-name-0.5.5').with_ensure('present') }
+      end
+
+      context 'when not managing the package' do
+        let(:params) { {'manage_package' => false } }
+        it { should_not contain_package('docker') }
+      end
+
+      context 'It should accept custom prerequired_packages' do
+        let(:params) { {'prerequired_packages' => [ 'test_package' ],
+                        'manage_package'       => false,  } }
+        it { should contain_package('test_package').with_ensure('present') }
       end
 
       context 'with proxy param' do

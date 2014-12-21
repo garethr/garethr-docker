@@ -10,17 +10,12 @@ class docker::install {
   validate_string($::kernelrelease)
   validate_bool($docker::use_upstream_package_source)
 
+  ensure_packages($docker::prerequired_packages)
+
   case $::osfamily {
     'Debian': {
-      ensure_packages($docker::prerequired_packages)
       if $docker::manage_package {
         Package['apt-transport-https'] -> Package['docker']
-      }
-
-      if $docker::version {
-        $dockerpackage = "${docker::package_name}-${docker::version}"
-      } else {
-        $dockerpackage = $docker::package_name
       }
 
       if ($docker::use_upstream_package_source) {
@@ -76,11 +71,6 @@ class docker::install {
 
       $manage_kernel = false
 
-      if $docker::version {
-        $dockerpackage = "${docker::package_name}-${docker::version}"
-      } else {
-        $dockerpackage = $docker::package_name
-      }
       if $::operatingsystem != 'Amazon' {
         if ($docker::use_upstream_package_source) {
           include 'epel'
@@ -108,6 +98,12 @@ class docker::install {
     if $docker::manage_package {
       Package[$kernelpackage] -> Package['docker']
     }
+  }
+
+  if $docker::version {
+    $dockerpackage = "${docker::package_name}-${docker::version}"
+  } else {
+    $dockerpackage = $docker::package_name
   }
 
   if $docker::manage_package {
