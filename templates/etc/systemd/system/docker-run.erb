@@ -3,8 +3,8 @@
 
 [Unit]
 Description=Daemon for <%= @title %>
-After=docker.service
-Requires=docker.service
+After=docker.service<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " docker-#{d}.service" %><% end %><% end %>
+Requires=docker.service<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " docker-#{d}.service" %><% end %><% end %>
 
 [Service]
 <%- if @username -%>User=<%= @username %><%- end -%>
@@ -12,7 +12,6 @@ TimeoutStartSec=0
 Environment="HOME=/root"
 ExecStartPre=-/usr/bin/<%= @docker_command %> kill <%= @sanitised_title %>
 ExecStartPre=-/usr/bin/<%= @docker_command %> rm <%= @sanitised_title %>
-ExecStartPre=/usr/bin/<%= @docker_command %> pull <%= @image %>
 ExecStart=/usr/bin/<%= @docker_command %> run \
         <% if @username %>-u '<%= @username %>' <% end %> \
         <% if @hostname %>-h '<%= @hostname %>'<% end %> \

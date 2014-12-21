@@ -11,12 +11,15 @@ require 'spec_helper'
     if osfamily == 'Debian'
       initscript = '/etc/init.d/docker-sample'
       command = 'docker.io'
+      systemd = false
     elsif osfamily == 'Archlinux'
       initscript = '/etc/systemd/system/docker-sample.service'
       command = 'docker'
+      systemd = true
     else
       initscript = '/etc/init.d/docker-sample'
       command = 'docker'
+      systemd = false
     end
 
     context 'passing the required params' do
@@ -33,6 +36,21 @@ require 'spec_helper'
 
       ['p', 'dns', 'u', 'v', 'e', 'n', 'volumes-from', 'name'].each do |search|
         it { should_not contain_file(initscript).with_content(/-${search}/) }
+      end
+    end
+
+    context 'when passing `depends` containers' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'depends' => ['foo', 'bar']} }
+      if (systemd)
+        it { should contain_file(initscript).with_content(/After=.*\s+docker-foo.service/) }
+        it { should contain_file(initscript).with_content(/After=.*\s+docker-bar.service/) }
+        it { should contain_file(initscript).with_content(/Requires=.*\s+docker-foo.service/) }
+        it { should contain_file(initscript).with_content(/Requires=.*\s+docker-bar.service/) }
+      else
+        it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-foo/) }
+        it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-bar/) }
+        it { should contain_file(initscript).with_content(/Required-Stop:.*\s+docker-foo/) }
+        it { should contain_file(initscript).with_content(/Required-Stop:.*\s+docker-bar/) }
       end
     end
 
@@ -166,7 +184,7 @@ require 'spec_helper'
       let(:params) { {'command' => 'command', 'image' => 'base', 'privileged' => true} }
       it { should contain_file(initscript).with_content(/--privileged/) }
     end
-    
+
     context 'when running detached' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'detach' => true} }
       it { should contain_file(initscript).with_content(/--detach=true/) }
