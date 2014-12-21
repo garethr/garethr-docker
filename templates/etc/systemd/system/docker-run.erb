@@ -3,8 +3,8 @@
 
 [Unit]
 Description=Daemon for <%= @title %>
-After=docker.service
-Requires=docker.service
+After=docker.service<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " docker-#{d}.service" %><% end %><% end %>
+Requires=docker.service<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " docker-#{d}.service" %><% end %><% end %>
 
 [Service]
 <%- if @username -%>User=<%= @username %><%- end -%>

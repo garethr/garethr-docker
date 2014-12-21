@@ -11,9 +11,9 @@
 # description: Docker container for <%= @title %>
 
 ### BEGIN INIT INFO
-## Provides:       docker-<%= @title %>
-## Required-Start: $network docker
-## Required-Stop: $network docker
+## Provides:       docker-<%= @sanitised_title %>
+## Required-Start: $network docker<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " docker-#{d}" %><% end %><% end %>
+## Required-Stop: $network docker<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " docker-#{d}" %><% end %><% end %>
 ## Should-Start:
 ## Should-Stop:
 ## Default-Start: 2 3 4 5

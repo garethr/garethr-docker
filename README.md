@@ -177,11 +177,15 @@ docker::run { 'helloworld':
   restart_service => true,
   privileged      => false,
   pull_on_start   => false,
+  depends         => [ 'container_a', 'postgres' ],
 }
 ```
 
 Ports, expose, env, dns and volumes can be set with either a single string or as above with an array of values.
-Specifying pull_on_start will pull the image before each time it is started.
+
+Specifying `pull_on_start` will pull the image before each time it is started.
+
+The `depends` option allows expressing containers that must be started before. This affects the generation of the init.d/systemd script.
 
 To use an image tag just append the tag name to the image name separated by a semicolon:
 

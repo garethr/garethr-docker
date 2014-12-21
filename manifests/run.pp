@@ -27,6 +27,7 @@ define docker::run(
   $detach = false,
   $extra_parameters = undef,
   $pull_on_start = false,
+  $depends = [],
 ) {
   include docker::params
   $docker_command = $docker::params::docker_command
@@ -63,8 +64,10 @@ define docker::run(
   $cpuset_array = any2array($cpuset)
   $lxc_conf_array = any2array($lxc_conf)
   $extra_parameters_array = any2array($extra_parameters)
+  $depends_array = any2array($depends)
 
   $sanitised_title = regsubst($title, '[^0-9A-Za-z.\-]', '-', 'G')
+  $sanitised_depends_array = regsubst($depends_array, '[^0-9A-Za-z.\-]', '-', 'G')
 
   $provider = $::operatingsystem ? {
     'Ubuntu' => 'upstart',
