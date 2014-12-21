@@ -175,10 +175,12 @@ docker::run { 'helloworld':
   dns             => ['8.8.8.8', '8.8.4.4'],
   restart_service => true,
   privileged      => false,
+  depends         => [ 'container_a', 'postgres' ],
 }
 ```
 
 Ports, expose, env, dns and volumes can be set with either a single string or as above with an array of values.
+The depends option allows expressing containers that must be started before. This affects the generation of the init.d/systemd script.
 
 To use an image tag just append the tag name to the image name separated by a semicolon:
 
