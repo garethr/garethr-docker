@@ -3,8 +3,8 @@
   "version": "2.2.0",
   "author": "Gareth Rushgrove",
   "summary": "Module for installing and managing docker",
-  "license": "Apache License, Version 2.0",
-  "source": "git://github.com/garethr/garethr-docker",
+  "license": "Apache-2.0",
+  "source": "https://github.com/garethr/garethr-docker.git",
   "project_page": "https://github.com/garethr/garethr-docker",
   "issues_url": "https://github.com/garethr/garethr-docker/issues",
   "operatingsystem_support": [
@@ -26,7 +26,12 @@
       ]
     },{
       "operatingsystem": "Archlinux"
-    }
+    },{
+      "operatingsystem": "Fedora",
+      "operatingsystemrelease": [
+        "21"
+      ]
+    },
   ],
   "requirements": [
     {
