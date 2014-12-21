@@ -166,7 +166,7 @@ require 'spec_helper'
       let(:params) { {'command' => 'command', 'image' => 'base', 'privileged' => true} }
       it { should contain_file(initscript).with_content(/--privileged/) }
     end
-    
+
     context 'when running detached' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'detach' => true} }
       it { should contain_file(initscript).with_content(/--detach=true/) }
@@ -196,6 +196,16 @@ require 'spec_helper'
     context 'when using network mode' do
       let(:params) { {'command' => 'command', 'image' => 'nginx', 'net' => 'host'} }
       it { should contain_file(initscript).with_content(/--net host/) }
+    end
+
+    context 'when `pull_on_start` is true' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'pull_on_start' => true } }
+      it { should contain_file(initscript).with_content(/docker pull base/) }
+    end
+
+    context 'when `pull_on_start` is false' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'pull_on_start' => false } }
+      it { should_not contain_file(initscript).with_content(/docker pull base/) }
     end
 
     context 'with an title that will not format into a path' do
