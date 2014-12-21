@@ -1,5 +1,5 @@
 Puppet module for installing, configuring and managing
-[Docker](https://github.com/dotcloud/docker) from the [official repository](http://docs.docker.io/en/latest/installation/ubuntulinux/) on Ubuntu, from [EPEL on RedHat](http://docs.docker.io/en/latest/installation/rhel/) based distributions or the [standard repositories](http://docs.docker.com/installation/archlinux/) for Archlinux.
+[Docker](https://github.com/dotcloud/docker) from the [official repository](http://docs.docker.io/en/latest/installation/ubuntulinux/) on Ubuntu, from [EPEL on RedHat](http://docs.docker.io/en/latest/installation/rhel/) based distributions or the [standard repositories](http://docs.docker.com/installation/archlinux/) for Archlinux and Fedora.
 
 [![Puppet
 Forge](http://img.shields.io/puppetforge/v/garethr/docker.svg)](https://forge.puppetlabs.com/garethr/docker) [![Build
@@ -21,6 +21,7 @@ too:
 * Centos 6.5
 * Archlinux
 * Amazon Linux
+* Fedora
 
 ## Usage
 
