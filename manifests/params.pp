@@ -76,7 +76,7 @@ class docker::params {
   $prerequired_packages = $::operatingsystem ? {
     'Debian' => ['apt-transport-https', 'cgroupfs-mount'],
     'Ubuntu' => ['apt-transport-https', 'cgroup-lite', 'apparmor'],
-    default  => '',
+    default  => [],
   }
 
 }
