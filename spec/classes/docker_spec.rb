@@ -179,6 +179,17 @@ describe 'docker', :type => :class do
         it { should contain_file(service_config_file).with_content(/--this this/) }
       end
 
+      context 'with multi shell values' do
+        let(:params) { {'shell_values' => ['--this this', '--that that'] } }
+        it { should contain_file(service_config_file).with_content(/--this this/) }
+        it { should contain_file(service_config_file).with_content(/--that that/) }
+      end
+
+      context 'with a string shell values' do
+        let(:params) { {'shell_values' => '--this this' } }
+        it { should contain_file(service_config_file).with_content(/--this this/) }
+      end
+
       context 'with socket group set' do
         let(:params) { { 'socket_group' => 'notdocker' }}
         it { should contain_file(service_config_file).with_content(/-G notdocker/) }

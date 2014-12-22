@@ -66,6 +66,9 @@
 #   Any extra parameters that should be passed to the docker daemon.
 #   Defaults to undefined
 #
+# [*shell_values*]
+#   Array of shell values to pass into init script config files
+#
 # [*proxy*]
 #   Will set the http_proxy and https_proxy env variables in /etc/sysconfig/docker (redhat/centos) or /etc/default/docker (debian)
 #
@@ -105,6 +108,7 @@ class docker(
   $dns_search                  = $docker::params::dns_search,
   $socket_group                = $docker::params::socket_group,
   $extra_parameters            = undef,
+  $shell_values                = undef,
   $proxy                       = $docker::params::proxy,
   $no_proxy                    = $docker::params::no_proxy,
   $storage_driver              = $docker::params::storage_driver,
