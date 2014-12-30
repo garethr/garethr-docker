@@ -54,6 +54,13 @@ require 'spec_helper'
       end
     end
 
+    context 'with autorestart functionality' do
+      let(:params) { {'command' => 'command', 'image' => 'base'} }
+      if (systemd)
+        it { should contain_file(initscript).with_content(/Restart=on-failure/) }
+      end
+    end
+
     context 'when lxc_conf disables swap' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'lxc_conf' => 'lxc.cgroup.memory.memsw.limit_in_bytes=536870912'} }
       it { should contain_file(initscript).with_content(/-lxc-conf=\"lxc.cgroup.memory.memsw.limit_in_bytes=536870912\"/) }
