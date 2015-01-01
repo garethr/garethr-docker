@@ -18,6 +18,9 @@
 # [*extra_parameters*]
 #   Plain additional parameters to pass to the docker daemon
 #
+# [*shell_values*]
+#   Array of shell values to pass into init script config files
+#
 class docker::service (
   $docker_command       = $docker::docker_command,
   $service_name         = $docker::service_name,
@@ -30,6 +33,7 @@ class docker::service (
   $service_enable       = $docker::service_enable,
   $root_dir             = $docker::root_dir,
   $extra_parameters     = $docker::extra_parameters,
+  $shell_values         = $docker::shell_values,
   $proxy                = $docker::proxy,
   $no_proxy             = $docker::no_proxy,
   $execdriver           = $docker::execdriver,
@@ -39,6 +43,7 @@ class docker::service (
   $dns_array = any2array($dns)
   $dns_search_array = any2array($dns_search)
   $extra_parameters_array = any2array($extra_parameters)
+  $shell_values_array = any2array($shell_values)
 
   case $::osfamily {
     'Debian': {

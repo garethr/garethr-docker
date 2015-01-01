@@ -29,3 +29,5 @@ DOCKER_OPTS="\
 <% if @storage_driver %> --storage-driver=<%= @storage_driver %><% end -%>
 <% if @extra_parameters %><% @extra_parameters_array.each do |param| %> <%= param %><% end %><% end -%>
 "
+<% if @shell_values %><% @shell_values_array.each do |param| %>
+<%= param %><% end %><% end %>

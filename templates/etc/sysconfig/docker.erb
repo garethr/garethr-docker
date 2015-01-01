@@ -19,3 +19,5 @@ export https_proxy='<%= @proxy %>'<% end %>
 <% if @no_proxy %>export no_proxy='<%= @no_proxy %>'<% end %>
 # This is also a handy place to tweak where Docker's temporary files go.
 export TMPDIR="<%= @tmp_dir %>"
+<% if @shell_values %><% @shell_values_array.each do |param| %>
+<%= param %><% end %><% end -%>

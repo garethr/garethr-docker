@@ -4,3 +4,5 @@ spec/fixtures
 .vagrant
 .yardoc
 doc
+*.swp
+.ruby-version
