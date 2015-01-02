@@ -53,18 +53,28 @@ define docker::run(
   validate_bool($detach)
   validate_bool($restart_service)
 
-  $ports_array = any2array($ports)
-  $expose_array = any2array($expose)
-  $volumes_array = any2array($volumes)
-  $volumes_from_array = any2array($volumes_from)
-  $env_array = any2array($env)
-  $dns_array = any2array($dns)
-  $dns_search_array = any2array($dns_search)
-  $links_array = any2array($links)
-  $cpuset_array = any2array($cpuset)
-  $lxc_conf_array = any2array($lxc_conf)
   $extra_parameters_array = any2array($extra_parameters)
   $depends_array = any2array($depends)
+
+  $docker_run_flags = docker_run_flags({
+    cpuset => any2array($cpuset),
+    detach => $detach,
+    disable_network => $disable_network,
+    dns => any2array($dns),
+    dns_search => any2array($dns_search),
+    env => any2array($env),
+    expose => any2array($expose),
+    hostname => $hostname,
+    links => any2array($links),
+    lxc_conf => any2array($lxc_conf),
+    memory_limit => $memory_limit,
+    net => $net,
+    ports => any2array($ports),
+    privileged => $privileged,
+    username => $username,
+    volumes => any2array($volumes),
+    volumes_from => any2array($volumes_from)
+  })
 
   $sanitised_title = regsubst($title, '[^0-9A-Za-z.\-]', '-', 'G')
   $sanitised_depends_array = regsubst($depends_array, '[^0-9A-Za-z.\-]', '-', 'G')
