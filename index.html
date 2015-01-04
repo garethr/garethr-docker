@@ -79,7 +79,7 @@ repository</a> on Ubuntu, from <a
 href="http://docs.docker.io/en/latest/installation/rhel/">EPEL on
 RedHat</a> based distributions or the <a
 href="http://docs.docker.com/installation/archlinux/">standard
-repositories</a> for Archlinux.</p>
+repositories</a> for Archlinux and Fedora.</p>
 
 <p><a href="https://forge.puppetlabs.com/garethr/docker"><img
 src="http://img.shields.io/puppetforge/v/garethr/docker.svg"></a> <a
@@ -96,15 +96,21 @@ src="http://img.shields.io/badge/docs-puppet--strings-lightgrey.svg"></a></p>
 </li><li>
 <p>Ubuntu 14.04</p>
 </li><li>
+<p>Centos 7.0</p>
+</li></ul>
+
+<p>It may work on other distros and additional operating systems will be
+supported in the future. It&#39;s definitely been used with the following
+too:</p>
+<ul><li>
 <p>Centos 6.5</p>
 </li><li>
 <p>Archlinux</p>
 </li><li>
 <p>Amazon Linux</p>
+</li><li>
+<p>Fedora</p>
 </li></ul>
-
-<p>It may work on other distros and other operating systems will be supported
-in the future.</p>
 
 <h2 id="label-Usage">Usage</h2>
 
@@ -193,6 +199,24 @@ running <code>docker pull -t=&quot;precise&quot; ubuntu</code>:</p>
 <p>Note: images will only install if an image of that name does not already
 exist.</p>
 
+<p>A images can also be added/build from a dockerfile with the
+<code>docker_file</code> property, this equivalent to running <code>docker
+build -t ubuntu - &lt; /tmp/Dockerfile</code></p>
+
+<pre class="code ruby"><code class="ruby">docker::image { &#39;ubuntu&#39;:
+  docker_file =&gt; &#39;/tmp/Dockerfile&#39;
+}
+</code></pre>
+
+<p>Images can also be added/build from a directory containing a dockerfile
+with the <code>docker_dir</code> property, this is equivalent to running
+<code>docker build -t ubuntu /tmp/ubuntu_image</code></p>
+
+<pre class="code ruby"><code class="ruby">docker::image { &#39;ubuntu&#39;:
+  docker_dir =&gt; &#39;/tmp/ubuntu_image&#39;
+}
+</code></pre>
+
 <p>You can also remove images you no longer need with:</p>
 
 <pre class="code ruby"><code class="ruby">docker::image { &#39;base&#39;:
@@ -239,13 +263,22 @@ docker.</p>
   dns             =&gt; [&#39;8.8.8.8&#39;, &#39;8.8.4.4&#39;],
   restart_service =&gt; true,
   privileged      =&gt; false,
-  pull_on_start   =&gt; true,
+  pull_on_start   =&gt; false,
+  depends         =&gt; [ &#39;container_a&#39;, &#39;postgres&#39; ],
 }
 </code></pre>
 
 <p>Ports, expose, env, dns and volumes can be set with either a single string
-or as above with an array of values. Specifying pull_on_start will pull the
-image before each time it is started</p>
+or as above with an array of values.</p>
+
+<p>Specifying <code>pull_on_start</code> will pull the image before each time
+it is started.</p>
+
+<p>The <code>depends</code> option allows expressing containers that must be
+started before. This affects the generation of the init.d/systemd script.</p>
+
+<p>The service file created for systemd and upstart based systems enables
+automatic restarting of the service on failure by default.</p>
 
 <p>To use an image tag just append the tag name to the image name separated by
 a semicolon:</p>
@@ -258,7 +291,7 @@ a semicolon:</p>
 </div></div>
 
     <div id="footer">
-  Generated on Mon Nov 24 13:46:33 2014 by
+  Generated on Sun Jan  4 20:08:14 2015 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.7.6 (ruby-2.1.4).
 </div>
