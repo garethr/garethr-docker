@@ -75,6 +75,44 @@
 # [*no_proxy*]
 #   Will set the no_proxy variable in /etc/sysconfig/docker (redhat/centos) or /etc/default/docker (debian)
 #
+# [*storage_driver*]
+#   Specify a storage driver to use
+#   Default is undef: let docker choose the correct one
+#   Valid values: aufs, devicemapper, btrfs, overlayfs, vfs
+#
+# [*dm_basesize*]
+#   The size to use when creating the base device, which limits the size of images and containers.
+#   Default value is 10G
+#
+# [*dm_fs*]
+#   The filesystem to use for the base image (xfs or ext4)
+#   Defaults to ext4
+#
+# [*dm_mkfsarg*]
+#   Specifies extra mkfs arguments to be used when creating the base device.
+#
+# [*dm_mountopt*]
+#   Specifies extra mount options used when mounting the thin devices.
+#
+# [*dm_blocksize*]
+#   A custom blocksize to use for the thin pool.
+#   Default blocksize is 64K.
+#   Warning: _DO NOT_ change this parameter after the lvm devices have been initialized.
+#
+# [*dm_loopdatasize*]
+#   Specifies the size to use when creating the loopback file for the "data" device which is used for the thin pool
+#   Default size is 100G
+#
+# [*dm_loopmetadatasize*]
+#   Specifies the size to use when creating the loopback file for the "metadata" device which is used for the thin pool
+#   Default size is 2G
+#
+# [*dm_datadev*]
+#   A custom blockdevice to use for data for the thin pool.
+#
+# [*dm_metadatadev*]
+#   A custom blockdevice to use for metadata for the thin pool.
+#
 # [*manage_package*]
 #   Won't install or define the docker package, useful if you want to use your own package
 #   Defaults to true
@@ -112,17 +150,35 @@ class docker(
   $proxy                       = $docker::params::proxy,
   $no_proxy                    = $docker::params::no_proxy,
   $storage_driver              = $docker::params::storage_driver,
+  $dm_basesize                 = $docker::params::dm_basesize,
+  $dm_fs                       = $docker::params::dm_fs,
+  $dm_mkfsarg                  = $docker::params::dm_mkfsarg,
+  $dm_mountopt                 = $docker::params::dm_mountopt,
+  $dm_blocksize                = $docker::params::dm_blocksize,
+  $dm_loopdatasize             = $docker::params::dm_loopdatasize,
+  $dm_loopmetadatasize         = $docker::params::dm_loopmetadatasize,
+  $dm_datadev                  = $docker::params::dm_datadev,
+  $dm_metadatadev              = $docker::params::dm_metadatadev,
   $execdriver                  = $docker::params::execdriver,
   $manage_package              = $docker::params::manage_package,
   $package_name                = $docker::params::package_name,
   $service_name                = $docker::params::service_name,
   $docker_command              = $docker::params::docker_command,
 ) inherits docker::params {
-
   validate_string($version)
   validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', 'This module only works on Debian and Red Hat based systems.')
   validate_bool($manage_kernel)
   validate_bool($manage_package)
+  validate_re($storage_driver, '^(aufs|devicemapper|btrfs|overlay|vfs)$', "Valid values for storage_driver are aufs, devicemapper, btrfs, overlayfs, vfs. Yout provided ${storage_driver}")
+  validate_re($dm_fs, '^(ext4|xfs)$', 'Only ext4 and xfs are supported currently for dm_fs.')
+
+  if ($dm_loopdatasize or $dm_loopmetadatasize) and ($dm_datadev or $dm_metadatadev) {
+    fail('You should provide parameters only for loop lvm or direct lvm, not both.')
+  }
+
+  if ($dm_datadev and !$dm_metadatadev) or (!$dm_datadev and $dm_metadatadev) {
+    fail('You need to provide both $dm_datadev and $dm_metadatadev parameters for direct lvm.')
+  }
 
   class { 'docker::install': } ->
   class { 'docker::config': } ~>

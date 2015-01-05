@@ -27,6 +27,17 @@ DOCKER_OPTS="\
 <% if @dns_search %><% @dns_search_array.each do |domain| %> --dns-search <%= domain %><% end %><% end -%>
 <% if @execdriver %> -e <%= @execdriver %> <% end -%>
 <% if @storage_driver %> --storage-driver=<%= @storage_driver %><% end -%>
+<% if @storage_driver == 'devicemapper' %>
+<% if @dm_basesize %> --storage-opt dm.basesize=<%= @dm_basesize %><% end -%>
+<% if @dm_fs %> --storage-opt dm.fs=<%= @dm_fs %><% end -%>
+<% if @dm_mkfsarg %> --storage-opt "dm.mkfsarg=<%= @dm_mkfsarg %>"<% end -%>
+<% if @dm_mountopt %> --storage-opt dm.mountopt=<%= @dm_mountopt %><% end -%>
+<% if @dm_blocksize %> --storage-opt dm.blocksize=<%= @dm_blocksize %><% end -%>
+<% if @dm_loopdatasize %> --storage-opt dm.loopdatasize=<%= @dm_loopdatasize %><% end -%>
+<% if @dm_loopmetadatasize %> --storage-opt dm.loopmetadatasize=<%= @dm_loopmetadatasize %><% end -%>
+<% if @dm_datadev %> --storage-opt dm.datadev=<%= @dm_datadev %><% end -%>
+<% if @dm_metadatadev %> --storage-opt dm.metadatadev=<%= @dm_metadatadev %><% end -%>
+<% end -%>
 <% if @extra_parameters %><% @extra_parameters_array.each do |param| %> <%= param %><% end %><% end -%>
 "
 <% if @shell_values %><% @shell_values_array.each do |param| %>
