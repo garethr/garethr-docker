@@ -165,12 +165,19 @@ class docker(
   $service_name                = $docker::params::service_name,
   $docker_command              = $docker::params::docker_command,
 ) inherits docker::params {
+
   validate_string($version)
   validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', 'This module only works on Debian and Red Hat based systems.')
   validate_bool($manage_kernel)
   validate_bool($manage_package)
-  validate_re($storage_driver, '^(aufs|devicemapper|btrfs|overlay|vfs)$', "Valid values for storage_driver are aufs, devicemapper, btrfs, overlayfs, vfs. Yout provided ${storage_driver}")
-  validate_re($dm_fs, '^(ext4|xfs)$', 'Only ext4 and xfs are supported currently for dm_fs.')
+
+  if $storage_driver {
+    validate_re($storage_driver, '^(aufs|devicemapper|btrfs|overlay|vfs)$', 'Valid values for storage_driver are aufs, devicemapper, btrfs, overlayfs, vfs.' )
+  }
+
+  if $dm_fs {
+    validate_re($dm_fs, '^(ext4|xfs)$', 'Only ext4 and xfs are supported currently for dm_fs.')
+  }
 
   if ($dm_loopdatasize or $dm_loopmetadatasize) and ($dm_datadev or $dm_metadatadev) {
     fail('You should provide parameters only for loop lvm or direct lvm, not both.')

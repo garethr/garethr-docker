@@ -13,7 +13,7 @@
 
 DOCKER_STORAGE_OPTIONS="<% -%>
 <% if @storage_driver %> --storage-driver=<%= @storage_driver %><% end -%>
-<% if @storage_driver == 'devicemapper' %>
+<% if @storage_driver == 'devicemapper' -%>
 <% if @dm_basesize %> --storage-opt dm.basesize=<%= @dm_basesize %><% end -%>
 <% if @dm_fs %> --storage-opt dm.fs=<%= @dm_fs %><% end -%>
 <% if @dm_mkfsarg %> --storage-opt "dm.mkfsarg=<%= @dm_mkfsarg %>"<% end -%>
