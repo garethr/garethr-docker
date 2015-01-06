@@ -79,6 +79,13 @@ class docker::service (
         content => template("docker/etc/sysconfig/${template}"),
         notify  => Service['docker'],
       }
+
+      file { '/etc/sysconfig/docker-storage':
+        ensure  => present,
+        force   => true,
+        content => template('docker/etc/sysconfig/docker-storage.erb'),
+        notify  => Service['docker'],
+      }
     }
     'Archlinux': {
       $hasstatus  = true

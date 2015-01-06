@@ -19,6 +19,15 @@ class docker::params {
   $no_proxy                     = undef
   $execdriver                   = undef
   $storage_driver               = undef
+  $dm_basesize                  = undef
+  $dm_fs                        = undef
+  $dm_mkfsarg                   = undef
+  $dm_mountopt                  = undef
+  $dm_blocksize                 = undef
+  $dm_loopdatasize              = undef
+  $dm_loopmetadatasize          = undef
+  $dm_datadev                   = undef
+  $dm_metadatadev               = undef
   $manage_package               = true
   $manage_kernel                = true
   $package_name_default         = 'lxc-docker'
