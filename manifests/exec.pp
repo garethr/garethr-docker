@@ -1,6 +1,6 @@
 # == Define: docker:exec
 #
-# A define which executes a command inside a container
+# A define which executes a command inside a container.
 #
 define docker::exec(
   $detach = false,
@@ -13,7 +13,7 @@ define docker::exec(
 
   $docker_command = $docker::params::docker_command
   validate_string($docker_command)
-  
+
   validate_string($container)
   validate_string($command)
   validate_bool($detach)
@@ -27,7 +27,7 @@ define docker::exec(
   })
 
   $exec  = "${docker_command} exec $docker_exec_flags $container $command"
-  
+
   exec { $exec:
     environment => 'HOME=/root',
     path        => ['/bin', '/usr/bin'],

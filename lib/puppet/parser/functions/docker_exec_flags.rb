@@ -7,11 +7,11 @@ module Puppet::Parser::Functions
     if opts['detach']
       flags << '--detach=true'
     end
-    
+
     if opts['interactive']
       flags << '--interactive=true'
     end
-    
+
     if opts['tty']
       flags << '--tty=true'
     end
