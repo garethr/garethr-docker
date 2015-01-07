@@ -26,7 +26,7 @@ define docker::exec(
     tty => $tty,
   })
 
-  $exec  = "${docker_command} exec $docker_exec_flags $container $command"
+  $exec = "${docker_command} exec ${docker_exec_flags} ${container} ${command}"
 
   exec { $exec:
     environment => 'HOME=/root',
