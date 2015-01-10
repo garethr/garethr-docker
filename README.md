@@ -198,3 +198,17 @@ docker::run { 'helloworld':
 }
 ```
 
+### Exec
+
+Docker also supports running arbitrary comments within the context of a
+running container. And now so does the Puppet module.
+
+```puppet
+docker::exec { 'helloworld-uptime':
+  detached  => true,
+  container => 'helloworld',
+  command   => 'uptime',
+  tty       => true,
+}
+```
+
