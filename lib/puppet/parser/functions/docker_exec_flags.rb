@@ -1,3 +1,5 @@
+require 'shellwords'
+
 module Puppet::Parser::Functions
   # Transforms a hash into a string of docker exec flags
   newfunction(:docker_exec_flags, :type => :rvalue) do |args|
