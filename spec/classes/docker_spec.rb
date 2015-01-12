@@ -56,6 +56,7 @@ describe 'docker', :type => :class do
       if osfamily == 'RedHat'
         let(:facts) { {
           :osfamily => osfamily,
+          :operatingsystem => 'RedHat',
           :operatingsystemrelease => '6.5'
         } }
         service_config_file = '/etc/sysconfig/docker'
@@ -282,6 +283,7 @@ describe 'docker', :type => :class do
   context 'specific to RedHat' do
     let(:facts) { {
       :osfamily => 'RedHat',
+      :operatingsystem => 'RedHat',
       :operatingsystemrelease => '6.5'
     } }
 
@@ -299,6 +301,7 @@ describe 'docker', :type => :class do
   context 'specific to RedHat 7 or above' do
     let(:facts) { {
       :osfamily => 'RedHat',
+      :operatingsystem => 'RedHat',
       :operatingsystemrelease => '7.0'
     } }
 
@@ -338,6 +341,7 @@ describe 'docker', :type => :class do
   context 'specific to older RedHat based distros' do
     let(:facts) { {
       :osfamily => 'RedHat',
+      :operatingsystem => 'RedHat',
       :operatingsystemrelease => '6.4'
     } }
     it do

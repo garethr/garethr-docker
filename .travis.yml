@@ -9,6 +9,11 @@ rvm:
   - 2.1.0
 script: bundle exec rake test
 env:
-  - PUPPET_VERSION="~> 3.5.0"
   - PUPPET_VERSION="~> 3.6.0"
   - PUPPET_VERSION="~> 3.7.0"
+  - PUPPET_VERSION="~> 3.6.0" PARSER="future"
+  - PUPPET_VERSION="~> 3.7.0" PARSER="future"
+  matrix:
+    allow_failures:
+      - env: PUPPET_VERSION="~> 3.6.0" PARSER="future"
+      - env: PUPPET_VERSION="~> 3.7.0" PARSER="future"
