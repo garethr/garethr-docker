@@ -8,7 +8,6 @@ class docker::params {
   $tcp_bind                     = undef
   $socket_bind                  = 'unix:///var/run/docker.sock'
   $socket_group                 = undef
-  $use_upstream_package_source  = true
   $service_state                = running
   $service_enable               = true
   $root_dir                     = undef
@@ -47,15 +46,19 @@ class docker::params {
           $docker_command = 'docker.io'
         }
       }
-      $package_source_location = 'https://get.docker.io/ubuntu'
+      $package_source_location     = 'https://get.docker.io/ubuntu'
+      $use_upstream_package_source = true
     }
     'RedHat' : {
       if $::operatingsystem == 'Fedora' {
         $package_name   = 'docker-io'
+        $use_upstream_package_source = false
       } elsif (versioncmp($::operatingsystemrelease, '7.0') < 0) and $::operatingsystem != 'Amazon' {
         $package_name   = 'docker-io'
+        $use_upstream_package_source = true
       } else {
         $package_name   = 'docker'
+        $use_upstream_package_source = false
       }
       $package_source_location = ''
       $service_name   = $service_name_default
@@ -65,14 +68,16 @@ class docker::params {
       }
     }
     'Archlinux' : {
+      $package_source_location     = ''
+      $use_upstream_package_source = false
       $package_name   = 'docker'
-      $package_source_location = ''
       $service_name   = $service_name_default
       $docker_command = $docker_command_default
       include docker::systemd_reload
       }
     default: {
-      $package_source_location = ''
+      $package_source_location     = ''
+      $use_upstream_package_source = true
       $package_name   = $package_name_default
       $service_name   = $service_name_default
       $docker_command = $docker_command_default

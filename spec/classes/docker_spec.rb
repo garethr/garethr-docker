@@ -298,6 +298,17 @@ describe 'docker', :type => :class do
     end
   end
 
+  context 'specific to Fedora 21 or above' do
+    let(:facts) { {
+      :osfamily => 'RedHat',
+      :operatingsystem => 'Family',
+      :operatingsystemrelease => '21.0'
+    } }
+
+    it { should contain_package('docker').with_name('docker') }
+    it { should_not contain_class('epel') }
+  end
+
   context 'specific to RedHat 7 or above' do
     let(:facts) { {
       :osfamily => 'RedHat',
@@ -306,6 +317,7 @@ describe 'docker', :type => :class do
     } }
 
     it { should contain_package('docker').with_name('docker') }
+    it { should_not contain_class('epel') }
   end
 
   context 'specific to Ubuntu Precise' do
