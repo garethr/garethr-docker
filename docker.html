@@ -173,6 +173,42 @@ to undefined</p>
 <dd>
 <p>Will set the no_proxy variable in /etc/sysconfig/docker (redhat/centos) or
 /etc/default/docker (debian)</p>
+</dd><dt><strong>storage_driver</strong>
+<dd>
+<p>Specify a storage driver to use Default is undef: let docker choose the
+correct one Valid values: aufs, devicemapper, btrfs, overlayfs, vfs</p>
+</dd><dt><strong>dm_basesize</strong>
+<dd>
+<p>The size to use when creating the base device, which limits the size of
+images and containers. Default value is 10G</p>
+</dd><dt><strong>dm_fs</strong>
+<dd>
+<p>The filesystem to use for the base image (xfs or ext4) Defaults to ext4</p>
+</dd><dt><strong>dm_mkfsarg</strong>
+<dd>
+<p>Specifies extra mkfs arguments to be used when creating the base device.</p>
+</dd><dt><strong>dm_mountopt</strong>
+<dd>
+<p>Specifies extra mount options used when mounting the thin devices.</p>
+</dd><dt><strong>dm_blocksize</strong>
+<dd>
+<p>A custom blocksize to use for the thin pool. Default blocksize is 64K.
+Warning: _DO NOT_ change this parameter after the lvm devices have been
+initialized.</p>
+</dd><dt><strong>dm_loopdatasize</strong>
+<dd>
+<p>Specifies the size to use when creating the loopback file for the “data”
+device which is used for the thin pool Default size is 100G</p>
+</dd><dt><strong>dm_loopmetadatasize</strong>
+<dd>
+<p>Specifies the size to use when creating the loopback file for the
+“metadata” device which is used for the thin pool Default size is 2G</p>
+</dd><dt><strong>dm_datadev</strong>
+<dd>
+<p>A custom blockdevice to use for data for the thin pool.</p>
+</dd><dt><strong>dm_metadatadev</strong>
+<dd>
+<p>A custom blockdevice to use for metadata for the thin pool.</p>
 </dd><dt><strong>manage_package</strong>
 <dd>
 <p>Won&#39;t install or define the docker package, useful if you want to use
@@ -484,6 +520,132 @@ in docker::params</p>
       <a href="#">
         <span class="summary_signature">
           -
+          <strong>dm_basesize</strong>
+          
+            
+            => $docker::params::dm_basesize
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>dm_fs</strong>
+          
+            
+            => $docker::params::dm_fs
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>dm_mkfsarg</strong>
+          
+            
+            => $docker::params::dm_mkfsarg
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>dm_mountopt</strong>
+          
+            
+            => $docker::params::dm_mountopt
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>dm_blocksize</strong>
+          
+            
+            => $docker::params::dm_blocksize
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>dm_loopdatasize</strong>
+          
+            
+            => $docker::params::dm_loopdatasize
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>dm_loopmetadatasize</strong>
+          
+            
+            => $docker::params::dm_loopmetadatasize
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>dm_datadev</strong>
+          
+            
+            => $docker::params::dm_datadev
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>dm_metadatadev</strong>
+          
+            
+            => $docker::params::dm_metadatadev
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
           <strong>execdriver</strong>
           
             
@@ -554,7 +716,7 @@ in docker::params</p>
 </div>
 
     <div id="footer">
-  Generated on Sun Jan  4 20:08:14 2015 by
+  Generated on Mon Jan 12 09:23:36 2015 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.7.6 (ruby-2.1.4).
 </div>
