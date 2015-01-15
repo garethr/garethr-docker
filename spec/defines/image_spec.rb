@@ -69,6 +69,34 @@ describe 'docker::image', :type => :define do
     end
   end
 
+  context 'with docker_tar => /tmp/docker_tars/test1.tar' do
+    let(:params) { { 'docker_tar' => '/tmp/docker_tars/test1.tar' } }
+    it { should contain_exec('docker load -i /tmp/docker_tars/test1.tar') }
+  end
+
+  context 'with ensure => present and docker_tar => /tmp/docker_tars/test1.tar' do
+    let(:params) { { 'ensure' => 'present', 'docker_tar' => '/tmp/docker_tars/test1.tar' } }
+    it { should contain_exec('docker load -i /tmp/docker_tars/test1.tar') }
+  end
+
+  context 'with docker_file => Dockerfile and docker_tar => /tmp/docker_tars/test1.tar' do
+    let(:params) { { 'docker_file' => 'Dockerfile', 'docker_tar' => '/tmp/docker_tars/test1.tar' }}
+    it do
+      expect {
+        should have_exec_resource_count(1)
+      }.to raise_error(Puppet::Error)
+    end
+  end
+
+  context 'with docker_tar => /tmp/docker_tars/test1.tar and docker_dir => /tmp/docker_images/test1' do
+    let(:params) { { 'docker_tar' => '/tmp/docker_tars/test1.tar', 'docker_dir' => '/tmp/docker_images/test1' }}
+    it do
+      expect {
+        should have_exec_resource_count(1)
+      }.to raise_error(Puppet::Error)
+    end
+  end
+
   context 'with ensure => latest' do
     let(:params) { { 'ensure' => 'latest' } }
     it { should contain_exec('docker pull base') }
