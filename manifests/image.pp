@@ -17,6 +17,9 @@
 # [*docker_file*]
 #   If you want to add a docker image from specific docker file
 #
+# [*docker_tar*]
+#   If you want to load a docker image from specific docker tar 
+#
 define docker::image(
   $ensure    = 'present',
   $image     = $title,
@@ -24,6 +27,7 @@ define docker::image(
   $force     = false,
   $docker_file = undef,
   $docker_dir = undef,
+  $docker_tar = undef,
 ) {
   include docker::params
   $docker_command = $docker::params::docker_command
@@ -33,6 +37,14 @@ define docker::image(
 
   if ($docker_file) and ($docker_dir) {
     fail 'docker::image must not have both $docker_file and $docker_dir set'
+  }
+
+  if ($docker_file) and ($docker_tar) {
+    fail 'docker::image must not have both $docker_file and $docker_tar set'
+  }
+
+  if ($docker_dir) and ($docker_tar) {
+    fail 'docker::image must not have both $docker_dir and $docker_tar set'
   }
 
   if $force {
@@ -55,6 +67,8 @@ define docker::image(
     $image_install = "${docker_command} build -t ${image_arg} ${docker_dir}"
   } elsif $docker_file {
     $image_install = "${docker_command} build -t ${image_arg} - < ${docker_file}"
+  } elsif $docker_tar {
+    $image_install = "${docker_command} load -i ${docker_tar}"
   } else {
     $image_install = "${docker_command} pull ${image_arg}"
   }
