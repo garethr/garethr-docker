@@ -78,14 +78,10 @@ start() {
     <% if @pull_on_start -%>
         $docker pull <%= @image %>
     <% end -%>
-    <% if @use_name -%>
-        $docker inspect <%= @name %> && $docker start <%= @name %>
-        $docker inspect <%= @name %> || $docker run --cidfile=$cidfile -d=true \
-    <% else -%>
-        $docker run --cidfile=$cidfile -d=true \
-    <% end -%>
+    $docker inspect <%= @name %> && $docker start <%= @name %>
+    $docker inspect <%= @name %> || $docker run --cidfile=$cidfile -d=true \
         <%= @docker_run_flags %> \
-        <% if @use_name %>--name <%= @name %><% end %> \
+        --name <%= @name %>
         <% if @extra_parameters %><% @extra_parameters_array.each do |param| %>  \
             <%= param %> <% end %> \
         <% end -%> \
