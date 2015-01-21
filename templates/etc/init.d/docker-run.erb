@@ -48,7 +48,6 @@ fi
 HOME=/root/
 docker="/usr/bin/<%= @docker_command %>"
 prog="docker-<%= @sanitised_title %>"
-cidfile="/var/run/$prog.cid"
 if [ -d /var/lock/subsys ]; then
     lockfile="/var/lock/subsys/$prog"
 else
@@ -58,34 +57,23 @@ fi
 start() {
     [ -x $docker ] || exit 5
 
-    if [ -f $cidfile ]; then
-        cid="$(cat $cidfile)"
-        if [ -n "$cid" ]; then
-            $docker ps --no-trunc=true|grep $cid
-            retval=$?
-            if [ $retval -eq 0 ]; then
-                failure
-                echo
-                printf "Container $cid is still running.\n"
-                exit 7
-            else
-                rm -f $lockfile $cidfile
-            fi
-        fi
+    is_running=$($docker inspect -f '{{.State.Running}}' '<%= @name %>' 2> /dev/null || echo 'false')
+    if [ "$is_running" = 'true'  ]; then
+        failure
+        echo
+        echo 'Container <%= @name %> is still running.'
+        exit 7
     fi
+
+    $docker rm '<%= @name %>' || true
 
     printf "Starting $prog:\t"
     <% if @pull_on_start -%>
         $docker pull <%= @image %>
     <% end -%>
-    <% if @use_name -%>
-        $docker inspect <%= @name %> && $docker start <%= @name %>
-        $docker inspect <%= @name %> || $docker run --cidfile=$cidfile -d=true \
-    <% else -%>
-        $docker run --cidfile=$cidfile -d=true \
-    <% end -%>
+    $docker run -d=true \
         <%= @docker_run_flags %> \
-        <% if @use_name %>--name <%= @name %><% end %> \
+        --name <%= @name %> \
         <% if @extra_parameters %><% @extra_parameters_array.each do |param| %>  \
             <%= param %> <% end %> \
         <% end -%> \
@@ -94,7 +82,7 @@ start() {
     retval=$?
     echo
     if [ $retval -eq 0 ]; then
-	[ -n "$lockfile" ] && touch $lockfile
+        [ -n "$lockfile" ] && touch $lockfile
         success
     else
         failure
@@ -102,23 +90,11 @@ start() {
 }
 
 stop() {
-    if ! [ -f $cidfile ]; then
-        failure
-        echo
-        printf "$cidfile does not exist.\n"
-        exit 7
-    else
-        cid="$(cat $cidfile)"
-        if [ -n $cid ]; then
-            echo -n $"Stopping $prog: "
-            $docker stop $(cat $cidfile)
-            retval=$?
-            [ $retval -eq 0 ] && rm -f $lockfile $cidfile
-            return $retval
-        else
-            rm $cidfile
-        fi
-    fi
+    printf "Stopping $prog:\t"
+    $docker stop '<%= @name %>'
+    retval=$?
+    [ $retval -eq 0 ] && rm -f $lockfile
+    return $retval
 }
 
 case "$1" in
@@ -129,11 +105,11 @@ case "$1" in
     stop
     ;;
     status)
-    if [ "false" = "$(docker inspect --format='{{.State.Running}}' $(cat $cidfile))"  ] ; then
-        echo $prog not running
+    if [ 'false' = "$(docker inspect --format='{{.State.Running}}' '<%= @name %>')"  ] ; then
+        echo "$prog not running"
         exit 1
     fi
-    docker inspect $(cat $cidfile)
+    docker inspect '<%= @name %>'
     ;;
     restart|reload)
     stop

@@ -11,7 +11,7 @@ define docker::run(
   $expose = [],
   $volumes = [],
   $links = [],
-  $use_name = false,
+  $use_name = true, # only for backwards compatibility, not used actually
   $running = true,
   $volumes_from = [],
   $net = 'bridge',
