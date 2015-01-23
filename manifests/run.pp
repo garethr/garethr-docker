@@ -28,6 +28,7 @@ define docker::run(
   $extra_parameters = undef,
   $pull_on_start = false,
   $depends = [],
+  $tty = false,
 ) {
   include docker::params
   $docker_command = $docker::params::docker_command
@@ -52,6 +53,7 @@ define docker::run(
   validate_bool($privileged)
   validate_bool($detach)
   validate_bool($restart_service)
+  validate_bool($tty)
 
   $extra_parameters_array = any2array($extra_parameters)
   $depends_array = any2array($depends)
@@ -73,7 +75,8 @@ define docker::run(
     privileged => $privileged,
     username => $username,
     volumes => any2array($volumes),
-    volumes_from => any2array($volumes_from)
+    volumes_from => any2array($volumes_from),
+    tty => $tty,
   })
 
   $sanitised_title = regsubst($title, '[^0-9A-Za-z.\-]', '-', 'G')

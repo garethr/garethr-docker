@@ -34,7 +34,7 @@ require 'spec_helper'
         it { should contain_file(initscript).with_content(/#{command} run/).with_content(/command/) }
       end
 
-      ['p', 'dns', 'u', 'v', 'e', 'n', 'volumes-from', 'name'].each do |search|
+      ['p', 'dns', 'u', 'v', 'e', 'n', 't', 'volumes-from', 'name'].each do |search|
         it { should_not contain_file(initscript).with_content(/-${search}/) }
       end
     end
@@ -195,6 +195,11 @@ require 'spec_helper'
     context 'when running detached' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'detach' => true} }
       it { should contain_file(initscript).with_content(/--detach=true/) }
+    end
+
+    context 'when running with a tty' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'tty' => true} }
+      it { should contain_file(initscript).with_content(/-t/) }
     end
 
     context 'when passing serveral extra parameters' do

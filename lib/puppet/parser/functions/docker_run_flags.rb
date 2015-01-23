@@ -39,6 +39,10 @@ module Puppet::Parser::Functions
       flags << '--detach=true'
     end
 
+    if opts['tty']
+      flags << '-t'
+    end
+
     multi_flags = lambda { |values, format|
       filtered = [values].flatten.compact
       filtered.map { |val| sprintf(format, val) }
