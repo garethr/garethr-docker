@@ -46,7 +46,7 @@ else
     }
 fi
 
-HOME="/root"
+export HOME="/root"
 docker="/usr/bin/<%= @docker_command %>"
 prog="docker-<%= @sanitised_title %>"
 cidfile="/var/run/$prog.cid"
