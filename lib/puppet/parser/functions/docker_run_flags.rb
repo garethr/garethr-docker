@@ -58,6 +58,7 @@ module Puppet::Parser::Functions
       ['-e %s',             'env'],
       ['-p %s',             'ports'],
       ['-v %s',             'volumes'],
+      ['-H %s',             'socket_connect'],
     ].each do |(format, key)|
       values    = opts[key]
       new_flags = multi_flags.call(values, format)

@@ -34,7 +34,7 @@ require 'spec_helper'
         it { should contain_file(initscript).with_content(/#{command} run/).with_content(/command/) }
       end
 
-      ['p', 'dns', 'u', 'v', 'e', 'n', 't', 'volumes-from', 'name'].each do |search|
+      ['p', 'dns', 'H', 'dns-search', 'u', 'v', 'e', 'n', 't', 'volumes-from', 'name'].each do |search|
         it { should_not contain_file(initscript).with_content(/-${search}/) }
       end
     end
@@ -171,6 +171,17 @@ require 'spec_helper'
       let(:params) { {'command' => 'command', 'image' => 'base', 'dns' => '8.8.8.8'} }
       it { should contain_file(initscript).with_content(/--dns 8.8.8.8/) }
     end
+
+    context 'when passing serveral sockets to connect to' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'socket_connect' => ['tcp://127.0.0.1:4567', 'tcp://127.0.0.2:4567']} }
+      it { should contain_file(initscript).with_content(/-H tcp:\/\/127.0.0.1:4567/) }
+    end
+
+    context 'when passing a socket to connect to' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'socket_connect' => 'tcp://127.0.0.1:4567'} }
+      it { should contain_file(initscript).with_content(/-H tcp:\/\/127.0.0.1:4567/) }
+    end
+
 
     context 'when passing serveral dns search domains' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'dns_search' => ['my.domain.local', 'other-domain.de']} }
