@@ -141,6 +141,14 @@ docker::image { 'ubuntu':
 }
 ```
 
+If using hiera, there's a docker::images class you can configure, for example:
+
+```yaml
+docker::images:
+  ubuntu:
+    image_tag: 'precise'
+```
+
 ### Containers
 
 Now you have an image you can run commands within a container managed by docker.
@@ -196,6 +204,15 @@ docker::run { 'helloworld':
   image   => 'ubuntu:precise',
   command => '/bin/sh -c "while true; do echo hello world; sleep 1; done"',
 }
+```
+
+If using hiera, there's a docker::run_instance class you can configure, for example:
+
+```yaml
+docker::run_instance:
+  helloworld:
+    image: 'ubuntu:precise'
+    command: '/bin/sh -c "while true; do echo hello world; sleep 1; done"'
 ```
 
 ### Exec
