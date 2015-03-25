@@ -16,7 +16,9 @@ describe 'docker class' do
 
   context 'default parameters' do
     let(:pp) {"
-        class { 'docker': }
+        class { 'docker': 
+          docker_users => [ 'testuser' ]
+        }
         docker::image { 'nginx': }
         docker::run { 'nginx':
           image   => 'nginx',
@@ -79,6 +81,11 @@ describe 'docker class' do
     describe command('netstat -tlndp') do
       its(:exit_status) { should eq 0 }
       its(:stdout) { should match /0\.0\.0\.0\:80/ }
+    end
+
+    describe command('id testuser | grep docker') do
+      it { should return_exit_status 0 }
+      it { should return_stdout(/docker/) }
     end
 
   end
