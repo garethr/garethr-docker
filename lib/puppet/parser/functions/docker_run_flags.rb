@@ -57,6 +57,7 @@ module Puppet::Parser::Functions
       ['--volumes-from %s', 'volumes_from'],
       ['-e %s',             'env'],
       ['-p %s',             'ports'],
+      ['--add-host %s',     'hostentries'],
       ['-v %s',             'volumes'],
       ['-H %s',             'socket_connect'],
     ].each do |(format, key)|
