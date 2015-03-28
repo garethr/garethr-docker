@@ -163,6 +163,14 @@ define docker::run(
 
   if $restart_service {
     File[$initscript] ~> Service["docker-${sanitised_title}"]
+
+    exec { "check-whether-image-id-changed-${sanitised_title}":
+      command => '/bin/true',
+      onlyif  => "test \"$(service docker-${sanitised_title} imageid)\" != \"$(docker inspect -f \'{{.Id}}\' $image)\"",
+      path    => ['/sbin', '/bin', '/usr/sbin', '/usr/bin'],
+      notify  => Service["docker-${sanitised_title}"],
+      require => File[$initscript],
+    }
   }
   else {
     File[$initscript] -> Service["docker-${sanitised_title}"]

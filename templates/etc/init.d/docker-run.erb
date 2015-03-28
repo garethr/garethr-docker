@@ -135,6 +135,12 @@ case "$1" in
     fi
     docker inspect $(cat $cidfile)
     ;;
+    imageid)
+    if [ "true" != "$(docker inspect --format='{{.State.Running}}' $(cat $cidfile))"  ] ; then
+        exit 1
+    fi
+    docker inspect --format='{{.Image}}' $(cat $cidfile)
+    ;;
     restart|reload)
     stop
     start
