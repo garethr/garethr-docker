@@ -131,6 +131,11 @@ require 'spec_helper'
       it { should contain_file(initscript).with_content(/--expose=4666/) }
     end
 
+    context 'when passing a hostentry' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'hostentries' => 'dummyhost:127.0.0.2'} }
+      it { should contain_file(initscript).with_content(/--add-host dummyhost:127.0.0.2/) }
+    end
+
     context 'when connecting to shared data volumes' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'volumes_from' => '6446ea52fbc9'} }
       it { should contain_file(initscript).with_content(/--volumes-from 6446ea52fbc9/) }

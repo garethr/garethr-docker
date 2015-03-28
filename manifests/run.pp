@@ -30,6 +30,7 @@ define docker::run(
   $depends = [],
   $tty = false,
   $socket_connect = [],
+  $hostentries = [],
 ) {
   include docker::params
   $docker_command = $docker::params::docker_command
@@ -79,6 +80,7 @@ define docker::run(
     volumes_from => any2array($volumes_from),
     tty => $tty,
     socket_connect => any2array($socket_connect),
+    hostentries => any2array($hostentries),
   })
 
   $sanitised_title = regsubst($title, '[^0-9A-Za-z.\-]', '-', 'G')
