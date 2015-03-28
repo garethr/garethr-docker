@@ -1,6 +1,6 @@
 {
   "name": "garethr-docker",
-  "version": "3.3.2",
+  "version": "3.4.0",
   "author": "Gareth Rushgrove",
   "summary": "Module for installing and managing docker",
   "license": "Apache-2.0",
@@ -16,7 +16,8 @@
     },{
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
-        "7"
+        "7",
+        "6.6"
       ]
     },{
       "operatingsystem": "Ubuntu",
@@ -36,11 +37,11 @@
   "requirements": [
     {
       "name": "pe",
-      "version_requirement": "3.x"
+      "version_requirement": "3.7"
     },
     {
       "name": "puppet",
-      "version_requirement": "3.x"
+      "version_requirement": "3.4"
     }
   ],
   "dependencies": [
