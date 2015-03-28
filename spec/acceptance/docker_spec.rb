@@ -27,32 +27,32 @@ describe 'docker class' do
     end
 
     describe package(package_name) do
-      it { should be_installed }
+      it { is_expected.to be_installed }
     end
 
     describe service(service_name) do
-      it { should be_enabled }
-      it { should be_running }
+      it { is_expected.to be_enabled }
+      it { is_expected.to be_running }
     end
 
     describe command("#{command} version") do
-      it { should return_exit_status 0 }
-      it { should return_stdout(/Client version: /) }
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match /Client version:/ }
     end
 
     describe command("sudo #{command} images") do
-      it { should return_exit_status 0 }
-      it { should return_stdout(/nginx/) }
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match /nginx/ }
     end
 
     describe command("sudo #{command} ps -l --no-trunc=true") do
-      it { should return_exit_status 0 }
-      it { should return_stdout(/nginx\:/) }
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match /nginx\:/ }
     end
 
     describe command('netstat -tlndp') do
-      it { should return_exit_status 0 }
-      it { should return_stdout(/0\.0\.0\.0\:80/) }
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match /0\.0\.0\.0\:80/ }
     end
 
   end
