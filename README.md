@@ -26,6 +26,21 @@ too:
 * Amazon Linux
 * Fedora
 
+## Examples
+
+* [Launch vNext app in Docker using Puppet](https://github.com/garethr/puppet-docker-vnext-example)
+  This example contains a fairly simple example using Vagrant to launch a
+  Linux virtual machine, then Puppet to install Docker, build an image and
+  run a container. For added spice the container runs a ASP.NET vNext
+  application.
+* [Multihost containers connected with
+  Consul](https://github.com/garethr/puppet-docker-example)
+  Launch multiple hosts running simple application containers and
+  connect them together using Nginx updated by Consul and Puppet.
+* [Configure Docker Swarm using
+  Puppet](https://github.com/garethr/puppet-docker-swarm-example)
+  Build a cluster of hosts running Docker Swarm configured by Puppet.
+
 ## Usage
 
 The module includes a single class:
