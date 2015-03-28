@@ -3,7 +3,12 @@ require 'spec_helper_acceptance'
 describe 'docker class' do
   case fact('osfamily')
   when 'RedHat'
-    package_name = 'docker'
+    case fact('operatingsystemrelease')
+    when '7.0'
+      package_name = 'docker'
+    else
+      package_name = 'docker-io'
+    end
   else
     package_name = 'lxc-docker'
   end
