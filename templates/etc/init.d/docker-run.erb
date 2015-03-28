@@ -79,7 +79,7 @@ start() {
         $docker pull <%= @image %>
     <% end -%>
     <% if @use_name -%>
-        $docker inspect <%= @name %> && $docker start <%= @name %>
+        $docker inspect <%= @name %> && $docker start <%= @name %> && $docker inspect --format='{{.Id}}' <%= @name %> > $cidfile
         $docker inspect <%= @name %> || $docker run --cidfile=$cidfile -d=true \
     <% else -%>
         $docker run --cidfile=$cidfile -d=true \
