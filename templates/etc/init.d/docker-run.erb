@@ -129,11 +129,19 @@ case "$1" in
     stop
     ;;
     status)
-    if [ "false" = "$(docker inspect --format='{{.State.Running}}' $(cat $cidfile))"  ] ; then
+    <% if @use_name -%>
+        if [ "false" = "$($docker inspect --format='{{.State.Running}}' <%= @name %>)"  ] ; then
+    <% else -%>
+        if [ "false" = "$($docker inspect --format='{{.State.Running}}' $(cat $cidfile))"  ] ; then
+    <% end -%>
         echo $prog not running
         exit 1
     fi
-    docker inspect $(cat $cidfile)
+    <% if @use_name -%>
+    $docker inspect <%= @name %>
+    <% else -%>
+    $docker inspect $(cat $cidfile)
+    <% end -%>
     ;;
     restart|reload)
     stop
