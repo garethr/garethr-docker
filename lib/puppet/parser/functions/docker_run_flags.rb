@@ -9,8 +9,13 @@ module Puppet::Parser::Functions
     if opts['username']
       flags << "-u '#{opts['username'].shellescape}'"
     end
+
     if opts['hostname']
       flags << "-h '#{opts['hostname'].shellescape}'"
+    end
+
+    if opts['restart']
+      flags << "--restart '#{opts['restart']}'"
     end
 
     if opts['net']

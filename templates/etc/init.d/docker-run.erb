@@ -69,7 +69,7 @@ start() {
                 printf "Container $cid is still running.\n"
                 exit 7
             else
-                rm -f $lockfile $cidfile
+                rm -f $lockfile
             fi
         fi
     fi
@@ -78,12 +78,14 @@ start() {
     <% if @pull_on_start -%>
         $docker pull <%= @image %>
     <% end -%>
+    if [ -f $cidfile ]; then
     <% if @use_name -%>
-        $docker inspect <%= @name %> && $docker start <%= @name %> && $docker inspect --format='{{.Id}}' <%= @name %> > $cidfile
-        $docker inspect <%= @name %> || $docker run --cidfile=$cidfile -d=true \
+        $docker start <%= @name %>
     <% else -%>
-        $docker run --cidfile=$cidfile -d=true \
+        $docker start $(cat $cidfile)
     <% end -%>
+    else
+        $docker run --cidfile=$cidfile \
         <%= @docker_run_flags %> \
         <% if @use_name %>--name <%= @name %><% end %> \
         <% if @extra_parameters %><% @extra_parameters_array.each do |param| %>  \
@@ -91,6 +93,8 @@ start() {
         <% end -%> \
         <%= @image %> \
        <% if @command %> <%= @command %><% end %>
+
+    fi
     retval=$?
     echo
     if [ $retval -eq 0 ]; then
@@ -113,10 +117,8 @@ stop() {
             echo -n $"Stopping $prog: "
             $docker stop $(cat $cidfile)
             retval=$?
-            [ $retval -eq 0 ] && rm -f $lockfile $cidfile
+            [ $retval -eq 0 ] && rm -f $lockfile
             return $retval
-        else
-            rm $cidfile
         fi
     fi
 }
@@ -129,19 +131,11 @@ case "$1" in
     stop
     ;;
     status)
-    <% if @use_name -%>
-        if [ "false" = "$($docker inspect --format='{{.State.Running}}' <%= @name %>)"  ] ; then
-    <% else -%>
         if [ "false" = "$($docker inspect --format='{{.State.Running}}' $(cat $cidfile))"  ] ; then
-    <% end -%>
         echo $prog not running
         exit 1
     fi
-    <% if @use_name -%>
-    $docker inspect <%= @name %>
-    <% else -%>
     $docker inspect $(cat $cidfile)
-    <% end -%>
     ;;
     restart|reload)
     stop

@@ -3,8 +3,7 @@ require 'spec_helper_acceptance'
 describe 'docker class' do
   case fact('osfamily')
   when 'RedHat'
-    case fact('operatingsystemrelease')
-    when '7.0'
+    if fact('operatingsystemrelease').to_f >= 7
       package_name = 'docker'
     else
       package_name = 'docker-io'
@@ -20,8 +19,16 @@ describe 'docker class' do
         class { 'docker': }
         docker::image { 'nginx': }
         docker::run { 'nginx':
-          image => 'nginx',
-          net   => 'host',
+          image   => 'nginx',
+          net     => 'host',
+        }
+        docker::run { 'nginx2':
+          image   => 'nginx',
+          restart => 'always',
+        }
+        docker::run { 'nginx3':
+          image   => 'nginx',
+          use_name => true,
         }
     "}
     it 'should apply with no errors' do
@@ -51,6 +58,20 @@ describe 'docker class' do
     end
 
     describe command("sudo #{command} ps -l --no-trunc=true") do
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match /nginx\:/ }
+    end
+
+    describe command("sudo #{command} ps") do
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match /nginx3/ }
+    end
+
+    describe command("sudo #{command} inspect nginx3") do
+      its(:exit_status) { should eq 0 }
+    end
+
+    describe command("sudo #{command} ps --no-trunc | grep `cat /var/run/docker-nginx2.cid`") do
       its(:exit_status) { should eq 0 }
       its(:stdout) { should match /nginx\:/ }
     end

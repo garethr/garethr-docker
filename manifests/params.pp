@@ -48,6 +48,7 @@ class docker::params {
       }
       $package_source_location     = 'https://get.docker.io/ubuntu'
       $use_upstream_package_source = true
+      $detach_service_in_init = true
     }
     'RedHat' : {
       if $::operatingsystem == 'Fedora' {
@@ -63,7 +64,10 @@ class docker::params {
       $package_source_location = ''
       $service_name   = $service_name_default
       $docker_command = $docker_command_default
-      unless versioncmp($::operatingsystemrelease, '7.0') < 0 {
+      if versioncmp($::operatingsystemrelease, '7.0') < 0 {
+        $detach_service_in_init = true
+      } else {
+        $detach_service_in_init = false
         include docker::systemd_reload
       }
     }
@@ -73,14 +77,16 @@ class docker::params {
       $package_name   = 'docker'
       $service_name   = $service_name_default
       $docker_command = $docker_command_default
+      $detach_service_in_init = false
       include docker::systemd_reload
-      }
+    }
     default: {
       $package_source_location     = ''
       $use_upstream_package_source = true
       $package_name   = $package_name_default
       $service_name   = $service_name_default
       $docker_command = $docker_command_default
+      $detach_service_in_init = true
     }
   }
 
