@@ -6,6 +6,7 @@ class docker::params {
   $version                      = undef
   $ensure                       = present
   $tcp_bind                     = undef
+  $log_level                    = undef
   $socket_bind                  = 'unix:///var/run/docker.sock'
   $socket_group                 = undef
   $service_state                = running
