@@ -25,6 +25,11 @@
 #   The unix socket to bind to. Defaults to
 #   unix:///var/run/docker.sock.
 #
+# [*log_level*]
+#   Set the logging level
+#   Defaults to undef: docker defaults to info if no value specified
+#   Valid values: degug, info, error, fatal
+#
 # [*use_upstream_package_source*]
 #   Whether or not to use the upstream package source.
 #   If you run your own package mirror, you may set this
@@ -135,6 +140,7 @@ class docker(
   $prerequired_packages        = $docker::params::prerequired_packages,
   $tcp_bind                    = $docker::params::tcp_bind,
   $socket_bind                 = $docker::params::socket_bind,
+  $log_level                   = $docker::params::log_level,
   $use_upstream_package_source = $docker::params::use_upstream_package_source,
   $package_source_location     = $docker::params::package_source_location,
   $service_state               = $docker::params::service_state,

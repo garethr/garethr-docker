@@ -219,6 +219,11 @@ describe 'docker', :type => :class do
         it { should contain_service('docker').with_enable('true') }
       end
 
+      context 'with specific log_level' do
+        let(:params) {{ 'log_level' => 'debug' }}
+        it { should contain_file(service_config_file).with_content(/-l debug/) }
+      end
+
       context 'with custom root dir' do
         let(:params) { {'root_dir' => '/mnt/docker'} }
         it { should contain_file(service_config_file).with_content(/-g \/mnt\/docker/) }
