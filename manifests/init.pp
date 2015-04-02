@@ -21,14 +21,14 @@
 #   tcp://127.0.0.1:4243
 #   Defaults to undefined
 #
+# [*socket_bind*]
+#   The unix socket to bind to. Defaults to
+#   unix:///var/run/docker.sock.
+#
 # [*log_level*]
 #   Set the logging level
 #   Defaults to undef: docker defaults to info if no value specified
 #   Valid values: degug, info, error, fatal
-#
-# [*socket_bind*]
-#   The unix socket to bind to. Defaults to
-#   unix:///var/run/docker.sock.
 #
 # [*use_upstream_package_source*]
 #   Whether or not to use the upstream package source.
@@ -139,8 +139,8 @@ class docker(
   $ensure                      = $docker::params::ensure,
   $prerequired_packages        = $docker::params::prerequired_packages,
   $tcp_bind                    = $docker::params::tcp_bind,
-  $log_level                   = $docker::params::log_level,
   $socket_bind                 = $docker::params::socket_bind,
+  $log_level                   = $docker::params::log_level,
   $use_upstream_package_source = $docker::params::use_upstream_package_source,
   $package_source_location     = $docker::params::package_source_location,
   $service_state               = $docker::params::service_state,
