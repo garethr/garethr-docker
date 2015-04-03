@@ -177,6 +177,10 @@ class docker(
   validate_bool($manage_kernel)
   validate_bool($manage_package)
 
+  if $log_level {
+    validate_re($log_level, '^(debug|info|error|fatal)$', 'log_level must be one of debug, info, error or fatal')
+  }
+
   if $storage_driver {
     validate_re($storage_driver, '^(aufs|devicemapper|btrfs|overlay|vfs)$', 'Valid values for storage_driver are aufs, devicemapper, btrfs, overlayfs, vfs.' )
   }
