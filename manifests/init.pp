@@ -129,6 +129,10 @@
 #   Specify a custom docker command name
 #   Default is set on a per system basis in docker::params
 #
+# [*docker_users*]
+#   Specifc a array of users to add to the docker group
+#   Default is empty
+#
 class docker(
   $version                     = $docker::params::version,
   $ensure                      = $docker::params::ensure,
@@ -164,12 +168,14 @@ class docker(
   $package_name                = $docker::params::package_name,
   $service_name                = $docker::params::service_name,
   $docker_command              = $docker::params::docker_command,
+  $docker_users                = [],
 ) inherits docker::params {
 
   validate_string($version)
   validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', 'This module only works on Debian and Red Hat based systems.')
   validate_bool($manage_kernel)
   validate_bool($manage_package)
+  validate_array($docker_users)
 
   if $storage_driver {
     validate_re($storage_driver, '^(aufs|devicemapper|btrfs|overlay|vfs)$', 'Valid values for storage_driver are aufs, devicemapper, btrfs, overlayfs, vfs.' )
@@ -186,6 +192,8 @@ class docker(
   if ($dm_datadev and !$dm_metadatadev) or (!$dm_datadev and $dm_metadatadev) {
     fail('You need to provide both $dm_datadev and $dm_metadatadev parameters for direct lvm.')
   }
+
+  docker::system_user { $docker_users: }
 
   class { 'docker::install': } ->
   class { 'docker::config': } ~>

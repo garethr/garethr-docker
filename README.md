@@ -110,6 +110,14 @@ class { 'docker':
 }
 ```
 
+To add users to the Docker group you can pass an array like this:
+
+```puppet
+class { 'docker':
+  docker_users => [ 'user1', 'user2' ],
+}
+```
+
 The class contains lots of other options, please see the inline code
 documentation for the full options.
 
