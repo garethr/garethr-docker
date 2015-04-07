@@ -51,7 +51,8 @@ class docker::service (
 
       if versioncmp($::operatingsystemrelease, '8.0') >= 0 {
         $hasstatus  = true
-        $hasrestart = true
+        $hasrestart = false
+
 
         file {
           '/etc/systemd/system/docker.service.d':
@@ -59,14 +60,14 @@ class docker::service (
 
           '/etc/systemd/system/docker.service.d/service-overrides.conf':
             ensure => present,
-            source => 'puppet:///modules/docker/service-overrides-archlinux.conf',
+            source => 'puppet:///modules/docker/service-overrides-debianjessie.conf',
             notify => Exec['docker-systemd-reload'];
-
-          '/etc/conf.d/docker':
-            ensure  => present,
-            force   => true,
-            content => template('docker/etc/conf.d/docker.erb'),
-            notify  => Service['docker'];
+        }
+        file { "/etc/default/${service_name}":
+          ensure  => present,
+          force   => true,
+          content => template('docker/etc/default/docker.erb'),
+          notify  => Service['docker'],
         }
       } else {
         $hasstatus     = true

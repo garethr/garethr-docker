@@ -41,6 +41,7 @@ class docker::params {
         $service_name   = 'docker'
         $docker_command = 'docker'
         $detach_service_in_init = false
+        $use_upstream_package_source = true
         include docker::systemd_reload
       } else {
 
