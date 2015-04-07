@@ -116,25 +116,34 @@ define docker::run(
 
     case $::osfamily {
       'Debian': {
-        $initscript = "/etc/init.d/docker-${sanitised_title}"
-        $init_template = 'docker/etc/init.d/docker-run.erb'
-        $deprecated_initscript = "/etc/init/docker-${sanitised_title}.conf"
-        $hasstatus  = true
-        $hasrestart = false
-        $uses_systemd = false
-        $mode = '0755'
+        if versioncmp($::operatingsystemrelease, '8.0') >= 0 {
+          $initscript     = "/etc/systemd/system/docker-${sanitised_title}.service"
+          $init_template  = 'docker/etc/systemd/system/docker-run.erb'
+          $hasstatus      = true
+          $hasrestart     = true
+          $mode           = '0644'
+          $uses_systemd   = true
+
+        } else{
+          $initscript = "/etc/init.d/docker-${sanitised_title}"
+          $init_template = 'docker/etc/init.d/docker-run.erb'
+          $deprecated_initscript = "/etc/init/docker-${sanitised_title}.conf"
+          $hasstatus  = true
+          $hasrestart = false
+          $uses_systemd = false
+          $mode = '0755'
 
         # When switching between styles of init scripts (e.g. upstart and sysvinit),
         # we want to stop the service using the old init script. Since `service` will
         # prefer a sysvinit style script over an upstart one if both exist, we need
         # to stop the service before adding the sysvinit script.
-        exec { "/usr/sbin/service docker-${sanitised_title} stop":
-          onlyif  => "/usr/bin/test -f ${deprecated_initscript}"
-        } ->
-        file { $deprecated_initscript:
-          ensure => absent
-        } ->
-        File[$initscript]
+          exec { "/usr/sbin/service docker-${sanitised_title} stop":
+            onlyif  => "/usr/bin/test -f ${deprecated_initscript}"
+          } ->
+          file { $deprecated_initscript:
+            ensure => absent
+          } ->
+          File[$initscript] }
       }
       'RedHat': {
         if versioncmp($::operatingsystemrelease, '7.0') < 0 {
