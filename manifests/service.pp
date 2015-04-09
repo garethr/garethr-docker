@@ -28,6 +28,7 @@ class docker::service (
   $socket_bind          = $docker::socket_bind,
   $log_level            = $docker::log_level,
   $socket_group         = $docker::socket_group,
+  $bridge_ip            = $docker::bridge_ip,
   $dns                  = $docker::dns,
   $dns_search           = $docker::dns_search,
   $service_state        = $docker::service_state,
