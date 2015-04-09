@@ -242,6 +242,35 @@ docker::run_instance:
     command: '/bin/sh -c "while true; do echo hello world; sleep 1; done"'
 ```
 
+### Private registries
+By default images will be pushed and pulled from [index.docker.io](http://index.docker.io) unless you've specified a server. If you have your own private registry without authentication, you can fully qualify your image name. If your private registry requires authentication you may configure a registry:
+
+```puppet
+docker::registry { 'example.docker.io:5000':
+  username => 'user1'
+  password => 'secret'
+  email    => 'user1@example.io'
+}
+```
+
+You can logout of a registry if it is no longer required.
+
+```puppet
+docker::registry { 'example.docker.io:5000':
+  ensure => 'absent',
+}
+```
+
+If using hiera, there's a docker::registry_auth class you can configure, for example:
+
+```yaml
+docker::registry_auth::registries:
+  'example.docker.io:5000':
+    username: 'user1'
+    password: 'secret'
+    email: 'user1@example.io'
+```
+
 ### Exec
 
 Docker also supports running arbitrary comments within the context of a
