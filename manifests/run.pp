@@ -32,6 +32,7 @@ define docker::run(
   $socket_connect = [],
   $hostentries = [],
   $restart = undef,
+  $clean_restart = false,
 ) {
   include docker::params
   $docker_command = $docker::params::docker_command
@@ -111,7 +112,6 @@ define docker::run(
       environment => 'HOME=/root',
       path        => ['/bin', '/usr/bin'],
     }
-
   } else {
 
     case $::osfamily {
@@ -172,11 +172,17 @@ define docker::run(
       mode    => $mode,
     }
 
+    $restartcmd = $clean_restart ? {
+	    true  => "service docker-${sanitised_title} cleanRestart",
+	    false => undef,
+    }
+
     service { "docker-${sanitised_title}":
       ensure     => $running,
       enable     => true,
       hasstatus  => $hasstatus,
       hasrestart => $hasrestart,
+      restart    => $restartcmd,
       provider   => $provider,
       require    => File[$initscript],
     }
