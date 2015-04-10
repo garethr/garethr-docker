@@ -173,8 +173,8 @@ define docker::run(
     }
 
     $restartcmd = $clean_restart ? {
-	    true  => "service docker-${sanitised_title} cleanRestart",
-	    false => undef,
+      true  => "service docker-${sanitised_title} cleanRestart",
+      false => undef,
     }
 
     service { "docker-${sanitised_title}":
