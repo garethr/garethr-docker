@@ -58,6 +58,14 @@ fi
 start() {
     [ -x $docker ] || exit 5
 
+    <% if @use_name -%>
+    if [ "true" = "$($docker inspect --format='{{.State.Running}}' <%= @name %>"  ] ; then
+        failure
+        echo
+        printf "Container <%= @name %> is still running.\n"
+        exit 7
+    fi
+    <% else -%>
     if [ -f $cidfile ]; then
         cid="$(cat $cidfile)"
         if [ -n "$cid" ]; then
@@ -73,6 +81,7 @@ start() {
             fi
         fi
     fi
+    <% end -%>
 
     printf "Starting $prog:\t"
     <% if @pull_on_start -%>
@@ -80,6 +89,7 @@ start() {
     <% end -%>
     if [ -f $cidfile ]; then
     <% if @use_name -%>
+        $docker rm <%= @name %> >/dev/null 2>&1
         $docker start <%= @name %>
     <% else -%>
         $docker start $(cat $cidfile)
@@ -93,12 +103,11 @@ start() {
         <% end -%> \
         <%= @image %> \
        <% if @command %> <%= @command %><% end %>
-
     fi
     retval=$?
     echo
     if [ $retval -eq 0 ]; then
-	[ -n "$lockfile" ] && touch $lockfile
+        [ -n "$lockfile" ] && touch $lockfile
         success
     else
         failure
@@ -106,6 +115,10 @@ start() {
 }
 
 stop() {
+    <% if @use_name -%>
+    $docker stop <%= @name %>
+    return $?
+    <% else -%>
     if ! [ -f $cidfile ]; then
         failure
         echo
@@ -121,6 +134,7 @@ stop() {
             return $retval
         fi
     fi
+    <% end -%>
 }
 
 case "$1" in
@@ -131,11 +145,17 @@ case "$1" in
     stop
     ;;
     status)
-        if [ "false" = "$($docker inspect --format='{{.State.Running}}' $(cat $cidfile))"  ] ; then
+    <% if @use_name -%>
+    if [ "false" = "$($docker inspect --format='{{.State.Running}}' <%= @name %>"  ] ; then
+    <% else -%>
+    if [ "false" = "$($docker inspect --format='{{.State.Running}}' $(cat $cidfile))"  ] ; then
+    <% end -%>
         echo $prog not running
         exit 1
+    else
+        echo $prog is running
+        exit 0
     fi
-    $docker inspect $(cat $cidfile)
     ;;
     restart|reload)
     stop
