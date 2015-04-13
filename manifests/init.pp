@@ -28,7 +28,7 @@
 # [*log_level*]
 #   Set the logging level
 #   Defaults to undef: docker defaults to info if no value specified
-#   Valid values: degug, info, error, fatal
+#   Valid values: debug, info, warn, error, fatal
 #
 # [*use_upstream_package_source*]
 #   Whether or not to use the upstream package source.
@@ -178,7 +178,7 @@ class docker(
   validate_bool($manage_package)
 
   if $log_level {
-    validate_re($log_level, '^(debug|info|error|fatal)$', 'log_level must be one of debug, info, error or fatal')
+    validate_re($log_level, '^(debug|info|warn|error|fatal)$', 'log_level must be one of debug, info, warn, error or fatal')
   }
 
   if $storage_driver {
