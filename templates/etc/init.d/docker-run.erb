@@ -123,6 +123,20 @@ stop() {
     fi
 }
 
+clean() {
+    if ! [ -f $cidfile ]; then
+        failure
+        echo
+        printf "$cidfile does not exist.\n"
+    else
+        cid="$(cat $cidfile)"
+	rm $cidfile
+        $docker rm -f $cid
+        retval=$?
+        return $retval
+    fi
+}
+
 case "$1" in
     start)
     start
@@ -141,11 +155,19 @@ case "$1" in
     stop
     start
     ;;
+    clean)
+    clean
+    ;;
+    cleanRestart)
+    stop
+    clean
+    start
+    ;;
     condrestart)
     [ -f /var/lock/subsys/$prog ] && restart || :
     ;;
     *)
-    echo "Usage: $0 [start|stop|status|reload|restart|probe]"
+    echo "Usage: $0 [start|stop|status|reload|restart|probe|clean|cleanRestart]"
     exit 1
     ;;
 esac
