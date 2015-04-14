@@ -69,6 +69,7 @@ require 'spec_helper'
     context 'when `use_name` is true' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'use_name' => true } }
       it { should contain_file(initscript).with_content(/ --name sample /) }
+      it { should contain_file(initscript).with_content(/docker rm sample/) }
     end
 
     context 'when stopping the service' do
