@@ -34,6 +34,7 @@ class docker::params {
   $package_name_default         = 'lxc-docker'
   $service_name_default         = 'docker'
   $docker_command_default       = 'docker'
+  $docker_group                 = 'docker'
   case $::osfamily {
     'Debian' : {
       case $::operatingsystem {

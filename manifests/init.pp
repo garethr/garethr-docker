@@ -139,6 +139,10 @@
 #   Specify a custom docker command name
 #   Default is set on a per system basis in docker::params
 #
+# [*docker_users*]
+#   Specifc a array of users to add to the docker group
+#   Default is empty
+#
 class docker(
   $version                     = $docker::params::version,
   $ensure                      = $docker::params::ensure,
@@ -176,12 +180,14 @@ class docker(
   $package_name                = $docker::params::package_name,
   $service_name                = $docker::params::service_name,
   $docker_command              = $docker::params::docker_command,
+  $docker_users                = [],
 ) inherits docker::params {
 
   validate_string($version)
   validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', 'This module only works on Debian and Red Hat based systems.')
   validate_bool($manage_kernel)
   validate_bool($manage_package)
+  validate_array($docker_users)
 
   if $log_level {
     validate_re($log_level, '^(debug|info|warn|error|fatal)$', 'log_level must be one of debug, info, warn, error or fatal')
@@ -214,7 +220,7 @@ class docker(
   contain 'docker::config'
   contain 'docker::service'
 
-  # Only bother trying to extra docker stuff after docker has been installed,
+  # Only bother trying extra docker stuff after docker has been installed,
   # and is running.
   Class['docker'] -> Docker::Run <||>
   Class['docker'] -> Docker::Image <||>
