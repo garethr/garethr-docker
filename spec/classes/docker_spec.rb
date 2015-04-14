@@ -233,6 +233,20 @@ describe 'docker', :type => :class do
         end
       end
 
+      context 'with specific selinux_enabled parameter' do
+        let(:params) { { 'selinux_enabled' => 'true' } }
+        it { should contain_file(service_config_file).with_content(/--selinux-enabled=true/) }
+      end
+
+      context 'with an invalid selinux_enabled parameter' do
+        let(:params) { { 'selinux_enabled' => 'yes'} }
+        it do
+          expect {
+            should contain_package('docker')
+          }.to raise_error(Puppet::Error, /selinux_enabled must be true or false/)
+        end
+      end
+
       context 'with custom root dir' do
         let(:params) { {'root_dir' => '/mnt/docker'} }
         it { should contain_file(service_config_file).with_content(/-g \/mnt\/docker/) }
