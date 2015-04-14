@@ -203,8 +203,6 @@ class docker(
     fail('You need to provide both $dm_datadev and $dm_metadatadev parameters for direct lvm.')
   }
 
-  docker::system_user { $docker_users: }
-
   class { 'docker::install': } ->
   class { 'docker::config': } ~>
   class { 'docker::service': }
@@ -212,7 +210,7 @@ class docker(
   contain 'docker::config'
   contain 'docker::service'
 
-  # Only bother trying to extra docker stuff after docker has been installed,
+  # Only bother trying extra docker stuff after docker has been installed,
   # and is running.
   Class['docker'] -> Docker::Run <||>
   Class['docker'] -> Docker::Image <||>
