@@ -28,7 +28,7 @@
 # [*log_level*]
 #   Set the logging level
 #   Defaults to undef: docker defaults to info if no value specified
-#   Valid values: degug, info, error, fatal
+#   Valid values: debug, info, warn, error, fatal
 #
 # [*use_upstream_package_source*]
 #   Whether or not to use the upstream package source.
@@ -184,7 +184,7 @@ class docker(
   validate_array($docker_users)
 
   if $log_level {
-    validate_re($log_level, '^(debug|info|error|fatal)$', 'log_level must be one of debug, info, error or fatal')
+    validate_re($log_level, '^(debug|info|warn|error|fatal)$', 'log_level must be one of debug, info, warn, error or fatal')
   }
 
   if $storage_driver {
@@ -203,8 +203,6 @@ class docker(
     fail('You need to provide both $dm_datadev and $dm_metadatadev parameters for direct lvm.')
   }
 
-  docker::system_user { $docker_users: }
-
   class { 'docker::install': } ->
   class { 'docker::config': } ~>
   class { 'docker::service': }
@@ -212,7 +210,7 @@ class docker(
   contain 'docker::config'
   contain 'docker::service'
 
-  # Only bother trying to extra docker stuff after docker has been installed,
+  # Only bother trying extra docker stuff after docker has been installed,
   # and is running.
   Class['docker'] -> Docker::Run <||>
   Class['docker'] -> Docker::Image <||>

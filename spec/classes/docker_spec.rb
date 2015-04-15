@@ -229,7 +229,7 @@ describe 'docker', :type => :class do
         it do
           expect {
             should contain_package('docker')
-          }.to raise_error(Puppet::Error, /log_level must be one of debug, info, error or fatal/)
+          }.to raise_error(Puppet::Error, /log_level must be one of debug, info, warn, error or fatal/)
         end
       end
 

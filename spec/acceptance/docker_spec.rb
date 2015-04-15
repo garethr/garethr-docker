@@ -16,21 +16,24 @@ describe 'docker class' do
 
   context 'default parameters' do
     let(:pp) {"
-        class { 'docker': 
+        class { 'docker':
           docker_users => [ 'testuser' ]
         }
         docker::image { 'nginx': }
         docker::run { 'nginx':
           image   => 'nginx',
           net     => 'host',
+          require => Docker::Image['nginx'],
         }
         docker::run { 'nginx2':
           image   => 'nginx',
           restart => 'always',
+          require => Docker::Image['nginx'],
         }
         docker::run { 'nginx3':
           image   => 'nginx',
           use_name => true,
+          require => Docker::Image['nginx'],
         }
     "}
     it 'should apply with no errors' do
@@ -84,8 +87,8 @@ describe 'docker class' do
     end
 
     describe command('id testuser | grep docker') do
-      it { should return_exit_status 0 }
-      it { should return_stdout(/docker/) }
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match /docker/ }
     end
 
   end

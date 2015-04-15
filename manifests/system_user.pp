@@ -18,6 +18,6 @@ define docker::system_user (
 
   exec { "docker-system-user-${name}":
     command => "/usr/sbin/usermod -aG ${docker::params::docker_group} ${name}",
-    unless  => "/bin/cat /etc/group | grep '^${docker::params::docker_group}:' | grep -qw ${name}"
+    unless  => "/bin/cat /etc/group | grep '^${docker::params::docker_group}:' | grep -qw ${name}",
   }
 }
