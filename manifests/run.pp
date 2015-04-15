@@ -172,6 +172,22 @@ define docker::run(
       mode    => $mode,
     }
 
+    # Transition help from moving from CID based container detection to
+    # Name-based container detection. See #222 for context.
+    # This code should be considered temporary until most people have
+    # transitioned. - 2015-04-15
+    if $initscript == "/etc/init.d/docker-${sanitised_title}" {
+      # This exec sequence will ensure the old-style CID container is stopped
+      # before we replace the init script with the new-style.
+      exec { "/etc/init.d/docker-${sanitised_title} stop":
+        onlyif => "/usr/bin/test -f /var/run/docker-${sanitised_title}.cid"
+      } ->
+      file { "/var/run/docker-${sanitised_title}.cid":
+        ensure => absent,
+      } ->
+      File[$initscript]
+    }
+
     service { "docker-${sanitised_title}":
       ensure     => $running,
       enable     => true,
