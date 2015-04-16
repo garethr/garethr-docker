@@ -8,7 +8,6 @@ Requires=docker.service<% if @depends %><% @sanitised_depends_array.each do |d| 
 
 [Service]
 <%- if @username -%>User=<%= @username %><%- end -%>
-Restart=on-failure
 StartLimitInterval=20
 StartLimitBurst=5
 TimeoutStartSec=0
