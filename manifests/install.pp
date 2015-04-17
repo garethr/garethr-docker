@@ -14,50 +14,61 @@ class docker::install {
 
   case $::osfamily {
     'Debian': {
-      if $docker::manage_package {
-        Package['apt-transport-https'] -> Package['docker']
-      }
-
-      if ($docker::use_upstream_package_source) {
-        include apt
-        apt::source { 'docker':
-          location          => $docker::package_source_location,
-          release           => 'docker',
-          repos             => 'main',
-          required_packages => 'debian-keyring debian-archive-keyring',
-          key               => '36A1D7869245C8950F966E92D8576A8BA88D21E9',
-          key_source        => 'https://get.docker.io/gpg',
-          pin               => '10',
-          include_src       => false,
+      if versioncmp($::operatingsystemrelease, '8.0') >=  0 {
+        exec { 'install-docker':
+          command => '/usr/bin/wget -qO- https://get.docker.com/ | sh',
+          creates => '/usr/bin/docker'
         }
-        if $docker::manage_package {
-          Apt::Source['docker'] -> Package['docker']
-        }
-      } else {
         if $docker::version and $docker::ensure != 'absent' {
           $ensure = $docker::version
         } else {
           $ensure = $docker::ensure
         }
-      }
+      }else {
+        if $docker::manage_package {
+          Package['apt-transport-https'] -> Package['docker']
+        }
 
-      if $::operatingsystem == 'Ubuntu' {
-        case $::operatingsystemrelease {
-          # On Ubuntu 12.04 (precise) install the backported 13.10 (saucy) kernel
-          '12.04': { $kernelpackage = [
-                                        'linux-image-generic-lts-trusty',
-                                        'linux-headers-generic-lts-trusty'
-                                      ]
+        if ($docker::use_upstream_package_source) {
+          include apt
+          apt::source { 'docker':
+            location          => $docker::package_source_location,
+            release           => 'docker',
+            repos             => 'main',
+            required_packages => 'debian-keyring debian-archive-keyring',
+            key               => '36A1D7869245C8950F966E92D8576A8BA88D21E9',
+            key_source        => 'https://get.docker.io/gpg',
+            pin               => '10',
+            include_src       => false,
           }
+          if $docker::manage_package {
+            Apt::Source['docker'] -> Package['docker']
+          }
+        } else {
+          if $docker::version and $docker::ensure != 'absent' {
+            $ensure = $docker::version
+          } else {
+            $ensure = $docker::ensure
+          }
+        }
+
+        if $::operatingsystem == 'Ubuntu' {
+          case $::operatingsystemrelease {
+          # On Ubuntu 12.04 (precise) install the backported 13.10 (saucy) kernel
+            '12.04': { $kernelpackage = [
+              'linux-image-generic-lts-trusty',
+              'linux-headers-generic-lts-trusty'
+            ]
+            }
           # determine the package name for 'linux-image-extra-$(uname -r)' based
           # on the $::kernelrelease fact
-          default: { $kernelpackage = "linux-image-extra-${::kernelrelease}" }
-        }
-        $manage_kernel = $docker::manage_kernel
-      } else {
+            default: { $kernelpackage = "linux-image-extra-${::kernelrelease}" }
+          }
+          $manage_kernel = $docker::manage_kernel
+        } else {
         # Debian does not need extra kernel packages
-        $manage_kernel = false
-      }
+          $manage_kernel = false
+        } }
     }
     'RedHat': {
       if $::operatingsystem == 'Amazon' {

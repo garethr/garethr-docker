@@ -36,21 +36,31 @@ class docker::params {
   $docker_group                 = 'docker'
   case $::osfamily {
     'Debian' : {
-      case $::operatingsystem {
-        'Ubuntu' : {
-          $package_name   = $package_name_default
-          $service_name   = $service_name_default
-          $docker_command = $docker_command_default
+      if versioncmp($::operatingsystemrelease, '8.0') >= 0 {
+        $package_name   = 'docker.io'
+        $service_name   = 'docker'
+        $docker_command = 'docker'
+        $detach_service_in_init = false
+        $use_upstream_package_source = true
+        include docker::systemd_reload
+      } else {
+
+        case $::operatingsystem {
+          'Ubuntu' : {
+            $package_name   = $package_name_default
+            $service_name   = $service_name_default
+            $docker_command = $docker_command_default
+          }
+          default: {
+            $package_name   = 'docker.io'
+            $service_name   = 'docker.io'
+            $docker_command = 'docker.io'
+          }
         }
-        default: {
-          $package_name   = 'docker.io'
-          $service_name   = 'docker.io'
-          $docker_command = 'docker.io'
-        }
+        $package_source_location     = 'https://get.docker.io/ubuntu'
+        $use_upstream_package_source = true
+        $detach_service_in_init = true
       }
-      $package_source_location     = 'https://get.docker.io/ubuntu'
-      $use_upstream_package_source = true
-      $detach_service_in_init = true
     }
     'RedHat' : {
       if $::operatingsystem == 'Fedora' {

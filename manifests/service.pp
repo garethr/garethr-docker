@@ -48,28 +48,51 @@ class docker::service (
 
   case $::osfamily {
     'Debian': {
-      $hasstatus     = true
-      $hasrestart    = false
 
-      case $::operatingsystem {
-        'Debian': {
-          # Do nothing as Debian doesn't have Upstart
+      if versioncmp($::operatingsystemrelease, '8.0') >= 0 {
+        $hasstatus  = true
+        $hasrestart = false
+
+
+        file {
+          '/etc/systemd/system/docker.service.d':
+            ensure => directory;
+
+          '/etc/systemd/system/docker.service.d/service-overrides.conf':
+            ensure => present,
+            source => 'puppet:///modules/docker/service-overrides-debianjessie.conf',
+            notify => Exec['docker-systemd-reload'];
         }
-        default: {
-          file { '/etc/init.d/docker':
+        file { "/etc/default/${service_name}":
+          ensure  => present,
+          force   => true,
+          content => template('docker/etc/default/docker.erb'),
+          notify  => Service['docker'],
+        }
+      } else {
+        $hasstatus     = true
+        $hasrestart    = false
+
+        case $::operatingsystem {
+          'Debian': {
+          # Do nothing as Debian doesn't have Upstart
+          }
+          default: {
+            file { '/etc/init.d/docker':
               ensure => 'link',
               target => '/lib/init/upstart-job',
               force  => true,
               notify => Service['docker'],
+            }
           }
         }
-      }
 
-      file { "/etc/default/${service_name}":
-        ensure  => present,
-        force   => true,
-        content => template('docker/etc/default/docker.erb'),
-        notify  => Service['docker'],
+        file { "/etc/default/${service_name}":
+          ensure  => present,
+          force   => true,
+          content => template('docker/etc/default/docker.erb'),
+          notify  => Service['docker'],
+        }
       }
     }
     'RedHat': {
