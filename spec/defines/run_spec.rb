@@ -27,7 +27,6 @@ require 'spec_helper'
       it { should compile.with_all_deps }
       it { should contain_service('docker-sample') }
       if (osfamily == 'Debian')
-        it { should contain_service('docker-sample').with_hasrestart('false') }
         it { should contain_file(initscript).with_content(/\$docker run/) }
         it { should contain_file(initscript).with_content(/#{command}/) }
       else

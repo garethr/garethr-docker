@@ -135,7 +135,6 @@ define docker::run(
         $init_template = 'docker/etc/init.d/docker-run.erb'
         $deprecated_initscript = "/etc/init/docker-${sanitised_title}.conf"
         $hasstatus  = true
-        $hasrestart = false
         $uses_systemd = false
         $mode = '0755'
       }
@@ -144,14 +143,12 @@ define docker::run(
           $initscript     = "/etc/init.d/docker-${sanitised_title}"
           $init_template  = 'docker/etc/init.d/docker-run.erb'
           $hasstatus      = undef
-          $hasrestart     = undef
           $mode           = '0755'
           $uses_systemd   = false
         } else {
           $initscript     = "/etc/systemd/system/docker-${sanitised_title}.service"
           $init_template  = 'docker/etc/systemd/system/docker-run.erb'
           $hasstatus      = true
-          $hasrestart     = true
           $mode           = '0644'
           $uses_systemd   = true
         }
@@ -160,7 +157,6 @@ define docker::run(
         $initscript     = "/etc/systemd/system/docker-${sanitised_title}.service"
         $init_template  = 'docker/etc/systemd/system/docker-run.erb'
         $hasstatus      = true
-        $hasrestart     = true
         $mode           = '0644'
         $uses_systemd   = true
       }
@@ -193,11 +189,10 @@ define docker::run(
     }
 
     service { "docker-${sanitised_title}":
-      ensure     => $running,
-      enable     => true,
-      hasstatus  => $hasstatus,
-      hasrestart => $hasrestart,
-      require    => File[$initscript],
+      ensure    => $running,
+      enable    => true,
+      hasstatus => $hasstatus,
+      require   => File[$initscript],
     }
 
     if $uses_systemd {
