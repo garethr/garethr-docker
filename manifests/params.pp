@@ -104,6 +104,7 @@ class docker::params {
     'Debian' => $::operatingsystem ? {
       'Debian' => ['apt-transport-https', 'cgroupfs-mount'],
       'Ubuntu' => ['apt-transport-https', 'cgroup-lite', 'apparmor'],
+      default  => [],
     },
     'RedHat' => ['device-mapper'],
     default  => [],

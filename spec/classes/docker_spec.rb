@@ -41,6 +41,12 @@ describe 'docker', :type => :class do
           it { should contain_package('docker') }
         end
 
+        context 'It should include default prerequired_packages' do
+          it { should contain_package('apt-transport-https').with_ensure('present') }
+          it { should contain_package('cgroup-lite').with_ensure('present') }
+          it { should contain_package('apparmor').with_ensure('present') }
+        end
+
         context 'when given a specific tmp_dir' do
           let(:params) {{ 'tmp_dir' => '/bigtmp' }}
           it { should contain_file('/etc/default/docker').with_content(/export TMPDIR="\/bigtmp"/) }
@@ -76,6 +82,10 @@ describe 'docker', :type => :class do
         context 'when given a specific tmp_dir' do
           let(:params) {{ 'tmp_dir' => '/bigtmp' }}
           it { should contain_file('/etc/sysconfig/docker').with_content(/export TMPDIR="\/bigtmp"/) }
+        end
+
+        context 'It should include default prerequired_packages' do
+          it { should contain_package('device-mapper').with_ensure('present') }
         end
 
       end
