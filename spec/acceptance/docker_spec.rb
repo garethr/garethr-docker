@@ -95,6 +95,21 @@ describe 'docker class' do
       its(:exit_status) { should eq 0 }
       its(:stdout) { should match /docker/ }
     end
-
   end
+
+  context "When asked to have the latest image of something" do
+    let(:pp) {"
+        class { 'docker':
+          docker_users => [ 'testuser' ]
+        }
+	docker::image { 'busybox': ensure => latest }
+    "}
+    it 'should apply with no errors' do
+      apply_manifest(pp, :catch_failures=>true)
+    end
+    it 'should be idempotent' do
+      apply_manifest(pp, :catch_changes=>true)
+    end
+  end
+
 end
