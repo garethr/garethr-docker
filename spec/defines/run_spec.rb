@@ -24,6 +24,7 @@ require 'spec_helper'
 
     context 'passing the required params' do
       let(:params) { {'command' => 'command', 'image' => 'base'} }
+      it { should compile.with_all_deps }
       it { should contain_service('docker-sample') }
       if (osfamily == 'Debian')
         it { should contain_service('docker-sample').with_hasrestart('false') }
