@@ -71,71 +71,51 @@ define docker::run(
   $depends_array = any2array($depends)
 
   $docker_run_flags = docker_run_flags({
-    cpuset => any2array($cpuset),
-    detach => $valid_detach,
+    cpuset          => any2array($cpuset),
+    detach          => $valid_detach,
     disable_network => $disable_network,
-    dns => any2array($dns),
-    dns_search => any2array($dns_search),
-    env => any2array($env),
-    expose => any2array($expose),
-    hostname => $hostname,
-    links => any2array($links),
-    lxc_conf => any2array($lxc_conf),
-    memory_limit => $memory_limit,
-    net => $net,
-    ports => any2array($ports),
-    privileged => $privileged,
-    username => $username,
-    volumes => any2array($volumes),
-    volumes_from => any2array($volumes_from),
-    tty => $tty,
-    socket_connect => any2array($socket_connect),
-    hostentries => any2array($hostentries),
+    dns             => any2array($dns),
+    dns_search      => any2array($dns_search),
+    env             => any2array($env),
+    expose          => any2array($expose),
+    hostname        => $hostname,
+    links           => any2array($links),
+    lxc_conf        => any2array($lxc_conf),
+    memory_limit    => $memory_limit,
+    net             => $net,
+    ports           => any2array($ports),
+    privileged      => $privileged,
+    username        => $username,
+    volumes         => any2array($volumes),
+    volumes_from    => any2array($volumes_from),
+    tty             => $tty,
+    restart         => $restart,
+    socket_connect  => any2array($socket_connect),
+    hostentries     => any2array($hostentries),
   })
 
   $sanitised_title = regsubst($title, '[^0-9A-Za-z.\-]', '-', 'G')
   $sanitised_depends_array = regsubst($depends_array, '[^0-9A-Za-z.\-]', '-', 'G')
 
-  if $restart {
-
-    $cidfile = "/var/run/docker-${sanitised_title}.cid"
-
-    exec { "run ${title} with docker":
-      command     => "${docker_command} run -d ${docker_run_flags} --cidfile=${cidfile} ${image} ${command}",
-      unless      => "docker ps --no-trunc | grep `cat ${cidfile}`",
-      environment => 'HOME=/root',
-      path        => ['/bin', '/usr/bin'],
+  case $::osfamily {
+    'Debian': {
+      $initscript = "/etc/init.d/docker-${sanitised_title}"
+      $init_template = 'docker/etc/init.d/docker-run.erb'
+      $deprecated_initscript = "/etc/init/docker-${sanitised_title}.conf"
+      $hasstatus  = true
+      $hasrestart = false
+      $uses_systemd = false
+      $mode = '0755'
     }
-  } else {
-
-    case $::osfamily {
-      'Debian': {
-        $initscript = "/etc/init.d/docker-${sanitised_title}"
-        $init_template = 'docker/etc/init.d/docker-run.erb'
-        $deprecated_initscript = "/etc/init/docker-${sanitised_title}.conf"
-        $hasstatus  = true
-        $hasrestart = false
-        $uses_systemd = false
-        $mode = '0755'
-      }
-      'RedHat': {
-        if versioncmp($::operatingsystemrelease, '7.0') < 0 {
-          $initscript     = "/etc/init.d/docker-${sanitised_title}"
-          $init_template  = 'docker/etc/init.d/docker-run.erb'
-          $hasstatus      = undef
-          $hasrestart     = undef
-          $mode           = '0755'
-          $uses_systemd   = false
-        } else {
-          $initscript     = "/etc/systemd/system/docker-${sanitised_title}.service"
-          $init_template  = 'docker/etc/systemd/system/docker-run.erb'
-          $hasstatus      = true
-          $hasrestart     = true
-          $mode           = '0644'
-          $uses_systemd   = true
-        }
-      }
-      'Archlinux': {
+    'RedHat': {
+      if versioncmp($::operatingsystemrelease, '7.0') < 0 {
+        $initscript     = "/etc/init.d/docker-${sanitised_title}"
+        $init_template  = 'docker/etc/init.d/docker-run.erb'
+        $hasstatus      = undef
+        $hasrestart     = undef
+        $mode           = '0755'
+        $uses_systemd   = false
+      } else {
         $initscript     = "/etc/systemd/system/docker-${sanitised_title}.service"
         $init_template  = 'docker/etc/systemd/system/docker-run.erb'
         $hasstatus      = true
@@ -143,52 +123,61 @@ define docker::run(
         $mode           = '0644'
         $uses_systemd   = true
       }
-      default: {
-        fail('Docker needs a Debian, RedHat or Archlinux based system.')
-      }
     }
-
-    file { $initscript:
-      ensure  => present,
-      content => template($init_template),
-      mode    => $mode,
+    'Archlinux': {
+      $initscript     = "/etc/systemd/system/docker-${sanitised_title}.service"
+      $init_template  = 'docker/etc/systemd/system/docker-run.erb'
+      $hasstatus      = true
+      $hasrestart     = true
+      $mode           = '0644'
+      $uses_systemd   = true
     }
-
-    # Transition help from moving from CID based container detection to
-    # Name-based container detection. See #222 for context.
-    # This code should be considered temporary until most people have
-    # transitioned. - 2015-04-15
-    if $initscript == "/etc/init.d/docker-${sanitised_title}" {
-      # This exec sequence will ensure the old-style CID container is stopped
-      # before we replace the init script with the new-style.
-      exec { "/bin/sh /etc/init.d/docker-${sanitised_title} stop":
-        onlyif  => "/usr/bin/test -f /var/run/docker-${sanitised_title}.cid && /usr/bin/test -f /etc/init.d/docker-${sanitised_title}",
-        require => [],
-      } ->
-      file { "/var/run/docker-${sanitised_title}.cid":
-        ensure => absent,
-      } ->
-      File[$initscript]
-    }
-
-    service { "docker-${sanitised_title}":
-      ensure     => $running,
-      enable     => true,
-      hasstatus  => $hasstatus,
-      hasrestart => $hasrestart,
-      require    => File[$initscript],
-    }
-
-    if $uses_systemd {
-      File[$initscript] ~> Exec['docker-systemd-reload']
-      Exec['docker-systemd-reload'] -> Service["docker-${sanitised_title}"]
-    }
-
-    if $restart_service {
-      File[$initscript] ~> Service["docker-${sanitised_title}"]
-    }
-    else {
-      File[$initscript] -> Service["docker-${sanitised_title}"]
+    default: {
+      fail('Docker needs a Debian, RedHat or Archlinux based system.')
     }
   }
+
+  file { $initscript:
+    ensure  => present,
+    content => template($init_template),
+    mode    => $mode,
+  }
+
+  # Transition help from moving from CID based container detection to
+  # Name-based container detection. See #222 for context.
+  # This code should be considered temporary until most people have
+  # transitioned. - 2015-04-15
+  if $initscript == "/etc/init.d/docker-${sanitised_title}" {
+    # This exec sequence will ensure the old-style CID container is stopped
+    # before we replace the init script with the new-style.
+    exec { "/bin/sh /etc/init.d/docker-${sanitised_title} stop":
+      onlyif  => "/usr/bin/test -f /var/run/docker-${sanitised_title}.cid && /usr/bin/test -f /etc/init.d/docker-${sanitised_title}",
+      require => [],
+    } ->
+    file { "/var/run/docker-${sanitised_title}.cid":
+      ensure => absent,
+    } ->
+    File[$initscript]
+  }
+
+  service { "docker-${sanitised_title}":
+    ensure     => $running,
+    enable     => true,
+    hasstatus  => $hasstatus,
+    hasrestart => $hasrestart,
+    require    => File[$initscript],
+  }
+
+  if $uses_systemd {
+    File[$initscript] ~> Exec['docker-systemd-reload']
+    Exec['docker-systemd-reload'] -> Service["docker-${sanitised_title}"]
+  }
+
+  if $restart_service {
+    File[$initscript] ~> Service["docker-${sanitised_title}"]
+  }
+  else {
+    File[$initscript] -> Service["docker-${sanitised_title}"]
+  }
+
 }
