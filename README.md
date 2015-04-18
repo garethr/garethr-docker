@@ -187,9 +187,9 @@ docker::run { 'helloworld':
 }
 ```
 
-This is equivalent to running the following under upstart:
+This is equivalent to running the following:
 
-    docker run -d base /bin/sh -c "while true; do echo hello world; sleep 1; done"
+    docker run -d base --name helloworld /bin/sh -c "while true; do echo hello world; sleep 1; done"
 
 Run also contains a number of optional parameters:
 
@@ -200,7 +200,6 @@ docker::run { 'helloworld':
   ports           => ['4444', '4555'],
   expose          => ['4666', '4777'],
   links           => ['mysql:db'],
-  use_name        => true,
   volumes         => ['/var/lib/couchdb', '/var/log'],
   volumes_from    => '6446ea52fbc9',
   memory_limit    => 10m, # (format: <number><unit>, where unit = b, k, m or g)
@@ -222,7 +221,7 @@ Specifying `pull_on_start` will pull the image before each time it is started.
 
 The `depends` option allows expressing containers that must be started before. This affects the generation of the init.d/systemd script.
 
-The service file created for systemd and upstart based systems enables automatic restarting of the service on failure by default.
+The service file created for systemd based systems enables automatic restarting of the service on failure by default.
 
 To use an image tag just append the tag name to the image name separated by a semicolon:
 

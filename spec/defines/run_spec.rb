@@ -28,6 +28,7 @@ require 'spec_helper'
       it { should contain_service('docker-sample') }
       if (osfamily == 'Debian')
         it { should contain_service('docker-sample').with_hasrestart('false') }
+        it { should contain_file(initscript).with_content(/ --name sample /) }
         it { should contain_file(initscript).with_content(/\$docker run/) }
         it { should contain_file(initscript).with_content(/#{command}/) }
       else
@@ -65,11 +66,6 @@ require 'spec_helper'
     context 'when lxc_conf disables swap' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'lxc_conf' => 'lxc.cgroup.memory.memsw.limit_in_bytes=536870912'} }
       it { should contain_file(initscript).with_content(/-lxc-conf=\"lxc.cgroup.memory.memsw.limit_in_bytes=536870912\"/) }
-    end
-
-    context 'when `use_name` is true' do
-      let(:params) { {'command' => 'command', 'image' => 'base', 'use_name' => true } }
-      it { should contain_file(initscript).with_content(/ --name sample /) }
     end
 
     context 'when stopping the service' do

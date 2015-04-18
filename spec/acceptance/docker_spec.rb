@@ -37,7 +37,6 @@ describe 'docker class' do
         }
         docker::run { 'nginx3':
           image   => 'nginx',
-          use_name => true,
           require => Docker::Image['nginx'],
         }
     "}
