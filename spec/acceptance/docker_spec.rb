@@ -14,6 +14,11 @@ describe 'docker class' do
   service_name = 'docker'
   command = 'docker'
 
+  before(:all) do
+    # This is a hack to work around a dependency issue
+    shell('sudo yum install -y device-mapper') if fact('osfamily') == 'RedHat'
+  end
+
   context 'default parameters' do
     let(:pp) {"
         class { 'docker':

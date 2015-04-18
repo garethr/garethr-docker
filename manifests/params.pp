@@ -100,9 +100,12 @@ class docker::params {
   # Special extra packages are required on some OSes.
   # Specifically apparmor is needed for Ubuntu:
   # https://github.com/docker/docker/issues/4734
-  $prerequired_packages = $::operatingsystem ? {
-    'Debian' => ['apt-transport-https', 'cgroupfs-mount'],
-    'Ubuntu' => ['apt-transport-https', 'cgroup-lite', 'apparmor'],
+  $prerequired_packages = $::osfamily ? {
+    'Debian' => $::operatingsystem ? {
+      'Debian' => ['apt-transport-https', 'cgroupfs-mount'],
+      'Ubuntu' => ['apt-transport-https', 'cgroup-lite', 'apparmor'],
+    },
+    'RedHat' => ['device-mapper'],
     default  => [],
   }
 

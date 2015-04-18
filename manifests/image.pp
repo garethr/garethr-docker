@@ -56,11 +56,11 @@ define docker::image(
   if $image_tag {
     $image_arg     = "${image}:${image_tag}"
     $image_remove  = "${docker_command} rmi ${image_force}${image}:${image_tag}"
-    $image_find    = "${docker_command} images | grep ^${image} | awk '{ print \$2 }' | grep ^${image_tag}$"
+    $image_find    = "${docker_command} images | egrep '^(docker.io/)?${image} ' | awk '{ print \$2 }' | grep ^${image_tag}$"
   } else {
     $image_arg     = $image
     $image_remove  = "${docker_command} rmi ${image_force}${image}"
-    $image_find    = "${docker_command} images | grep ^${image}"
+    $image_find    = "${docker_command} images | cut -d ' ' -f 1 | egrep '^(docker\\.io/)?${image}$'"
   }
 
   if $docker_dir {
