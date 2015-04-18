@@ -30,6 +30,11 @@
 #   Defaults to undef: docker defaults to info if no value specified
 #   Valid values: debug, info, warn, error, fatal
 #
+# [*selinux_enabled*]
+#   Enable selinux support. Default is false. SELinux does  not  presently
+#   support  the  BTRFS storage driver.
+#   Valid values: true, false
+#
 # [*use_upstream_package_source*]
 #   Whether or not to use the upstream package source.
 #   If you run your own package mirror, you may set this
@@ -145,6 +150,7 @@ class docker(
   $tcp_bind                    = $docker::params::tcp_bind,
   $socket_bind                 = $docker::params::socket_bind,
   $log_level                   = $docker::params::log_level,
+  $selinux_enabled             = $docker::params::selinux_enabled,
   $use_upstream_package_source = $docker::params::use_upstream_package_source,
   $package_source_location     = $docker::params::package_source_location,
   $service_state               = $docker::params::service_state,
@@ -185,6 +191,10 @@ class docker(
 
   if $log_level {
     validate_re($log_level, '^(debug|info|warn|error|fatal)$', 'log_level must be one of debug, info, warn, error or fatal')
+  }
+
+  if $selinux_enabled {
+    validate_re($selinux_enabled, '^(true|false)$', 'selinux_enabled must be true or false')
   }
 
   if $storage_driver {
