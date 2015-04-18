@@ -33,7 +33,7 @@ class docker::params {
   $package_name_default         = 'lxc-docker'
   $service_name_default         = 'docker'
   $docker_command_default       = 'docker'
-  $docker_group                 = 'docker'
+  $docker_group_default         = 'docker'
   case $::osfamily {
     'Debian' : {
       case $::operatingsystem {
@@ -48,6 +48,7 @@ class docker::params {
           $docker_command = 'docker.io'
         }
       }
+      $docker_group = $docker_group_default
       $package_source_location     = 'https://get.docker.io/ubuntu'
       $use_upstream_package_source = true
       $detach_service_in_init = true
@@ -68,12 +69,15 @@ class docker::params {
       $docker_command = $docker_command_default
       if versioncmp($::operatingsystemrelease, '7.0') < 0 {
         $detach_service_in_init = true
+        $docker_group = $docker_group_default
       } else {
         $detach_service_in_init = false
+        $docker_group = 'dockerroot'
         include docker::systemd_reload
       }
     }
     'Archlinux' : {
+      $docker_group = $docker_group_default
       $package_source_location     = ''
       $use_upstream_package_source = false
       $package_name   = 'docker'
@@ -83,6 +87,7 @@ class docker::params {
       include docker::systemd_reload
     }
     default: {
+      $docker_group = $docker_group_default
       $package_source_location     = ''
       $use_upstream_package_source = true
       $package_name   = $package_name_default
