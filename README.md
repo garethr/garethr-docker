@@ -255,4 +255,32 @@ docker::exec { 'helloworld-uptime':
   tty       => true,
 }
 ```
+## Known Issues
 
+Depending on the initial state of your OS, you may run into issues which may mean that Docker fails to start properly.
+
+### RHEL7 and CentOS 7
+RHEL7/CentOS requires at least version 1.02.93 of the device-mapper package to be installed in order for docker's default configuration to work. This is only available on RHEL/CentOS 7.1+.
+
+You can install this package via puppet using the following manifest:
+
+```puppet
+package {'device-mapper':
+  ensure => latest,
+}
+```
+
+Remember to add the appropriate metaparameters (before or require) for your environment to ensure that device-mapper is installed before the docker class is executed.
+
+RHEL7 also has the above issue. 
+
+Additionally, RHEL7 needs the rhel7-extras repo enabled in order to install docker. You can install docker using the following example manifest:
+
+```puppet
+package {'docker':
+  install_options => ['--enablerepo=rhel7-extras'],
+  ensure          => latest,
+}
+```
+
+Again, remember to add the appropriate metaparameters (before or require) for your environment to ensure that device-mapper is installed before the docker package is installed.
