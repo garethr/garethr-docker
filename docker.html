@@ -128,6 +128,14 @@ undefined</p>
 </dd><dt><strong>socket_bind</strong>
 <dd>
 <p>The unix socket to bind to. Defaults to unix:///var/run/docker.sock.</p>
+</dd><dt><strong>log_level</strong>
+<dd>
+<p>Set the logging level Defaults to undef: docker defaults to info if no
+value specified Valid values: debug, info, warn, error, fatal</p>
+</dd><dt><strong>selinux_enabled</strong>
+<dd>
+<p>Enable selinux support. Default is false. SELinux does  not  presently
+support  the  BTRFS storage driver. Valid values: true, false</p>
 </dd><dt><strong>use_upstream_package_source</strong>
 <dd>
 <p>Whether or not to use the upstream package source. If you run your own
@@ -225,6 +233,9 @@ docker::params</p>
 <dd>
 <p>Specify a custom docker command name Default is set on a per system basis
 in docker::params</p>
+</dd><dt><strong>docker_users</strong>
+<dd>
+<p>Specifc a array of users to add to the docker group Default is empty</p>
 </dd></dl>
 
 
@@ -300,6 +311,34 @@ in docker::params</p>
           
             
             => $docker::params::socket_bind
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>log_level</strong>
+          
+            
+            => $docker::params::log_level
+          
+        </span>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>selinux_enabled</strong>
+          
+            
+            => $docker::params::selinux_enabled
           
         </span>
         
@@ -712,11 +751,25 @@ in docker::params</p>
       </a>
     </li>
   
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>docker_users</strong>
+          
+            
+            => []
+          
+        </span>
+        
+      </a>
+    </li>
+  
 </ul>
 </div>
 
     <div id="footer">
-  Generated on Sun Mar 29 16:38:02 2015 by
+  Generated on Tue Apr 21 16:25:40 2015 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.7.6 (ruby-2.1.4).
 </div>

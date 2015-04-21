@@ -4,7 +4,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>
-  Hostclass: docker::systemd_reload
+  Definedtype: docker::system_user
   
     &mdash; Documentation by YARD 0.8.7.6
   
@@ -17,7 +17,7 @@
 <script type="text/javascript" charset="utf-8">
   hasFrames = window.top.frames.main ? true : false;
   relpath = '../';
-  framesUrl = "../frames.html#!docker/systemd_reload.html";
+  framesUrl = "../frames.html#!docker/system_user.html";
 </script>
 
 
@@ -34,7 +34,7 @@
     <a href="../_index.html">Index (s)</a> &raquo;
     <span class='title'><span class='object_link'><a href="../docker.html" title="docker (hostclass)">docker</a></span></span>
      &raquo; 
-    <span class="title">systemd_reload</span>
+    <span class="title">system_user</span>
   
 
   <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
@@ -73,7 +73,7 @@
 
     <iframe id="search_frame"></iframe>
 
-    <div id="content"><h1>Hostclass: docker::systemd_reload
+    <div id="content"><h1>Definedtype: docker::system_user
   
   
   
@@ -82,8 +82,14 @@
 <dl class="box">
   
   
+    
+  
+    
+  
+  
+  
     <dt class="r1 last">Defined in:</dt>
-    <dd class="r1 last">manifests/systemd_reload.pp</dd>
+    <dd class="r1 last">manifests/system_user.pp</dd>
   
 </dl>
 <div class="clear"></div>
@@ -91,9 +97,15 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     
-<h2 id="label-Class%3A+docker%3A%3Asystemd_reload">Class: docker::systemd_reload</h2>
+<h2 id="label-Define%3A+docker%3A%3Asystem_user">Define: docker::system_user</h2>
 
-<p>For systems that have systemd</p>
+<p>Define to manage docker group users</p>
+
+<h3 id="label-Parameters">Parameters</h3>
+<dl class="rdoc-list label-list"><dt><strong>create_user</strong>
+<dd>
+<p>Boolean to cotrol whether the user should be created</p>
+</dd></dl>
 
 
   </div>
@@ -101,7 +113,25 @@
 <div class="tags">
   
 
-</div></div>
+</div><h2>Parameter Summary<small>(<a href="#" class="summary_toggle">collapse</a>)</small></h2>
+<ul class="summary">
+  
+    <li>
+      <a href="#">
+        <span class="summary_signature">
+          -
+          <strong>create_user</strong>
+          
+            
+            => true
+          
+        </span>
+        
+      </a>
+    </li>
+  
+</ul>
+</div>
 
     <div id="footer">
   Generated on Tue Apr 21 16:25:40 2015 by

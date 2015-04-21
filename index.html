@@ -199,6 +199,13 @@ you give a dns server to the docker daemon like this:</p>
 }
 </code></pre>
 
+<p>To add users to the Docker group you can pass an array like this:</p>
+
+<pre class="code ruby"><code class="ruby">class { &#39;docker&#39;:
+  docker_users =&gt; [ &#39;user1&#39;, &#39;user2&#39; ],
+}
+</code></pre>
+
 <p>The class contains lots of other options, please see the inline code
 documentation for the full options.</p>
 
@@ -343,7 +350,7 @@ running container. And now so does the Puppet module.</p>
 </div></div>
 
     <div id="footer">
-  Generated on Sun Mar 29 16:38:01 2015 by
+  Generated on Tue Apr 21 16:25:39 2015 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.7.6 (ruby-2.1.4).
 </div>
