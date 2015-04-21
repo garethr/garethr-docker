@@ -17,6 +17,7 @@ This module is currently tested on:
 * Ubuntu 14.04
 * Centos 7.0
 * Centos 6.6
+* Debian 7.8
 
 It may work on other distros and additional operating systems will be
 supported in the future. It's definitely been used with the following
@@ -25,7 +26,6 @@ too:
 * Archlinux
 * Amazon Linux
 * Fedora
-* Debian
 
 ## Examples
 
