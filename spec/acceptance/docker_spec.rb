@@ -16,7 +16,7 @@ describe 'docker class' do
 
   before(:all) do
     # This is a hack to work around a dependency issue
-    shell('sudo yum install -y device-mapper') if fact('osfamily') == 'RedHat'
+    shell('sudo yum install -y device-mapper', :pty=>true) if fact('osfamily') == 'RedHat'
   end
 
   context 'default parameters' do
@@ -62,26 +62,26 @@ describe 'docker class' do
       its(:stdout) { should match /Client version:/ }
     end
 
-    describe command("sudo #{command} images") do
+    describe command("#{command} images"), :sudo => true do
       its(:exit_status) { should eq 0 }
       its(:stdout) { should match /nginx/ }
     end
 
-    describe command("sudo #{command} ps -l --no-trunc=true") do
+    describe command("#{command} ps -l --no-trunc=true"), :sudo => true do
       its(:exit_status) { should eq 0 }
       its(:stdout) { should match /nginx\:/ }
     end
 
-    describe command("sudo #{command} ps") do
+    describe command("#{command} ps"), :sudo => true do
       its(:exit_status) { should eq 0 }
       its(:stdout) { should match /nginx3/ }
     end
 
-    describe command("sudo #{command} inspect nginx3") do
+    describe command("#{command} inspect nginx3"), :sudo => true do
       its(:exit_status) { should eq 0 }
     end
 
-    describe command("sudo #{command} ps --no-trunc | grep `cat /var/run/docker-nginx2.cid`") do
+    describe command("#{command} ps --no-trunc | grep `cat /var/run/docker-nginx2.cid`"), :sudo => true do
       its(:exit_status) { should eq 0 }
       its(:stdout) { should match /nginx\:/ }
     end
