@@ -139,7 +139,7 @@ define docker::run(
         $mode = '0755'
       }
       'RedHat': {
-        if ($::operatingsystem == "Amazon") or (versioncmp($::operatingsystemrelease, '7.0') < 0) {
+        if ($::operatingsystem == 'Amazon') or (versioncmp($::operatingsystemrelease, '7.0') < 0) {
           $initscript     = "/etc/init.d/docker-${sanitised_title}"
           $init_template  = 'docker/etc/init.d/docker-run.erb'
           $hasstatus      = undef
