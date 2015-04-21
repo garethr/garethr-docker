@@ -54,8 +54,22 @@ class docker::install {
           default: { $kernelpackage = "linux-image-extra-${::kernelrelease}" }
         }
         $manage_kernel = $docker::manage_kernel
-      } else {
-        # Debian does not need extra kernel packages
+      }
+      elsif $::operatingsystem == 'Debian' {
+        case $::lsbmajdistrelease {
+          '7': {
+            # Debian 7 (Wheezy) ships with Kernel 3.2, but Docker requires
+            # Kernel >= 3.8. Install the 3.16 kernel from wheezy-backports.
+            $kernelpackage  = "linux-image-${::architecture}"
+            $manage_kernel  = $docker::manage_kernel
+          }
+          default: {
+            # Debian >= 8 should have a new enough kernel to support Docker.
+            $manage_kernel = false
+          }
+        }
+      }
+      else {
         $manage_kernel = false
       }
     }
@@ -92,9 +106,33 @@ class docker::install {
   }
 
   if $manage_kernel {
-    package { $kernelpackage:
-      ensure => present,
+    if $::lsbdistcodename == 'wheezy' {
+      include apt::backports
+
+      notify { 'please-reboot':
+        message => "Please reboot the system to load Kernel ${docker::kernel_release}",
+        require => Package[$kernelpackage]
+      }
     }
+
+    case $::lsbdistcodename {
+      'wheezy': {
+        $kernelpackage_install_opts = ['-t=wheezy-backports']
+        $kernelpackage_require      = Class['apt::backports']
+      }
+      default: {
+        $kernelpackage_install_opts = undef
+        $kernelpackage_require      = undef
+      }
+    }
+
+    package { $kernelpackage:
+      ensure          => $docker::kernelpackage_version,
+      install_options => $kernelpackage_install_opts,
+      require         => $kernelpackage_require,
+    }
+
+
     if $docker::manage_package {
       Package[$kernelpackage] -> Package['docker']
     }

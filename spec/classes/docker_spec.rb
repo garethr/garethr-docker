@@ -305,22 +305,29 @@ describe 'docker', :type => :class do
       :lsbdistid         => 'Debian',
       :lsbdistcodename   => 'wheezy',
       :lsbmajdistrelease => '7',
-      :kernelrelease     => '3.2.0-4-amd64'
+      :kernelrelease     => '3.2.0-4-amd64',
+      :architecture      => 'amd64'
     } }
 
-    it { should_not contain_package('linux-image-extra-3.8.0-29-generic') }
-    it { should_not contain_package('linux-image-generic-lts-raring') }
-    it { should_not contain_package('linux-headers-generic-lts-raring') }
-    it { should contain_service('docker').without_provider }
-
-    context 'with defaults' do
+    context 'with all defaults' do
+      it { should compile.with_all_deps }
+      it { should contain_class('apt::backports').that_comes_before('Package[linux-image-amd64]') }
+      it { should contain_package('linux-image-amd64').with_ensure(/3\.16/) }
+      it { should contain_notify('please-reboot') }
       it { should contain_apt__source('docker') }
       it { should contain_package('docker').with_name('lxc-docker') }
+      it { should contain_service('docker').without_provider }
     end
 
     context 'with no upstream package source' do
       let(:params) { { 'use_upstream_package_source' => false } }
       it { should_not contain_apt__source('docker') }
+    end
+
+    context 'when not managing the kernel' do
+      let(:params) { { 'manage_kernel' => false } }
+      it { should_not contain_package('linux-image-amd64') }
+      it { should_not contain_notify('please-reboot').with_content(/3\.16/) }
     end
   end
 
