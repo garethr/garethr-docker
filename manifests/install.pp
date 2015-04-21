@@ -10,7 +10,18 @@ class docker::install {
   validate_string($::kernelrelease)
   validate_bool($docker::use_upstream_package_source)
 
-  ensure_packages($docker::prerequired_packages)
+  if $::lsbdistcodename == 'wheezy' {
+    # One of the prerequisite packages for Debian is cgroupfs-mount.
+    # On Wheezy, this is only available in backports.
+    include apt::backports
+    ensure_packages($docker::prerequired_packages, {
+      install_options => ['-t=wheezy-backports'],
+      require         => Class['apt::backports'],
+    })
+  }
+  else {
+    ensure_packages($docker::prerequired_packages)
+  }
 
   case $::osfamily {
     'Debian': {
@@ -59,7 +70,7 @@ class docker::install {
         case $::lsbmajdistrelease {
           '7': {
             # Debian 7 (Wheezy) ships with Kernel 3.2, but Docker requires
-            # Kernel >= 3.8. Install the 3.16 kernel from wheezy-backports.
+            # Kernel >= 3.8. Install the 3.16 kernel from backports.
             $kernelpackage  = "linux-image-${::architecture}"
             $manage_kernel  = $docker::manage_kernel
           }
@@ -107,8 +118,6 @@ class docker::install {
 
   if $manage_kernel {
     if $::lsbdistcodename == 'wheezy' {
-      include apt::backports
-
       notify { 'please-reboot':
         message => "Please reboot the system to load Kernel ${docker::kernel_release}",
         require => Package[$kernelpackage]

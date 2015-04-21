@@ -312,6 +312,7 @@ describe 'docker', :type => :class do
     context 'with all defaults' do
       it { should compile.with_all_deps }
       it { should contain_class('apt::backports').that_comes_before('Package[linux-image-amd64]') }
+      it { should contain_class('apt::backports').that_comes_before('Package[cgroupfs-mount]') }
       it { should contain_package('linux-image-amd64').with_ensure(/3\.16/) }
       it { should contain_notify('please-reboot') }
       it { should contain_apt__source('docker') }
