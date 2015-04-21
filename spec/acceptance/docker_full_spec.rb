@@ -1,197 +1,289 @@
 require 'spec_helper_acceptance'
 
-describe 'Temp OS hacks' do
-  if fact('operatingsystem') =~ /CentOS/
-    if fact('operatingsystemmajrelease') == '7'
+describe 'the Puppet Docker module' do
+  before(:all) do
+    if fact('operatingsystem') =~ /CentOS/
+      if fact('operatingsystemmajrelease') == '7'
         pp=<<-EOS
-              package {'device-mapper':
-                ensure => latest,
-              }
+          package {'device-mapper':
+            ensure => latest,
+          }
         EOS
-      apply_manifest(pp, :catch_failures => true)
-    end
-  elsif default['platform'] =~ /el-7/
-      pp=<<-EOS
-            package {'device-mapper':
-              ensure => latest,
-            }
-
-            package {'docker':
-              install_options => ['--enablerepo=rhel7-extras'],
-              ensure => latest,
-              require => Package['device-mapper']
-            }
-      EOS
-      apply_manifest(pp, :catch_failures => true)
-  end
-end
-
-describe 'Testing class {\'docker\':}' do
-  context 'Install and configure Docker and Docker Daemon' do
-    it 'applies the manifest' do
-      pp=<<-EOS
-        class { 'docker': }
-      EOS
-
-      apply_manifest(pp, :catch_failures => true)
-      unless fact('selinux') == 'true'
-        apply_manifest(pp, :catch_changes => true)
+        apply_manifest(pp, :catch_failures => true)
       end
-    end
-
-    it ': should be running docker process' do
-      shell('ps -aux | grep docker') do |r|
-        expect(r.stdout).to match(/\/usr\/bin\/docker/)
-      end
-    end
-    it ': should output table headers without error' do
-      shell('docker ps', :acceptable_exit_codes => [0])
-    end
-  end 
-
-  context 'When providing a TCP address to bind to' do
-    it 'applies the manifest' do
+    elsif default['platform'] =~ /el-7/
       pp=<<-EOS
-        class { 'docker': 
-          tcp_bind    => 'tcp://127.0.0.1:4444',
+        package {'device-mapper':
+          ensure => latest,
+        }
+        package {'docker':
+          install_options => ['--enablerepo=rhel7-extras'],
+          ensure          => latest,
+          require         => Package['device-mapper']
         }
       EOS
-
       apply_manifest(pp, :catch_failures => true)
-      unless fact('selinux') == 'true'
-        apply_manifest(pp, :catch_changes => true)
+    end
+  end
+
+  describe 'docker class' do
+    context 'without any parameters' do
+      let(:pp) {"
+        class { 'docker': }
+      "}
+
+      it 'should run successfully' do
+        apply_manifest(pp, :catch_failures => true)
+      end
+
+      it 'should run idempotently' do
+        apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
+      end
+
+      it 'should be start a docker process' do
+        shell('ps -aux | grep docker') do |r|
+          expect(r.stdout).to match(/\/usr\/bin\/docker/)
+        end
+      end
+
+      it 'should install a working docker client' do
+        shell('docker ps', :acceptable_exit_codes => [0])
       end
     end
 
-    it ': should show docker listening' do
-      shell('netstat -tulpn | grep docker') do |r|
-        expect(r.stdout).to match(/tcp\s+0\s+0\s+127.0.0.1:4444\s+0.0.0.0\:\*\s+LISTEN\s+\d+\/docker/)
+    context 'passing a TCP address to bind to' do
+      let(:pp) {"
+        class { 'docker':
+          tcp_bind => 'tcp://127.0.0.1:4444',
+        }
+      "}
+
+      it 'should run successfully' do
+        apply_manifest(pp, :catch_failures => true)
+      end
+
+      it 'should run idempotently' do
+        apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
+      end
+
+      it 'should result in docker listening on the specified address' do
+        shell('netstat -tulpn | grep docker') do |r|
+          expect(r.stdout).to match(/tcp\s+0\s+0\s+127.0.0.1:4444\s+0.0.0.0\:\*\s+LISTEN\s+\d+\/docker/)
+        end
       end
     end
-    it ': should output the table headers' do
-      shell('docker ps', :acceptable_exit_codes => [0])
-    end
-  end  
 
-  context 'Bound to a particular unix socket' do
-    it 'applies the manifest' do
-      pp=<<-EOS
-        class { 'docker': 
+    context 'bound to a particular unix socket' do
+      let(:pp) {"
+        class { 'docker':
           socket_bind => 'unix:///var/run/docker.sock',
         }
-      EOS
+      "}
 
-      apply_manifest(pp, :catch_failures => true)
-      unless fact('selinux') == 'true'
-        apply_manifest(pp, :catch_changes => true)
+      it 'should run successfully' do
+        apply_manifest(pp, :catch_failures => true)
       end
-    end
 
-    it ': should show docker listening on a unix socket' do
-      shell('ps -aux | grep docker') do |r|
-        expect(r.stdout).to match(/unix:\/\/\/var\/run\/docker.sock/)
+      it 'should run idempotently' do
+        apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
       end
-    end
-    it ': should output the table headers' do
-      shell('docker ps', :acceptable_exit_codes => [0])
-    end
-  end
-end
 
-describe 'Testing docker::image' do
-  before(:each) do
-    # Delete all existing images
-    shell('docker rmi $(docker images -q) || true')
-    # Check to make sure no images are present
-    shell('docker images | wc -l') do |r|
-      expect(r.stdout).to match(/^0|1$/)
+      it 'should show docker listening on the specified unix socket' do
+        shell('ps -aux | grep docker') do |r|
+          expect(r.stdout).to match(/unix:\/\/\/var\/run\/docker.sock/)
+        end
+      end
     end
   end
 
-  context 'docker::image should successfully download an image from the Docker Hub' do
-    it 'runs test' do
+  describe 'docker::image' do
+    before(:each) do
+      # Delete all existing images
+      shell('docker rmi $(docker images -q) || true')
+      # Check to make sure no images are present
+      shell('docker images | wc -l') do |r|
+        expect(r.stdout).to match(/^0|1$/)
+      end
+    end
+
+    it 'should successfully download an image from the Docker Hub' do
       pp=<<-EOS
         class { 'docker':}
         docker::image { 'ubuntu':
-          ensure => present,
+          ensure  => present,
           require => Class['docker'],
         }
       EOS
-
       apply_manifest(pp, :catch_failures => true)
-      unless fact('selinux') == 'true'
-        apply_manifest(pp, :catch_changes => true)
-      end
-
+      apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
       shell('docker images') do |r|
         expect(r.stdout).to match(/ubuntu/)
       end
     end
-  end
 
-  context 'docker::image should successfully download an image based on a tag from the Docker Hub' do
-    it 'runs test' do
+    it 'should successfully download an image based on a tag from the Docker Hub' do
       pp=<<-EOS
         class { 'docker':}
         docker::image { 'ubuntu':
-          ensure => present,
+          ensure    => present,
           image_tag => 'precise',
-          require => Class['docker'],
+          require   => Class['docker'],
         }
       EOS
-
       apply_manifest(pp, :catch_failures => true)
-      unless fact('selinux') == 'true'
-        apply_manifest(pp, :catch_changes => true)
-      end
-
+      apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
       shell('docker images') do |r|
         expect(r.stdout).to match(/ubuntu\s+precise/)
       end
     end
-  end
 
-  context 'docker::image should create a new image based on a Dockerfile' do
-    it 'runs test' do
-      pp=<<-EOS
-        class { 'docker':}
 
-        docker::image { 'ubuntu':
-          docker_file => "/root/Dockerfile",
-          require => Class['docker'],
-        }
-
-        file { '/root/Dockerfile':
-          ensure => present,
-          content => "FROM ubuntu\nRUN touch /root/test_file_from_dockerfile.txt",
-          before => Docker::Image['ubuntu'],
-        }
-      EOS
-
-      pp2=<<-EOS
-        docker::run { 'container_2_3':
-          image   => 'ubuntu',
-          command => 'init',
-        }
-      EOS
-
-      apply_manifest(pp, :catch_failures => true)
-      unless fact('selinux') == 'true'
-        apply_manifest(pp, :catch_changes => true)
+    context 'which cleans up any running containers' do
+      after(:each) do
+        # Stop all container using systemd
+        shell('ls -D -1 /etc/systemd/system/docker-container* | sed \'s/\/etc\/systemd\/system\///g\' | sed \'s/\.service//g\' | while read container; do service $container stop; done')
+        # Delete all running containers
+        shell('docker rm -f $(docker ps -a -q) || true')
+        # Check to make sure no running containers are present
+        shell('docker ps | wc -l') do |r|
+          expect(r.stdout).to match(/^0|1$/)
+        end
       end
 
-      apply_manifest(pp2, :catch_failures => true)
-      unless fact('selinux') == 'true'
-        apply_manifest(pp2, :catch_changes => true)
+      it 'should create a new image based on a Dockerfile' do
+        pp=<<-EOS
+          class { 'docker':}
+
+          docker::image { 'ubuntu':
+            docker_file => "/root/Dockerfile",
+            require     => Class['docker'],
+          }
+
+          file { '/root/Dockerfile':
+            ensure  => present,
+            content => "FROM ubuntu\nRUN touch /root/test_file_from_dockerfile.txt",
+            before  => Docker::Image['ubuntu'],
+          }
+        EOS
+
+        pp2=<<-EOS
+          docker::run { 'container_2_3':
+            image   => 'ubuntu',
+            command => 'init',
+          }
+        EOS
+
+        apply_manifest(pp, :catch_failures => true)
+        apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
+
+        apply_manifest(pp2, :catch_failures => true)
+        apply_manifest(pp2, :catch_changes => true) unless fact('selinux') == 'true'
+
+        container_id = shell("docker ps | awk 'FNR == 2 {print $1}'")
+        shell("docker exec #{container_id.stdout.strip} ls /root") do |r|
+          expect(r.stdout).to match(/test_file_from_dockerfile.txt/)
+        end
       end
 
-      container_id = shell("docker ps | awk 'FNR == 2 {print $1}'")
-      shell("docker exec #{container_id.stdout.strip} ls /root") do |r|
-        expect(r.stdout).to match(/test_file_from_dockerfile.txt/)
+      it 'should create a new image based on a tar' do
+        pp=<<-EOS
+          class { 'docker': }
+          docker::image { 'ubuntu':
+            require => Class['docker'],
+            ensure  => present,
+          }
+
+          docker::run { 'container_2_4':
+            image   => 'ubuntu',
+            command => '/bin/sh -c "touch /root/test_file_for_tar_test.txt; while true; do echo hello world; sleep 1; done"',
+            require => Docker::Image['ubuntu'],
+          }
+        EOS
+
+        pp2=<<-EOS
+          docker::image { 'newos':
+            docker_tar => "/root/rootfs.tar"
+          }
+
+          docker::run { 'container_2_4_2':
+            image   => 'newos',
+            command => 'init',
+            require => Docker::Image['newos'],
+          }
+        EOS
+
+        apply_manifest(pp, :catch_failures => true)
+        apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
+
+        # Commit currently running container as an image called newos
+        container_id = shell("docker ps | awk 'FNR == 2 {print $1}'")
+        shell("docker commit #{container_id.stdout.strip} newos")
+
+        # Stop all container using systemd
+        shell('ls -D -1 /etc/systemd/system/docker-container* | sed \'s/\/etc\/systemd\/system\///g\' | sed \'s/\.service//g\' | while read container; do service $container stop; done')
+
+        # Stop all running containers
+        shell('docker rm -f $(docker ps -a -q) || true')
+
+        # Make sure no other containers are running
+        shell('docker ps | wc -l') do |r|
+          expect(r.stdout).to match(/^1$/)
+        end
+
+        # Export new to a tar file
+        shell("docker save newos > /root/rootfs.tar")
+
+        # Remove all images
+        shell('docker rmi $(docker images -q) || true')
+
+        # Make sure no other images are present
+        shell('docker images | wc -l') do |r|
+          expect(r.stdout).to match(/^1$/)
+        end
+
+        apply_manifest(pp2, :catch_failures => true)
+        apply_manifest(pp2, :catch_changes => true) unless fact('selinux') == 'true'
+
+        container_id = shell("docker ps | awk 'FNR == 2 {print $1}'")
+        shell("docker exec #{container_id.stdout.strip} ls /root") do |r|
+          expect(r.stdout).to match(/test_file_for_tar_test.txt/)
+        end
       end
     end
 
-    after(:each) do
+    context 'with an existing image' do
+      before(:all) do
+        pp=<<-EOS
+          class { 'docker':}
+          docker::image { 'busybox':
+            ensure  => present,
+            require => Class['docker'],
+          }
+        EOS
+        apply_manifest(pp, :catch_failures => true)
+      end
+
+      it 'should successfully delete the image' do
+        pp=<<-EOS
+          class { 'docker':}
+          docker::image { 'busybox':
+            ensure => absent,
+          }
+        EOS
+
+        apply_manifest(pp, :catch_failures => true)
+        apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
+
+        shell('docker images') do |r|
+          expect(r.stdout).to_not match(/busybox/)
+        end
+      end
+    end
+  end
+
+
+  describe "docker::run" do
+    before(:each) do
       # Stop all container using systemd
       shell('ls -D -1 /etc/systemd/system/docker-container* | sed \'s/\/etc\/systemd\/system\///g\' | sed \'s/\.service//g\' | while read container; do service $container stop; done')
       # Delete all running containers
@@ -201,137 +293,8 @@ describe 'Testing docker::image' do
         expect(r.stdout).to match(/^0|1$/)
       end
     end
-  end
 
-  context 'docker::image should create a new image based on a tar' do
-    it 'runs test' do
-      pp=<<-EOS
-        class { 'docker':
-        }
-
-        docker::image { 'ubuntu':
-          require => Class['docker'],
-          ensure => present,
-        }
-
-        docker::run { 'container_2_4':
-          image   => 'ubuntu',
-          command => '/bin/sh -c "touch /root/test_file_for_tar_test.txt; while true; do echo hello world; sleep 1; done"',
-          require => Docker::Image['ubuntu'],
-        }
-      EOS
-
-      pp2=<<-EOS
-        docker::image { 'newos':
-          docker_tar => "/root/rootfs.tar"
-        }
-
-        docker::run { 'container_2_4_2':
-          image   => 'newos',
-          command => 'init',
-          require => Docker::Image['newos'],
-        }
-      EOS
-
-      apply_manifest(pp, :catch_failures => true)
-      unless fact('selinux') == 'true'
-        apply_manifest(pp, :catch_changes => true)
-      end
-
-      # Commit currently running container as an image called newos
-      container_id = shell("docker ps | awk 'FNR == 2 {print $1}'")
-      shell("docker commit #{container_id.stdout.strip} newos")
-
-      # Stop all container using systemd
-      shell('ls -D -1 /etc/systemd/system/docker-container* | sed \'s/\/etc\/systemd\/system\///g\' | sed \'s/\.service//g\' | while read container; do service $container stop; done')
-
-      # Stop all running containers
-      shell('docker rm -f $(docker ps -a -q) || true')
-
-      # Make sure no other containers are running
-      shell('docker ps | wc -l') do |r|
-        expect(r.stdout).to match(/^1$/)
-      end
-
-      # Export new to a tar file
-      shell("docker save newos > /root/rootfs.tar")
-
-      # Remove all images
-      shell('docker rmi $(docker images -q) || true')
-
-      # Make sure no other images are present
-      shell('docker images | wc -l') do |r|
-        expect(r.stdout).to match(/^1$/)
-      end
-
-      apply_manifest(pp2, :catch_failures => true)
-      unless fact('selinux') == 'true'
-        apply_manifest(pp2, :catch_changes => true)
-      end
-
-      container_id = shell("docker ps | awk 'FNR == 2 {print $1}'")
-      shell("docker exec #{container_id.stdout.strip} ls /root") do |r|
-        expect(r.stdout).to match(/test_file_for_tar_test.txt/)
-      end
-    end
-
-    after(:each) do
-      # Stop all container using systemd
-      shell('ls -D -1 /etc/systemd/system/docker-container* | sed \'s/\/etc\/systemd\/system\///g\' | sed \'s/\.service//g\' | while read container; do service $container stop; done')
-      # Delete all running containers
-      shell('docker rm -f $(docker ps -a -q) || true')
-      # Check to make sure no running containers are present
-      shell('docker ps | wc -l') do |r|
-        expect(r.stdout).to match(/^0|1$/)
-      end
-    end
-  end
-
-  context 'docker::image should delete an image' do
-    it 'runs test' do
-      pp=<<-EOS
-        class { 'docker':}
-        docker::image { 'busybox':
-          ensure => present,
-          require => Class['docker'],
-        }
-      EOS
-
-      pp2=<<-EOS
-        class { 'docker':}
-        docker::image { 'busybox':
-          ensure => absent,
-        }
-      EOS
-
-      apply_manifest(pp, :catch_failures => true)
-      apply_manifest(pp2, :catch_failures => true)
-      unless fact('selinux') == 'true'
-        apply_manifest(pp2, :catch_changes => true)
-      end
-
-      shell('docker images') do |r|
-        expect(r.stdout).to_not match(/ubuntu/)
-      end
-    end
-  end
-end
-
-
-describe "Testing docker::run" do
-  before(:each) do
-    # Stop all container using systemd
-    shell('ls -D -1 /etc/systemd/system/docker-container* | sed \'s/\/etc\/systemd\/system\///g\' | sed \'s/\.service//g\' | while read container; do service $container stop; done')
-    # Delete all running containers
-    shell('docker rm -f $(docker ps -a -q) || true')
-    # Check to make sure no running containers are present
-    shell('docker ps | wc -l') do |r|
-      expect(r.stdout).to match(/^0|1$/)
-    end
-  end
-
-  context 'docker::run should start a container with a configurable command' do
-    it 'runs test' do
+    it 'should start a container with a configurable command' do
       pp=<<-EOS
         class { 'docker':
         }
@@ -348,9 +311,7 @@ describe "Testing docker::run" do
       EOS
 
       apply_manifest(pp, :catch_failures => true)
-      unless fact('selinux') == 'true'
-        apply_manifest(pp, :catch_changes => true)
-      end
+      apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
 
       container_id = shell("docker ps | awk 'FNR == 2 {print $1}'")
       shell("docker exec #{container_id.stdout.strip} ls /root") do |r|
@@ -361,15 +322,11 @@ describe "Testing docker::run" do
         shell("/etc/init.d/docker-container-3-1 status", :acceptable_exit_codes => [0])
       end
 
-
       container_name = shell("docker ps | awk 'FNR == 2 {print $NF}'")
       expect("#{container_name.stdout.strip}").to match(/(container-3-1|container_3_1)/)
-
     end
-  end
 
-  context 'docker::run should start a container with port configuration' do
-    it 'runs test' do
+    it 'should start a container with port configuration' do
       pp=<<-EOS
         class { 'docker':}
 
@@ -380,16 +337,14 @@ describe "Testing docker::run" do
         docker::run { 'container_3_2':
           image   => 'ubuntu',
           command => 'init',
-          ports => ['4444'],
-          expose => ['5555'],
+          ports   => ['4444'],
+          expose  => ['5555'],
           require => Docker::Image['ubuntu'],
-          }
+        }
       EOS
 
       apply_manifest(pp, :catch_failures => true)
-      unless fact('selinux') == 'true'
-        apply_manifest(pp, :catch_changes => true)
-      end
+      apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
 
       shell('docker ps') do |r|
         expect(r.stdout).to match(/"init".+5555\/tcp\, 0\.0\.0.0\:\d+\-\>4444\/tcp/)
@@ -399,10 +354,8 @@ describe "Testing docker::run" do
         shell("/etc/init.d/docker-container-3-2 status", :acceptable_exit_codes => [0])
       end
     end
-  end
 
-  context 'docker::run should start a container with the hostname set' do
-    it 'runs test' do
+    it 'should start a container with the hostname set' do
       pp=<<-EOS
         class { 'docker':}
 
@@ -411,17 +364,15 @@ describe "Testing docker::run" do
         }
 
         docker::run { 'container_3_3':
-          image   => 'ubuntu',
-          command => 'init',
+          image    => 'ubuntu',
+          command  => 'init',
           hostname => 'testdomain.com',
-          require => Docker::Image['ubuntu'],
-          }
+          require  => Docker::Image['ubuntu'],
+        }
       EOS
 
       apply_manifest(pp, :catch_failures => true)
-      unless fact('selinux') == 'true'
-        apply_manifest(pp, :catch_changes => true)
-      end
+      apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
 
       container_id = shell("docker ps | awk 'FNR == 2 {print $1}'")
 
@@ -433,10 +384,8 @@ describe "Testing docker::run" do
         shell("/etc/init.d/docker-container-3-3 status", :acceptable_exit_codes => [0])
       end
     end
-  end
 
-  context 'docker::run should start a container while mounting local volumes' do
-    it 'runs test' do
+    it 'should start a container while mounting local volumes' do
       pp=<<-EOS
         class { 'docker':}
 
@@ -458,9 +407,7 @@ describe "Testing docker::run" do
       EOS
 
       apply_manifest(pp, :catch_failures => true)
-      unless fact('selinux') == 'true'
-        apply_manifest(pp, :catch_changes => true)
-      end
+      apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
 
       container_id = shell("docker ps | awk 'FNR == 2 {print $1}'")
       shell("docker exec #{container_id.stdout.strip} ls /root/mnt") do |r|
@@ -471,10 +418,8 @@ describe "Testing docker::run" do
         shell("/etc/init.d/docker-container-3-4 status", :acceptable_exit_codes => [0])
       end
     end
-  end
 
-  context 'docker::run should start multiple linked containers' do
-    it 'runs test' do
+    it 'should start multiple linked containers' do
       pp=<<-EOS
         class { 'docker':}
 
@@ -490,9 +435,7 @@ describe "Testing docker::run" do
       EOS
 
       apply_manifest(pp, :catch_failures => true)
-      unless fact('selinux') == 'true'
-        apply_manifest(pp, :catch_changes => true)
-      end
+      apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
 
       container_1 = shell("docker ps | awk 'FNR == 2 {print $NF}'")
 
@@ -507,16 +450,13 @@ describe "Testing docker::run" do
           image   => 'ubuntu',
           command => 'init',
           depends => ['#{container_1.stdout.strip}'],
-          links => "#{container_1.stdout.strip}:the_link",
+          links   => "#{container_1.stdout.strip}:the_link",
           require => Docker::Image['ubuntu'],
         }
-
       EOS
 
       apply_manifest(pp2, :catch_failures => true)
-      unless fact('selinux') == 'true'
-        apply_manifest(pp2, :catch_changes => true)
-      end
+      apply_manifest(pp2, :catch_changes => true) unless fact('selinux') == 'true'
 
       container_2 = shell("docker ps | awk 'FNR == 2 {print $NF}'")
 
@@ -525,10 +465,8 @@ describe "Testing docker::run" do
         expect(r.stdout).to match("/#{container_1.stdout.strip}:/#{container_2.stdout.strip}/the_link")
       end
     end
-  end
 
-  context 'docker::run should stop a running container' do
-    it 'runs test' do
+    it 'should stop a running container' do
       pp=<<-EOS
         class { 'docker':}
 
@@ -558,18 +496,14 @@ describe "Testing docker::run" do
       EOS
 
       apply_manifest(pp, :catch_failures => true)
-      unless fact('selinux') == 'true'
-        apply_manifest(pp, :catch_changes => true)
-      end
+      apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
 
       shell('docker ps | wc -l') do |r|
         expect(r.stdout).to match(/^2$/)
       end
 
       apply_manifest(pp2, :catch_failures => true)
-      unless fact('selinux') == 'true'
-        apply_manifest(pp2, :catch_changes => true)
-      end
+      apply_manifest(pp2, :catch_changes => true) unless fact('selinux') == 'true'
 
       shell('docker ps | wc -l') do |r|
         expect(r.stdout).to match(/^1$/)
@@ -580,11 +514,9 @@ describe "Testing docker::run" do
       end
     end
   end
-end
 
-describe "Testing docker::exec" do
-  context 'Run a command inside an already running container' do
-    it 'runs test' do
+  describe "docker::exec" do
+    it 'should run a command inside an already running container' do
       pp=<<-EOS
         class { 'docker':}
 
@@ -600,9 +532,7 @@ describe "Testing docker::exec" do
       EOS
 
       apply_manifest(pp, :catch_failures => true)
-      unless fact('selinux') == 'true'
-        apply_manifest(pp, :catch_changes => true)
-      end
+      apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
 
       container_1 = shell("docker ps | awk 'FNR == 2 {print $NF}'")
 
@@ -623,4 +553,3 @@ describe "Testing docker::exec" do
     end
   end
 end
-
