@@ -107,9 +107,17 @@ class docker::install {
   }
 
   if $docker::manage_package {
-    package { 'docker':
-      ensure => $docker::ensure,
-      name   => $dockerpackage,
+    if $docker::repo_opt {
+      package { 'docker':
+        ensure          => $docker::ensure,
+        name            => $dockerpackage,
+        install_options => $docker::repo_opt,
+      }
+    } else {
+        package { 'docker':
+          ensure => $docker::ensure,
+          name   => $dockerpackage,
+        }
     }
   }
 }

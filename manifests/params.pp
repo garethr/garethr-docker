@@ -76,6 +76,17 @@ class docker::params {
         $docker_group = 'dockerroot'
         include docker::systemd_reload
       }
+
+      if (versioncmp($::operatingsystemrelease, '7.0') == 0) {
+        if $::operatingsystem == 'RedHat' {
+          $repo_opt = '--enablerepo=rhel7-extras'
+        } elsif $::operatingsystem == 'OracleLinux' {
+          $repo_opt = '--enablerepo=ol7_addons'
+        } elsif $::operatingsystem == 'Scientific' {
+          $repo_opt = '--enablerepo=sl-extras'
+        }
+      }
+
     }
     'Archlinux' : {
       $docker_group = $docker_group_default
