@@ -168,7 +168,7 @@ docker::image { 'ubuntu':
 }
 ```
 
-If using hiera, there's a docker::images class you can configure, for example:
+If using hiera, there's a `docker::images` class you can configure, for example:
 
 ```yaml
 docker::images:
@@ -178,7 +178,7 @@ docker::images:
 
 ### Containers
 
-Now you have an image you can run commands within a container managed by docker.
+Now you have an image you can launch containers:
 
 ```puppet
 docker::run { 'helloworld':
@@ -187,11 +187,13 @@ docker::run { 'helloworld':
 }
 ```
 
-This is equivalent to running the following under upstart:
+This is equivalent to running the following:
 
     docker run -d base /bin/sh -c "while true; do echo hello world; sleep 1; done"
 
-Run also contains a number of optional parameters:
+This will launch a Docker container managed by the local init system.
+
+Run also takes a number of optional parameters:
 
 ```puppet
 docker::run { 'helloworld':
@@ -222,7 +224,7 @@ Specifying `pull_on_start` will pull the image before each time it is started.
 
 The `depends` option allows expressing containers that must be started before. This affects the generation of the init.d/systemd script.
 
-The service file created for systemd and upstart based systems enables automatic restarting of the service on failure by default.
+The service file created for systemd based systems enables automatic restarting of the service on failure by default.
 
 To use an image tag just append the tag name to the image name separated by a semicolon:
 
