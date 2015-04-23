@@ -2,24 +2,10 @@ require 'spec_helper_acceptance'
 
 describe 'the Puppet Docker module' do
   before(:all) do
-    if fact('operatingsystem') =~ /CentOS/
-      if fact('operatingsystemmajrelease') == '7'
-        pp=<<-EOS
-          package {'device-mapper':
-            ensure => latest,
-          }
-        EOS
-        apply_manifest(pp, :catch_failures => true)
-      end
-    elsif default['platform'] =~ /el-7/
+    if default['platform'] =~ /el-7/
       pp=<<-EOS
         package {'device-mapper':
           ensure => latest,
-        }
-        package {'docker':
-          install_options => ['--enablerepo=rhel7-extras'],
-          ensure          => latest,
-          require         => Package['device-mapper']
         }
       EOS
       apply_manifest(pp, :catch_failures => true)
