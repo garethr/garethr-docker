@@ -352,7 +352,8 @@ describe 'docker', :type => :class do
     let(:facts) { {
       :osfamily => 'RedHat',
       :operatingsystem => 'RedHat',
-      :operatingsystemrelease => '7.0'
+      :operatingsystemrelease => '7.0',
+      :operatingsystemmajrelease => '7',
     } }
 
     it { should contain_package('docker').with_name('docker') }
@@ -365,7 +366,8 @@ describe 'docker', :type => :class do
     let(:facts) { {
       :osfamily => 'RedHat',
       :operatingsystem => 'OracleLinux',
-      :operatingsystemrelease => '7.0'
+      :operatingsystemrelease => '7.0',
+      :operatingsystemmajrelease => '7',
     } }
 
     it { should contain_package('docker').with_name('docker') }
@@ -378,7 +380,8 @@ describe 'docker', :type => :class do
     let(:facts) { {
       :osfamily => 'RedHat',
       :operatingsystem => 'Scientific',
-      :operatingsystemrelease => '7.0'
+      :operatingsystemrelease => '7.0',
+      :operatingsystemmajrelease => '7',
     } }
 
     it { should contain_package('docker').with_name('docker') }
