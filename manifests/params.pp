@@ -77,7 +77,7 @@ class docker::params {
         include docker::systemd_reload
       }
 
-      if (versioncmp($::operatingsystemrelease, '7.0') == 0) {
+      if (versioncmp($::operatingsystemmajrelease, '7') == 0) {
         if $::operatingsystem == 'RedHat' {
           $repo_opt = '--enablerepo=rhel7-extras'
         } elsif $::operatingsystem == 'OracleLinux' {
