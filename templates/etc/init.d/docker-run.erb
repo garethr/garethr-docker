@@ -11,16 +11,16 @@
 # description: Docker container for <%= @title %>
 
 ### BEGIN INIT INFO
-## Provides:       docker-<%= @sanitised_title %>
-## Required-Start: $network docker<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " docker-#{d}" %><% end %><% end %>
-## Required-Stop: $network docker<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " docker-#{d}" %><% end %><% end %>
-## Should-Start:
-## Should-Stop:
-## Default-Start: 2 3 4 5
-## Default-Stop:  0 1 6
-## Short-Description: start and stop docker container for <%= @title %>
-## Description: Docker container for <%= @title %>
-#### END INIT INFO
+# Provides:       docker-<%= @sanitised_title %>
+# Required-Start: $network docker<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " docker-#{d}" %><% end %><% end %>
+# Required-Stop: $network docker<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " docker-#{d}" %><% end %><% end %>
+# Should-Start:
+# Should-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop:  0 1 6
+# Short-Description: start and stop docker container for <%= @title %>
+# Description: Docker container for <%= @title %>
+### END INIT INFO
 
 if [ -e /etc/init.d/functions ]; then
     . /etc/init.d/functions
