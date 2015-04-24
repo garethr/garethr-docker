@@ -26,6 +26,9 @@ describe 'the Puppet Docker module' do
         apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
       end
 
+      # A sleep to give docker time to execute properly
+      sleep 4
+
       it 'should be start a docker process' do
         shell('ps -aux | grep docker') do |r|
           expect(r.stdout).to match(/\/usr\/bin\/docker/)
@@ -74,6 +77,9 @@ describe 'the Puppet Docker module' do
         apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
       end
 
+      # A sleep to give docker time to execute properly
+      sleep 4
+
       it 'should show docker listening on the specified unix socket' do
         shell('ps -aux | grep docker') do |r|
           expect(r.stdout).to match(/unix:\/\/\/var\/run\/docker.sock/)
@@ -102,6 +108,10 @@ describe 'the Puppet Docker module' do
       EOS
       apply_manifest(pp, :catch_failures => true)
       apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
+
+      # A sleep to give docker time to execute properly
+      sleep 4
+
       shell('docker images') do |r|
         expect(r.stdout).to match(/ubuntu/)
       end
@@ -118,6 +128,10 @@ describe 'the Puppet Docker module' do
       EOS
       apply_manifest(pp, :catch_failures => true)
       apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
+
+      # A sleep to give docker time to execute properly
+      sleep 4
+
       shell('docker images') do |r|
         expect(r.stdout).to match(/ubuntu\s+precise/)
       end
@@ -126,6 +140,9 @@ describe 'the Puppet Docker module' do
 
     context 'which cleans up any running containers' do
       after(:each) do
+        # A sleep to give docker time to execute properly
+        sleep 4
+
         # Stop all container using systemd
         shell('ls -D -1 /etc/systemd/system/docker-container* | sed \'s/\/etc\/systemd\/system\///g\' | sed \'s/\.service//g\' | while read container; do service $container stop; done')
         # Delete all running containers
@@ -165,6 +182,9 @@ describe 'the Puppet Docker module' do
         apply_manifest(pp2, :catch_failures => true)
         apply_manifest(pp2, :catch_changes => true) unless fact('selinux') == 'true'
 
+        # A sleep to give docker time to execute properly
+        sleep 4
+
         container_id = shell("docker ps | awk 'FNR == 2 {print $1}'")
         shell("docker exec #{container_id.stdout.strip} ls /root") do |r|
           expect(r.stdout).to match(/test_file_from_dockerfile.txt/)
@@ -200,6 +220,9 @@ describe 'the Puppet Docker module' do
 
         apply_manifest(pp, :catch_failures => true)
         apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
+
+        # A sleep to give docker time to execute properly
+        sleep 4
 
         # Commit currently running container as an image called newos
         container_id = shell("docker ps | awk 'FNR == 2 {print $1}'")
@@ -260,6 +283,9 @@ describe 'the Puppet Docker module' do
         apply_manifest(pp, :catch_failures => true)
         apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
 
+        # A sleep to give docker time to execute properly
+        sleep 4
+
         shell('docker images') do |r|
           expect(r.stdout).to_not match(/busybox/)
         end
@@ -270,6 +296,9 @@ describe 'the Puppet Docker module' do
 
   describe "docker::run" do
     before(:each) do
+      # A sleep to give docker time to execute properly
+      sleep 4
+
       # Stop all container using systemd
       shell('ls -D -1 /etc/systemd/system/docker-container* | sed \'s/\/etc\/systemd\/system\///g\' | sed \'s/\.service//g\' | while read container; do service $container stop; done')
       # Delete all running containers
@@ -298,6 +327,9 @@ describe 'the Puppet Docker module' do
 
       apply_manifest(pp, :catch_failures => true)
       apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
+
+      # A sleep to give docker time to execute properly
+      sleep 4
 
       container_id = shell("docker ps | awk 'FNR == 2 {print $1}'")
       shell("docker exec #{container_id.stdout.strip} ls /root") do |r|
@@ -332,6 +364,9 @@ describe 'the Puppet Docker module' do
       apply_manifest(pp, :catch_failures => true)
       apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
 
+      # A sleep to give docker time to execute properly
+      sleep 4
+
       shell('docker ps') do |r|
         expect(r.stdout).to match(/"init".+5555\/tcp\, 0\.0\.0.0\:\d+\-\>4444\/tcp/)
       end
@@ -359,6 +394,9 @@ describe 'the Puppet Docker module' do
 
       apply_manifest(pp, :catch_failures => true)
       apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
+
+      # A sleep to give docker time to execute properly
+      sleep 4
 
       container_id = shell("docker ps | awk 'FNR == 2 {print $1}'")
 
@@ -395,6 +433,9 @@ describe 'the Puppet Docker module' do
       apply_manifest(pp, :catch_failures => true)
       apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
 
+      # A sleep to give docker time to execute properly
+      sleep 4
+
       container_id = shell("docker ps | awk 'FNR == 2 {print $1}'")
       shell("docker exec #{container_id.stdout.strip} ls /root/mnt") do |r|
         expect(r.stdout).to match(/test_mount.txt/)
@@ -423,6 +464,9 @@ describe 'the Puppet Docker module' do
       apply_manifest(pp, :catch_failures => true)
       apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
 
+      # A sleep to give docker time to execute properly
+      sleep 4
+
       container_1 = shell("docker ps | awk 'FNR == 2 {print $NF}'")
 
       pp2=<<-EOS
@@ -443,6 +487,9 @@ describe 'the Puppet Docker module' do
 
       apply_manifest(pp2, :catch_failures => true)
       apply_manifest(pp2, :catch_changes => true) unless fact('selinux') == 'true'
+
+      # A sleep to give docker time to execute properly
+      sleep 4
 
       container_2 = shell("docker ps | awk 'FNR == 2 {print $NF}'")
 
@@ -484,12 +531,18 @@ describe 'the Puppet Docker module' do
       apply_manifest(pp, :catch_failures => true)
       apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
 
+      # A sleep to give docker time to execute properly
+      sleep 4
+
       shell('docker ps | wc -l') do |r|
         expect(r.stdout).to match(/^2$/)
       end
 
       apply_manifest(pp2, :catch_failures => true)
       apply_manifest(pp2, :catch_changes => true) unless fact('selinux') == 'true'
+
+      # A sleep to give docker time to execute properly
+      sleep 4
 
       shell('docker ps | wc -l') do |r|
         expect(r.stdout).to match(/^1$/)
@@ -520,6 +573,9 @@ describe 'the Puppet Docker module' do
       apply_manifest(pp, :catch_failures => true)
       apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
 
+      # A sleep to give docker time to execute properly
+      sleep 4
+
       container_1 = shell("docker ps | awk 'FNR == 2 {print $NF}'")
 
       pp2=<<-EOS
@@ -531,6 +587,9 @@ describe 'the Puppet Docker module' do
       EOS
 
       apply_manifest(pp2, :catch_failures => true)
+
+      # A sleep to give docker time to execute properly
+      sleep 4
 
       container_id = shell("docker ps | awk 'FNR == 2 {print $1}'")
       shell("docker exec #{container_id.stdout.strip} ls /root") do |r|
