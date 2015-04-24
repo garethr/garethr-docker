@@ -253,6 +253,9 @@ describe 'the Puppet Docker module' do
         apply_manifest(pp2, :catch_failures => true)
         apply_manifest(pp2, :catch_changes => true) unless fact('selinux') == 'true'
 
+        # A sleep to give docker time to execute properly
+        sleep 4
+
         container_id = shell("docker ps | awk 'FNR == 2 {print $1}'")
         shell("docker exec #{container_id.stdout.strip} ls /root") do |r|
           expect(r.stdout).to match(/test_file_for_tar_test.txt/)
