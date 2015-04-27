@@ -53,6 +53,7 @@ class docker::params {
       $package_source_location     = 'https://get.docker.io/ubuntu'
       $use_upstream_package_source = true
       $detach_service_in_init = true
+      $repo_opt = undef
     }
     'RedHat' : {
       if $::operatingsystem == 'Fedora' {
@@ -77,6 +78,7 @@ class docker::params {
         include docker::systemd_reload
       }
 
+      # repo_opt to specify install_options for docker package
       if (versioncmp($::operatingsystemmajrelease, '7') == 0) {
         if $::operatingsystem == 'RedHat' {
           $repo_opt = '--enablerepo=rhel7-extras'
@@ -84,7 +86,11 @@ class docker::params {
           $repo_opt = '--enablerepo=ol7_addons'
         } elsif $::operatingsystem == 'Scientific' {
           $repo_opt = '--enablerepo=sl-extras'
+        } else {
+          $repo_opt = undef
         }
+      } else {
+        $repo_opt = undef
       }
 
     }
@@ -97,6 +103,7 @@ class docker::params {
       $docker_command = $docker_command_default
       $detach_service_in_init = false
       include docker::systemd_reload
+      $repo_opt = undef
     }
     default: {
       $docker_group = $docker_group_default
@@ -106,6 +113,7 @@ class docker::params {
       $service_name   = $service_name_default
       $docker_command = $docker_command_default
       $detach_service_in_init = true
+      $repo_opt = undef
     }
   }
 
