@@ -20,7 +20,7 @@ describe 'docker::image', :type => :define do
 
   context 'with ensure => present' do
     let(:params) { { 'ensure' => 'present' } }
-    it { should contain_exec('/usr/bin/update_docker_image.sh base') }
+    it { should contain_exec('/usr/local/bin/update_docker_image.sh base') }
   end
 
   context 'with docker_file => Dockerfile' do
@@ -45,7 +45,7 @@ describe 'docker::image', :type => :define do
 
   context 'with ensure => present and image_tag => precise' do
     let(:params) { { 'ensure' => 'present', 'image_tag' => 'precise' } }
-    it { should contain_exec('/usr/bin/update_docker_image.sh base:precise') }
+    it { should contain_exec('/usr/local/bin/update_docker_image.sh base:precise') }
   end
 
   context 'with ensure => present and image_tag => precise and docker_file => Dockerfile' do
@@ -97,7 +97,7 @@ describe 'docker::image', :type => :define do
 
   context 'with ensure => latest' do
     let(:params) { { 'ensure' => 'latest' } }
-    it { should contain_exec("echo 'Update of base complete'").with_onlyif('/usr/bin/update_docker_image.sh base') }
+    it { should contain_exec("echo 'Update of base complete'").with_onlyif('/usr/local/bin/update_docker_image.sh base') }
   end
 
   context 'with ensure => latest and image_tag => precise' do
@@ -109,7 +109,7 @@ describe 'docker::image', :type => :define do
     let(:title) { 'with spaces' }
     it do
       expect {
-        should contain_exec('/usr/bin/update_docker_image.sh with spaces')
+        should contain_exec('/usr/local/bin/update_docker_image.sh with spaces')
       }.to raise_error(Puppet::Error)
     end
   end

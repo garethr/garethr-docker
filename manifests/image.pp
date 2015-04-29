@@ -70,7 +70,7 @@ define docker::image(
   } elsif $docker_tar {
     $image_install = "${docker_command} load -i ${docker_tar}"
   } else {
-    $image_install = "/usr/bin/update_docker_image.sh ${image_arg}"
+    $image_install = "/usr/local/bin/update_docker_image.sh ${image_arg}"
   }
 
   if $ensure == 'absent' {
@@ -85,7 +85,7 @@ define docker::image(
       path        => ['/bin', '/usr/bin'],
       timeout     => 0,
       onlyif      => $image_install,
-      require     => File['/usr/bin/update_docker_image.sh'],
+      require     => File['/usr/local/bin/update_docker_image.sh'],
     }
   } elsif $ensure == 'present' {
     exec { $image_install:
