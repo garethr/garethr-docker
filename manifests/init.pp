@@ -177,6 +177,7 @@ class docker(
   $dm_metadatadev              = $docker::params::dm_metadatadev,
   $execdriver                  = $docker::params::execdriver,
   $manage_package              = $docker::params::manage_package,
+  $manage_epel                 = $docker::params::manage_epel,
   $package_name                = $docker::params::package_name,
   $service_name                = $docker::params::service_name,
   $docker_command              = $docker::params::docker_command,
