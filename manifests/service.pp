@@ -38,6 +38,7 @@ class docker::service (
   $shell_values         = $docker::shell_values,
   $proxy                = $docker::proxy,
   $no_proxy             = $docker::no_proxy,
+  $docker_cert_path     = $docker::docker_cert_path,
   $execdriver           = $docker::execdriver,
   $storage_driver       = $docker::storage_driver,
   $tmp_dir              = $docker::tmp_dir,

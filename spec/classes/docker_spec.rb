@@ -89,6 +89,15 @@ describe 'docker', :type => :class do
           it { should contain_package('device-mapper').with_ensure('present') }
         end
 
+        context 'with default docker cert param' do
+          it { should contain_file(service_config_file).with_content(/DOCKER_CERT_PATH="\/etc\/docker"/) }
+        end
+
+        context 'with custom docker cert param' do
+          let(:params) { {'docker_cert_path' => '/home/docker/' } }
+          it { should contain_file(service_config_file).with_content(/DOCKER_CERT_PATH="\/home\/docker\/"/) }
+        end
+
       end
 
       if osfamily == 'Archlinux'
@@ -327,6 +336,10 @@ describe 'docker', :type => :class do
     } }
 
     it { should contain_class('epel') }
+    context 'with no epel repo' do
+      let(:params) { {'manage_epel' => false } }
+      it { should_not contain_class('epel') }
+    end
     it { should contain_package('docker').with_name('docker-io').with_ensure('present') }
     it { should_not contain_apt__source('docker') }
     it { should_not contain_package('linux-image-extra-3.8.0-29-generic') }

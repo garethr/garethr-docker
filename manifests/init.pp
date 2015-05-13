@@ -85,6 +85,10 @@
 # [*no_proxy*]
 #   Will set the no_proxy variable in /etc/sysconfig/docker (redhat/centos) or /etc/default/docker (debian)
 #
+# [*docker_cert_path*]
+#   If defined, this will set the DOCKER_CERT_PATH parameter in /etc/sysconfig/docker.
+#   Defaults to /etc/docker
+#
 # [*storage_driver*]
 #   Specify a storage driver to use
 #   Default is undef: let docker choose the correct one
@@ -165,6 +169,7 @@ class docker(
   $shell_values                = undef,
   $proxy                       = $docker::params::proxy,
   $no_proxy                    = $docker::params::no_proxy,
+  $docker_cert_path            = $docker::params::docker_cert_path,
   $storage_driver              = $docker::params::storage_driver,
   $dm_basesize                 = $docker::params::dm_basesize,
   $dm_fs                       = $docker::params::dm_fs,
@@ -177,6 +182,7 @@ class docker(
   $dm_metadatadev              = $docker::params::dm_metadatadev,
   $execdriver                  = $docker::params::execdriver,
   $manage_package              = $docker::params::manage_package,
+  $manage_epel                 = $docker::params::manage_epel,
   $package_name                = $docker::params::package_name,
   $service_name                = $docker::params::service_name,
   $docker_command              = $docker::params::docker_command,

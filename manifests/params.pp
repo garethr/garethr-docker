@@ -18,6 +18,7 @@ class docker::params {
   $dns_search                   = undef
   $proxy                        = undef
   $no_proxy                     = undef
+  $docker_cert_path             = '/etc/docker'
   $execdriver                   = undef
   $storage_driver               = undef
   $dm_basesize                  = undef
@@ -31,6 +32,7 @@ class docker::params {
   $dm_metadatadev               = undef
   $manage_package               = true
   $manage_kernel                = true
+  $manage_epel                  = true
   $package_name_default         = 'lxc-docker'
   $service_name_default         = 'docker'
   $docker_command_default       = 'docker'
