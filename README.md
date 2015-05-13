@@ -210,6 +210,7 @@ docker::run { 'helloworld':
   username        => 'example',
   hostname        => 'example.com',
   env             => ['FOO=BAR', 'FOO2=BAR2'],
+  env_file        => ['/etc/foo', '/etc/bar'],
   dns             => ['8.8.8.8', '8.8.4.4'],
   restart_service => true,
   privileged      => false,
@@ -218,7 +219,7 @@ docker::run { 'helloworld':
 }
 ```
 
-Ports, expose, env, dns and volumes can be set with either a single string or as above with an array of values.
+Ports, expose, env, env_file, dns and volumes can be set with either a single string or as above with an array of values.
 
 Specifying `pull_on_start` will pull the image before each time it is started.
 

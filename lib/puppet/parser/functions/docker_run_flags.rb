@@ -61,6 +61,7 @@ module Puppet::Parser::Functions
       ['--lxc-conf="%s"',   'lxc_conf'],
       ['--volumes-from %s', 'volumes_from'],
       ['-e %s',             'env'],
+      ['--env-file %s',     'env_file'],
       ['-p %s',             'ports'],
       ['--add-host %s',     'hostentries'],
       ['-v %s',             'volumes'],
