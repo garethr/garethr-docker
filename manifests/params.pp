@@ -18,6 +18,7 @@ class docker::params {
   $dns_search                   = undef
   $proxy                        = undef
   $no_proxy                     = undef
+  $docker_cert_path             = '/etc/docker'
   $execdriver                   = undef
   $storage_driver               = undef
   $dm_basesize                  = undef
