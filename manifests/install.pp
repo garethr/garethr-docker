@@ -9,7 +9,7 @@ class docker::install {
   validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', 'This module only works on Debian, Red Hat and Archlinux based systems.')
   validate_string($::kernelrelease)
   validate_bool($docker::use_upstream_package_source)
-
+  validate_bool($docker::docker_compose)
   ensure_packages($docker::prerequired_packages)
 
   case $::osfamily {
@@ -120,4 +120,71 @@ class docker::install {
         }
     }
   }
-}
+ 
+ if $docker::docker_compose {
+      $pythondev = $osfamily ? {
+         'RedHat'    => 'python-devel',
+         'Debian'    => 'python-setuptools',
+         'Archlinux' => 'python-setuptools' 
+      }
+     
+     package { $pythondev:
+       ensure   => installed,
+     }
+     
+    if $::operatingsystem == 'Ubuntu' {
+         # Have to run exec cause of https://bugs.launchpad.net/ubuntu/+source/python-pip/+bug/1306991
+            exec { 'pip install':
+              command     => 'easy_install -U pip',
+              path        => '/usr/bin',
+              creates     => '/usr/local/lib/python2.7/dist-packages/pip-6.1.1-py2.7.egg',
+              require     => Package["$pythondev"],
+              before      => Package['docker-compose']
+            }
+           # Install options cause of docker-compose bug 1305 https://github.com/docker/compose/issues/1305   
+
+           package { 'requests':      
+             ensure    => '2.5.3',
+             provider  => pip,
+             before    => Package['docker-compose'],
+             require   => Exec['pip install']
+            } 
+             
+             # This is needed for Ubuntu 12.04 as the docker-compose up will fail
+             if $::operatingsystemrelease == '12.04'{
+                package { 'distribute':
+                  ensure    => '0.7.3',
+                  provider  => pip,
+                  before    => Package['docker-compose'],
+                  require   => Exec['pip install']
+               }
+             }
+          }     
+          
+    elsif $::operatingsystem == 'RedHat' {
+       if $docker::use_upstream_package_source {include 'epel'
+         package { 'python-pip':
+           ensure    => installed,
+           require   => [Package["$pythondev"], Class['epel']], 
+           before    => Package['docker-compose']
+          }
+        }
+      } 
+    
+    else {
+      package { 'python-pip':
+        ensure    => installed,
+        require   => Package["$pythondev"]
+        }
+      }
+    
+     
+     # TODO:There is a bug in Puppet with PIP on RHEL 7. It will be fixed in Puppet 3.8.1 (PuppetPUP-4604)
+
+    package { 'docker-compose':
+      ensure   => installed,
+      provider => pip, 
+      require  => Package['docker'] 
+      }
+    }
+  }

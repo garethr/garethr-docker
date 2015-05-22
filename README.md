@@ -257,4 +257,21 @@ docker::exec { 'helloworld-uptime':
   tty       => true,
 }
 ```
+### Docker-compose
 
+Docker-compose allows you to configure and run multple containers from a single erb file.
+The Puppet module expects to find the docker-compose.yml file first.
+```puppet
+file { '/root/docker-compose.yml':
+  ensure    => file,
+  content   => template('helloworld/docker-compose.yml.erb'), 
+  }
+```
+Then will build the containers with the following statement
+
+```puppet
+docker_compose {'Hello World':
+  source   => '/root',  
+  require  => File['/root/docker-compose.yml']
+  }
+```
