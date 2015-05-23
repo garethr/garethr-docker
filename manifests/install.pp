@@ -135,46 +135,46 @@ class docker::install {
     if $::operatingsystem == 'Ubuntu' {
          # Have to run exec cause of https://bugs.launchpad.net/ubuntu/+source/python-pip/+bug/1306991
             exec { 'pip install':
-              command     => 'easy_install -U pip',
-              path        => '/usr/bin',
-              creates     => '/usr/local/lib/python2.7/dist-packages/pip-6.1.1-py2.7.egg',
-              require     => Package["${pythondev}"],
-              before      => Package['docker-compose']
+              command => 'easy_install -U pip',
+              path    => '/usr/bin',
+              creates => '/usr/local/lib/python2.7/dist-packages/pip-6.1.1-py2.7.egg',
+              require => Package["${pythondev}"],
+              before  => Package['docker-compose']
             }
            # Install options cause of docker-compose bug 1305 https://github.com/docker/compose/issues/1305   
 
-           package { 'requests':    
-             ensure    => '2.5.3',
-             provider  => pip,
-             before    => Package['docker-compose'],
-             require   => Exec['pip install']
+           package { 'requests':
+             ensure   => '2.5.3',
+             provider => pip,
+             before   => Package['docker-compose'],
+             require  => Exec['pip install']
             }
              
              # This is needed for Ubuntu 12.04 as the docker-compose up will fail
              if $::operatingsystemrelease == '12.04'{
                 package { 'distribute':
-                  ensure    => '0.7.3',
-                  provider  => pip,
-                  before    => Package['docker-compose'],
-                  require   => Exec['pip install']
+                  ensure   => '0.7.3',
+                  provider => pip,
+                  before   => Package['docker-compose'],
+                  require  => Exec['pip install']
                }
              }
-          }    
+          }
           
     elsif $::operatingsystem == 'RedHat' {
        if $docker::use_upstream_package_source {include 'epel'
          package { 'python-pip':
-           ensure    => installed,
-           require   => [Package["${pythondev}"], Class['epel']],
-           before    => Package['docker-compose']
+           ensure  => installed,
+           require => [Package["${pythondev}"], Class['epel']],
+           before  => Package['docker-compose']
           }
         }
       }
     
     else {
       package { 'python-pip':
-        ensure    => installed,
-        require   => Package["${pythondev}"]
+        ensure  => installed,
+        require => Package["${pythondev}"]
         }
       }
     
