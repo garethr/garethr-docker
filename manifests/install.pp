@@ -122,13 +122,13 @@ class docker::install {
   }
  
  if $docker::docker_compose {
-      ${pythondev} = $osfamily ? {
+      $pythondev = $osfamily ? {
          'RedHat'    => 'python-devel',
          'Debian'    => 'python-setuptools',
          'Archlinux' => 'python-setuptools' 
       }
      
-     package { ${pythondev}:
+     package { $pythondev:
        ensure   => installed,
      }
      
