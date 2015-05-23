@@ -125,7 +125,7 @@ class docker::install {
       $pythondev = $osfamily ? {
          'RedHat'    => 'python-devel',
          'Debian'    => 'python-setuptools',
-         'Archlinux' => 'python-setuptools' 
+         'Archlinux' => 'python-setuptools'
       }
      
      package { $pythondev:
@@ -143,12 +143,12 @@ class docker::install {
             }
            # Install options cause of docker-compose bug 1305 https://github.com/docker/compose/issues/1305   
 
-           package { 'requests':      
+           package { 'requests':    
              ensure    => '2.5.3',
              provider  => pip,
              before    => Package['docker-compose'],
              require   => Exec['pip install']
-            } 
+            }
              
              # This is needed for Ubuntu 12.04 as the docker-compose up will fail
              if $::operatingsystemrelease == '12.04'{
@@ -159,17 +159,17 @@ class docker::install {
                   require   => Exec['pip install']
                }
              }
-          }     
+          }    
           
     elsif $::operatingsystem == 'RedHat' {
        if $docker::use_upstream_package_source {include 'epel'
          package { 'python-pip':
            ensure    => installed,
-           require   => [Package["${pythondev}"], Class['epel']], 
+           require   => [Package["${pythondev}"], Class['epel']],
            before    => Package['docker-compose']
           }
         }
-      } 
+      }
     
     else {
       package { 'python-pip':
@@ -178,13 +178,13 @@ class docker::install {
         }
       }
     
-     
-     # TODO:There is a bug in Puppet with PIP on RHEL 7. It will be fixed in Puppet 3.8.1 (PuppetPUP-4604)
+    
+    # TODO:There is a bug in Puppet with PIP on RHEL 7. It will be fixed in Puppet 3.8.1 (PuppetPUP-4604)
 
     package { 'docker-compose':
       ensure   => installed,
-      provider => pip, 
-      require  => Package['docker'] 
+      provider => pip,
+      require  => Package['docker']
       }
     }
   }
