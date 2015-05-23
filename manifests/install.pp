@@ -122,13 +122,13 @@ class docker::install {
   }
  
  if $docker::docker_compose {
-      $pythondev = $osfamily ? {
+      ${pythondev} = $osfamily ? {
          'RedHat'    => 'python-devel',
          'Debian'    => 'python-setuptools',
          'Archlinux' => 'python-setuptools' 
       }
      
-     package { $pythondev:
+     package { ${pythondev}:
        ensure   => installed,
      }
      
@@ -138,7 +138,7 @@ class docker::install {
               command     => 'easy_install -U pip',
               path        => '/usr/bin',
               creates     => '/usr/local/lib/python2.7/dist-packages/pip-6.1.1-py2.7.egg',
-              require     => Package["$pythondev"],
+              require     => Package["${pythondev}"],
               before      => Package['docker-compose']
             }
            # Install options cause of docker-compose bug 1305 https://github.com/docker/compose/issues/1305   
@@ -165,7 +165,7 @@ class docker::install {
        if $docker::use_upstream_package_source {include 'epel'
          package { 'python-pip':
            ensure    => installed,
-           require   => [Package["$pythondev"], Class['epel']], 
+           require   => [Package["${pythondev}"], Class['epel']], 
            before    => Package['docker-compose']
           }
         }
@@ -174,7 +174,7 @@ class docker::install {
     else {
       package { 'python-pip':
         ensure    => installed,
-        require   => Package["$pythondev"]
+        require   => Package["${pythondev}"]
         }
       }
     
