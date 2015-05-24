@@ -24,6 +24,6 @@ Puppet::Type.type(:docker_compose).provide(:ruby) do
   def destroy
     Puppet.info("stoping docker-compose containers")
     Dir.chdir(resource[:source])
-    dockercompose('up', '-d')
+    dockercompose('stop')
   end
 end
