@@ -327,6 +327,10 @@ describe 'docker', :type => :class do
     } }
 
     it { should contain_class('epel') }
+    context 'with no epel repo' do
+      let(:params) { {'manage_epel' => false } }
+      it { should_not contain_class('epel') }
+    end
     it { should contain_package('docker').with_name('docker-io').with_ensure('present') }
     it { should_not contain_apt__source('docker') }
     it { should_not contain_package('linux-image-extra-3.8.0-29-generic') }
