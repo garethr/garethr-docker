@@ -167,6 +167,16 @@ require 'spec_helper'
       it { should contain_file(initscript).with_content(/-e FOO=BAR/) }
     end
 
+    context 'when passing serveral environment files' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'env_file' => ['/etc/foo.env', '/etc/bar.env']} }
+      it { should contain_file(initscript).with_content(/--env-file \/etc\/foo.env/).with_content(/--env-file \/etc\/bar.env/) }
+    end
+
+    context 'when passing an environment file' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'env_file' => '/etc/foo.env'} }
+      it { should contain_file(initscript).with_content(/--env-file \/etc\/foo.env/) }
+    end
+
     context 'when passing serveral dns addresses' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'dns' => ['8.8.8.8', '8.8.4.4']} }
       it { should contain_file(initscript).with_content(/--dns 8.8.8.8/).with_content(/--dns 8.8.4.4/) }
