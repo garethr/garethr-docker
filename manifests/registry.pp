@@ -38,7 +38,7 @@ define docker::registry(
 
   if $ensure == 'present' {
     if $username != undef and $password != undef and $email != undef {
-      $auth_cmd = "${docker_command} login -u ${username} -p ${password} -e ${email} ${server}"
+      $auth_cmd = "${docker_command} login -u '${username}' -p '${password}' -e '${email}' ${server}"
     }
     else {
       $auth_cmd = "${docker_command} login ${server}"
