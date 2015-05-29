@@ -36,6 +36,7 @@ class docker::params {
   $service_name_default         = 'docker'
   $docker_command_default       = 'docker'
   $docker_group_default         = 'docker'
+  $docker_compose               = true
   case $::osfamily {
     'Debian' : {
       case $::operatingsystem {

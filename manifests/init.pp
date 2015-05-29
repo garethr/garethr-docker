@@ -143,6 +143,10 @@
 #   Specifc a array of users to add to the docker group
 #   Default is empty
 #
+# [*docker_compose*]
+#   Specifc if you want docker-compose installed
+#   Default is true
+#
 class docker(
   $version                     = $docker::params::version,
   $ensure                      = $docker::params::ensure,
@@ -182,6 +186,7 @@ class docker(
   $service_name                = $docker::params::service_name,
   $docker_command              = $docker::params::docker_command,
   $docker_users                = [],
+  $docker_compose              = $docker::params::docker_compose
 ) inherits docker::params {
 
   validate_string($version)
