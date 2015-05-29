@@ -140,8 +140,11 @@
 #   Default is set on a per system basis in docker::params
 #
 # [*docker_users*]
-#   Specifc a array of users to add to the docker group
+#   Specify an array of users to add to the docker group
 #   Default is empty
+#
+# [*repo_opt*]
+#   Specify a string to pass as repository options (RedHat only)
 #
 class docker(
   $version                     = $docker::params::version,
@@ -182,6 +185,7 @@ class docker(
   $service_name                = $docker::params::service_name,
   $docker_command              = $docker::params::docker_command,
   $docker_users                = [],
+  $repo_opt                    = $docker::params::repo_opt,
 ) inherits docker::params {
 
   validate_string($version)
