@@ -2,6 +2,7 @@
 # may be overwritten
 
 DOCKER="/usr/bin/<%= @docker_command %>"
+DOCKER_CERT_PATH="<%= @docker_cert_path %>"
 
 other_args="<% -%>
 <% if @root_dir %> -g <%= @root_dir %><% end -%>

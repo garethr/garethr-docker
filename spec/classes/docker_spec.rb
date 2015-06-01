@@ -89,6 +89,15 @@ describe 'docker', :type => :class do
           it { should contain_package('device-mapper').with_ensure('present') }
         end
 
+        context 'with default docker cert param' do
+          it { should contain_file(service_config_file).with_content(/DOCKER_CERT_PATH="\/etc\/docker"/) }
+        end
+
+        context 'with custom docker cert param' do
+          let(:params) { {'docker_cert_path' => '/home/docker/' } }
+          it { should contain_file(service_config_file).with_content(/DOCKER_CERT_PATH="\/home\/docker\/"/) }
+        end
+
       end
 
       if osfamily == 'Archlinux'
