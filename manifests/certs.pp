@@ -5,7 +5,12 @@
 class docker::certs {
   include ::docker
 
-  # TODO: Include certs correctly!
+  file { '/etc/docker/certs.d' :
+    ensure => directory,
+    mode   => '0400',
+    owner  => root,
+    group  => root
+  } ->
   file { '/etc/docker/certs.d/registry.tradeshift.com' :
     ensure => directory,
     mode   => '0400',
@@ -33,5 +38,5 @@ class docker::certs {
     owner  => root,
     group  => root,
   } ~>
-  class { 'docker::service': }
+  Service['docker']
 }
