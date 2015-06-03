@@ -56,8 +56,8 @@ define docker::run(
   $restart = undef,
 ) {
   include docker::params
-  $docker_command = $docker::params::docker_command
-  $service_name = $docker::params::service_name
+  $docker_command = $docker::docker_command
+  $service_name = $docker::service_name
 
   validate_re($image, '^[\S]*$')
   validate_re($title, '^[\S]*$')

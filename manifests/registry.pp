@@ -34,7 +34,7 @@ define docker::registry(
 
   validate_re($ensure, '^(present|absent)$')
 
-  $docker_command = $docker::params::docker_command
+  $docker_command = $docker::docker_command
 
   if $ensure == 'present' {
     if $username != undef and $password != undef and $email != undef {

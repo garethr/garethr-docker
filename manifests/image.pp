@@ -30,7 +30,7 @@ define docker::image(
   $docker_tar = undef,
 ) {
   include docker::params
-  $docker_command = $docker::params::docker_command
+  $docker_command = $docker::docker_command
   validate_re($ensure, '^(present|absent|latest)$')
   validate_re($image, '^[\S]*$')
   validate_bool($force)
