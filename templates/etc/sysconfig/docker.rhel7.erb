@@ -13,8 +13,8 @@ OPTIONS="<% if @root_dir %> -g <%= @root_dir %><% end -%>
 <% if @extra_parameters %><% @extra_parameters_array.each do |param| %> <%= param %><% end %><% end -%>
 <% if @shell_values %><% @shell_values_array.each do |param| %> <%= param %><% end %><% end -%>"
 
-<% if @proxy %>export http_proxy='<%= @proxy %>'
-  export https_proxy='<%= @proxy %>'<% end %>
-<% if @no_proxy %>export no_proxy='<%= @no_proxy %>'<% end %>
+<% if @proxy %>http_proxy='<%= @proxy %>'
+  https_proxy='<%= @proxy %>'<% end %>
+<% if @no_proxy %>no_proxy='<%= @no_proxy %>'<% end %>
 # This is also a handy place to tweak where Docker's temporary files go.
-# export TMPDIR="<%= @tmp_dir %>"
+# TMPDIR="<%= @tmp_dir %>"

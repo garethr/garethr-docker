@@ -364,6 +364,11 @@ describe 'docker', :type => :class do
     it { should_not contain_class('epel') }
     it { should contain_package('docker').with_install_options('--enablerepo=rhel7-extras') }
 
+    let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
+    service_config_file = '/etc/sysconfig/docker'
+    it { should contain_file(service_config_file).with_content(/^http_proxy='http:\/\/127.0.0.1:3128'/) }
+    it { should contain_file(service_config_file).with_content(/^  https_proxy='http:\/\/127.0.0.1:3128'/) }
+
   end
 
   context 'specific to Oracle Linux 7 or above' do
