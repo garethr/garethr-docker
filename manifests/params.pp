@@ -55,6 +55,7 @@ class docker::params {
       $use_upstream_package_source = true
       $detach_service_in_init = true
       $repo_opt = undef
+      $nowarn_kernel = false
     }
     'RedHat' : {
       if $::operatingsystem == 'Fedora' {
@@ -93,7 +94,8 @@ class docker::params {
       } else {
         $repo_opt = undef
       }
-
+      if $::kernelversion == '2.6.32' { $nowarn_kernel = true }
+      else { $nowarn_kernel = false }
     }
     'Archlinux' : {
       $docker_group = $docker_group_default
@@ -105,6 +107,7 @@ class docker::params {
       $detach_service_in_init = false
       include docker::systemd_reload
       $repo_opt = undef
+      $nowarn_kernel = false
     }
     default: {
       $docker_group = $docker_group_default
@@ -115,6 +118,7 @@ class docker::params {
       $docker_command = $docker_command_default
       $detach_service_in_init = true
       $repo_opt = undef
+      $nowarn_kernel = false
     }
   }
 

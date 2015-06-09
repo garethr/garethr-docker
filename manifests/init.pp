@@ -186,6 +186,7 @@ class docker(
   $docker_command              = $docker::params::docker_command,
   $docker_users                = [],
   $repo_opt                    = $docker::params::repo_opt,
+  $nowarn_kernel               = $docker::params::nowarn_kernel,
 ) inherits docker::params {
 
   validate_string($version)
