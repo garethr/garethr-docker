@@ -36,6 +36,9 @@ class docker::params {
   $service_name_default         = 'docker'
   $docker_command_default       = 'docker'
   $docker_group_default         = 'docker'
+  $docker_cleanup               = false,
+  $docker_cleanup_minute        = '0'
+  $docker_cleanup_hour          = '1'
   case $::osfamily {
     'Debian' : {
       case $::operatingsystem {

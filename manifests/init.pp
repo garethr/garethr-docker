@@ -146,6 +146,15 @@
 # [*repo_opt*]
 #   Specify a string to pass as repository options (RedHat only)
 #
+# [*docker_cleanup*]
+#   Clean up older docker images that are good to remove.
+#
+# [*docker_cleanup_minute*]
+#   Specify the cron minute used to clean up older docker images
+#
+# [*docker_cleanup_hour*]
+#   Specify the cron hour to clean up older docker images
+#
 class docker(
   $version                     = $docker::params::version,
   $ensure                      = $docker::params::ensure,
@@ -184,14 +193,17 @@ class docker(
   $package_name                = $docker::params::package_name,
   $service_name                = $docker::params::service_name,
   $docker_command              = $docker::params::docker_command,
-  $docker_users                = [],
   $repo_opt                    = $docker::params::repo_opt,
+  $docker_cleanup              = $docker::params::docker_cleanup,
+  $docker_cleanup_minute       = $docker::params::docker_cleanup_minute,
+  $docker_cleanup_hour         = $docker::params::docker_cleanup_hour,
 ) inherits docker::params {
 
   validate_string($version)
   validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', 'This module only works on Debian and Red Hat based systems.')
   validate_bool($manage_kernel)
   validate_bool($manage_package)
+  validate_bool($docker_cleanup)
   validate_array($docker_users)
 
   if $log_level {
@@ -224,6 +236,10 @@ class docker(
   contain 'docker::install'
   contain 'docker::config'
   contain 'docker::service'
+
+  if $docker_cleanup{
+    class{'docker::cleanup': }
+  }
 
   # Only bother trying extra docker stuff after docker has been installed,
   # and is running.
