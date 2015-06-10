@@ -15,6 +15,6 @@ OPTIONS="<% if @root_dir %> -g <%= @root_dir %><% end -%>
 
 <% if @proxy %>http_proxy='<%= @proxy %>'
 https_proxy='<%= @proxy %>'<% end %>
-<% if @no_proxy %>export no_proxy='<%= @no_proxy %>'<% end %>
+<% if @no_proxy %>no_proxy='<%= @no_proxy %>'<% end %>
 # This is also a handy place to tweak where Docker's temporary files go.
 # export TMPDIR="<%= @tmp_dir %>"
