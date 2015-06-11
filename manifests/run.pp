@@ -7,7 +7,7 @@
 # [*restart*]
 # Sets a restart policy on the docker run.
 # Note: If set, puppet will NOT setup an init script to manage, instead
-# it will do a raw docker run command using a CID file to track the container 
+# it will do a raw docker run command using a CID file to track the container
 # ID.
 #
 # If you want a normal named container with an init script and a restart policy

@@ -18,7 +18,7 @@
 #   If you want to add a docker image from specific docker file
 #
 # [*docker_tar*]
-#   If you want to load a docker image from specific docker tar 
+#   If you want to load a docker image from specific docker tar
 #
 define docker::image(
   $ensure    = 'present',
