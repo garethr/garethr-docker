@@ -22,3 +22,5 @@ export https_proxy='<%= @proxy %>'<% end %>
 export TMPDIR="<%= @tmp_dir %>"
 <% if @shell_values %><% @shell_values_array.each do |param| %>
 <%= param %><% end %><% end -%>
+<% if @nowarn_kernel %># Resolves: rhbz#1176302 (docker issue #407)
+DOCKER_NOWARN_KERNEL_VERSION=1<% end %>
