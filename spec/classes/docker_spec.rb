@@ -341,6 +341,26 @@ describe 'docker', :type => :class do
     end
   end
 
+  context 'RedHat 6.5 with patched Docker kernel' do
+    let(:facts) { {
+      :osfamily => 'RedHat',
+      :operatingsystem => 'RedHat',
+      :operatingsystemrelease => '6.5',
+      :kernelversion => '2.6.32'
+    } }
+    it { should contain_file('/etc/sysconfig/docker').with_content(/DOCKER_NOWARN_KERNEL_VERSION=1/) }
+  end
+
+  context 'RedHat 6.5 without patched Docker kernel' do
+    let(:facts) { {
+      :osfamily => 'RedHat',
+      :operatingsystem => 'RedHat',
+      :operatingsystemrelease => '6.5',
+      :kernelversion => '2.6.31'
+    } }
+    it { should_not contain_file('/etc/sysconfig/docker').with_content(/DOCKER_NOWARN_KERNEL_VERSION=1/) }
+  end
+
   context 'specific to Fedora 21 or above' do
     let(:facts) { {
       :osfamily => 'RedHat',
