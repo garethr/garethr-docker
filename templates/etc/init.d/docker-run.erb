@@ -45,7 +45,7 @@ else
     }
 fi
 
-HOME=/root/
+export HOME=/root/
 docker="/usr/bin/<%= @docker_command %>"
 prog="docker-<%= @sanitised_title %>"
 if [ -d /var/lock/subsys ]; then
