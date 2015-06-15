@@ -20,15 +20,19 @@ class docker::install {
 
       if ($docker::use_upstream_package_source) {
         include apt
+        package { ['debian-keyring', 'debian-archive-keyring']:
+          ensure => present,
+          before => Apt::Source['docker'],
+        }
         apt::source { 'docker':
-          location          => $docker::package_source_location,
-          release           => 'docker',
-          repos             => 'main',
-          required_packages => 'debian-keyring debian-archive-keyring',
-          key               => '36A1D7869245C8950F966E92D8576A8BA88D21E9',
-          key_source        => 'https://get.docker.io/gpg',
-          pin               => '10',
-          include_src       => false,
+          location => $docker::package_source_location,
+          release  => 'docker',
+          repos    => 'main',
+          pin      => '10',
+          key      => {
+            'id'     => '36A1D7869245C8950F966E92D8576A8BA88D21E9',
+            'source' => 'https://get.docker.io/gpg',
+          },
         }
         if $docker::manage_package {
           Apt::Source['docker'] -> Package['docker']
