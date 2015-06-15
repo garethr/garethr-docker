@@ -82,3 +82,6 @@ Or with Ubuntu 14.04 with:
 
     BEAKER_set=ubuntu-server-1404-x64 bundle exec rake beaker
 
+Or with Debian 7.8 with:
+
+    BEAKER_set=debian-78-x64 bundle exec rake beaker

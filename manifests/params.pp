@@ -39,6 +39,20 @@ class docker::params {
   case $::osfamily {
     'Debian' : {
       case $::operatingsystem {
+        'Debian': {
+          $package_name          = $package_name_default
+          $service_name          = $service_name_default
+          $docker_command        = $docker_command_default
+
+          if $::lsbdistcodename == 'wheezy' {
+            $kernelpackage_version = '3.16+63~bpo70+1'
+            $kernel_release        = '3.16.0'
+          }
+          else {
+            $kernelpackage_version = 'present'
+            $kernel_release        = undef
+          }
+        }
         'Ubuntu' : {
           $package_name   = $package_name_default
           $service_name   = $service_name_default
