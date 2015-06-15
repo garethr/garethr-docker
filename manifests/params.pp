@@ -73,7 +73,11 @@ class docker::params {
       $docker_command = $docker_command_default
       if versioncmp($::operatingsystemrelease, '7.0') < 0 {
         $detach_service_in_init = true
-        $docker_group = $docker_group_default
+        if $::operatingsystem == 'OracleLinux' {
+          $docker_group = 'dockerroot'
+        } else {
+          $docker_group = $docker_group_default
+        }
       } else {
         $detach_service_in_init = false
         $docker_group = 'dockerroot'
@@ -91,6 +95,9 @@ class docker::params {
         } else {
           $repo_opt = undef
         }
+      } elsif (versioncmp($::operatingsystemrelease, '7.0') < 0 and $::operatingsystem == 'OracleLinux') {
+          # FIXME is 'public_ol6_addons' available on all OL6 installs?
+          $repo_opt = '--enablerepo=public_ol6_addons,public_ol6_latest'
       } else {
         $repo_opt = undef
       }
