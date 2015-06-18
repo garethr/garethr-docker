@@ -23,8 +23,8 @@ Puppet::Type.type(:docker_compose).provide(:ruby) do
 
   def exists?
     Puppet.info("Checking if docker-compose.yml exists")
-        Dir.chdir(resource[:source])
-        File.file?('docker-compose.*') 
+      Dir.chdir(resource[:source])
+      File.file?('docker-compose.*') 
   end
  
   def create
