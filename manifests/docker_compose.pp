@@ -30,12 +30,21 @@ python::pip { 'docker-compose' :
   timeout => 1800,
   }
 
+# This is needed to fix the following dependency error in python
+# pkg_resources.VersionConflict: (requests 2.2.1 (/usr/lib/python2.7/dist-packages), Requirement.parse('requests>=2.5.2'))
+
 if $::operatingsystem == 'Ubuntu' {
   if $::operatingsystemrelease == '14.04'{
     python::pip { 'requests' :
-      ensure  => '2.5.3',
+      ensure  => '2.5.2',
       pkgname => 'requests',
       timeout => 1800,
+      }->
+    
+    exec { 'pip fix':
+      command => 'easy_install -U pip',
+      path    => '/usr/bin:/usr/sbin:/bin:/usr/local/bin',
+      unless  => 'pip --version [ $? -eq 0 ] || exit $?;',
       }
     }
   }
