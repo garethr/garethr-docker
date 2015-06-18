@@ -54,6 +54,9 @@
     },{
       "name": "stahnma/epel",
       "version_requirement": ">= 0.0.6"
+    },{
+      "name": "stankevich/python",
+      "version_requirement": ">= 1.9.4"
     }
   ]
 }

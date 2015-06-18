@@ -143,9 +143,18 @@
 #   Specifc a array of users to add to the docker group
 #   Default is empty
 #
-# [*docker_compose*]
+# [*manage_docker_compose*]
 #   Specifc if you want docker-compose installed
 #   Default is true
+#
+# [*manage_python*]
+#   Specifc if you to manage python for docker-compose 
+#   Default is true
+#
+# [*docker_compose_version*]
+#   The package version to install, used to set the package name.
+#   Defaults to undefined
+#
 #
 class docker(
   $version                     = $docker::params::version,
@@ -185,7 +194,9 @@ class docker(
   $service_name                = $docker::params::service_name,
   $docker_command              = $docker::params::docker_command,
   $docker_users                = [],
-  $docker_compose              = $docker::params::docker_compose
+  $docker_compose              = $docker::params::docker_compose,
+  $docker_compose_version      = $docker::params::docker_compose_version,
+  $manage_python               = $docker::params::manage_python,
 ) inherits docker::params {
 
   validate_string($version)
@@ -193,6 +204,7 @@ class docker(
   validate_bool($manage_kernel)
   validate_bool($manage_package)
   validate_array($docker_users)
+  validate_bool($docker_compose)
 
   if $log_level {
     validate_re($log_level, '^(debug|info|warn|error|fatal)$', 'log_level must be one of debug, info, warn, error or fatal')
@@ -230,4 +242,7 @@ class docker(
   Class['docker'] -> Docker::Run <||>
   Class['docker'] -> Docker::Image <||>
 
+  if ($docker_compose) {
+    class {'docker::docker_compose':}
+  }
 }

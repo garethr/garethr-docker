@@ -36,6 +36,8 @@ class docker::params {
   $docker_command_default       = 'docker'
   $docker_group_default         = 'docker'
   $docker_compose               = true
+  $docker_compose_version       = undef
+  $manage_python                = true
   case $::osfamily {
     'Debian' : {
       case $::operatingsystem {
@@ -65,7 +67,7 @@ class docker::params {
         $use_upstream_package_source = true
       } else {
         $package_name   = 'docker'
-        $use_upstream_package_source = false
+        $use_upstream_package_source = true
       }
       $package_source_location = ''
       $service_name   = $service_name_default
