@@ -54,6 +54,7 @@ define docker::run(
   $socket_connect = [],
   $hostentries = [],
   $restart = undef,
+  $before_stop = false,
 ) {
   include docker::params
   $docker_command = $docker::params::docker_command
