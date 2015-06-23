@@ -69,7 +69,7 @@ describe 'docker class' do
 
     describe command("#{command} ps -l --no-trunc=true"), :sudo => true do
       its(:exit_status) { should eq 0 }
-      its(:stdout) { should match /nginx\:/ }
+      its(:stdout) { should match /nginx -g 'daemon off;'/ }
     end
 
     describe command("#{command} ps"), :sudo => true do
@@ -83,7 +83,7 @@ describe 'docker class' do
 
     describe command("#{command} ps --no-trunc | grep `cat /var/run/docker-nginx2.cid`"), :sudo => true do
       its(:exit_status) { should eq 0 }
-      its(:stdout) { should match /nginx\:/ }
+      its(:stdout) { should match /nginx -g 'daemon off;'/ }
     end
 
     describe command('netstat -tlndp') do
