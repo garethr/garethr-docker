@@ -2,7 +2,7 @@ source "http://rubygems.org"
 
 group :test do
   gem "rake"
-  gem "puppet", ENV['PUPPET_VERSION'] || '~> 3.8.0'
+  gem "puppet", ENV['PUPPET_GEM_VERSION'] || '~> 3.8.0'
   gem "puppet-lint"
   gem "puppet-lint-unquoted_string-check"
   gem "rspec-puppet", :git => 'https://github.com/rodjek/rspec-puppet.git'
@@ -16,6 +16,7 @@ group :development do
   gem "travis"
   gem "travis-lint"
   gem "beaker", :git => 'https://github.com/puppetlabs/beaker.git'
+  gem "beaker-puppet_install_helper", :require => false
   gem "beaker-rspec"
   gem "puppet-blacksmith"
   gem "guard-rake"
