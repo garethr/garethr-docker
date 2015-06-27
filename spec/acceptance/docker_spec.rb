@@ -25,17 +25,17 @@ describe 'docker class' do
           docker_users => [ 'testuser' ]
         }
         docker::image { 'nginx': }
-        docker::run { 'nginx':
+        docker::container { 'nginx':
           image   => 'nginx',
           net     => 'host',
           require => Docker::Image['nginx'],
         }
-        docker::run { 'nginx2':
+        docker::container { 'nginx2':
           image   => 'nginx',
           restart => 'always',
           require => Docker::Image['nginx'],
         }
-        docker::run { 'nginx3':
+        docker::container { 'nginx3':
           image   => 'nginx',
           use_name => true,
           require => Docker::Image['nginx'],

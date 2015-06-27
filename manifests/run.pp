@@ -71,165 +71,39 @@ define docker::run(
   $restart = undef,
   $before_stop = false,
 ) {
-  include docker::params
-  $docker_command = $docker::params::docker_command
-  $service_name = $docker::params::service_name
-
-  validate_re($image, '^[\S]*$')
-  validate_re($title, '^[\S]*$')
-  validate_re($memory_limit, '^[\d]*(b|k|m|g)$')
-  if $restart {
-    validate_re($restart, '^(no|always)|^on-failure:[\d]+$')
-  }
-  validate_string($docker_command)
-  validate_string($service_name)
-  if $command {
-    validate_string($command)
-  }
-  if $username {
-    validate_string($username)
-  }
-  if $hostname {
-    validate_string($hostname)
-  }
-  validate_bool($running)
-  validate_bool($disable_network)
-  validate_bool($privileged)
-  validate_bool($restart_service)
-  validate_bool($tty)
-
-  if $detach == undef {
-    $valid_detach = $docker::params::detach_service_in_init
-  } else {
-    validate_bool($detach)
-    $valid_detach = $detach
-  }
-
-  $depends_array = any2array($depends)
-
-  $docker_run_flags = docker_run_flags({
-    cpuset          => any2array($cpuset),
-    detach          => $valid_detach,
-    disable_network => $disable_network,
-    dns             => any2array($dns),
-    dns_search      => any2array($dns_search),
-    env             => any2array($env),
-    env_file        => any2array($env_file),
-    expose          => any2array($expose),
-    extra_params    => any2array($extra_parameters),
-    hostentries     => any2array($hostentries),
-    hostname        => $hostname,
-    links           => any2array($links),
-    lxc_conf        => any2array($lxc_conf),
-    memory_limit    => $memory_limit,
-    net             => $net,
-    ports           => any2array($ports),
-    privileged      => $privileged,
-    socket_connect  => any2array($socket_connect),
-    tty             => $tty,
-    username        => $username,
-    volumes         => any2array($volumes),
-    volumes_from    => any2array($volumes_from),
-  })
-
-  $sanitised_title = regsubst($title, '[^0-9A-Za-z.\-]', '-', 'G')
-  if empty($depends_array) {
-    $sanitised_depends_array = []
-  }
-  else {
-    $sanitised_depends_array = regsubst($depends_array, '[^0-9A-Za-z.\-]', '-', 'G')
-  }
-
-  if $restart {
-
-    $cidfile = "/var/run/docker-${sanitised_title}.cid"
-
-    exec { "run ${title} with docker":
-      command     => "${docker_command} run -d ${docker_run_flags} --cidfile=${cidfile} ${image} ${command}",
-      unless      => "docker ps --no-trunc | grep `cat ${cidfile}`",
-      environment => 'HOME=/root',
-      path        => ['/bin', '/usr/bin'],
-    }
-  } else {
-
-    case $::osfamily {
-      'Debian': {
-        $initscript = "/etc/init.d/${service_prefix}${sanitised_title}"
-        $init_template = 'docker/etc/init.d/docker-run.erb'
-        $deprecated_initscript = "/etc/init/${service_prefix}${sanitised_title}.conf"
-        $hasstatus  = true
-        $uses_systemd = false
-        $mode = '0755'
-      }
-      'RedHat': {
-        if ($::operatingsystem == 'Amazon') or (versioncmp($::operatingsystemrelease, '7.0') < 0) {
-          $initscript     = "/etc/init.d/${service_prefix}${sanitised_title}"
-          $init_template  = 'docker/etc/init.d/docker-run.erb'
-          $hasstatus      = undef
-          $mode           = '0755'
-          $uses_systemd   = false
-        } else {
-          $initscript     = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
-          $init_template  = 'docker/etc/systemd/system/docker-run.erb'
-          $hasstatus      = true
-          $mode           = '0644'
-          $uses_systemd   = true
-        }
-      }
-      'Archlinux': {
-        $initscript     = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
-        $init_template  = 'docker/etc/systemd/system/docker-run.erb'
-        $hasstatus      = true
-        $mode           = '0644'
-        $uses_systemd   = true
-      }
-      default: {
-        fail('Docker needs a Debian, RedHat or Archlinux based system.')
-      }
-    }
-
-    file { $initscript:
-      ensure  => present,
-      content => template($init_template),
-      mode    => $mode,
-    }
-
-    if $manage_service {
-      # Transition help from moving from CID based container detection to
-      # Name-based container detection. See #222 for context.
-      # This code should be considered temporary until most people have
-      # transitioned. - 2015-04-15
-      if $initscript == "/etc/init.d/${service_prefix}${sanitised_title}" {
-        # This exec sequence will ensure the old-style CID container is stopped
-        # before we replace the init script with the new-style.
-        exec { "/bin/sh /etc/init.d/${service_prefix}${sanitised_title} stop":
-          onlyif  => "/usr/bin/test -f /var/run/docker-${sanitised_title}.cid && /usr/bin/test -f /etc/init.d/${service_prefix}${sanitised_title}",
-          require => [],
-        } ->
-        file { "/var/run/docker-${sanitised_title}.cid":
-          ensure => absent,
-        } ->
-        File[$initscript]
-      }
-
-      service { "${service_prefix}${sanitised_title}":
-        ensure    => $running,
-        enable    => true,
-        hasstatus => $hasstatus,
-        require   => File[$initscript],
-      }
-    }
-
-    if $uses_systemd {
-      File[$initscript] ~> Exec['docker-systemd-reload']
-      Exec['docker-systemd-reload'] -> Service<| title == "${service_prefix}${sanitised_title}" |>
-    }
-
-    if $restart_service {
-      File[$initscript] ~> Service<| title == "${service_prefix}${sanitised_title}" |>
-    }
-    else {
-      File[$initscript] -> Service<| title == "${service_prefix}${sanitised_title}" |>
-    }
+  docker::container { $title :
+    image            => $image,
+    command          => $command,
+    memory_limit     => $memory_limit,
+    cpuset           => $cpuset,
+    ports            => $ports,
+    expose           => $expose,
+    volumes          => $volumes,
+    links            => $links,
+    use_name         => $use_name,
+    running          => $running,
+    volumes_from     => $volumes_from,
+    net              => $net,
+    username         => $username,
+    hostname         => $hostname,
+    env              => $env,
+    env_file         => $env_file,
+    dns              => $dns,
+    dns_search       => $dns_search,
+    lxc_conf         => $lxc_conf,
+    service_prefix   => 'docker-',
+    restart_service  => $restart_service,
+    manage_service   => true,
+    disable_network  => $disable_network,
+    privileged       => $privileged,
+    detach           => $detach,
+    extra_parameters => $extra_parameters,
+    pull_on_start    => $pull_on_start,
+    depends          => $depends,
+    tty              => $tty,
+    socket_connect   => $socket_connect,
+    hostentries      => $hostentries,
+    restart          => $restart,
+    before_stop      => false,
   }
 }

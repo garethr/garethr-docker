@@ -181,7 +181,7 @@ docker::images:
 Now you have an image you can launch containers:
 
 ```puppet
-docker::run { 'helloworld':
+docker::container { 'helloworld':
   image   => 'base',
   command => '/bin/sh -c "while true; do echo hello world; sleep 1; done"',
 }
@@ -196,7 +196,7 @@ This will launch a Docker container managed by the local init system.
 Run also takes a number of optional parameters:
 
 ```puppet
-docker::run { 'helloworld':
+docker::container { 'helloworld':
   image           => 'base',
   command         => '/bin/sh -c "while true; do echo hello world; sleep 1; done"',
   ports           => ['4444', '4555'],
@@ -233,16 +233,16 @@ The service file created for systemd based systems enables automatic restarting 
 To use an image tag just append the tag name to the image name separated by a semicolon:
 
 ```puppet
-docker::run { 'helloworld':
+docker::container { 'helloworld':
   image   => 'ubuntu:precise',
   command => '/bin/sh -c "while true; do echo hello world; sleep 1; done"',
 }
 ```
 
-If using hiera, there's a docker::run_instance class you can configure, for example:
+If using hiera, there's a docker::container_instance class you can configure, for example:
 
 ```yaml
-docker::run_instance:
+docker::container_instance:
   helloworld:
     image: 'ubuntu:precise'
     command: '/bin/sh -c "while true; do echo hello world; sleep 1; done"'

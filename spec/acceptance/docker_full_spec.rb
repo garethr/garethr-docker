@@ -170,7 +170,7 @@ describe 'the Puppet Docker module' do
         EOS
 
         pp2=<<-EOS
-          docker::run { 'container_2_3':
+          docker::container { 'container_2_3':
             image   => 'ubuntu',
             command => 'init',
           }
@@ -199,7 +199,7 @@ describe 'the Puppet Docker module' do
             ensure  => present,
           }
 
-          docker::run { 'container_2_4':
+          docker::container { 'container_2_4':
             image   => 'ubuntu',
             command => '/bin/sh -c "touch /root/test_file_for_tar_test.txt; while true; do echo hello world; sleep 1; done"',
             require => Docker::Image['ubuntu'],
@@ -211,7 +211,7 @@ describe 'the Puppet Docker module' do
             docker_tar => "/root/rootfs.tar"
           }
 
-          docker::run { 'container_2_4_2':
+          docker::container { 'container_2_4_2':
             image   => 'newos',
             command => 'init',
             require => Docker::Image['newos'],
@@ -297,7 +297,7 @@ describe 'the Puppet Docker module' do
   end
 
 
-  describe "docker::run" do
+  describe "docker::container" do
     before(:each) do
       # A sleep to give docker time to execute properly
       sleep 4
@@ -321,7 +321,7 @@ describe 'the Puppet Docker module' do
           require => Class['docker'],
         }
 
-        docker::run { 'container_3_1':
+        docker::container { 'container_3_1':
           image   => 'ubuntu',
           command => '/bin/sh -c "touch /root/test_file.txt; while true; do echo hello world; sleep 1; done"',
           require => Docker::Image['ubuntu'],
@@ -355,7 +355,7 @@ describe 'the Puppet Docker module' do
           require => Class['docker'],
         }
 
-        docker::run { 'container_3_2':
+        docker::container { 'container_3_2':
           image   => 'ubuntu',
           command => 'init',
           ports   => ['4444'],
@@ -387,7 +387,7 @@ describe 'the Puppet Docker module' do
           require => Class['docker'],
         }
 
-        docker::run { 'container_3_3':
+        docker::container { 'container_3_3':
           image    => 'ubuntu',
           command  => 'init',
           hostname => 'testdomain.com',
@@ -420,7 +420,7 @@ describe 'the Puppet Docker module' do
           require => Class['docker'],
         }
 
-        docker::run { 'container_3_4':
+        docker::container { 'container_3_4':
           image   => 'ubuntu',
           command => 'init',
           volumes => ["/root:/root/mnt:rw"],
@@ -429,7 +429,7 @@ describe 'the Puppet Docker module' do
 
         file { '/root/test_mount.txt':
           ensure => present,
-          before => Docker::Run['container_3_4'],
+          before => docker::container['container_3_4'],
         }
       EOS
 
@@ -457,7 +457,7 @@ describe 'the Puppet Docker module' do
           require => Class['docker'],
         }
 
-        docker::run { 'container_3_5_1':
+        docker::container { 'container_3_5_1':
           image   => 'ubuntu',
           command => 'init',
           require => Docker::Image['ubuntu'],
@@ -479,7 +479,7 @@ describe 'the Puppet Docker module' do
           require => Class['docker'],
         }
 
-        docker::run { 'container_3_5_2':
+        docker::container { 'container_3_5_2':
           image   => 'ubuntu',
           command => 'init',
           depends => ['#{container_1.stdout.strip}'],
@@ -510,7 +510,7 @@ describe 'the Puppet Docker module' do
           require => Class['docker'],
         }
 
-        docker::run { 'container_3_6':
+        docker::container { 'container_3_6':
           image   => 'ubuntu',
           command => 'init',
           require => Docker::Image['ubuntu'],
@@ -524,7 +524,7 @@ describe 'the Puppet Docker module' do
           require => Class['docker'],
         }
 
-        docker::run { 'container_3_6':
+        docker::container { 'container_3_6':
           image   => 'ubuntu',
           running => false,
           require => Docker::Image['ubuntu'],
@@ -566,7 +566,7 @@ describe 'the Puppet Docker module' do
           require => Class['docker'],
         }
 
-        docker::run { 'container_4_1':
+        docker::container { 'container_4_1':
           image   => 'ubuntu',
           command => 'init',
           require => Docker::Image['ubuntu'],
