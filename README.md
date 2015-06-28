@@ -121,6 +121,18 @@ class { 'docker':
 }
 ```
 
+And if you want to install a specific rpm package of docker you can do so:
+
+```puppet
+class { 'docker' :
+  manage_package              => true,
+  use_upstream_package_source => false,
+  package_name                => 'docker-engine'
+  package_source              => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm',
+  prerequired_packages        => [ 'glibc.i686', 'glibc.x86_64', 'sqlite.i686', 'sqlite.x86_64', 'device-mapper', 'device-mapper-libs', 'device-mapper-event-libs', 'device-mapper-event' ]
+}
+```
+
 And if you want to track the latest version you can do so:
 
 ```puppet
@@ -339,4 +351,3 @@ docker::exec { 'cron_allow_root':
   unless       => 'grep root /usr/lib/cron/cron.allow 2>/dev/null',
 }
 ```
-
