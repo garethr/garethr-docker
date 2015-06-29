@@ -89,7 +89,6 @@ define docker::run(
     $valid_detach = $detach
   }
 
-  $extra_parameters_array = any2array($extra_parameters)
   $depends_array = any2array($depends)
 
   $docker_run_flags = docker_run_flags({
@@ -101,6 +100,7 @@ define docker::run(
     env             => any2array($env),
     env_file        => any2array($env_file),
     expose          => any2array($expose),
+    extra_params    => any2array($extra_parameters),
     hostentries     => any2array($hostentries),
     hostname        => $hostname,
     links           => any2array($links),

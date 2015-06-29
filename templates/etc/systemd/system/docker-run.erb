@@ -20,9 +20,6 @@ ExecStartPre=-/usr/bin/<%= @docker_command %> rm <%= @sanitised_title %>
 ExecStart=/usr/bin/<%= @docker_command %> run \
         <%= @docker_run_flags %> \
         --name <%= @sanitised_title %> \
-        <% if @extra_parameters %><% @extra_parameters_array.each do |param| %>  \
-            <%= param %> <% end %> \
-        <% end -%> \
         <%= @image %> \
         <% if @command %> <%= @command %><% end %>
 ExecStop=-/usr/bin/<%= @docker_command %> stop <%= @sanitised_title %>

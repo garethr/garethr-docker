@@ -72,6 +72,10 @@ module Puppet::Parser::Functions
       flags.concat(new_flags)
     end
 
+    opts['extra_params'].each do |param|
+      flags << param
+    end
+
     flags.flatten.join(" ")
   end
 end
