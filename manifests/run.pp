@@ -178,28 +178,40 @@ define docker::run(
       mode    => $mode,
     }
 
-    # Transition help from moving from CID based container detection to
-    # Name-based container detection. See #222 for context.
-    # This code should be considered temporary until most people have
-    # transitioned. - 2015-04-15
-    if $initscript == "/etc/init.d/docker-${sanitised_title}" {
-      # This exec sequence will ensure the old-style CID container is stopped
-      # before we replace the init script with the new-style.
-      exec { "/bin/sh /etc/init.d/docker-${sanitised_title} stop":
-        onlyif  => "/usr/bin/test -f /var/run/docker-${sanitised_title}.cid && /usr/bin/test -f /etc/init.d/docker-${sanitised_title}",
-        require => [],
-      } ->
-      file { "/var/run/docker-${sanitised_title}.cid":
-        ensure => absent,
-      } ->
-      File[$initscript]
+    if $running == false {
+      service { "docker-${sanitised_title}":
+        ensure    => $running,
+        enable    => false,
+        hasstatus => $hasstatus,
+        require   => File[$initscript],
+      }
     }
+    else {
 
-    service { "docker-${sanitised_title}":
-      ensure    => $running,
-      enable    => true,
-      hasstatus => $hasstatus,
-      require   => File[$initscript],
+
+      # Transition help from moving from CID based container detection to
+      # Name-based container detection. See #222 for context.
+      # This code should be considered temporary until most people have
+      # transitioned. - 2015-04-15
+      if $initscript == "/etc/init.d/docker-${sanitised_title}" {
+        # This exec sequence will ensure the old-style CID container is stopped
+        # before we replace the init script with the new-style.
+        exec { "/bin/sh /etc/init.d/docker-${sanitised_title} stop":
+          onlyif  => "/usr/bin/test -f /var/run/docker-${sanitised_title}.cid && /usr/bin/test -f /etc/init.d/docker-${sanitised_title}",
+          require => [],
+        } ->
+        file { "/var/run/docker-${sanitised_title}.cid":
+          ensure => absent,
+        } ->
+        File[$initscript]
+      }
+
+      service { "docker-${sanitised_title}":
+        ensure    => $running,
+        enable    => true,
+        hasstatus => $hasstatus,
+        require   => File[$initscript],
+      }
     }
 
     if $uses_systemd {
