@@ -18,6 +18,19 @@
 # This will allow the docker container to be restarted if it dies, without
 # puppet help.
 #
+# [*service_prefix*]
+#   (optional) The name to prefix the startup script with and the Puppet
+#   service resource title with.  Default: 'docker-'
+#
+# [*restart_service*]
+#   (optional) Whether or not to restart the service if the the generated init
+#   script changes.  Default: true
+#
+# [*manage_service*]
+#  (optional) Whether or not to create a puppet Service resource for the init
+#  script.  Disabling this may be useful if integrating with existing modules.
+#  Default: true
+#
 # [*extra_parameters*]
 # An array of additional command line arguments to pass to the `docker run`
 # command. Useful for adding additional new or experimental options that the
@@ -43,7 +56,9 @@ define docker::run(
   $dns = [],
   $dns_search = [],
   $lxc_conf = [],
+  $service_prefix = 'docker-',
   $restart_service = true,
+  $manage_service = true,
   $disable_network = false,
   $privileged = false,
   $detach = undef,
@@ -138,22 +153,22 @@ define docker::run(
 
     case $::osfamily {
       'Debian': {
-        $initscript = "/etc/init.d/docker-${sanitised_title}"
+        $initscript = "/etc/init.d/${service_prefix}${sanitised_title}"
         $init_template = 'docker/etc/init.d/docker-run.erb'
-        $deprecated_initscript = "/etc/init/docker-${sanitised_title}.conf"
+        $deprecated_initscript = "/etc/init/${service_prefix}${sanitised_title}.conf"
         $hasstatus  = true
         $uses_systemd = false
         $mode = '0755'
       }
       'RedHat': {
         if ($::operatingsystem == 'Amazon') or (versioncmp($::operatingsystemrelease, '7.0') < 0) {
-          $initscript     = "/etc/init.d/docker-${sanitised_title}"
+          $initscript     = "/etc/init.d/${service_prefix}${sanitised_title}"
           $init_template  = 'docker/etc/init.d/docker-run.erb'
           $hasstatus      = undef
           $mode           = '0755'
           $uses_systemd   = false
         } else {
-          $initscript     = "/etc/systemd/system/docker-${sanitised_title}.service"
+          $initscript     = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
           $init_template  = 'docker/etc/systemd/system/docker-run.erb'
           $hasstatus      = true
           $mode           = '0644'
@@ -161,7 +176,7 @@ define docker::run(
         }
       }
       'Archlinux': {
-        $initscript     = "/etc/systemd/system/docker-${sanitised_title}.service"
+        $initscript     = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
         $init_template  = 'docker/etc/systemd/system/docker-run.erb'
         $hasstatus      = true
         $mode           = '0644'
@@ -178,40 +193,42 @@ define docker::run(
       mode    => $mode,
     }
 
-    # Transition help from moving from CID based container detection to
-    # Name-based container detection. See #222 for context.
-    # This code should be considered temporary until most people have
-    # transitioned. - 2015-04-15
-    if $initscript == "/etc/init.d/docker-${sanitised_title}" {
-      # This exec sequence will ensure the old-style CID container is stopped
-      # before we replace the init script with the new-style.
-      exec { "/bin/sh /etc/init.d/docker-${sanitised_title} stop":
-        onlyif  => "/usr/bin/test -f /var/run/docker-${sanitised_title}.cid && /usr/bin/test -f /etc/init.d/docker-${sanitised_title}",
-        require => [],
-      } ->
-      file { "/var/run/docker-${sanitised_title}.cid":
-        ensure => absent,
-      } ->
-      File[$initscript]
-    }
+    if $manage_service {
+      # Transition help from moving from CID based container detection to
+      # Name-based container detection. See #222 for context.
+      # This code should be considered temporary until most people have
+      # transitioned. - 2015-04-15
+      if $initscript == "/etc/init.d/${service_prefix}${sanitised_title}" {
+        # This exec sequence will ensure the old-style CID container is stopped
+        # before we replace the init script with the new-style.
+        exec { "/bin/sh /etc/init.d/${service_prefix}${sanitised_title} stop":
+          onlyif  => "/usr/bin/test -f /var/run/docker-${sanitised_title}.cid && /usr/bin/test -f /etc/init.d/${service_prefix}${sanitised_title}",
+          require => [],
+        } ->
+        file { "/var/run/docker-${sanitised_title}.cid":
+          ensure => absent,
+        } ->
+        File[$initscript]
+      }
 
-    service { "docker-${sanitised_title}":
-      ensure    => $running,
-      enable    => true,
-      hasstatus => $hasstatus,
-      require   => File[$initscript],
+      service { "${service_prefix}${sanitised_title}":
+        ensure    => $running,
+        enable    => true,
+        hasstatus => $hasstatus,
+        require   => File[$initscript],
+      }
     }
 
     if $uses_systemd {
       File[$initscript] ~> Exec['docker-systemd-reload']
-      Exec['docker-systemd-reload'] -> Service["docker-${sanitised_title}"]
+      Exec['docker-systemd-reload'] -> Service<| title == "${service_prefix}${sanitised_title}" |>
     }
 
     if $restart_service {
-      File[$initscript] ~> Service["docker-${sanitised_title}"]
+      File[$initscript] ~> Service<| title == "${service_prefix}${sanitised_title}" |>
     }
     else {
-      File[$initscript] -> Service["docker-${sanitised_title}"]
+      File[$initscript] -> Service<| title == "${service_prefix}${sanitised_title}" |>
     }
   }
 }

@@ -288,6 +288,38 @@ require 'spec_helper'
       it { should contain_file(new_initscript) }
     end
 
+    context 'with manage_service turned off' do
+      let(:title) { 'this/that' }
+      let(:params) { {'image' => 'base', 'manage_service' => false} }
+
+      if osfamily == 'Debian'
+        new_initscript = '/etc/init.d/docker-this-that'
+      elsif osfamily == 'Archlinux'
+        new_initscript = '/etc/systemd/system/docker-this-that.service'
+      else
+        new_initscript = '/etc/init.d/docker-this-that'
+      end
+
+      it { should_not contain_service('docker-this-that') }
+      it { should contain_file(new_initscript) }
+    end
+
+    context 'with service_prefix set to empty string' do
+      let(:title) { 'this/that' }
+      let(:params) { {'image' => 'base', 'service_prefix' => ''} }
+
+      if osfamily == 'Debian'
+        new_initscript = '/etc/init.d/this-that'
+      elsif osfamily == 'Archlinux'
+        new_initscript = '/etc/systemd/system/this-that.service'
+      else
+        new_initscript = '/etc/init.d/this-that'
+      end
+
+      it { should contain_service('this-that') }
+      it { should contain_file(new_initscript) }
+    end
+
     context 'with an invalid title' do
       let(:title) { 'with spaces' }
       it do
