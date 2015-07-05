@@ -215,6 +215,7 @@ docker::run { 'helloworld':
   restart_service => true,
   privileged      => false,
   pull_on_start   => false,
+  before_stop     => 'echo "So Long, and Thanks for All the Fish"',
   depends         => [ 'container_a', 'postgres' ],
 }
 ```
@@ -222,6 +223,8 @@ docker::run { 'helloworld':
 Ports, expose, env, env_file, dns and volumes can be set with either a single string or as above with an array of values.
 
 Specifying `pull_on_start` will pull the image before each time it is started.
+
+Specifying `before_stop` will execute a command before stopping the container.
 
 The `depends` option allows expressing containers that must be started before. This affects the generation of the init.d/systemd script.
 

@@ -88,6 +88,9 @@ start() {
 
 stop() {
     echo -n "Stopping $prog: "
+    <% if @before_stop -%>
+        <%= @before_stop %>
+    <% end -%>
     $docker stop <%= @sanitised_title %>
     $docker rm <%= @sanitised_title %>
     return $?
