@@ -20,7 +20,7 @@ describe 'docker', :type => :class do
         it { should contain_class('apt') }
         it { should contain_package('apt-transport-https').that_comes_before('Package[docker]') }
         it { should contain_package('docker').with_name('lxc-docker').with_ensure('present') }
-        it { should contain_apt__source('docker').with_location('https://get.docker.io/ubuntu') }
+        it { should contain_apt__source('docker').with_location('https://get.docker.com/ubuntu') }
         it { should contain_file('/etc/init.d/docker').with_ensure('link').with_target('/lib/init/upstart-job') }
         it { should contain_package('docker').with_install_options(nil) }
 
