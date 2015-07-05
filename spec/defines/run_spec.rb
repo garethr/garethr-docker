@@ -378,6 +378,15 @@ require 'spec_helper'
       end
     end
 
+    context 'with restart policy' do
+      let(:params) { {'restart' => 'no', 'command' => 'command', 'image' => 'base', 'extra_parameters' => '-c 4'} }
+      it { should contain_exec('run sample with docker') }
+      it { should contain_exec('run sample with docker').with_unless(/\/var\/run\/docker-sample.cid/) }
+      it { should contain_exec('run sample with docker').with_command(/--cidfile=\/var\/run\/docker-sample.cid/) }
+      it { should contain_exec('run sample with docker').with_command(/-c 4/) }
+      it { should contain_exec('run sample with docker').with_command(/base command/) }
+    end
+
   end
   end
 
