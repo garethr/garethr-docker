@@ -80,20 +80,21 @@ class docker::params {
       }
 
       # repo_opt to specify install_options for docker package
-      if (versioncmp($::operatingsystemmajrelease, '7') == 0) {
-        if $::operatingsystem == 'RedHat' {
-          $repo_opt = '--enablerepo=rhel7-extras'
-        } elsif $::operatingsystem == 'OracleLinux' {
-          $repo_opt = '--enablerepo=ol7_addons'
-        } elsif $::operatingsystem == 'Scientific' {
-          $repo_opt = '--enablerepo=sl-extras'
+      if ($docker::manage_epel == true){
+        if (versioncmp($::operatingsystemmajrelease, '7') == 0) {
+          if $::operatingsystem == 'RedHat' {
+            $repo_opt = '--enablerepo=rhel7-extras'
+          } elsif $::operatingsystem == 'OracleLinux' {
+            $repo_opt = '--enablerepo=ol7_addons'
+          } elsif $::operatingsystem == 'Scientific' {
+            $repo_opt = '--enablerepo=sl-extras'
+          } else {
+            $repo_opt = undef
+          }
         } else {
           $repo_opt = undef
         }
-      } else {
-        $repo_opt = undef
       }
-
     }
     'Archlinux' : {
       $docker_group = $docker_group_default
