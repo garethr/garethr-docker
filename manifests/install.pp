@@ -102,7 +102,7 @@ class docker::install {
     }
   }
 
-  if $docker::version {
+  if $docker::version and $docker::version != 'absent' and $docker::version != 'present' and $docker::version != 'latest' {
     $dockerpackage = "${docker::package_name}-${docker::version}"
   } else {
     $dockerpackage = $docker::package_name
