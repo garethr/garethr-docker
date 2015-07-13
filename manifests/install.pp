@@ -26,7 +26,7 @@ class docker::install {
           repos             => 'main',
           required_packages => 'debian-keyring debian-archive-keyring',
           key               => '36A1D7869245C8950F966E92D8576A8BA88D21E9',
-          key_source        => 'https://get.docker.io/gpg',
+          key_source        => 'https://get.docker.com/gpg',
           pin               => '10',
           include_src       => false,
         }
