@@ -20,6 +20,14 @@ RSpec.configure do |c|
       on host, puppet('module', 'install', 'puppetlabs-stdlib'), { :acceptable_exit_codes => [0,1] }
       on host, puppet('module', 'install', 'puppetlabs-apt', '--version', '2.1.0'), { :acceptable_exit_codes => [0,1] }
       on host, puppet('module', 'install', 'stahnma-epel'), { :acceptable_exit_codes => [0,1] }
+
+      # net-tools required for netstat utility being used by some tests
+      pp = <<-EOS
+        package { 'net-tools': ensure => installed }
+      EOS
+      if fact_on(host, 'osfamily')== 'RedHat' && fact_on(host, 'operatingsystemmajrelease') == '7'
+        on host, apply_manifest(pp), { :catch_failures => false }
+      end
     end
   end
 end
