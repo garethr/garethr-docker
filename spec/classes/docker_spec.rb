@@ -315,7 +315,7 @@ describe 'docker', :type => :class do
     context 'with no upstream package source' do
       let(:params) { {'use_upstream_package_source' => false } }
       it { should_not contain_apt__source('docker') }
-      it { should contain_package('docker').with_name('docker.io') }
+      it { should contain_package('docker').with_name('lxc-docker') }
     end
   end
 
