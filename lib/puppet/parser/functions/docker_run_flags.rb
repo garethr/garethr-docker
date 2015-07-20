@@ -48,6 +48,10 @@ module Puppet::Parser::Functions
       flags << '-t'
     end
 
+    if opts['log_driver']
+      flags << "--log-driver '#{opts['log_driver'].shellescape}'"
+    end
+
     multi_flags = lambda { |values, format|
       filtered = [values].flatten.compact
       filtered.map { |val| sprintf(format, val) }
