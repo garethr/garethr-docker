@@ -15,12 +15,11 @@ end
 group :development do
   gem "travis"
   gem "travis-lint"
-  gem "beaker", "2.13.0"
+  gem "beaker", "~> 2.0"
   gem "beaker-puppet_install_helper", :require => false
   gem "beaker-rspec"
   gem "puppet-blacksmith"
   gem "guard-rake"
   gem "pry"
   gem "yard"
-  #gem "vagrant-wrapper"
 end
