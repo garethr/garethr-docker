@@ -253,9 +253,9 @@ By default images will be pushed and pulled from [index.docker.io](http://index.
 
 ```puppet
 docker::registry { 'example.docker.io:5000':
-  username => 'user1'
-  password => 'secret'
-  email    => 'user1@example.io'
+  username => 'user',
+  password => 'secret',
+  email    => 'user@example.com',
 }
 ```
 
