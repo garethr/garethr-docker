@@ -1,7 +1,14 @@
 require 'beaker-rspec/spec_helper'
 require 'beaker-rspec/helpers/serverspec'
-require 'beaker/puppet_install_helper'
 require 'pry'
+require 'beaker/puppet_install_helper'
+
+# this is a workaround for BKR-419. Beaker currently fails to
+# install puppet on Ubuntu 14.04 after version 2.13.0. But
+# install_puppet_on is used by puppet_install_helper
+def install_puppet_on(hosts, opts = {})
+  install_puppet(opts)
+end unless respond_to? :install_puppet_on
 
 run_puppet_install_helper
 
