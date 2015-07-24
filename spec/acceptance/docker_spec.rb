@@ -105,7 +105,7 @@ describe 'docker' do
       registry_port = 5000
       @registry_address = "#{registry_host}:#{registry_port}"
       @registry_email = 'user@example.com'
-      @config_file = '~/.docker/config.json'
+      @config_file = fact('osfamily') == 'RedHat' ? '~/.dockercfg' : '~/.docker/config.json'
       @manifest = <<-EOS
         class { 'docker': }
         docker::run { 'registry':
@@ -122,7 +122,7 @@ describe 'docker' do
     it 'should be able to login to the registry' do
       manifest = <<-EOS
         docker::registry { '#{@registry_address}':
-          username => 'user',
+          username => 'username',
           password => 'password',
           email    => '#{@registry_email}',
         }
@@ -139,8 +139,8 @@ describe 'docker' do
         }
       EOS
       apply_manifest(manifest, :catch_failures=>true)
-      shell("grep #{@registry_address} #{@config_file}", :acceptable_exit_codes => [1])
-      shell("grep #{@registry_email} #{@config_file}", :acceptable_exit_codes => [1])
+      shell("grep #{@registry_address} #{@config_file}", :acceptable_exit_codes => [1,2])
+      shell("grep #{@registry_email} #{@config_file}", :acceptable_exit_codes => [1,2])
     end
 
   end
