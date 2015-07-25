@@ -26,6 +26,11 @@
         "14.04"
       ]
     },{
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "7.8"
+      ]
+    },{
       "operatingsystem": "Archlinux"
     },{
       "operatingsystem": "Fedora",

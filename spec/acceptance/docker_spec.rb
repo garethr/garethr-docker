@@ -1,16 +1,7 @@
 require 'spec_helper_acceptance'
 
 describe 'docker' do
-  case fact('osfamily')
-  when 'RedHat'
-    package_name = if fact('operatingsystemrelease').to_f >= 7
-      'docker'
-    else
-      'docker-io'
-    end
-  else
-    package_name = 'lxc-docker'
-  end
+  package_name = 'docker-engine'
   service_name = 'docker'
   command = 'docker'
 
@@ -19,10 +10,13 @@ describe 'docker' do
     shell('sudo yum install -y device-mapper', :pty=>true) if fact('osfamily') == 'RedHat'
   end
 
+  context 'null' do
+  end
+
   context 'with default parameters' do
     let(:pp) {"
         class { 'docker':
-          docker_users => [ 'testuser' ]
+          docker_users => [ 'testuser' ],
         }
         docker::image { 'nginx': }
         docker::run { 'nginx':
@@ -105,7 +99,7 @@ describe 'docker' do
       registry_port = 5000
       @registry_address = "#{registry_host}:#{registry_port}"
       @registry_email = 'user@example.com'
-      @config_file = fact('osfamily') == 'RedHat' ? '~/.dockercfg' : '~/.docker/config.json'
+      @config_file = '~/.docker/config.json'
       @manifest = <<-EOS
         class { 'docker': }
         docker::run { 'registry':

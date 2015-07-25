@@ -72,6 +72,32 @@ class { 'docker':
 }
 ```
 
+Docker Inc recently [launched new official
+repositories](http://blog.docker.com/2015/07/new-apt-and-yum-repos/#comment-247448)
+which are now the default for the module from version 5. If you want to
+stick with the old respoitories you can do so with the following:
+
+```puppet
+class { 'docker':
+  package_name => 'lxc-docker',
+  package_source_location => 'https://get.docker.com/ubuntu',
+  package_key_source => 'https://get.docker.com/gpg',
+  package_key => '36A1D7869245C8950F966E92D8576A8BA88D21E',
+  package_release => 'docker',
+}
+```
+
+The module also now uses the upstream repositories by default for RHEL
+based distros, including Fedora. If you want to stick with the distro packages
+you should use the following:
+
+```puppet
+class { 'docker':
+  use_upstream_package_source => false,
+  package_name => 'docker',
+}
+```
+
 By default the docker daemon will bind to a unix socket at
 /var/run/docker.sock. This can be changed, as well as binding to a tcp
 socket if required.

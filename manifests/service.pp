@@ -50,20 +50,15 @@ class docker::service (
 
   case $::osfamily {
     'Debian': {
-      $hasstatus     = true
-      $hasrestart    = false
+      $hasstatus = true
+      $hasrestart = false
 
-      case $::operatingsystem {
-        'Debian': {
-          # Do nothing as Debian doesn't have Upstart
-        }
-        default: {
-          file { '/etc/init.d/docker':
-              ensure => 'link',
-              target => '/lib/init/upstart-job',
-              force  => true,
-              notify => Service['docker'],
-          }
+      if $::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '15.04') < 0 {
+        file { '/etc/init.d/docker':
+          ensure => 'link',
+          target => '/lib/init/upstart-job',
+          force  => true,
+          notify => Service['docker'],
         }
       }
 
@@ -82,6 +77,18 @@ class docker::service (
       }
       $hasstatus     = undef
       $hasrestart    = undef
+
+      if ($docker::use_upstream_package_source) {
+        file { '/etc/systemd/system/docker.service.d':
+          ensure => directory;
+        }
+
+        file { '/etc/systemd/system/docker.service.d/service-overrides.conf':
+          ensure => present,
+          source => 'puppet:///modules/docker/service-overrides-rhel.conf',
+          notify => Exec['docker-systemd-reload'];
+        }
+      }
 
       file { '/etc/sysconfig/docker':
         ensure  => present,
@@ -122,9 +129,10 @@ class docker::service (
     }
   }
 
-  $provider = $::operatingsystem ? {
-    'Ubuntu' => 'upstart',
-    default  => undef,
+  if $::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '15.04') < 0 {
+    $provider = 'upstart'
+  } else {
+    $provider = undef
   }
 
   service { 'docker':

@@ -157,7 +157,7 @@ describe 'the Puppet Docker module' do
         pp=<<-EOS
           class { 'docker':}
 
-          docker::image { 'ubuntu':
+          docker::image { 'ubuntu_with_file':
             docker_file => "/root/Dockerfile",
             require     => Class['docker'],
           }
@@ -165,28 +165,17 @@ describe 'the Puppet Docker module' do
           file { '/root/Dockerfile':
             ensure  => present,
             content => "FROM ubuntu\nRUN touch /root/test_file_from_dockerfile.txt",
-            before  => Docker::Image['ubuntu'],
-          }
-        EOS
-
-        pp2=<<-EOS
-          docker::run { 'container_2_3':
-            image   => 'ubuntu',
-            command => 'init',
+            before  => Docker::Image['ubuntu_with_file'],
           }
         EOS
 
         apply_manifest(pp, :catch_failures => true)
         apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
 
-        apply_manifest(pp2, :catch_failures => true)
-        apply_manifest(pp2, :catch_changes => true) unless fact('selinux') == 'true'
-
         # A sleep to give docker time to execute properly
         sleep 4
 
-        container_id = shell("docker ps | awk 'FNR == 2 {print $1}'")
-        shell("docker exec #{container_id.stdout.strip} ls /root") do |r|
+        shell("docker run ubuntu_with_file ls /root") do |r|
           expect(r.stdout).to match(/test_file_from_dockerfile.txt/)
         end
       end
@@ -207,14 +196,8 @@ describe 'the Puppet Docker module' do
         EOS
 
         pp2=<<-EOS
-          docker::image { 'newos':
+          docker::image { 'ubuntu_from_commit':
             docker_tar => "/root/rootfs.tar"
-          }
-
-          docker::run { 'container_2_4_2':
-            image   => 'newos',
-            command => 'init',
-            require => Docker::Image['newos'],
           }
         EOS
 
@@ -224,9 +207,9 @@ describe 'the Puppet Docker module' do
         # A sleep to give docker time to execute properly
         sleep 4
 
-        # Commit currently running container as an image called newos
+        # Commit currently running container as an image
         container_id = shell("docker ps | awk 'FNR == 2 {print $1}'")
-        shell("docker commit #{container_id.stdout.strip} newos")
+        shell("docker commit #{container_id.stdout.strip} ubuntu_from_commit")
 
         # Stop all container using systemd
         shell('ls -D -1 /etc/systemd/system/docker-container* | sed \'s/\/etc\/systemd\/system\///g\' | sed \'s/\.service//g\' | while read container; do service $container stop; done')
@@ -240,7 +223,7 @@ describe 'the Puppet Docker module' do
         end
 
         # Export new to a tar file
-        shell("docker save newos > /root/rootfs.tar")
+        shell("docker save ubuntu_from_commit > /root/rootfs.tar")
 
         # Remove all images
         shell('docker rmi $(docker images -q) || true')
@@ -256,8 +239,7 @@ describe 'the Puppet Docker module' do
         # A sleep to give docker time to execute properly
         sleep 4
 
-        container_id = shell("docker ps | awk 'FNR == 2 {print $1}'")
-        shell("docker exec #{container_id.stdout.strip} ls /root") do |r|
+        shell("docker run ubuntu_from_commit ls /root") do |r|
           expect(r.stdout).to match(/test_file_for_tar_test.txt/)
         end
       end
