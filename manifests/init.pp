@@ -156,6 +156,10 @@ class docker(
   $selinux_enabled             = $docker::params::selinux_enabled,
   $use_upstream_package_source = $docker::params::use_upstream_package_source,
   $package_source_location     = $docker::params::package_source_location,
+  $package_release             = $docker::params::package_release,
+  $package_repos               = $docker::params::package_repos,
+  $package_key                 = $docker::params::package_key,
+  $package_key_source          = $docker::params::package_key_source,
   $service_state               = $docker::params::service_state,
   $service_enable              = $docker::params::service_enable,
   $root_dir                    = $docker::params::root_dir,
@@ -219,9 +223,11 @@ class docker(
     fail('You need to provide both $dm_datadev and $dm_metadatadev parameters for direct lvm.')
   }
 
+  class { 'docker::repos': } ->
   class { 'docker::install': } ->
   class { 'docker::config': } ~>
   class { 'docker::service': }
+  contain 'docker::repos'
   contain 'docker::install'
   contain 'docker::config'
   contain 'docker::service'
