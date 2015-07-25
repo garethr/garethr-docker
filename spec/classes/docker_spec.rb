@@ -38,6 +38,10 @@ describe 'docker', :type => :class do
         storage_config_file = '/etc/default/docker'
 
         it { should contain_service('docker').with_hasrestart('false') }
+        it { should contain_class('apt') }
+        it { should contain_package('apt-transport-https').that_comes_before('Apt::Source[docker]') }
+        it { should contain_package('docker').with_name('docker-engine').with_ensure('present') }
+        it { should contain_apt__source('docker').with_location('https://apt.dockerproject.org/repo') }
         it { should contain_file('/etc/init.d/docker').with_ensure('link').with_target('/lib/init/upstart-job') }
 
         context 'It should include default prerequired_packages' do

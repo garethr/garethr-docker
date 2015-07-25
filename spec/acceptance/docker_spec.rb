@@ -10,6 +10,9 @@ describe 'docker' do
     shell('sudo yum install -y device-mapper', :pty=>true) if fact('osfamily') == 'RedHat'
   end
 
+  context 'null' do
+  end
+
   context 'with default parameters' do
     let(:pp) {"
         class { 'docker':
