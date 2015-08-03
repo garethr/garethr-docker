@@ -61,6 +61,7 @@ module Puppet::Parser::Functions
       ['--lxc-conf="%s"',   'lxc_conf'],
       ['--volumes-from %s', 'volumes_from'],
       ['-e %s',             'env'],
+      ['--env-file %s',     'env_file'],
       ['-p %s',             'ports'],
       ['--add-host %s',     'hostentries'],
       ['-v %s',             'volumes'],
@@ -69,6 +70,10 @@ module Puppet::Parser::Functions
       values    = opts[key]
       new_flags = multi_flags.call(values, format)
       flags.concat(new_flags)
+    end
+
+    opts['extra_params'].each do |param|
+      flags << param
     end
 
     flags.flatten.join(" ")

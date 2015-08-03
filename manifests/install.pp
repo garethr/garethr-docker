@@ -26,7 +26,7 @@ class docker::install {
           repos             => 'main',
           required_packages => 'debian-keyring debian-archive-keyring',
           key               => '36A1D7869245C8950F966E92D8576A8BA88D21E9',
-          key_source        => 'https://get.docker.io/gpg',
+          key_source        => 'https://get.docker.com/gpg',
           pin               => '10',
           include_src       => false,
         }
@@ -73,9 +73,11 @@ class docker::install {
 
       if ($::operatingsystem != 'Amazon') and ($::operatingsystem != 'Fedora') {
         if ($docker::use_upstream_package_source) {
-          include 'epel'
-          if $docker::manage_package {
-            Class['epel'] -> Package['docker']
+          if ($docker::manage_epel == true){
+            include 'epel'
+            if $docker::manage_package {
+              Class['epel'] -> Package['docker']
+            }
           }
         }
       }
@@ -107,9 +109,17 @@ class docker::install {
   }
 
   if $docker::manage_package {
-    package { 'docker':
-      ensure => $docker::ensure,
-      name   => $dockerpackage,
+    if $docker::repo_opt {
+      package { 'docker':
+        ensure          => $docker::ensure,
+        name            => $dockerpackage,
+        install_options => $docker::repo_opt,
+      }
+    } else {
+        package { 'docker':
+          ensure => $docker::ensure,
+          name   => $dockerpackage,
+        }
     }
   }
 }

@@ -20,8 +20,9 @@ describe 'docker', :type => :class do
         it { should contain_class('apt') }
         it { should contain_package('apt-transport-https').that_comes_before('Package[docker]') }
         it { should contain_package('docker').with_name('lxc-docker').with_ensure('present') }
-        it { should contain_apt__source('docker').with_location('https://get.docker.io/ubuntu') }
+        it { should contain_apt__source('docker').with_location('https://get.docker.com/ubuntu') }
         it { should contain_file('/etc/init.d/docker').with_ensure('link').with_target('/lib/init/upstart-job') }
+        it { should contain_package('docker').with_install_options(nil) }
 
         context 'with a custom version' do
           let(:params) { {'version' => '0.5.5' } }
@@ -39,6 +40,12 @@ describe 'docker', :type => :class do
           it { should_not contain_apt__source('docker') }
           it { should_not contain_class('epel') }
           it { should contain_package('docker') }
+        end
+
+        context 'It should include default prerequired_packages' do
+          it { should contain_package('apt-transport-https').with_ensure('present') }
+          it { should contain_package('cgroup-lite').with_ensure('present') }
+          it { should contain_package('apparmor').with_ensure('present') }
         end
 
         context 'when given a specific tmp_dir' do
@@ -76,6 +83,10 @@ describe 'docker', :type => :class do
         context 'when given a specific tmp_dir' do
           let(:params) {{ 'tmp_dir' => '/bigtmp' }}
           it { should contain_file('/etc/sysconfig/docker').with_content(/export TMPDIR="\/bigtmp"/) }
+        end
+
+        context 'It should include default prerequired_packages' do
+          it { should contain_package('device-mapper').with_ensure('present') }
         end
 
       end
@@ -229,7 +240,21 @@ describe 'docker', :type => :class do
         it do
           expect {
             should contain_package('docker')
-          }.to raise_error(Puppet::Error, /log_level must be one of debug, info, error or fatal/)
+          }.to raise_error(Puppet::Error, /log_level must be one of debug, info, warn, error or fatal/)
+        end
+      end
+
+      context 'with specific selinux_enabled parameter' do
+        let(:params) { { 'selinux_enabled' => 'true' } }
+        it { should contain_file(service_config_file).with_content(/--selinux-enabled=true/) }
+      end
+
+      context 'with an invalid selinux_enabled parameter' do
+        let(:params) { { 'selinux_enabled' => 'yes'} }
+        it do
+          expect {
+            should contain_package('docker')
+          }.to raise_error(Puppet::Error, /selinux_enabled must be true or false/)
         end
       end
 
@@ -302,6 +327,10 @@ describe 'docker', :type => :class do
     } }
 
     it { should contain_class('epel') }
+    context 'with no epel repo' do
+      let(:params) { {'manage_epel' => false } }
+      it { should_not contain_class('epel') }
+    end
     it { should contain_package('docker').with_name('docker-io').with_ensure('present') }
     it { should_not contain_apt__source('docker') }
     it { should_not contain_package('linux-image-extra-3.8.0-29-generic') }
@@ -310,6 +339,26 @@ describe 'docker', :type => :class do
       let(:params) { {'use_upstream_package_source' => false } }
       it { should_not contain_class('epel') }
     end
+  end
+
+  context 'RedHat 6.5 with patched Docker kernel' do
+    let(:facts) { {
+      :osfamily => 'RedHat',
+      :operatingsystem => 'RedHat',
+      :operatingsystemrelease => '6.5',
+      :kernelversion => '2.6.32'
+    } }
+    it { should contain_file('/etc/sysconfig/docker').with_content(/DOCKER_NOWARN_KERNEL_VERSION=1/) }
+  end
+
+  context 'RedHat 6.5 without patched Docker kernel' do
+    let(:facts) { {
+      :osfamily => 'RedHat',
+      :operatingsystem => 'RedHat',
+      :operatingsystemrelease => '6.5',
+      :kernelversion => '2.6.31'
+    } }
+    it { should_not contain_file('/etc/sysconfig/docker').with_content(/DOCKER_NOWARN_KERNEL_VERSION=1/) }
   end
 
   context 'specific to Fedora 21 or above' do
@@ -327,11 +376,47 @@ describe 'docker', :type => :class do
     let(:facts) { {
       :osfamily => 'RedHat',
       :operatingsystem => 'RedHat',
-      :operatingsystemrelease => '7.0'
+      :operatingsystemrelease => '7.0',
+      :operatingsystemmajrelease => '7',
     } }
 
     it { should contain_package('docker').with_name('docker') }
     it { should_not contain_class('epel') }
+    it { should contain_package('docker').with_install_options('--enablerepo=rhel7-extras') }
+
+    let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
+    service_config_file = '/etc/sysconfig/docker'
+    it { should contain_file(service_config_file).with_content(/^http_proxy='http:\/\/127.0.0.1:3128'/) }
+    it { should contain_file(service_config_file).with_content(/^  https_proxy='http:\/\/127.0.0.1:3128'/) }
+
+  end
+
+  context 'specific to Oracle Linux 7 or above' do
+    let(:facts) { {
+      :osfamily => 'RedHat',
+      :operatingsystem => 'OracleLinux',
+      :operatingsystemrelease => '7.0',
+      :operatingsystemmajrelease => '7',
+    } }
+
+    it { should contain_package('docker').with_name('docker') }
+    it { should_not contain_class('epel') }
+    it { should contain_package('docker').with_install_options('--enablerepo=ol7_addons') }
+
+  end
+
+  context 'specific to Scientific Linux 7 or above' do
+    let(:facts) { {
+      :osfamily => 'RedHat',
+      :operatingsystem => 'Scientific',
+      :operatingsystemrelease => '7.0',
+      :operatingsystemmajrelease => '7',
+    } }
+
+    it { should contain_package('docker').with_name('docker') }
+    it { should_not contain_class('epel') }
+    it { should contain_package('docker').with_install_options('--enablerepo=sl-extras') }
+
   end
 
   context 'specific to Ubuntu Precise' do

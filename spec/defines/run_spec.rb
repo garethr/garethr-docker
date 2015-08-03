@@ -24,9 +24,9 @@ require 'spec_helper'
 
     context 'passing the required params' do
       let(:params) { {'command' => 'command', 'image' => 'base'} }
+      it { should compile.with_all_deps }
       it { should contain_service('docker-sample') }
       if (osfamily == 'Debian')
-        it { should contain_service('docker-sample').with_hasrestart('false') }
         it { should contain_file(initscript).with_content(/\$docker run/) }
         it { should contain_file(initscript).with_content(/#{command}/) }
       else
@@ -167,6 +167,16 @@ require 'spec_helper'
       it { should contain_file(initscript).with_content(/-e FOO=BAR/) }
     end
 
+    context 'when passing serveral environment files' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'env_file' => ['/etc/foo.env', '/etc/bar.env']} }
+      it { should contain_file(initscript).with_content(/--env-file \/etc\/foo.env/).with_content(/--env-file \/etc\/bar.env/) }
+    end
+
+    context 'when passing an environment file' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'env_file' => '/etc/foo.env'} }
+      it { should contain_file(initscript).with_content(/--env-file \/etc\/foo.env/) }
+    end
+
     context 'when passing serveral dns addresses' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'dns' => ['8.8.8.8', '8.8.4.4']} }
       it { should contain_file(initscript).with_content(/--dns 8.8.8.8/).with_content(/--dns 8.8.4.4/) }
@@ -262,6 +272,16 @@ require 'spec_helper'
       it { should_not contain_file(initscript).with_content(/docker pull base/) }
     end
 
+    context 'when `before_stop` is set' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'before_stop' => "echo before_stop" } }
+      it { should contain_file(initscript).with_content(/before_stop/) }
+    end
+
+    context 'when `before_stop` is not set' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'before_stop' => false } }
+      it { should_not contain_file(initscript).with_content(/before_stop/) }
+    end
+
     context 'with an title that will not format into a path' do
       let(:title) { 'this/that' }
       let(:params) { {'image' => 'base'} }
@@ -275,6 +295,38 @@ require 'spec_helper'
       end
 
       it { should contain_service('docker-this-that') }
+      it { should contain_file(new_initscript) }
+    end
+
+    context 'with manage_service turned off' do
+      let(:title) { 'this/that' }
+      let(:params) { {'image' => 'base', 'manage_service' => false} }
+
+      if osfamily == 'Debian'
+        new_initscript = '/etc/init.d/docker-this-that'
+      elsif osfamily == 'Archlinux'
+        new_initscript = '/etc/systemd/system/docker-this-that.service'
+      else
+        new_initscript = '/etc/init.d/docker-this-that'
+      end
+
+      it { should_not contain_service('docker-this-that') }
+      it { should contain_file(new_initscript) }
+    end
+
+    context 'with service_prefix set to empty string' do
+      let(:title) { 'this/that' }
+      let(:params) { {'image' => 'base', 'service_prefix' => ''} }
+
+      if osfamily == 'Debian'
+        new_initscript = '/etc/init.d/this-that'
+      elsif osfamily == 'Archlinux'
+        new_initscript = '/etc/systemd/system/this-that.service'
+      else
+        new_initscript = '/etc/init.d/this-that'
+      end
+
+      it { should contain_service('this-that') }
       it { should contain_file(new_initscript) }
     end
 
@@ -324,6 +376,15 @@ require 'spec_helper'
           should contain_service('docker-sample')
         }.to raise_error(Puppet::Error)
       end
+    end
+
+    context 'with restart policy' do
+      let(:params) { {'restart' => 'no', 'command' => 'command', 'image' => 'base', 'extra_parameters' => '-c 4'} }
+      it { should contain_exec('run sample with docker') }
+      it { should contain_exec('run sample with docker').with_unless(/\/var\/run\/docker-sample.cid/) }
+      it { should contain_exec('run sample with docker').with_command(/--cidfile=\/var\/run\/docker-sample.cid/) }
+      it { should contain_exec('run sample with docker').with_command(/-c 4/) }
+      it { should contain_exec('run sample with docker').with_command(/base command/) }
     end
 
   end
