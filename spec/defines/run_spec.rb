@@ -45,6 +45,8 @@ require 'spec_helper'
       if (systemd)
         it { should contain_file(initscript).with_content(/After=.*\s+docker-foo.service/) }
         it { should contain_file(initscript).with_content(/After=.*\s+docker-bar.service/) }
+        it { should contain_file(initscript).with_content(/Wants=.*\s+docker-foo.service/) }
+        it { should contain_file(initscript).with_content(/Wants=.*\s+docker-bar.service/) }
       else
         it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-foo/) }
         it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-bar/) }
