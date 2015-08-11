@@ -88,6 +88,8 @@ class docker::params {
       if (versioncmp($::operatingsystemmajrelease, '7') == 0) {
         if $::operatingsystem == 'RedHat' {
           $repo_opt = '--enablerepo=rhel7-extras'
+        } elsif $::operatingsystem == 'CentOS' {
+          $repo_opt = '--enablerepo=extras'
         } elsif $::operatingsystem == 'OracleLinux' {
           $repo_opt = '--enablerepo=ol7_addons'
         } elsif $::operatingsystem == 'Scientific' {
