@@ -3,7 +3,7 @@
 
 [Unit]
 Description=Daemon for <%= @title %>
-After=docker.service<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " #{@service_prefix}#{d}.service" %><% end %><% end %>
+After=docker.service<% if @after %><% @sanitised_after_array.each do |a| %><%= " #{@service_prefix}#{a}.service" %><% end %><% end %><% if @depends %><% @sanitised_depends_array.each do |d| %><%= " #{@service_prefix}#{d}.service" %><% end %><% end %>
 Requires=docker.service<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " #{@service_prefix}#{d}.service" %><% end %><% end %>
 
 [Service]

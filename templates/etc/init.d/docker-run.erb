@@ -12,7 +12,7 @@
 
 ### BEGIN INIT INFO
 # Provides:       <%= @service_prefix %><%= @sanitised_title %>
-# Required-Start: $network docker<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " #{@service_prefix}#{d}" %><% end %><% end %>
+# Required-Start: $network docker<% if @after %><% @sanitised_after_array.each do |a| %><%= " #{@service_prefix}#{a}" %><% end %><% end %><% if @depends %><% @sanitised_depends_array.each do |d| %><%= " #{@service_prefix}#{d}" %><% end %><% end %>
 # Required-Stop: $network docker<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " #{@service_prefix}#{d}" %><% end %><% end %>
 # Should-Start:
 # Should-Stop:
