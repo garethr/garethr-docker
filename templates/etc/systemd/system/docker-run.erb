@@ -4,11 +4,11 @@
 [Unit]
 Description=Daemon for <%= @title %>
 After=docker.service
-After=<% if @after %><% @sanitised_after_array.each do |a| %><%= " #{@service_prefix}#{a}.service" %><% end %><% end %>
-After=<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " #{@service_prefix}#{d}.service" %><% end %><% end %>
+<% if @after %>After=<%= @sanitised_after_array.map{ |a| "#{@service_prefix}#{a}.service"}.join(" ") %><% end %>
+<% if @depends %>After=<%= @sanitised_depends_array.map{ |d| "#{@service_prefix}#{d}.service"}.join(" ") %><% end %>
 Requires=docker.service
-Requires=<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " #{@service_prefix}#{d}.service" %><% end %><% end %>
-Wants=<% if @after %><% @sanitised_after_array.each do |a| %><%= " #{@service_prefix}#{a}.service" %><% end %><% end %>
+<% if @after %>Wants=<%= @sanitised_after_array.map{ |a| "#{@service_prefix}#{a}.service"}.join(" ") %><% end %>
+<% if @depends %>Requires=<%= @sanitised_depends_array.map{ |d| "#{@service_prefix}#{d}.service"}.join(" ") %><% end %>
 
 [Service]
 Restart=on-failure
