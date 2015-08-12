@@ -29,6 +29,10 @@ class docker::params {
   $dm_loopmetadatasize          = undef
   $dm_datadev                   = undef
   $dm_metadatadev               = undef
+  $dm_thinpooldev               = undef
+  $dm_use_deferred_removal      = undef
+  $dm_blkdiscard                = undef
+  $dm_override_udev_sync_check  = undef
   $manage_package               = true
   $manage_kernel                = true
   $manage_epel                  = true
