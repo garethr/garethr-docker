@@ -123,6 +123,20 @@
 # [*dm_metadatadev*]
 #   A custom blockdevice to use for metadata for the thin pool.
 #
+# [*dm_thinpooldev*]
+#   Specifies a custom block storage device to use for the thin pool.
+#
+# [*dm_use_deferred_removal*]
+#   Enables use of deferred device removal if libdm and the kernel driver support the mechanism.
+#
+# [*dm_blkdiscard*]
+#   Enables or disables the use of blkdiscard when removing devicemapper devices.
+#   Defaults to false
+#
+# [*dm_override_udev_sync_check*]
+#   By default, the devicemapper backend attempts to synchronize with the udev device manager for the Linux kernel. This option allows disabling that synchronization, to continue even though the configuration may be buggy.
+#   Defaults to true
+#
 # [*manage_package*]
 #   Won't install or define the docker package, useful if you want to use your own package
 #   Defaults to true
