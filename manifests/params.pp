@@ -32,7 +32,7 @@ class docker::params {
   $manage_package               = true
   $manage_kernel                = true
   $manage_epel                  = true
-  $package_name_default         = 'lxc-docker'
+  $package_name_default         = 'docker-engine'
   $service_name_default         = 'docker'
   $docker_command_default       = 'docker'
   $docker_group_default         = 'docker'
@@ -51,7 +51,7 @@ class docker::params {
         }
       }
       $docker_group = $docker_group_default
-      $package_source_location     = 'https://get.docker.com/ubuntu'
+      $package_source_location     = 'https://apt.dockerproject.org/repo'
       $use_upstream_package_source = true
       $detach_service_in_init = true
       $repo_opt = undef

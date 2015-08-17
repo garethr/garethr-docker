@@ -20,25 +20,25 @@ class docker::install {
 
       if ($docker::use_upstream_package_source) {
         include apt
+        $dist = downcase($::lsbdistid)
         apt::source { 'docker':
           location          => $docker::package_source_location,
-          release           => 'docker',
+          release           => "${dist}-${::lsbdistcodename}",
           repos             => 'main',
           required_packages => 'debian-keyring debian-archive-keyring',
-          key               => '36A1D7869245C8950F966E92D8576A8BA88D21E9',
-          key_source        => 'https://get.docker.com/gpg',
+          key               => '58118E89F3A912897C070ADBF76221572C52609D',
           pin               => '10',
           include_src       => false,
         }
         if $docker::manage_package {
           Apt::Source['docker'] -> Package['docker']
         }
+      }
+
+      if $docker::version and $docker::ensure != 'absent' {
+        $ensure = $docker::version
       } else {
-        if $docker::version and $docker::ensure != 'absent' {
-          $ensure = $docker::version
-        } else {
-          $ensure = $docker::ensure
-        }
+        $ensure = $docker::ensure
       }
 
       if $::operatingsystem == 'Ubuntu' {
@@ -102,11 +102,7 @@ class docker::install {
     }
   }
 
-  if $docker::version {
-    $dockerpackage = "${docker::package_name}-${docker::version}"
-  } else {
-    $dockerpackage = $docker::package_name
-  }
+  $dockerpackage = $docker::package_name
 
   if $docker::manage_package {
     if $docker::repo_opt {
