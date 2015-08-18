@@ -50,6 +50,7 @@ describe 'docker' do
 
     describe command("#{command} version") do
       its(:exit_status) { should eq 0 }
+      its(:stdout) { should match /Client:/ }
     end
 
     describe command("#{command} images"), :sudo => true do

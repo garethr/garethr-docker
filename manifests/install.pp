@@ -11,12 +11,6 @@ class docker::install {
   validate_string($::kernelrelease)
   validate_bool($docker::use_upstream_package_source)
 
-  if $docker::version and $docker::ensure != 'absent' {
-    $ensure = $docker::version
-  } else {
-    $ensure = $docker::ensure
-  }
-
   case $::osfamily {
     'Debian': {
       if $::operatingsystem == 'Ubuntu' {
@@ -32,12 +26,16 @@ class docker::install {
           default: { $kernelpackage = "linux-image-extra-${::kernelrelease}" }
         }
         $manage_kernel = $docker::manage_kernel
+        # new versions are setup this way
+        $real_docker_version = "${docker::version}-0~${::lsbdistcodename}"
       } else {
+        $real_docker_version = $docker::version
         # Debian does not need extra kernel packages
         $manage_kernel = false
       }
     }
     'RedHat': {
+      $real_docker_version = $docker::version
       if $::operatingsystem == 'Amazon' {
         if versioncmp($::operatingsystemrelease, '3.10.37-47.135') < 0 {
           fail('Docker needs Amazon version to be at least 3.10.37-47.135.')
@@ -65,6 +63,17 @@ class docker::install {
     if $docker::manage_package {
       Package[$kernelpackage] -> Package['docker']
     }
+  }
+
+  # we are dealing with a version string, so ensure should be a version
+  if $docker::version {
+    if $docker::ensure == 'present' {
+      $ensure = $real_docker_version
+    } else {
+      $ensure = $docker::ensure
+    }
+  } else {
+    $ensure = $docker::ensure
   }
 
   if $docker::manage_package {

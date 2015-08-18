@@ -14,7 +14,7 @@ class docker::repos {
       if $::operatingsystem == 'Debian' and $::lsbdistcodename == 'wheezy' {
         include apt::backports
       }
-      Apt::Source <||> ~> Exec['apt_update'] -> Package[$docker::prerequired_packages]
+      Exec['apt_update'] -> Package[$docker::prerequired_packages]
       if ($docker::use_upstream_package_source) {
         apt::source { 'docker':
           location          => $docker::package_source_location,
@@ -22,12 +22,13 @@ class docker::repos {
           repos             => $docker::package_repos,
           key               => $docker::package_key,
           key_source        => $docker::package_key_source,
+          key_server        => 'hkp://p80.pool.sks-keyservers.net:80',
           required_packages => 'debian-keyring debian-archive-keyring',
           pin               => '10',
           include_src       => false,
         }
         if $docker::manage_package {
-          Apt::Source['docker'] -> Package['docker']
+          Exec['apt_update'] -> Package['docker']
         }
       }
 

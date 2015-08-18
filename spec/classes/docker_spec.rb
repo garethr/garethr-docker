@@ -61,7 +61,11 @@ describe 'docker', :type => :class do
 
         context 'with a custom version' do
           let(:params) { {'version' => '0.5.5' } }
+<<<<<<< 785de43041df6555241e75a10f47b3d52a1563a1
           it { should contain_package('docker').with_ensure('0.5.5').with_name('docker-engine') }
+=======
+          it { should contain_package('docker').with_name('docker-engine').with_ensure('0.5.5-0~maverick') }
+>>>>>>> fixed various issues discovered while testing this on an ubuntu 14.04 instance
         end
 
         context 'with no upstream package source' do
@@ -160,6 +164,14 @@ describe 'docker', :type => :class do
               'install_options' => '--enablerepo=rhel7-extras'
             )
           end
+
+        context 'with a custom package name and version' do
+          # version is ignored in archlinux
+          let(:params) { {
+             'version'      => '0.5.5',
+             'package_name' => 'docker-custom-pkg-name',
+          } }
+          it { should contain_package('docker').with_name('docker-custom-pkg-name').with_ensure('0.5.5') }
         end
 
       end
@@ -170,6 +182,15 @@ describe 'docker', :type => :class do
         } }
         service_config_file = '/etc/conf.d/docker'
         storage_config_file = '/etc/conf.d/docker'
+
+        context 'with a custom package name and version' do
+          # version is ignored in archlinux
+          let(:params) { {
+             'version'      => '0.5.5',
+             'package_name' => 'docker-custom-pkg-name',
+          } }
+          it { should contain_package('docker').with_name('docker-custom-pkg-name').with_ensure('present') }
+        end
       end
 
 
@@ -189,6 +210,7 @@ describe 'docker', :type => :class do
         it { should contain_package('docker').with_name('docker-custom-pkg-name').with_ensure('present') }
       end
 
+<<<<<<< 785de43041df6555241e75a10f47b3d52a1563a1
       context 'with a custom package name and version' do
         let(:params) { {
            'version'      => '0.5.5',
@@ -197,6 +219,8 @@ describe 'docker', :type => :class do
         it { should contain_package('docker').with_name('docker-custom-pkg-name').with_ensure('0.5.5') }
       end
 
+=======
+>>>>>>> fixed various issues discovered while testing this on an ubuntu 14.04 instance
       context 'when not managing the package' do
         let(:params) { {'manage_package' => false } }
         it { should_not contain_package('docker') }
