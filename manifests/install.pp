@@ -11,7 +11,7 @@ class docker::install {
   validate_bool($docker::use_upstream_package_source)
 
   ensure_packages($docker::prerequired_packages)
-
+  $ensure = $docker::ensure
   case $::osfamily {
     'Debian': {
       if $docker::manage_package {
@@ -36,8 +36,6 @@ class docker::install {
       } else {
         if $docker::version and $docker::ensure != 'absent' {
           $ensure = $docker::version
-        } else {
-          $ensure = $docker::ensure
         }
       }
 
@@ -81,6 +79,9 @@ class docker::install {
           }
         }
       }
+      if $docker::version and $docker::ensure != 'absent' {
+          $ensure = $docker::version
+      }
     }
     'Archlinux': {
       $manage_kernel = false
@@ -102,7 +103,7 @@ class docker::install {
     }
   }
 
-  if $docker::version {
+  if $docker::version and $::osfamily != 'RedHat' {
     $dockerpackage = "${docker::package_name}-${docker::version}"
   } else {
     $dockerpackage = $docker::package_name
@@ -111,13 +112,13 @@ class docker::install {
   if $docker::manage_package {
     if $docker::repo_opt {
       package { 'docker':
-        ensure          => $docker::ensure,
+        ensure          => $ensure,
         name            => $dockerpackage,
         install_options => $docker::repo_opt,
       }
     } else {
         package { 'docker':
-          ensure => $docker::ensure,
+          ensure => $ensure,
           name   => $dockerpackage,
         }
     }
