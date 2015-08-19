@@ -85,7 +85,7 @@ class docker::install {
       if $docker::version and $docker::ensure != 'absent' {
         $ensure = $docker::version
       } else {
-        $ensure = $docker::ensure  
+        $ensure = $docker::ensure
       }
     }
     'Archlinux': {
