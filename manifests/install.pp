@@ -33,9 +33,12 @@ class docker::install {
         if $docker::manage_package {
           Apt::Source['docker'] -> Package['docker']
         }
+        $ensure = $docker::ensure
       } else {
         if $docker::version and $docker::ensure != 'absent' {
           $ensure = $docker::version
+        } else {
+          $ensure = $docker::ensure
         }
       }
 
@@ -80,12 +83,14 @@ class docker::install {
         }
       }
       if $docker::version and $docker::ensure != 'absent' {
-          $ensure = $docker::version
+        $ensure = $docker::version
+      } else {
+        $ensure = $docker::ensure  
       }
     }
     'Archlinux': {
       $manage_kernel = false
-
+      $ensure = $docker::ensure
       if $docker::version {
         notify { 'docker::version unsupported on Archlinux':
           message => 'Versions other than latest are not supported on Arch Linux. This setting will be ignored.'
