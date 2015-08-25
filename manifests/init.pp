@@ -348,6 +348,10 @@ class docker(
     fail('You need to provide both $dm_datadev and $dm_metadatadev parameters for direct lvm.')
   }
 
+  if ($dm_basesize or $dm_fs or $dm_mkfsarg or $dm_mountopt or $dm_blocksize or $dm_loopdatasize or $dm_loopmetadatasize or $dm_datadev or $dm_metadatadev) and ($storage_driver != 'devicemapper') {
+    fail('Values for dm_ variables will be ignored unless storage_driver is set to devicemapper.')
+  }
+
   class { 'docker::repos': } ->
   class { 'docker::install': } ->
   class { 'docker::config': } ~>
