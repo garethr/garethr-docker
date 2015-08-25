@@ -80,7 +80,7 @@ define docker::run(
   validate_re($title, '^[\S]*$')
   validate_re($memory_limit, '^[\d]*(b|k|m|g)$')
   if $restart {
-    validate_re($restart, '^(no|always)|^on-failure:[\d]+$')
+    validate_re($restart, '^(no|always|on-failure)|^on-failure:[\d]+$')
   }
   validate_string($docker_command)
   validate_string($service_name)
@@ -147,7 +147,7 @@ define docker::run(
     $cidfile = "/var/run/docker-${sanitised_title}.cid"
 
     exec { "run ${title} with docker":
-      command     => "${docker_command} run -d ${docker_run_flags} --cidfile=${cidfile} ${image} ${command}",
+      command     => "${docker_command} run -d ${docker_run_flags} --cidfile=${cidfile} --restart=\"${restart}\" ${image} ${command}",
       unless      => "docker ps --no-trunc -a | grep `cat ${cidfile}`",
       environment => 'HOME=/root',
       path        => ['/bin', '/usr/bin'],
