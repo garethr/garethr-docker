@@ -397,6 +397,7 @@ require 'spec_helper'
       it { should contain_exec('run sample with docker').with_command(/-c 4/) }
       it { should contain_exec('run sample with docker').with_command(/--restart="no"/) }
       it { should contain_exec('run sample with docker').with_command(/base command/) }
+      it { should contain_exec('run sample with docker').with_timeout(0) }
     end
 
     context 'with restart policy set to always' do
@@ -408,6 +409,7 @@ require 'spec_helper'
       it { should contain_exec('run sample with docker').with_command(/-c 4/) }
       it { should contain_exec('run sample with docker').with_command(/--restart="always"/) }
       it { should contain_exec('run sample with docker').with_command(/base command/) }
+      it { should contain_exec('run sample with docker').with_timeout(0) }
     end
 
     context 'with restart policy set to on-failure' do
@@ -419,6 +421,7 @@ require 'spec_helper'
       it { should contain_exec('run sample with docker').with_command(/-c 4/) }
       it { should contain_exec('run sample with docker').with_command(/--restart="on-failure"/) }
       it { should contain_exec('run sample with docker').with_command(/base command/) }
+      it { should contain_exec('run sample with docker').with_timeout(0) }
     end
 
     context 'with restart policy set to on-failure:3' do
@@ -430,6 +433,7 @@ require 'spec_helper'
       it { should contain_exec('run sample with docker').with_command(/-c 4/) }
       it { should contain_exec('run sample with docker').with_command(/--restart="on-failure:3"/) }
       it { should contain_exec('run sample with docker').with_command(/base command/) }
+      it { should contain_exec('run sample with docker').with_timeout(0) }
     end
 
   end

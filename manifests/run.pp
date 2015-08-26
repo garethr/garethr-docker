@@ -151,6 +151,7 @@ define docker::run(
       unless      => "docker ps --no-trunc -a | grep `cat ${cidfile}`",
       environment => 'HOME=/root',
       path        => ['/bin', '/usr/bin'],
+      timeout     => 0
     }
   } else {
 
