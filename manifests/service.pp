@@ -77,6 +77,14 @@ class docker::service (
     'RedHat': {
       if ($::operatingsystem == 'Fedora') or (versioncmp($::operatingsystemrelease, '7.0') >= 0) {
         $template = 'docker.rhel7.erb'
+
+        file { '/etc/sysconfig/docker-storage-setup':
+          ensure  => present,
+          force   => true,
+          content => template('docker/etc/sysconfig/docker-storage-setup.erb'),
+          notify  => Service['docker'],
+        }
+
       } else {
         $template = 'docker.erb'
       }
