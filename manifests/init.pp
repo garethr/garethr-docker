@@ -204,7 +204,7 @@ class docker(
   }
 
   if $storage_driver {
-    validate_re($storage_driver, '^(aufs|devicemapper|btrfs|overlay|vfs)$', 'Valid values for storage_driver are aufs, devicemapper, btrfs, overlayfs, vfs.' )
+    validate_re($storage_driver, '^(aufs|devicemapper|btrfs|overlayfs|vfs)$', 'Valid values for storage_driver are aufs, devicemapper, btrfs, overlayfs, vfs.' )
   }
 
   if $dm_fs {
