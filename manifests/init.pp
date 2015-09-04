@@ -123,6 +123,20 @@
 # [*dm_metadatadev*]
 #   A custom blockdevice to use for metadata for the thin pool.
 #
+# [*dm_thinpooldev*]
+#   Specifies a custom block storage device to use for the thin pool.
+#
+# [*dm_use_deferred_removal*]
+#   Enables use of deferred device removal if libdm and the kernel driver support the mechanism.
+#
+# [*dm_blkdiscard*]
+#   Enables or disables the use of blkdiscard when removing devicemapper devices.
+#   Defaults to false
+#
+# [*dm_override_udev_sync_check*]
+#   By default, the devicemapper backend attempts to synchronize with the udev device manager for the Linux kernel. This option allows disabling that synchronization, to continue even though the configuration may be buggy.
+#   Defaults to true
+#
 # [*manage_package*]
 #   Won't install or define the docker package, useful if you want to use your own package
 #   Defaults to true
@@ -146,47 +160,87 @@
 # [*repo_opt*]
 #   Specify a string to pass as repository options (RedHat only)
 #
+# [*storage_devs*]
+#   A quoted, space-separated list of devices to be used.
+#
+# [*storage_vg*]
+#   The volume group to use for docker storage.
+#
+# [*storage_root_size*]
+#   The size to which the root filesystem should be grown.
+#
+# [*storage_data_size*]
+#   The desired size for the docker data LV
+#
+# [*storage_chunk_size*]
+#   Controls the chunk size/block size of thin pool.
+#
+# [*storage_growpart*]
+#   Enable resizing partition table backing root volume group.
+#
+# [*storage_auto_extend_pool*]
+#   Enable/disable automatic pool extension using lvm
+#
+# [*storage_pool_autoextend_threshold*]
+#   Auto pool extension threshold (in % of pool size)
+#
+# [*storage_pool_autoextend_percent*]
+#   Extend the pool by specified percentage when threshold is hit.
+#
 class docker(
-  $version                     = $docker::params::version,
-  $ensure                      = $docker::params::ensure,
-  $prerequired_packages        = $docker::params::prerequired_packages,
-  $tcp_bind                    = $docker::params::tcp_bind,
-  $socket_bind                 = $docker::params::socket_bind,
-  $log_level                   = $docker::params::log_level,
-  $selinux_enabled             = $docker::params::selinux_enabled,
-  $use_upstream_package_source = $docker::params::use_upstream_package_source,
-  $package_source_location     = $docker::params::package_source_location,
-  $service_state               = $docker::params::service_state,
-  $service_enable              = $docker::params::service_enable,
-  $root_dir                    = $docker::params::root_dir,
-  $tmp_dir                     = $docker::params::tmp_dir,
-  $manage_kernel               = $docker::params::manage_kernel,
-  $dns                         = $docker::params::dns,
-  $dns_search                  = $docker::params::dns_search,
-  $socket_group                = $docker::params::socket_group,
-  $extra_parameters            = undef,
-  $shell_values                = undef,
-  $proxy                       = $docker::params::proxy,
-  $no_proxy                    = $docker::params::no_proxy,
-  $storage_driver              = $docker::params::storage_driver,
-  $dm_basesize                 = $docker::params::dm_basesize,
-  $dm_fs                       = $docker::params::dm_fs,
-  $dm_mkfsarg                  = $docker::params::dm_mkfsarg,
-  $dm_mountopt                 = $docker::params::dm_mountopt,
-  $dm_blocksize                = $docker::params::dm_blocksize,
-  $dm_loopdatasize             = $docker::params::dm_loopdatasize,
-  $dm_loopmetadatasize         = $docker::params::dm_loopmetadatasize,
-  $dm_datadev                  = $docker::params::dm_datadev,
-  $dm_metadatadev              = $docker::params::dm_metadatadev,
-  $execdriver                  = $docker::params::execdriver,
-  $manage_package              = $docker::params::manage_package,
-  $manage_epel                 = $docker::params::manage_epel,
-  $package_name                = $docker::params::package_name,
-  $service_name                = $docker::params::service_name,
-  $docker_command              = $docker::params::docker_command,
-  $docker_users                = [],
-  $repo_opt                    = $docker::params::repo_opt,
-  $nowarn_kernel               = $docker::params::nowarn_kernel,
+  $version                           = $docker::params::version,
+  $ensure                            = $docker::params::ensure,
+  $prerequired_packages              = $docker::params::prerequired_packages,
+  $tcp_bind                          = $docker::params::tcp_bind,
+  $socket_bind                       = $docker::params::socket_bind,
+  $log_level                         = $docker::params::log_level,
+  $selinux_enabled                   = $docker::params::selinux_enabled,
+  $use_upstream_package_source       = $docker::params::use_upstream_package_source,
+  $package_source_location           = $docker::params::package_source_location,
+  $service_state                     = $docker::params::service_state,
+  $service_enable                    = $docker::params::service_enable,
+  $root_dir                          = $docker::params::root_dir,
+  $tmp_dir                           = $docker::params::tmp_dir,
+  $manage_kernel                     = $docker::params::manage_kernel,
+  $dns                               = $docker::params::dns,
+  $dns_search                        = $docker::params::dns_search,
+  $socket_group                      = $docker::params::socket_group,
+  $extra_parameters                  = undef,
+  $shell_values                      = undef,
+  $proxy                             = $docker::params::proxy,
+  $no_proxy                          = $docker::params::no_proxy,
+  $storage_driver                    = $docker::params::storage_driver,
+  $dm_basesize                       = $docker::params::dm_basesize,
+  $dm_fs                             = $docker::params::dm_fs,
+  $dm_mkfsarg                        = $docker::params::dm_mkfsarg,
+  $dm_mountopt                       = $docker::params::dm_mountopt,
+  $dm_blocksize                      = $docker::params::dm_blocksize,
+  $dm_loopdatasize                   = $docker::params::dm_loopdatasize,
+  $dm_loopmetadatasize               = $docker::params::dm_loopmetadatasize,
+  $dm_datadev                        = $docker::params::dm_datadev,
+  $dm_metadatadev                    = $docker::params::dm_metadatadev,
+  $dm_thinpooldev                    = $docker::params::dm_thinpooldev,
+  $dm_use_deferred_removal           = $docker::params::dm_use_deferred_removal,
+  $dm_blkdiscard                     = $docker::params::dm_blkdiscard,
+  $dm_override_udev_sync_check       = $docker::params::dm_override_udev_sync_check,
+  $execdriver                        = $docker::params::execdriver,
+  $manage_package                    = $docker::params::manage_package,
+  $manage_epel                       = $docker::params::manage_epel,
+  $package_name                      = $docker::params::package_name,
+  $service_name                      = $docker::params::service_name,
+  $docker_command                    = $docker::params::docker_command,
+  $docker_users                      = [],
+  $repo_opt                          = $docker::params::repo_opt,
+  $nowarn_kernel                     = $docker::params::nowarn_kernel,
+  $storage_devs                      = $docker::params::storage_devs,
+  $storage_vg                        = $docker::params::storage_vg,
+  $storage_root_size                 = $docker::params::storage_root_size,
+  $storage_data_size                 = $docker::params::storage_data_size,
+  $storage_chunk_size                = $docker::params::storage_chunk_size,
+  $storage_growpart                  = $docker::params::storage_growpart,
+  $storage_auto_extend_pool          = $docker::params::storage_auto_extend_pool,
+  $storage_pool_autoextend_threshold = $docker::params::storage_pool_autoextend_threshold,
+  $storage_pool_autoextend_percent   = $docker::params::storage_pool_autoextend_percent,
 ) inherits docker::params {
 
   validate_string($version)
