@@ -319,6 +319,27 @@ describe 'docker', :type => :class do
     end
   end
 
+  context 'specific to Debian jessie' do
+    let(:facts) { {
+      :osfamily        => 'Debian',
+      :operatingsystem => 'Debian',
+      :lsbdistid       => 'Debian',
+      :lsbdistcodename => 'jessie',
+      :kernelrelease   => '3.16.0-4-amd64'
+    } }
+
+    it { should_not contain_package('linux-image-extra-3.8.0-29-generic') }
+    it { should_not contain_package('linux-image-generic-lts-raring') }
+    it { should_not contain_package('linux-headers-generic-lts-raring') }
+    it { should contain_service('docker').without_provider }
+
+    context 'with no upstream package source' do
+      let(:params) { {'use_upstream_package_source' => false } }
+      it { should_not contain_apt__source('docker') }
+      it { should contain_package('docker').with_name('docker.io') }
+    end
+  end
+
   context 'specific to RedHat' do
     let(:facts) { {
       :osfamily => 'RedHat',
