@@ -1,8 +1,37 @@
 require 'spec_helper'
 
+
 describe 'docker::image', :type => :define do
   let(:title) { 'base' }
   it { should contain_exec('docker pull base') }
+
+  context 'specific to Debian jessie' do
+    let(:facts) { {
+      :osfamily        => 'Debian',
+      :operatingsystem => 'Debian',
+      :lsbdistid       => 'Debian',
+      :lsbdistcodename => 'jessie',
+    } }
+
+    context 'with docker_file => Dockerfile' do
+      let(:params) { { 'docker_file' => 'Dockerfile' }}
+      it { should contain_exec('docker build -t base - < Dockerfile') }
+    end
+  end
+
+  context 'specific to Debian wheezy' do
+    let(:facts) { {
+      :osfamily        => 'Debian',
+      :operatingsystem => 'Debian',
+      :lsbdistid       => 'Debian',
+      :lsbdistcodename => 'wheezy',
+    } }
+
+    context 'with docker_file => Dockerfile' do
+      let(:params) { { 'docker_file' => 'Dockerfile' }}
+      it { should contain_exec('docker.io build -t base - < Dockerfile') }
+    end
+  end
 
   context 'with ensure => absent' do
     let(:params) { { 'ensure' => 'absent' } }

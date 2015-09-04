@@ -45,9 +45,15 @@ class docker::params {
           $docker_command = $docker_command_default
         }
         default: {
-          $package_name   = 'docker.io'
-          $service_name   = 'docker.io'
-          $docker_command = 'docker.io'
+          if ($::lsbdistcodename == 'jessie') {
+            $package_name   = 'docker.io'
+            $service_name   = 'docker'
+            $docker_command = 'docker'
+          } else {
+            $package_name   = 'docker.io'
+            $service_name   = 'docker.io'
+            $docker_command = 'docker.io'
+          }
         }
       }
       $docker_group = $docker_group_default
