@@ -26,6 +26,7 @@ require 'spec_helper'
       let(:params) { {'command' => 'command', 'image' => 'base'} }
       it { should compile.with_all_deps }
       it { should contain_service('docker-sample') }
+      it { should_not contain_service('docker') }
       if (osfamily == 'Debian')
         it { should contain_file(initscript).with_content(/\$docker run/) }
         it { should contain_file(initscript).with_content(/#{command}/) }
@@ -396,6 +397,26 @@ require 'spec_helper'
       it { should contain_exec('run sample with docker').with_command(/--cidfile=\/var\/run\/docker-sample.cid/) }
       it { should contain_exec('run sample with docker').with_command(/-c 4/) }
       it { should contain_exec('run sample with docker').with_command(/base command/) }
+    end
+
+    context 'when `docker_service` is false' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'docker_service' => false} }
+      it { should compile.with_all_deps }
+			it { should contain_service('docker-sample') }
+    end
+
+    context 'when `docker_service` is true' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'docker_service' => true} }
+			let(:pre_condition) { "service { 'docker': }" }
+      it { should compile.with_all_deps }
+			it { should contain_service('docker').that_comes_before('Service[docker-sample]') }
+    end
+
+    context 'when `docker_service` is `my-docker`' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'docker_service' => 'my-docker'} }
+			let(:pre_condition) { "service{ 'my-docker': }" }
+      it { should compile.with_all_deps }
+			it { should contain_service('my-docker').that_comes_before('Service[docker-sample]') }
     end
 
   end

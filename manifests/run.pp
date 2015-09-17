@@ -31,6 +31,13 @@
 #  script.  Disabling this may be useful if integrating with existing modules.
 #  Default: true
 #
+# [*docker_service*]
+#  (optional) If (and how) the Docker service itself is managed by Puppet
+#  true          -> Service['docker']
+#  false         -> no Service dependency
+#  anything else -> Service[docker_service]
+#  Default: false
+#
 # [*extra_parameters*]
 # An array of additional command line arguments to pass to the `docker run`
 # command. Useful for adding additional new or experimental options that the
@@ -60,6 +67,7 @@ define docker::run(
   $service_prefix = 'docker-',
   $restart_service = true,
   $manage_service = true,
+  $docker_service = false,
   $disable_network = false,
   $privileged = false,
   $detach = undef,
@@ -233,6 +241,14 @@ define docker::run(
         provider  => $provider,
         hasstatus => $hasstatus,
         require   => File[$initscript],
+      }
+
+      if $docker_service {
+        if $docker_service == true {
+          Service['docker'] -> Service["${service_prefix}${sanitised_title}"]
+        } else {
+          Service[$docker_service] -> Service["${service_prefix}${sanitised_title}"]
+        }
       }
     }
 
