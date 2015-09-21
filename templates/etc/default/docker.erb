@@ -24,7 +24,7 @@ DOCKER_OPTS="\
 <% if @socket_bind %> -H <%= @socket_bind %><% end -%>
 <% if @log_level %> -l <%= @log_level %><% end -%>
 <% if @log_driver %> --log-driver <%= @log_driver %><% end -%>
-<% if @log_driver %><% if @log_opt %><% @log_opt_array.each do |param| %> --log-opt <%= param %><% end %><% end -%><% end -%>
+<% if @log_driver %><% if @log_opt %><% @log_opt.each do |param| %> --log-opt <%= param %><% end %><% end -%><% end -%>
 <% if @selinux_enabled %> --selinux-enabled=<%= @selinux_enabled %><% end -%>
 <% if @socket_group %> -G <%= @socket_group %><% end -%>
 <% if @dns %><% @dns_array.each do |address| %> --dns <%= address %><% end %><% end -%>
