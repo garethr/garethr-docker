@@ -283,15 +283,16 @@ docker::registry_auth::registries:
 
 ### Exec
 
-Docker also supports running arbitrary comments within the context of a
+Docker also supports running arbitrary commands within the context of a
 running container. And now so does the Puppet module.
 
 ```puppet
-docker::exec { 'helloworld-uptime':
-  detach    => true,
-  container => 'helloworld',
-  command   => 'uptime',
-  tty       => true,
+docker::exec { 'bin/echo root >> /usr/lib/cron/cron.allow':
+  detach       => true,
+  container    => 'helloworld',
+  command      => 'uptime',
+  tty          => true,
+  unless       => 'grep root /usr/lib/cron/cron.allow 2>/dev/null',
 }
 ```
 

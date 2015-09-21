@@ -8,6 +8,7 @@ define docker::exec(
   $tty = false,
   $container = undef,
   $command = undef,
+  $unless = undef,
   $sanitise_name = true,
 ) {
   include docker::params
@@ -34,10 +35,12 @@ define docker::exec(
     $sanitised_container = $container
   }
   $exec = "${docker_command} exec ${docker_exec_flags} ${sanitised_container} ${command}"
+  $unless_command = "${docker_command} exec ${docker_exec_flags} ${sanitised_container} ${unless}"
 
   exec { $exec:
     environment => 'HOME=/root',
     path        => ['/bin', '/usr/bin'],
     timeout     => 0,
+    unless      => $unless_command,
   }
 }
