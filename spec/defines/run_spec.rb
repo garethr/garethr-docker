@@ -398,6 +398,13 @@ require 'spec_helper'
       it { should contain_exec('run sample with docker').with_command(/base command/) }
     end
 
+    context 'with extra_systemd_parameters' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'extra_systemd_parameters' => {'RestartSec' => 5}} }
+      if (systemd)
+        it { should contain_file(initscript).with_content(/^RestartSec=5$/) }
+      end
+    end
+
   end
   end
 
