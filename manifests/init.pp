@@ -30,6 +30,52 @@
 #   Defaults to undef: docker defaults to info if no value specified
 #   Valid values: debug, info, warn, error, fatal
 #
+# [*log_driver*]
+#   Set the log driver.
+#   Defaults to undef.
+#   Docker default is json-file.
+#   Valid values: none, json-file, syslog, journald, gelf, fluentd
+#   Valid values description:
+#     none     : Disables any logging for the container.
+#                docker logs won’t be available with this driver.
+#     json-file: Default logging driver for Docker.
+#                Writes JSON messages to file.
+#     syslog   : Syslog logging driver for Docker.
+#                Writes log messages to syslog.
+#     journald : Journald logging driver for Docker.
+#                Writes log messages to journald.
+#     gelf     : Graylog Extended Log Format (GELF) logging driver for Docker.
+#                Writes log messages to a GELF endpoint: Graylog or Logstash.
+#     fluentd  : Fluentd logging driver for Docker.
+#                Writes log messages to fluentd (forward input).
+#
+# [*log_opt*]
+#   Set the log driver specific options
+#   Defaults to undef
+#   Valid values per log driver:
+#     none     : undef
+#     json-file:
+#                max-size=[0-9+][k|m|g]
+#                max-file=[0-9+]
+#     syslog   :
+#                syslog-address=[tcp|udp]://host:port
+#                syslog-address=unix://path
+#                syslog-facility=daemon|kern|user|mail|auth|
+#                                syslog|lpr|news|uucp|cron|
+#                                authpriv|ftp|
+#                                local0|local1|local2|local3|
+#                                local4|local5|local6|local7
+#                syslog-tag="some_tag"
+#     journald : undef
+#     gelf     :
+#                gelf-address=udp://host:port
+#                gelf-tag="some_tag"
+#     fluentd  :
+#                fluentd-address=host:port
+#                fluentd-tag={{.ID}} - short container id (12 characters)|
+#                            {{.FullID}} - full container id
+#                            {{.Name}} - container name
+#
 # [*selinux_enabled*]
 #   Enable selinux support. Default is false. SELinux does  not  presently
 #   support  the  BTRFS storage driver.
@@ -153,6 +199,8 @@ class docker(
   $tcp_bind                    = $docker::params::tcp_bind,
   $socket_bind                 = $docker::params::socket_bind,
   $log_level                   = $docker::params::log_level,
+  $log_driver                  = $docker::params::log_driver,
+  $log_opt                     = $docker::params::log_opt,
   $selinux_enabled             = $docker::params::selinux_enabled,
   $use_upstream_package_source = $docker::params::use_upstream_package_source,
   $package_source_location     = $docker::params::package_source_location,
@@ -194,9 +242,14 @@ class docker(
   validate_bool($manage_kernel)
   validate_bool($manage_package)
   validate_array($docker_users)
+  validate_array($log_opt)
 
   if $log_level {
     validate_re($log_level, '^(debug|info|warn|error|fatal)$', 'log_level must be one of debug, info, warn, error or fatal')
+  }
+
+  if $log_driver {
+    validate_re($log_driver, '^(none|json-file|syslog|journald|gelf|fluentd)$', 'log_driver must be one of none, json-file, syslog, journald, gelf or fluentd')
   }
 
   if $selinux_enabled {
