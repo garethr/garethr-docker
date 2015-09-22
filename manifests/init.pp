@@ -37,7 +37,7 @@
 #   Valid values: none, json-file, syslog, journald, gelf, fluentd
 #   Valid values description:
 #     none     : Disables any logging for the container.
-#                docker logs won’t be available with this driver.
+#                docker logs won't be available with this driver.
 #     json-file: Default logging driver for Docker.
 #                Writes JSON messages to file.
 #     syslog   : Syslog logging driver for Docker.
