@@ -287,10 +287,10 @@ Docker also supports running arbitrary commands within the context of a
 running container. And now so does the Puppet module.
 
 ```puppet
-docker::exec { 'bin/echo root >> /usr/lib/cron/cron.allow':
+docker::exec { 'cron_allow_root':
   detach       => true,
-  container    => 'helloworld',
-  command      => 'uptime',
+  container    => 'mycontainer',
+  command      => '/bin/echo root >> /usr/lib/cron/cron.allow',
   tty          => true,
   unless       => 'grep root /usr/lib/cron/cron.allow 2>/dev/null',
 }
