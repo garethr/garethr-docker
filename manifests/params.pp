@@ -51,7 +51,7 @@ class docker::params {
         }
       }
       $docker_group = $docker_group_default
-      $package_source_location     = 'https://get.docker.com/ubuntu'
+      $package_source_location     = 'http://apt.dockerproject.org/repo/'
       $use_upstream_package_source = true
       $detach_service_in_init = true
       $repo_opt = undef
