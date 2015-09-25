@@ -8,6 +8,7 @@ define docker::exec(
   $tty = false,
   $container = undef,
   $command = undef,
+  $sanitise_name = true,
 ) {
   include docker::params
 
@@ -26,7 +27,13 @@ define docker::exec(
     tty => $tty,
   })
 
-  $exec = "${docker_command} exec ${docker_exec_flags} ${container} ${command}"
+
+  if $sanitise_name {
+    $sanitised_container = regsubst($container, '[^0-9A-Za-z.\-]', '-', 'G')
+  } else {
+    $sanitised_container = $container
+  }
+  $exec = "${docker_command} exec ${docker_exec_flags} ${sanitised_container} ${command}"
 
   exec { $exec:
     environment => 'HOME=/root',

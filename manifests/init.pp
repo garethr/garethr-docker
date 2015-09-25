@@ -30,6 +30,11 @@
 #   Defaults to undef: docker defaults to info if no value specified
 #   Valid values: debug, info, warn, error, fatal
 #
+# [*selinux_enabled*]
+#   Enable selinux support. Default is false. SELinux does  not  presently
+#   support  the  BTRFS storage driver.
+#   Valid values: true, false
+#
 # [*use_upstream_package_source*]
 #   Whether or not to use the upstream package source.
 #   If you run your own package mirror, you may set this
@@ -37,7 +42,7 @@
 #
 # [*package_source_location*]
 #   If you're using an upstream package source, what is it's
-#   location. Defaults to https://get.docker.io/ubuntu on Debian
+#   location. Defaults to https://get.docker.com/ubuntu on Debian
 #
 # [*service_state*]
 #   Whether you want to docker daemon to start up
@@ -135,8 +140,11 @@
 #   Default is set on a per system basis in docker::params
 #
 # [*docker_users*]
-#   Specifc a array of users to add to the docker group
+#   Specify an array of users to add to the docker group
 #   Default is empty
+#
+# [*repo_opt*]
+#   Specify a string to pass as repository options (RedHat only)
 #
 class docker(
   $version                     = $docker::params::version,
@@ -145,6 +153,7 @@ class docker(
   $tcp_bind                    = $docker::params::tcp_bind,
   $socket_bind                 = $docker::params::socket_bind,
   $log_level                   = $docker::params::log_level,
+  $selinux_enabled             = $docker::params::selinux_enabled,
   $use_upstream_package_source = $docker::params::use_upstream_package_source,
   $package_source_location     = $docker::params::package_source_location,
   $service_state               = $docker::params::service_state,
@@ -171,10 +180,13 @@ class docker(
   $dm_metadatadev              = $docker::params::dm_metadatadev,
   $execdriver                  = $docker::params::execdriver,
   $manage_package              = $docker::params::manage_package,
+  $manage_epel                 = $docker::params::manage_epel,
   $package_name                = $docker::params::package_name,
   $service_name                = $docker::params::service_name,
   $docker_command              = $docker::params::docker_command,
   $docker_users                = [],
+  $repo_opt                    = $docker::params::repo_opt,
+  $nowarn_kernel               = $docker::params::nowarn_kernel,
 ) inherits docker::params {
 
   validate_string($version)
@@ -185,6 +197,10 @@ class docker(
 
   if $log_level {
     validate_re($log_level, '^(debug|info|warn|error|fatal)$', 'log_level must be one of debug, info, warn, error or fatal')
+  }
+
+  if $selinux_enabled {
+    validate_re($selinux_enabled, '^(true|false)$', 'selinux_enabled must be true or false')
   }
 
   if $storage_driver {
@@ -212,7 +228,7 @@ class docker(
 
   # Only bother trying extra docker stuff after docker has been installed,
   # and is running.
-  Class['docker'] -> Docker::Run <||>
+  Class['docker'] -> Docker::Registry <||> -> Docker::Run <||>
   Class['docker'] -> Docker::Image <||>
 
 }

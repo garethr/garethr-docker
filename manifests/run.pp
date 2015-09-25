@@ -1,6 +1,40 @@
 # == Define: docker:run
 #
-# A define which manages an upstart managed docker container
+# A define which manages a running docker container.
+#
+# == Parameters
+#
+# [*restart*]
+# Sets a restart policy on the docker run.
+# Note: If set, puppet will NOT setup an init script to manage, instead
+# it will do a raw docker run command using a CID file to track the container
+# ID.
+#
+# If you want a normal named container with an init script and a restart policy
+# you must use the extra_parameters feature and pass it in like this:
+#
+#    extra_parameters => ['--restart=always']
+#
+# This will allow the docker container to be restarted if it dies, without
+# puppet help.
+#
+# [*service_prefix*]
+#   (optional) The name to prefix the startup script with and the Puppet
+#   service resource title with.  Default: 'docker-'
+#
+# [*restart_service*]
+#   (optional) Whether or not to restart the service if the the generated init
+#   script changes.  Default: true
+#
+# [*manage_service*]
+#  (optional) Whether or not to create a puppet Service resource for the init
+#  script.  Disabling this may be useful if integrating with existing modules.
+#  Default: true
+#
+# [*extra_parameters*]
+# An array of additional command line arguments to pass to the `docker run`
+# command. Useful for adding additional new or experimental options that the
+# module does not yet support.
 #
 define docker::run(
   $image,
@@ -8,6 +42,7 @@ define docker::run(
   $memory_limit = '0b',
   $cpuset = [],
   $ports = [],
+  $labels = [],
   $expose = [],
   $volumes = [],
   $links = [],
@@ -18,10 +53,13 @@ define docker::run(
   $username = false,
   $hostname = false,
   $env = [],
+  $env_file = [],
   $dns = [],
   $dns_search = [],
   $lxc_conf = [],
+  $service_prefix = 'docker-',
   $restart_service = true,
+  $manage_service = true,
   $disable_network = false,
   $privileged = false,
   $detach = undef,
@@ -32,7 +70,7 @@ define docker::run(
   $socket_connect = [],
   $hostentries = [],
   $restart = undef,
-  $clean_restart = false,
+  $before_stop = false,
 ) {
   include docker::params
   $docker_command = $docker::params::docker_command
@@ -68,38 +106,40 @@ define docker::run(
     $valid_detach = $detach
   }
 
-  $extra_parameters_array = any2array($extra_parameters)
   $depends_array = any2array($depends)
 
   $docker_run_flags = docker_run_flags({
-    cpuset => any2array($cpuset),
-    detach => $valid_detach,
+    cpuset          => any2array($cpuset),
+    detach          => $valid_detach,
     disable_network => $disable_network,
-    dns => any2array($dns),
-    dns_search => any2array($dns_search),
-    env => any2array($env),
-    expose => any2array($expose),
-    hostname => $hostname,
-    links => any2array($links),
-    lxc_conf => any2array($lxc_conf),
-    memory_limit => $memory_limit,
-    net => $net,
-    ports => any2array($ports),
-    privileged => $privileged,
-    username => $username,
-    volumes => any2array($volumes),
-    volumes_from => any2array($volumes_from),
-    tty => $tty,
-    socket_connect => any2array($socket_connect),
-    hostentries => any2array($hostentries),
+    dns             => any2array($dns),
+    dns_search      => any2array($dns_search),
+    env             => any2array($env),
+    env_file        => any2array($env_file),
+    expose          => any2array($expose),
+    extra_params    => any2array($extra_parameters),
+    hostentries     => any2array($hostentries),
+    hostname        => $hostname,
+    links           => any2array($links),
+    lxc_conf        => any2array($lxc_conf),
+    memory_limit    => $memory_limit,
+    net             => $net,
+    ports           => any2array($ports),
+    labels          => any2array($labels),
+    privileged      => $privileged,
+    socket_connect  => any2array($socket_connect),
+    tty             => $tty,
+    username        => $username,
+    volumes         => any2array($volumes),
+    volumes_from    => any2array($volumes_from),
   })
 
   $sanitised_title = regsubst($title, '[^0-9A-Za-z.\-]', '-', 'G')
-  $sanitised_depends_array = regsubst($depends_array, '[^0-9A-Za-z.\-]', '-', 'G')
-
-  $provider = $::operatingsystem ? {
-    'Ubuntu' => 'upstart',
-    default  => undef,
+  if empty($depends_array) {
+    $sanitised_depends_array = []
+  }
+  else {
+    $sanitised_depends_array = regsubst($depends_array, '[^0-9A-Za-z.\-]', '-', 'G')
   }
 
   if $restart {
@@ -108,7 +148,7 @@ define docker::run(
 
     exec { "run ${title} with docker":
       command     => "${docker_command} run -d ${docker_run_flags} --cidfile=${cidfile} ${image} ${command}",
-      unless      => "docker ps --no-trunc | grep `cat ${cidfile}`",
+      unless      => "docker ps --no-trunc -a | grep `cat ${cidfile}`",
       environment => 'HOME=/root',
       path        => ['/bin', '/usr/bin'],
     }
@@ -116,48 +156,32 @@ define docker::run(
 
     case $::osfamily {
       'Debian': {
-        $initscript = "/etc/init.d/docker-${sanitised_title}"
+        $initscript = "/etc/init.d/${service_prefix}${sanitised_title}"
         $init_template = 'docker/etc/init.d/docker-run.erb'
-        $deprecated_initscript = "/etc/init/docker-${sanitised_title}.conf"
+        $deprecated_initscript = "/etc/init/${service_prefix}${sanitised_title}.conf"
         $hasstatus  = true
-        $hasrestart = false
         $uses_systemd = false
         $mode = '0755'
-
-        # When switching between styles of init scripts (e.g. upstart and sysvinit),
-        # we want to stop the service using the old init script. Since `service` will
-        # prefer a sysvinit style script over an upstart one if both exist, we need
-        # to stop the service before adding the sysvinit script.
-        exec { "/usr/sbin/service docker-${sanitised_title} stop":
-          onlyif  => "/usr/bin/test -f ${deprecated_initscript}"
-        } ->
-        file { $deprecated_initscript:
-          ensure => absent
-        } ->
-        File[$initscript]
       }
       'RedHat': {
-        if versioncmp($::operatingsystemrelease, '7.0') < 0 {
-          $initscript     = "/etc/init.d/docker-${sanitised_title}"
+        if ($::operatingsystem == 'Amazon') or (versioncmp($::operatingsystemrelease, '7.0') < 0) {
+          $initscript     = "/etc/init.d/${service_prefix}${sanitised_title}"
           $init_template  = 'docker/etc/init.d/docker-run.erb'
           $hasstatus      = undef
-          $hasrestart     = undef
           $mode           = '0755'
           $uses_systemd   = false
         } else {
-          $initscript     = "/etc/systemd/system/docker-${sanitised_title}.service"
+          $initscript     = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
           $init_template  = 'docker/etc/systemd/system/docker-run.erb'
           $hasstatus      = true
-          $hasrestart     = true
           $mode           = '0644'
           $uses_systemd   = true
         }
       }
       'Archlinux': {
-        $initscript     = "/etc/systemd/system/docker-${sanitised_title}.service"
+        $initscript     = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
         $init_template  = 'docker/etc/systemd/system/docker-run.erb'
         $hasstatus      = true
-        $hasrestart     = true
         $mode           = '0644'
         $uses_systemd   = true
       }
@@ -172,31 +196,42 @@ define docker::run(
       mode    => $mode,
     }
 
-    $restartcmd = $clean_restart ? {
-      true  => "service docker-${sanitised_title} cleanRestart",
-      false => undef,
-    }
+    if $manage_service {
+      # Transition help from moving from CID based container detection to
+      # Name-based container detection. See #222 for context.
+      # This code should be considered temporary until most people have
+      # transitioned. - 2015-04-15
+      if $initscript == "/etc/init.d/${service_prefix}${sanitised_title}" {
+        # This exec sequence will ensure the old-style CID container is stopped
+        # before we replace the init script with the new-style.
+        exec { "/bin/sh /etc/init.d/${service_prefix}${sanitised_title} stop":
+          onlyif  => "/usr/bin/test -f /var/run/docker-${sanitised_title}.cid && /usr/bin/test -f /etc/init.d/${service_prefix}${sanitised_title}",
+          require => [],
+        } ->
+        file { "/var/run/docker-${sanitised_title}.cid":
+          ensure => absent,
+        } ->
+        File[$initscript]
+      }
 
-    service { "docker-${sanitised_title}":
-      ensure     => $running,
-      enable     => true,
-      hasstatus  => $hasstatus,
-      hasrestart => $hasrestart,
-      restart    => $restartcmd,
-      provider   => $provider,
-      require    => File[$initscript],
+      service { "${service_prefix}${sanitised_title}":
+        ensure    => $running,
+        enable    => true,
+        hasstatus => $hasstatus,
+        require   => File[$initscript],
+      }
     }
 
     if $uses_systemd {
       File[$initscript] ~> Exec['docker-systemd-reload']
-      Exec['docker-systemd-reload'] -> Service["docker-${sanitised_title}"]
+      Exec['docker-systemd-reload'] -> Service<| title == "${service_prefix}${sanitised_title}" |>
     }
 
     if $restart_service {
-      File[$initscript] ~> Service["docker-${sanitised_title}"]
+      File[$initscript] ~> Service<| title == "${service_prefix}${sanitised_title}" |>
     }
     else {
-      File[$initscript] -> Service["docker-${sanitised_title}"]
+      File[$initscript] -> Service<| title == "${service_prefix}${sanitised_title}" |>
     }
   }
 }
