@@ -17,10 +17,10 @@ if $::osfamily == 'RedHat' {
 if ($docker::manage_python) {
   class { 'python' :
     version    => 'system',
-    pip        => true,
-    dev        => true,
-    virtualenv => false,
-    gunicorn   => false,
+    pip        => 'present',
+    dev        => 'present',
+    virtualenv => 'absent',
+    gunicorn   => 'absent',
     }
   }
 
