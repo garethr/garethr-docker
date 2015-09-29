@@ -131,6 +131,11 @@ require 'spec_helper'
       it { should contain_file(initscript).with_content(/--expose=4666/) }
     end
 
+    context 'when passing a label' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'labels' => 'key=value'} }
+      it { should contain_file(initscript).with_content(/-l key=value/) }
+    end
+
     context 'when passing a hostentry' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'hostentries' => 'dummyhost:127.0.0.2'} }
       it { should contain_file(initscript).with_content(/--add-host dummyhost:127.0.0.2/) }
@@ -150,6 +155,11 @@ require 'spec_helper'
     context 'when passing several port numbers' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'ports' => ['4444', '4555']} }
       it { should contain_file(initscript).with_content(/-p 4444/).with_content(/-p 4555/) }
+    end
+
+    context 'when passing several labels' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'labels' => ['key1=value1', 'key2=value2']} }
+      it { should contain_file(initscript).with_content(/-l key1=value1/).with_content(/-l key2=value2/) }
     end
 
     context 'when passing several ports to expose' do
@@ -382,6 +392,7 @@ require 'spec_helper'
       let(:params) { {'restart' => 'no', 'command' => 'command', 'image' => 'base', 'extra_parameters' => '-c 4'} }
       it { should contain_exec('run sample with docker') }
       it { should contain_exec('run sample with docker').with_unless(/\/var\/run\/docker-sample.cid/) }
+      it { should contain_exec('run sample with docker').with_unless(/-a/) }
       it { should contain_exec('run sample with docker').with_command(/--cidfile=\/var\/run\/docker-sample.cid/) }
       it { should contain_exec('run sample with docker').with_command(/-c 4/) }
       it { should contain_exec('run sample with docker').with_command(/base command/) }

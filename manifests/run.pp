@@ -42,6 +42,7 @@ define docker::run(
   $memory_limit = '0b',
   $cpuset = [],
   $ports = [],
+  $labels = [],
   $expose = [],
   $volumes = [],
   $links = [],
@@ -125,6 +126,7 @@ define docker::run(
     memory_limit    => $memory_limit,
     net             => $net,
     ports           => any2array($ports),
+    labels          => any2array($labels),
     privileged      => $privileged,
     socket_connect  => any2array($socket_connect),
     tty             => $tty,
@@ -148,7 +150,7 @@ define docker::run(
 
     exec { "run ${title} with docker":
       command     => "${docker_command} run -d ${docker_run_flags} --cidfile=${cidfile} ${image} ${command}",
-      unless      => "docker ps --no-trunc | grep `cat ${cidfile}`",
+      unless      => "docker ps --no-trunc -a | grep `cat ${cidfile}`",
       environment => 'HOME=/root',
       path        => ['/bin', '/usr/bin'],
     }

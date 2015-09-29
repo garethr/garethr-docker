@@ -105,7 +105,7 @@ describe 'docker' do
       registry_port = 5000
       @registry_address = "#{registry_host}:#{registry_port}"
       @registry_email = 'user@example.com'
-      @config_file = fact('osfamily') == 'RedHat' ? '~/.dockercfg' : '~/.docker/config.json'
+      @config_file = shell('docker --version|cut -d"/" -f2').stdout < "1.7" ? '~/.dockercfg' : '~/.docker/config.json'
       @manifest = <<-EOS
         class { 'docker': }
         docker::run { 'registry':
