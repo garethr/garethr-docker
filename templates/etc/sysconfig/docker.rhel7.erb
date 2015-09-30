@@ -14,6 +14,8 @@ OPTIONS="<% if @root_dir %> -g <%= @root_dir %><% end -%>
 <% if @extra_parameters %><% @extra_parameters_array.each do |param| %> <%= param %><% end %><% end -%>
 <% if @shell_values %><% @shell_values_array.each do |param| %> <%= param %><% end %><% end -%>"
 
+other_args=$OPTIONS
+
 <% if @proxy %>http_proxy='<%= @proxy %>'
   https_proxy='<%= @proxy %>'<% end %>
 <% if @no_proxy %>no_proxy='<%= @no_proxy %>'<% end %>
