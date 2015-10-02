@@ -26,6 +26,11 @@
 #   (optional) Whether or not to restart the service if the the generated init
 #   script changes.  Default: true
 #
+# [*restart_service_on_docker_refresh*]
+#   Whether or not to restart the service if the docker service is restarted
+#   by the module.
+#   Default: true
+#
 # [*manage_service*]
 #  (optional) Whether or not to create a puppet Service resource for the init
 #  script.  Disabling this may be useful if integrating with existing modules.
@@ -59,6 +64,7 @@ define docker::run(
   $lxc_conf = [],
   $service_prefix = 'docker-',
   $restart_service = true,
+  $restart_service_on_docker_refresh = true,
   $manage_service = true,
   $disable_network = false,
   $privileged = false,
@@ -151,6 +157,7 @@ define docker::run(
       unless      => "docker ps --no-trunc -a | grep `cat ${cidfile}`",
       environment => 'HOME=/root',
       path        => ['/bin', '/usr/bin'],
+      require     => Service['docker']
     }
   } else {
 
@@ -232,6 +239,9 @@ define docker::run(
     }
     else {
       File[$initscript] -> Service<| title == "${service_prefix}${sanitised_title}" |>
+    }
+    if $restart_service_on_docker_refresh {
+      Service['docker'] ~> Service<| title == "${service_prefix}${sanitised_title}" |>
     }
   }
 }
