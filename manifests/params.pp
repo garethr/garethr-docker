@@ -57,7 +57,7 @@ class docker::params {
       $service_name = $service_name_default
       $docker_command = $docker_command_default
       $docker_group = $docker_group_default
-      $package_source_location = 'https://apt.dockerproject.org/repo'
+      $package_source_location = 'http://apt.dockerproject.org/repo'
       $package_key_source = 'https://apt.dockerproject.org/gpg'
       $package_key = '58118E89F3A912897C070ADBF76221572C52609D'
       $package_repos = 'main'
