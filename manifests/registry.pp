@@ -22,13 +22,18 @@
 #   Email for registration to private Docker registry. Leave undef if
 #   auth is not required.
 #
+# [*local_user*]
+#   The local user to log in as. Docker will store credentials in this
+#   users home directory
+#
 #
 define docker::registry(
-  $server    = $title,
-  $ensure    = 'present',
-  $username  = undef,
-  $password  = undef,
-  $email     = undef,
+  $server      = $title,
+  $ensure      = 'present',
+  $username    = undef,
+  $password    = undef,
+  $email       = undef,
+  $local_user  = 'root',
 ) {
   include docker::params
 
@@ -50,7 +55,7 @@ define docker::registry(
 
   exec { "auth against ${server}":
     command => $auth_cmd,
-    user    => 0,
+    user    => $local_user,
     cwd     => '/root',
     path    => ['/bin', '/usr/bin'],
     timeout => 0,
