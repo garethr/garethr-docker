@@ -26,6 +26,12 @@
         "14.04"
       ]
     },{
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "7.8",
+        "8.0"
+      ]
+    },{
       "operatingsystem": "Archlinux"
     },{
       "operatingsystem": "Fedora",
@@ -50,7 +56,7 @@
       "version_requirement": ">= 4.1.0"
     },{
       "name": "puppetlabs/apt",
-      "version_requirement": ">= 1.1.0 <= 3.0.0"
+      "version_requirement": ">= 1.8.0 <= 3.0.0"
     },{
       "name": "stahnma/epel",
       "version_requirement": ">= 0.0.6"

@@ -1,7 +1,7 @@
 HOSTS:
-  ubuntu-server-1404-x64:
+  ubuntu-1404-x64:
     roles:
-      - master
+      - default
     platform: ubuntu-14.04-amd64
     box: puppetlabs/ubuntu-14.04-64-nocm
     box_url: https://vagrantcloud.com/puppetlabs/ubuntu-14.04-64-nocm

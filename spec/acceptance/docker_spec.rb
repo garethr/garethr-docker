@@ -1,16 +1,7 @@
 require 'spec_helper_acceptance'
 
 describe 'docker' do
-  case fact('osfamily')
-  when 'RedHat'
-    package_name = if fact('operatingsystemrelease').to_f >= 7
-      'docker'
-    else
-      'docker-io'
-    end
-  else
-    package_name = 'lxc-docker'
-  end
+  package_name = 'docker-engine'
   service_name = 'docker'
   command = 'docker'
 
@@ -22,7 +13,7 @@ describe 'docker' do
   context 'with default parameters' do
     let(:pp) {"
         class { 'docker':
-          docker_users => [ 'testuser' ]
+          docker_users => [ 'testuser' ],
         }
         docker::image { 'nginx': }
         docker::run { 'nginx':
@@ -61,7 +52,6 @@ describe 'docker' do
 
     describe command("#{command} version") do
       its(:exit_status) { should eq 0 }
-      its(:stdout) { should match /Client version:/ }
     end
 
     describe command("#{command} images"), :sudo => true do

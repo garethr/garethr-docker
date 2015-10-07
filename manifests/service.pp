@@ -50,38 +50,68 @@ class docker::service (
 
   case $::osfamily {
     'Debian': {
-      $hasstatus     = true
-      $hasrestart    = false
+      if $::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '15.04') < 0 {
+        $hasstatus = true
+        $hasrestart = false
+        file { '/etc/init.d/docker':
+          ensure => 'link',
+          target => '/lib/init/upstart-job',
+          force  => true,
+          notify => Service['docker'],
+        }
+      } else {
+        $hasstatus = undef
+        $hasrestart = undef
+      }
 
-      case $::operatingsystem {
-        'Debian': {
-          # Do nothing as Debian doesn't have Upstart
+      if ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemmajrelease, '8') >= 0) or ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '15.04') >= 0) {
+        file { '/etc/systemd/system/docker.service.d':
+          ensure => directory;
         }
-        default: {
-          file { '/etc/init.d/docker':
-              ensure => 'link',
-              target => '/lib/init/upstart-job',
-              force  => true,
-              notify => Service['docker'],
-          }
+        file { '/etc/systemd/system/docker.service.d/service-overrides.conf':
+          ensure  => present,
+          content => template('docker/etc/systemd/system/docker.service.d/service-overrides-debian.conf.erb'),
+          notify  => Exec['docker-systemd-reload'];
         }
+        file { '/etc/default/docker-storage':
+          ensure  => present,
+          force   => true,
+          content => template('docker/etc/sysconfig/docker-storage.erb'),
+          notify  => Service['docker'],
+        }
+        $template = 'docker/etc/sysconfig/docker.systemd.erb'
+      } else {
+        $template = 'docker/etc/default/docker.erb'
       }
 
       file { "/etc/default/${service_name}":
         ensure  => present,
         force   => true,
-        content => template('docker/etc/default/docker.erb'),
+        content => template($template),
         notify  => Service['docker'],
       }
+
     }
     'RedHat': {
       if ($::operatingsystem == 'Fedora') or (versioncmp($::operatingsystemrelease, '7.0') >= 0) {
-        $template = 'docker.rhel7.erb'
+        $template = 'docker.systemd.erb'
       } else {
         $template = 'docker.erb'
       }
       $hasstatus     = undef
       $hasrestart    = undef
+
+      if ($docker::use_upstream_package_source) {
+        file { '/etc/systemd/system/docker.service.d':
+          ensure => directory;
+        }
+
+        file { '/etc/systemd/system/docker.service.d/service-overrides.conf':
+          ensure  => present,
+          content => template('docker/etc/systemd/system/docker.service.d/service-overrides-rhel.conf.erb'),
+          notify  => Exec['docker-systemd-reload'];
+        }
+      }
 
       file { '/etc/sysconfig/docker':
         ensure  => present,
@@ -101,20 +131,21 @@ class docker::service (
       $hasstatus  = true
       $hasrestart = true
 
-      file {
-        '/etc/systemd/system/docker.service.d':
-          ensure => directory;
+      file { '/etc/systemd/system/docker.service.d':
+        ensure => directory;
+      }
 
-        '/etc/systemd/system/docker.service.d/service-overrides.conf':
-          ensure => present,
-          source => 'puppet:///modules/docker/service-overrides-archlinux.conf',
-          notify => Exec['docker-systemd-reload'];
+      file { '/etc/systemd/system/docker.service.d/service-overrides.conf':
+        ensure  => present,
+        content => template('docker/etc/systemd/system/docker.service.d/service-overrides-archlinux.conf.erb'),
+        notify  => Exec['docker-systemd-reload'];
+      }
 
-        '/etc/conf.d/docker':
-          ensure  => present,
-          force   => true,
-          content => template('docker/etc/conf.d/docker.erb'),
-          notify  => Service['docker'];
+      file { '/etc/conf.d/docker':
+        ensure  => present,
+        force   => true,
+        content => template('docker/etc/conf.d/docker.erb'),
+        notify  => Service['docker'];
       }
     }
     default: {
@@ -122,9 +153,10 @@ class docker::service (
     }
   }
 
-  $provider = $::operatingsystem ? {
-    'Ubuntu' => 'upstart',
-    default  => undef,
+  if $::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '15.04') < 0 {
+    $provider = 'upstart'
+  } else {
+    $provider = undef
   }
 
   service { 'docker':
