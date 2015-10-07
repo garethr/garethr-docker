@@ -56,6 +56,7 @@ define docker::run(
   $env_file = [],
   $dns = [],
   $dns_search = [],
+  $bridge_ip = undef,
   $lxc_conf = [],
   $service_prefix = 'docker-',
   $restart_service = true,
@@ -132,6 +133,7 @@ define docker::run(
     username        => $username,
     volumes         => any2array($volumes),
     volumes_from    => any2array($volumes_from),
+    bridge_ip       => $bridge_ip
   })
 
   $sanitised_title = regsubst($title, '[^0-9A-Za-z.\-]', '-', 'G')

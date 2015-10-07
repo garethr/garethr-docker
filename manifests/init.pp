@@ -161,6 +161,7 @@ class docker(
   $root_dir                    = $docker::params::root_dir,
   $tmp_dir                     = $docker::params::tmp_dir,
   $manage_kernel               = $docker::params::manage_kernel,
+  $bridge_ip                   = $docker::params::bridge_ip,
   $dns                         = $docker::params::dns,
   $dns_search                  = $docker::params::dns_search,
   $socket_group                = $docker::params::socket_group,

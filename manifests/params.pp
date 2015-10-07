@@ -14,6 +14,7 @@ class docker::params {
   $service_enable               = true
   $root_dir                     = undef
   $tmp_dir                      = '/tmp/'
+  $bridge_ip                    = undef
   $dns                          = undef
   $dns_search                   = undef
   $proxy                        = undef
