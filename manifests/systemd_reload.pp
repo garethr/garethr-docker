@@ -4,7 +4,8 @@
 #
 class docker::systemd_reload {
   exec { 'docker-systemd-reload':
-    command     => '/usr/bin/systemctl daemon-reload',
+    path        => ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/'],
+    command     => 'systemctl daemon-reload',
     refreshonly => true,
   }
 }
