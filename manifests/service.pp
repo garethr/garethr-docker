@@ -82,6 +82,7 @@ class docker::service (
           ensure  => present,
           force   => true,
           content => template('docker/etc/sysconfig/docker-storage-setup.erb'),
+          before  => Service['docker'],
           notify  => Service['docker'],
         }
 
@@ -95,6 +96,7 @@ class docker::service (
         ensure  => present,
         force   => true,
         content => template("docker/etc/sysconfig/${template}"),
+        before  => Service['docker'],
         notify  => Service['docker'],
       }
 
@@ -102,6 +104,7 @@ class docker::service (
         ensure  => present,
         force   => true,
         content => template('docker/etc/sysconfig/docker-storage.erb'),
+        before  => Service['docker'],
         notify  => Service['docker'],
       }
     }
