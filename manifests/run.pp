@@ -218,7 +218,10 @@ define docker::run(
         ensure    => $running,
         enable    => true,
         hasstatus => $hasstatus,
-        require   => File[$initscript],
+        require   => [
+          File[$initscript],
+          Service[$service_name]
+        ]
       }
     }
 
