@@ -15,30 +15,6 @@ describe 'the Puppet Docker module' do
   end
 
   describe 'docker class' do
-    context 'without any parameters' do
-      let(:pp) {"
-        class { 'docker': }
-      "}
-
-      it 'should run successfully' do
-        apply_manifest(pp, :catch_failures => true)
-      end
-
-      it 'should run idempotently' do
-        apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
-      end
-
-      it 'should be start a docker process' do
-        shell('ps -aux | grep docker') do |r|
-          expect(r.stdout).to match(/\/usr\/bin\/docker/)
-        end
-      end
-
-      it 'should install a working docker client' do
-        shell('docker ps', :acceptable_exit_codes => [0])
-      end
-    end
-
     context 'passing a TCP address to bind to' do
       before(:all) do
         @pp =<<-EOS
