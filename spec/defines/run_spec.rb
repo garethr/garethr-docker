@@ -10,7 +10,7 @@ require 'spec_helper'
 
     if osfamily == 'Debian'
       initscript = '/etc/init.d/docker-sample'
-      command = 'docker.io'
+      command = 'docker'
       systemd = false
     elsif osfamily == 'Archlinux'
       initscript = '/etc/systemd/system/docker-sample.service'

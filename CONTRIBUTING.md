@@ -80,5 +80,5 @@ run the integration tests against Centos 6.5 with:
 
 Or with Ubuntu 14.04 with:
 
-    BEAKER_set=ubuntu-server-1404-x64 bundle exec rake beaker
+    BEAKER_set=ubuntu-1404-x64 bundle exec rake beaker
 
