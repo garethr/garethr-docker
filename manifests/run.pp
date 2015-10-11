@@ -232,10 +232,7 @@ define docker::run(
         enable    => true,
         provider  => $provider,
         hasstatus => $hasstatus,
-        require   => [
-          File[$initscript],
-          Service['docker']
-        ]
+        require   => File[$initscript],
       }
     }
 
