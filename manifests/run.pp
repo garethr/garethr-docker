@@ -234,7 +234,7 @@ define docker::run(
         hasstatus => $hasstatus,
         require   => [
           File[$initscript],
-          Service[$service_name]
+          Service['docker']
         ]
       }
     }
