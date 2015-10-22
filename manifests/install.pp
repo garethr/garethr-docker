@@ -80,4 +80,6 @@ class docker::install {
         }
     }
   }
+
+    include docker::compose
 }
