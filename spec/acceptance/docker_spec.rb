@@ -41,12 +41,6 @@ describe 'docker' do
       apply_manifest(pp, :catch_changes=>true)
     end
 
-    it 'should be start a docker process' do
-      shell('ps -aux | grep docker') do |r|
-        expect(r.stdout).to match(/\/usr\/bin\/docker/)
-      end
-    end
-
     describe package(package_name) do
       it { is_expected.to be_installed }
     end
