@@ -294,6 +294,20 @@ describe 'docker', :type => :class do
         it { should contain_package('docker').with_ensure('absent') }
       end
 
+      context 'with an invalid combination of devicemapper options' do
+        let(:params) {
+          { 'dm_datadev' => '/dev/mapper/vg_test-docker--pool_tdata',
+            'dm_metadatadev' => '/dev/mapper/vg_test-docker--pool_tmeta',
+            'dm_thinpooldev' => '/dev/mapper/vg_test-docker--pool'
+          }
+        }
+        it do
+          expect {
+            should contain_package('docker')
+          }.to raise_error(Puppet::Error, /You can use the \$dm_thinpooldev parameter, or the \$dm_datadev and \$dm_metadatadev parameter pair, but you cannot use both./)
+        end
+      end
+
     end
 
   end
@@ -396,6 +410,45 @@ describe 'docker', :type => :class do
     it { should contain_package('docker').with_name('docker-engine') }
     it { should contain_yumrepo('docker') }
     it { should_not contain_class('epel') }
+  end
+
+  ['RedHat', 'OracleLinux', 'Scientific', 'CentOS'].each do |operatingsystem|
+    context "on #{operatingsystem}" do
+      let(:facts) { {
+        :osfamily => 'RedHat',
+        :operatingsystem => operatingsystem,
+        :operatingsystemrelease => '7.0',
+        :operatingsystemmajrelease => '7',
+      } }
+
+      let(:params) {
+        {
+          'storage_driver' => 'devicemapper',
+          'storage_devs' => '/dev/sda,/dev/sdb',
+          'storage_vg' => 'vg_test',
+          'storage_root_size' => '10G',
+          'storage_data_size' => '10G',
+          'storage_chunk_size' => '10G',
+          'storage_growpart' => 'true',
+          'storage_auto_extend_pool' => '1',
+          'storage_pool_autoextend_threshold' => '1',
+          'storage_pool_autoextend_percent' => '1',
+        }
+      }
+
+      storage_setup_file = '/etc/sysconfig/docker-storage-setup'
+      it { should contain_file(storage_setup_file).with_content(/^STORAGE_DRIVER=devicemapper/) }
+      it { should contain_file(storage_setup_file).with_content(/^DEVS="\/dev\/sda,\/dev\/sdb"/) }
+      it { should contain_file(storage_setup_file).with_content(/^VG=vg_test/) }
+      it { should contain_file(storage_setup_file).with_content(/^ROOT_SIZE=10G/) }
+      it { should contain_file(storage_setup_file).with_content(/^DATA_SIZE=10G/) }
+      it { should contain_file(storage_setup_file).with_content(/^CHUNK_SIZE=10G/) }
+      it { should contain_file(storage_setup_file).with_content(/^GROWPART=true/) }
+      it { should contain_file(storage_setup_file).with_content(/^AUTO_EXTEND_POOL=1/) }
+      it { should contain_file(storage_setup_file).with_content(/^POOL_AUTOEXTEND_THRESHOLD=1/) }
+      it { should contain_file(storage_setup_file).with_content(/^POOL_AUTOEXTEND_PERCENT=1/) }
+
+    end
   end
 
   context 'specific to RedHat 7 or above' do
