@@ -118,9 +118,11 @@
 #   Default size is 2G
 #
 # [*dm_datadev*]
+#   (deprecated - dm_thinpooldev should be used going forward)
 #   A custom blockdevice to use for data for the thin pool.
 #
 # [*dm_metadatadev*]
+#   (deprecated - dm_thinpooldev should be used going forward)
 #   A custom blockdevice to use for metadata for the thin pool.
 #
 # [*dm_thinpooldev*]
@@ -271,6 +273,14 @@ class docker(
 
   if ($dm_loopdatasize or $dm_loopmetadatasize) and ($dm_datadev or $dm_metadatadev) {
     fail('You should provide parameters only for loop lvm or direct lvm, not both.')
+  }
+
+  if ($dm_datadev or $dm_metadatadev) and $dm_thinpooldev) {
+    fail('You can use the $dm_thinpooldev parameter, or the $dm_datadev and $dm_metadatadev parameter pair, but you cannot use both'.)
+  }
+
+  if ($dm_datadev or $dm_metadatadev) {
+    notice('The $dm_datadev and $dm_metadatadev parameter pair are deprecated.  The $dm_thinpooldev parameter should be used instead.')
   }
 
   if ($dm_datadev and !$dm_metadatadev) or (!$dm_datadev and $dm_metadatadev) {
