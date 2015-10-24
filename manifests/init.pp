@@ -276,7 +276,7 @@ class docker(
   }
 
   if ($dm_datadev or $dm_metadatadev) and $dm_thinpooldev {
-    fail('You can use the $dm_thinpooldev parameter, or the $dm_datadev and $dm_metadatadev parameter pair, but you cannot use both'.)
+    fail('You can use the $dm_thinpooldev parameter, or the $dm_datadev and $dm_metadatadev parameter pair, but you cannot use both.')
   }
 
   if ($dm_datadev or $dm_metadatadev) {
