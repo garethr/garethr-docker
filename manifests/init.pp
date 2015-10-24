@@ -275,7 +275,7 @@ class docker(
     fail('You should provide parameters only for loop lvm or direct lvm, not both.')
   }
 
-  if ($dm_datadev or $dm_metadatadev) and $dm_thinpooldev) {
+  if ($dm_datadev or $dm_metadatadev) and $dm_thinpooldev {
     fail('You can use the $dm_thinpooldev parameter, or the $dm_datadev and $dm_metadatadev parameter pair, but you cannot use both'.)
   }
 
