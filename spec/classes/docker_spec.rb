@@ -184,6 +184,42 @@ describe 'docker', :type => :class do
         it { should contain_file(storage_config_file).with_content(/--storage-driver=devicemapper/) }
       end
 
+      context 'with thinpool device param' do
+        let(:params) {
+          { 'storage_driver' => 'devicemapper',
+            'dm_thinpooldev' => '/dev/mapper/vg_test-docker--pool'
+          }
+        }
+        it { should contain_file(storage_config_file).with_content(/--storage-opt dm\.thinpooldev=\/dev\/mapper\/vg_test-docker--pool/) }
+      end
+
+      context 'with use deferred removal param' do
+        let(:params) {
+          { 'storage_driver' => 'devicemapper',
+            'dm_use_deferred_removal' => 'true'
+          }
+        }
+        it { should contain_file(storage_config_file).with_content(/--storage-opt dm\.use_deferred_removal=true/) }
+      end
+
+      context 'with block discard param' do
+        let(:params) {
+          { 'storage_driver' => 'devicemapper',
+            'dm_blkdiscard' => 'true'
+          }
+        }
+        it { should contain_file(storage_config_file).with_content(/--storage-opt dm\.blkdiscard=true/) }
+      end
+
+      context 'with override udev sync check param' do
+        let(:params) {
+          { 'storage_driver' => 'devicemapper',
+            'dm_override_udev_sync_check' => 'true'
+          }
+        }
+        it { should contain_file(storage_config_file).with_content(/--storage-opt dm\.override_udev_sync_check=true/) }
+      end
+
       context 'without execdriver param' do
         it { should_not contain_file(service_config_file).with_content(/-e lxc/) }
         it { should_not contain_file(service_config_file).with_content(/-e native/) }
@@ -421,32 +457,57 @@ describe 'docker', :type => :class do
         :operatingsystemmajrelease => '7',
       } }
 
-      let(:params) {
-        {
-          'storage_driver' => 'devicemapper',
-          'storage_devs' => '/dev/sda,/dev/sdb',
-          'storage_vg' => 'vg_test',
-          'storage_root_size' => '10G',
-          'storage_data_size' => '10G',
-          'storage_chunk_size' => '10G',
-          'storage_growpart' => 'true',
-          'storage_auto_extend_pool' => '1',
-          'storage_pool_autoextend_threshold' => '1',
-          'storage_pool_autoextend_percent' => '1',
-        }
-      }
-
       storage_setup_file = '/etc/sysconfig/docker-storage-setup'
-      it { should contain_file(storage_setup_file).with_content(/^STORAGE_DRIVER=devicemapper/) }
-      it { should contain_file(storage_setup_file).with_content(/^DEVS="\/dev\/sda,\/dev\/sdb"/) }
-      it { should contain_file(storage_setup_file).with_content(/^VG=vg_test/) }
-      it { should contain_file(storage_setup_file).with_content(/^ROOT_SIZE=10G/) }
-      it { should contain_file(storage_setup_file).with_content(/^DATA_SIZE=10G/) }
-      it { should contain_file(storage_setup_file).with_content(/^CHUNK_SIZE=10G/) }
-      it { should contain_file(storage_setup_file).with_content(/^GROWPART=true/) }
-      it { should contain_file(storage_setup_file).with_content(/^AUTO_EXTEND_POOL=1/) }
-      it { should contain_file(storage_setup_file).with_content(/^POOL_AUTOEXTEND_THRESHOLD=1/) }
-      it { should contain_file(storage_setup_file).with_content(/^POOL_AUTOEXTEND_PERCENT=1/) }
+
+      context 'with storage driver' do
+        let(:params) { { 'storage_driver' => 'devicemapper' }}
+        it { should contain_file(storage_setup_file).with_content(/^STORAGE_DRIVER=devicemapper/) }
+      end
+
+      context 'with storage devices' do
+        let(:params) { { 'storage_devs' => '/dev/sda,/dev/sdb' }}
+        it { should contain_file(storage_setup_file).with_content(/^DEVS="\/dev\/sda,\/dev\/sdb"/) }
+      end
+
+      context 'with storage volume group' do
+        let(:params) { { 'storage_vg' => 'vg_test' }}
+        it { should contain_file(storage_setup_file).with_content(/^VG=vg_test/) }
+      end
+
+      context 'with storage root size' do
+        let(:params) { { 'storage_root_size' => '10G' }}
+        it { should contain_file(storage_setup_file).with_content(/^ROOT_SIZE=10G/) }
+      end
+
+      context 'with storage data size' do
+        let(:params) { { 'storage_data_size' => '10G' }}
+        it { should contain_file(storage_setup_file).with_content(/^DATA_SIZE=10G/) }
+      end
+
+      context 'with storage chunk size' do
+        let(:params) { { 'storage_chunk_size' => '10G' }}
+        it { should contain_file(storage_setup_file).with_content(/^CHUNK_SIZE=10G/) }
+      end
+
+      context 'with storage grow partition' do
+        let(:params) { { 'storage_growpart' => 'true' }}
+        it { should contain_file(storage_setup_file).with_content(/^GROWPART=true/) }
+      end
+
+      context 'with storage auto extend pool' do
+        let(:params) { { 'storage_auto_extend_pool' => '1' }}
+        it { should contain_file(storage_setup_file).with_content(/^AUTO_EXTEND_POOL=1/) }
+      end
+
+      context 'with storage auto extend threshold' do
+        let(:params) { { 'storage_pool_autoextend_threshold' => '1' }}
+        it { should contain_file(storage_setup_file).with_content(/^POOL_AUTOEXTEND_THRESHOLD=1/) }
+      end
+
+      context 'with storage auto extend percent' do
+        let(:params) { { 'storage_pool_autoextend_percent' => '10' }}
+        it { should contain_file(storage_setup_file).with_content(/^POOL_AUTOEXTEND_PERCENT=10/) }
+      end
 
     end
   end
