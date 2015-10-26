@@ -64,7 +64,7 @@ start() {
     fi
 
     printf "Starting $prog:\t"
-    $docker rm <%= @sanitised_title %> >/dev/null 2>&1
+    $docker rm -v <%= @sanitised_title %> >/dev/null 2>&1
     <% if @pull_on_start -%>
         $docker pull <%= @image %>
     <% end -%>
