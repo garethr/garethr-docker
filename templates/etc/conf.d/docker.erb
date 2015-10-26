@@ -22,7 +22,7 @@ other_args="<% -%>
 <% if @dm_blocksize %> --storage-opt dm.blocksize=<%= @dm_blocksize %><% end -%>
 <% if @dm_loopdatasize %> --storage-opt dm.loopdatasize=<%= @dm_loopdatasize %><% end -%>
 <% if @dm_loopmetadatasize %> --storage-opt dm.loopmetadatasize=<%= @dm_loopmetadatasize %><% end -%>
-<% if @dm_thinpooldev %> --storage-opt dm.thinpooldev=<%= @dm_thinpooldev %>
+<% if @dm_thinpooldev %> --storage-opt dm.thinpooldev=<%= @dm_thinpooldev -%>
 <% else -%>
 <% if @dm_datadev %> --storage-opt dm.datadev=<%= @dm_datadev %><% end -%>
 <% if @dm_metadatadev %> --storage-opt dm.metadatadev=<%= @dm_metadatadev %><% end -%>
