@@ -47,7 +47,7 @@ define docker::run(
   $volumes = [],
   $links = [],
   $use_name = false,
-  $running = true,
+  $running = running,
   $volumes_from = [],
   $net = 'bridge',
   $username = false,
@@ -93,7 +93,7 @@ define docker::run(
   if $hostname {
     validate_string($hostname)
   }
-  validate_bool($running)
+  validate_string($running)
   validate_bool($disable_network)
   validate_bool($privileged)
   validate_bool($restart_service)
