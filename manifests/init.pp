@@ -202,7 +202,7 @@ class docker(
   }
 
   if $log_driver {
-    validate_re($log_driver, '^(json-file|syslog|journald|gelf|fluentd)$', 'log_driver must be one of json-file, syslog, journald, gelf, or fluentd')
+    validate_re($log_driver, '^(json-file.*|syslog.*|journald|gelf.*|fluentd.*)$', 'log_driver must be one of json-file, syslog, journald, gelf, or fluentd')
   }
 
   if $selinux_enabled {
