@@ -122,6 +122,7 @@ define docker::run(
     hostentries     => any2array($hostentries),
     hostname        => $hostname,
     links           => any2array($links),
+    log_driver      => $log_driver,
     lxc_conf        => any2array($lxc_conf),
     memory_limit    => $memory_limit,
     net             => $net,
