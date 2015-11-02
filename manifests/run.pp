@@ -43,7 +43,6 @@ define docker::run(
   $cpuset = [],
   $ports = [],
   $labels = [],
-  $log_driver = 'json-file',
   $expose = [],
   $volumes = [],
   $links = [],
