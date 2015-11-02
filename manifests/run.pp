@@ -43,6 +43,7 @@ define docker::run(
   $cpuset = [],
   $ports = [],
   $labels = [],
+  $log_driver = undef,
   $expose = [],
   $volumes = [],
   $links = [],
