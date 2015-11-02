@@ -189,7 +189,7 @@ class docker(
   $repo_opt                    = $docker::params::repo_opt,
   $nowarn_kernel               = $docker::params::nowarn_kernel,
 ) inherits docker::params {
-  $log_driver                  = $docker::params::log_driver,
+  $log_driver                  = $docker::params::log_driver
 
   validate_string($version)
   validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', 'This module only works on Debian and Red Hat based systems.')
