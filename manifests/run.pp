@@ -58,7 +58,6 @@ define docker::run(
   $dns = [],
   $dns_search = [],
   $bridge_ip = undef,
-  $log_driver = undef,
   $lxc_conf = [],
   $service_prefix = 'docker-',
   $restart_service = true,
@@ -76,6 +75,7 @@ define docker::run(
   $before_stop = false,
 ) {
   include docker::params
+  $log_driver = $docker::params::log_driver
   $docker_command = $docker::params::docker_command
   $service_name = $docker::params::service_name
 

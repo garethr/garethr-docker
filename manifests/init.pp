@@ -153,7 +153,6 @@ class docker(
   $tcp_bind                    = $docker::params::tcp_bind,
   $socket_bind                 = $docker::params::socket_bind,
   $log_level                   = $docker::params::log_level,
-  $log_driver                  = $docker::params::log_driver,
   $selinux_enabled             = $docker::params::selinux_enabled,
   $use_upstream_package_source = $docker::params::use_upstream_package_source,
   $package_source_location     = $docker::params::package_source_location,
@@ -190,6 +189,7 @@ class docker(
   $repo_opt                    = $docker::params::repo_opt,
   $nowarn_kernel               = $docker::params::nowarn_kernel,
 ) inherits docker::params {
+  $log_driver                  = $docker::params::log_driver,
 
   validate_string($version)
   validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', 'This module only works on Debian and Red Hat based systems.')
