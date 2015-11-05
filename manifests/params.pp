@@ -8,7 +8,6 @@ class docker::params {
   $tcp_bind                     = undef
   $socket_bind                  = 'unix:///var/run/docker.sock'
   $log_level                    = undef
-  $log_driver                   = 'json-file'
   $selinux_enabled              = undef
   $socket_group                 = undef
   $service_state                = running
