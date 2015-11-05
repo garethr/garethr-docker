@@ -19,7 +19,8 @@ ExecStartPre=-/usr/bin/<%= @docker_command %> rm -v <%= @sanitised_title %>
 ExecStart=/usr/bin/<%= @docker_command %> run \
         <%= @docker_run_flags %> \
         --name <%= @sanitised_title %> \
-        --log-driver <%= @log_driver %> \
+<%- if @log_driver %>        --log-driver <%= @log_driver %> \
+<% end -%>
         <%= @image %> \
         <% if @command %> <%= @command %><% end %>
 <%- if @before_stop %>ExecStop=-<%= @before_stop %>
