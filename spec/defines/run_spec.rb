@@ -398,6 +398,11 @@ require 'spec_helper'
       it { should contain_exec('run sample with docker').with_command(/base command/) }
     end
 
+    context 'with restart policy when `use_name` is true' do
+      let(:params) { {'use_name' => true, 'restart' => 'no', 'command' => 'command', 'image' => 'base'} }
+      it { should contain_exec('run sample with docker').with_command(/--name=sample/) }
+    end
+
   end
   end
 
