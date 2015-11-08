@@ -72,6 +72,7 @@ define docker::run(
   $privileged = false,
   $detach = undef,
   $extra_parameters = undef,
+  $extra_systemd_parameters = {},
   $pull_on_start = false,
   $depends = [],
   $tty = false,
@@ -106,6 +107,8 @@ define docker::run(
   validate_bool($privileged)
   validate_bool($restart_service)
   validate_bool($tty)
+
+  validate_hash($extra_systemd_parameters)
 
   if $detach == undef {
     $valid_detach = $docker::params::detach_service_in_init
