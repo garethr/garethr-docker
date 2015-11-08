@@ -270,6 +270,20 @@ describe 'docker', :type => :class do
         end
       end
 
+      context 'with specific log_driver' do
+        let(:params) { { 'log_driver' => 'json-file' } }
+        it { should contain_file(service_config_file).with_content(/--log-driver json-file/) }
+      end
+
+      context 'with an invalid log_driver' do
+        let(:params) { { 'log_driver' => 'verbose'} }
+        it do
+          expect {
+            should contain_package('docker')
+          }.to raise_error(Puppet::Error, /log_driver must be one of none, json-file, syslog, journald, gelf or fluentd/)
+        end
+      end
+
       context 'with specific selinux_enabled parameter' do
         let(:params) { { 'selinux_enabled' => 'true' } }
         it { should contain_file(service_config_file).with_content(/--selinux-enabled=true/) }
