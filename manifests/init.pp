@@ -189,7 +189,6 @@ class docker(
   $repo_opt                    = $docker::params::repo_opt,
   $nowarn_kernel               = $docker::params::nowarn_kernel,
 ) inherits docker::params {
-  #$log_driver                  = $docker::params::log_driver
 
   validate_string($version)
   validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', 'This module only works on Debian and Red Hat based systems.')
@@ -200,10 +199,6 @@ class docker(
   if $log_level {
     validate_re($log_level, '^(debug|info|warn|error|fatal)$', 'log_level must be one of debug, info, warn, error or fatal')
   }
-
-###  if $log_driver {
-###    validate_re($log_driver, '^(json-file.*|syslog.*|journald|gelf.*|fluentd.*)$', 'log_driver must be one of json-file, syslog, journald, gelf, or fluentd')
-###  }
 
   if $selinux_enabled {
     validate_re($selinux_enabled, '^(true|false)$', 'selinux_enabled must be true or false')

@@ -58,6 +58,11 @@ define docker::run(
   $dns_search = [],
   $bridge_ip = undef,
   $log_driver = undef,
+  $log_driver_opts = undef,
+  $container_hostname = unef,
+  $linked_container = undef,
+  $dns_servers = undef,
+  $dns_search_domain = undef,
   $lxc_conf = [],
   $service_prefix = 'docker-',
   $restart_service = true,
@@ -76,10 +81,10 @@ define docker::run(
 ) {
   include docker::params
 
-#  $log_driver = $docker::params::log_driver
   $docker_command = $docker::params::docker_command
   $service_name = $docker::params::service_name
 
+  validate_re($log_driver, '^(none|json-file|syslog|journald|gelf|fluentd)$')
   validate_re($image, '^[\S]*$')
   validate_re($title, '^[\S]*$')
   validate_re($memory_limit, '^[\d]*(b|k|m|g)$')
@@ -125,7 +130,6 @@ define docker::run(
     hostentries     => any2array($hostentries),
     hostname        => $hostname,
     links           => any2array($links),
-#    log_driver      => $log_driver,
     lxc_conf        => any2array($lxc_conf),
     memory_limit    => $memory_limit,
     net             => $net,

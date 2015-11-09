@@ -19,7 +19,17 @@ ExecStartPre=-/usr/bin/<%= @docker_command %> rm -v <%= @sanitised_title %>
 ExecStart=/usr/bin/<%= @docker_command %> run \
         <%= @docker_run_flags %> \
         --name <%= @sanitised_title %> \
-<%- if @log_driver %>        --log-driver <%= @log_driver %> \
+<%- if @log_driver %>        --log-driver=<%= @log_driver %> \
+<% end -%>
+<%- if @log_driver_opts %>        --log-opt <%= @log_driver_opts %> \
+<% end -%>
+<%- if @container_hostname %>        --hostname=<%= @container_hostname %> \
+<% end -%>
+<%- if @linked_container %>        --link=<%= @linked_container %> \
+<% end -%>
+<%- if @dns_servers %>        --dns=<%= @dns_servers %> \
+<% end -%>
+<%- if @dns_search_domain %>        --dns-search=<%= @dns_search_domain %> \
 <% end -%>
         <%= @image %> \
         <% if @command %> <%= @command %><% end %>
