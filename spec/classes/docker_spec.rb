@@ -179,9 +179,11 @@ describe 'docker', :type => :class do
         it { should contain_file(service_config_file).with_content(/-e native/) }
       end
 
-      context 'with storage driver param' do
-        let(:params) { { 'storage_driver' => 'devicemapper' }}
-        it { should contain_file(storage_config_file).with_content(/--storage-driver=devicemapper/) }
+      ['aufs', 'devicemapper', 'btrfs', 'overlay', 'vfs'].each do |driver|
+        context "with #{driver} storage driver" do
+          let(:params) { { 'storage_driver' => driver }}
+          it { should contain_file(storage_config_file).with_content(/--storage-driver=#{driver}/) }
+        end
       end
 
       context 'without execdriver param' do
