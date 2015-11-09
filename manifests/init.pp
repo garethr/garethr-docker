@@ -134,7 +134,7 @@
 # [*storage_driver*]
 #   Specify a storage driver to use
 #   Default is undef: let docker choose the correct one
-#   Valid values: aufs, devicemapper, btrfs, overlay, vfs
+#   Valid values: aufs, devicemapper, btrfs, overlay, vfs, zfs
 #
 # [*dm_basesize*]
 #   The size to use when creating the base device, which limits the size of images and containers.
@@ -261,7 +261,7 @@ class docker(
   }
 
   if $storage_driver {
-    validate_re($storage_driver, '^(aufs|devicemapper|btrfs|overlay|vfs)$', 'Valid values for storage_driver are aufs, devicemapper, btrfs, overlay, vfs.' )
+    validate_re($storage_driver, '^(aufs|devicemapper|btrfs|overlay|vfs|zfs)$', 'Valid values for storage_driver are aufs, devicemapper, btrfs, overlay, vfs, zfs.' )
   }
 
   if $dm_fs {

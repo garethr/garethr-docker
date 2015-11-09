@@ -179,7 +179,7 @@ describe 'docker', :type => :class do
         it { should contain_file(service_config_file).with_content(/-e native/) }
       end
 
-      ['aufs', 'devicemapper', 'btrfs', 'overlay', 'vfs'].each do |driver|
+      ['aufs', 'devicemapper', 'btrfs', 'overlay', 'vfs', 'zfs'].each do |driver|
         context "with #{driver} storage driver" do
           let(:params) { { 'storage_driver' => driver }}
           it { should contain_file(storage_config_file).with_content(/--storage-driver=#{driver}/) }
