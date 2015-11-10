@@ -57,7 +57,7 @@ define docker::run(
   $dns = [],
   $dns_search = [],
   $bridge_ip = undef,
-  $log_driver = undef,
+  $log_driver = 'json-file',
   $log_driver_opts = undef,
   $container_hostname = unef,
   $linked_container = undef,
