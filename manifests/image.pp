@@ -87,7 +87,7 @@ define docker::image(
     }
   } else {
     exec { "check_image_${image}_install":
-      command => "true",
+      command => 'echo > /dev/null',
       path    => ['/bin', '/usr/bin'],
       unless  => $image_find,
       notify  => Exec[$image_install],
