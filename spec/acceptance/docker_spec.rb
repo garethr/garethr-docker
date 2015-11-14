@@ -26,11 +26,6 @@ describe 'docker' do
           restart => 'always',
           require => Docker::Image['nginx'],
         }
-        docker::run { 'nginx3':
-          image   => 'nginx',
-          use_name => true,
-          require => Docker::Image['nginx'],
-        }
     "}
 
     it 'should apply with no errors' do
@@ -64,12 +59,7 @@ describe 'docker' do
       its(:stdout) { should match /nginx -g 'daemon off;'/ }
     end
 
-    describe command("#{command} ps"), :sudo => true do
-      its(:exit_status) { should eq 0 }
-      its(:stdout) { should match /nginx3/ }
-    end
-
-    describe command("#{command} inspect nginx3"), :sudo => true do
+    describe command("#{command} inspect nginx1"), :sudo => true do
       its(:exit_status) { should eq 0 }
     end
 

@@ -108,6 +108,12 @@ define docker::run(
   validate_bool($restart_service)
   validate_bool($tty)
 
+  validate_bool($use_name)
+
+  if $use_name {
+    notify { 'The use_name parameter is no-longer required and will be removed in a future release': withpath => true }
+  }
+
   validate_hash($extra_systemd_parameters)
 
   if $detach == undef {
