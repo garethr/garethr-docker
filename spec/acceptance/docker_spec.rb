@@ -98,7 +98,7 @@ describe 'docker' do
       apply_manifest(@manifest, :catch_failures=>true)
       # avoid a race condition with the registry taking time to start
       # on some operating systems
-      sleep 4
+      sleep 10
     end
 
     it 'should be able to login to the registry' do
