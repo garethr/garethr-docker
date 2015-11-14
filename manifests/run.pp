@@ -164,7 +164,7 @@ define docker::run(
     $cidfile = "/var/run/docker-${sanitised_title}.cid"
 
     exec { "run ${title} with docker":
-      command     => "${docker_command} run -d ${docker_run_flags} --cidfile=${cidfile} --restart=\"${restart}\" ${image} ${command}",
+      command     => "${docker_command} run -d ${docker_run_flags} --name ${sanitised_title} --cidfile=${cidfile} --restart=\"${restart}\" ${image} ${command}",
       unless      => "docker ps --no-trunc -a | grep `cat ${cidfile}`",
       environment => 'HOME=/root',
       path        => ['/bin', '/usr/bin'],

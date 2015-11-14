@@ -59,7 +59,11 @@ describe 'docker' do
       its(:stdout) { should match /nginx -g 'daemon off;'/ }
     end
 
-    describe command("#{command} inspect nginx1"), :sudo => true do
+    describe command("#{command} inspect nginx"), :sudo => true do
+      its(:exit_status) { should eq 0 }
+    end
+
+    describe command("#{command} inspect nginx2"), :sudo => true do
       its(:exit_status) { should eq 0 }
     end
 
