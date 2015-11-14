@@ -54,11 +54,6 @@ describe 'docker' do
       its(:stdout) { should match /nginx/ }
     end
 
-    describe command("#{command} ps -l --no-trunc=true"), :sudo => true do
-      its(:exit_status) { should eq 0 }
-      its(:stdout) { should match /nginx -g 'daemon off;'/ }
-    end
-
     describe command("#{command} inspect nginx"), :sudo => true do
       its(:exit_status) { should eq 0 }
     end
