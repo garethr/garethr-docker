@@ -114,8 +114,7 @@ describe 'docker', :type => :class do
             'storage_driver' => 'devicemapper',
             'dm_basesize'  => '3G'
           }}
-          it { should contain_file(storage_config_file)
-            .with_content(/^(DOCKER_STORAGE_OPTIONS=" --storage-driver=devicemapper --storage-opt dm.basesize=3G)/) }
+          it { should contain_file(storage_config_file).with_content(/^(DOCKER_STORAGE_OPTIONS=" --storage-driver=devicemapper --storage-opt dm.basesize=3G)/) }
         end
 
         context 'It should include default prerequired_packages' do
