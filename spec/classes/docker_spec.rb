@@ -109,6 +109,14 @@ describe 'docker', :type => :class do
           it { should contain_file('/etc/sysconfig/docker').with_content(/export TMPDIR="\/bigtmp"/) }
         end
 
+        context 'when given specific storage options' do
+          let(:params) {{
+            'storage_driver' => 'devicemapper',
+            'dm_basesize'  => '3G'
+          }}
+          it { should contain_file(storage_config_file).with_content(/^(DOCKER_STORAGE_OPTIONS=" --storage-driver=devicemapper --storage-opt dm.basesize=3G)/) }
+        end
+
         context 'It should include default prerequired_packages' do
           it { should contain_package('device-mapper').with_ensure('present') }
         end
@@ -135,7 +143,7 @@ describe 'docker', :type => :class do
         it { should contain_file(service_config_file).with_content(/docker.io/) }
       end
 
-     context 'with a custom package name' do
+      context 'with a custom package name' do
         let(:params) { {'package_name' => 'docker-custom-pkg-name' } }
         it { should contain_package('docker').with_name('docker-custom-pkg-name').with_ensure('present') }
       end
