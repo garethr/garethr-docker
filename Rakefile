@@ -24,6 +24,8 @@ PuppetLint.configuration.fail_on_warnings = true
 PuppetLint.configuration.send('disable_class_parameter_defaults')
 # http://puppet-lint.com/checks/class_inherits_from_params_class/
 PuppetLint.configuration.send('disable_class_inherits_from_params_class')
+# To fix unquoted cases in spec/fixtures/modules/apt/manifests/key.pp
+PuppetLint.configuration.send('disable_unquoted_string_in_case')
 
 exclude_paths = [
   "pkg/**/*",
