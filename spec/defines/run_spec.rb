@@ -26,6 +26,7 @@ require 'spec_helper'
       let(:params) { {'command' => 'command', 'image' => 'base'} }
       it { should compile.with_all_deps }
       it { should contain_service('docker-sample') }
+      it { should_not contain_service('docker') }
       if (osfamily == 'Debian')
         it { should contain_file(initscript).with_content(/\$docker run/) }
         it { should contain_file(initscript).with_content(/#{command}/) }
@@ -388,14 +389,79 @@ require 'spec_helper'
       end
     end
 
-    context 'with restart policy' do
+    context 'with restart policy set to no' do
       let(:params) { {'restart' => 'no', 'command' => 'command', 'image' => 'base', 'extra_parameters' => '-c 4'} }
       it { should contain_exec('run sample with docker') }
       it { should contain_exec('run sample with docker').with_unless(/\/var\/run\/docker-sample.cid/) }
       it { should contain_exec('run sample with docker').with_unless(/-a/) }
       it { should contain_exec('run sample with docker').with_command(/--cidfile=\/var\/run\/docker-sample.cid/) }
       it { should contain_exec('run sample with docker').with_command(/-c 4/) }
+      it { should contain_exec('run sample with docker').with_command(/--restart="no"/) }
       it { should contain_exec('run sample with docker').with_command(/base command/) }
+      it { should contain_exec('run sample with docker').with_timeout(0) }
+    end
+
+    context 'with restart policy set to always' do
+      let(:params) { {'restart' => 'always', 'command' => 'command', 'image' => 'base', 'extra_parameters' => '-c 4'} }
+      it { should contain_exec('run sample with docker') }
+      it { should contain_exec('run sample with docker').with_unless(/\/var\/run\/docker-sample.cid/) }
+      it { should contain_exec('run sample with docker').with_unless(/-a/) }
+      it { should contain_exec('run sample with docker').with_command(/--cidfile=\/var\/run\/docker-sample.cid/) }
+      it { should contain_exec('run sample with docker').with_command(/-c 4/) }
+      it { should contain_exec('run sample with docker').with_command(/--restart="always"/) }
+      it { should contain_exec('run sample with docker').with_command(/base command/) }
+      it { should contain_exec('run sample with docker').with_timeout(0) }
+    end
+
+    context 'with restart policy set to on-failure' do
+      let(:params) { {'restart' => 'on-failure', 'command' => 'command', 'image' => 'base', 'extra_parameters' => '-c 4'} }
+      it { should contain_exec('run sample with docker') }
+      it { should contain_exec('run sample with docker').with_unless(/\/var\/run\/docker-sample.cid/) }
+      it { should contain_exec('run sample with docker').with_unless(/-a/) }
+      it { should contain_exec('run sample with docker').with_command(/--cidfile=\/var\/run\/docker-sample.cid/) }
+      it { should contain_exec('run sample with docker').with_command(/-c 4/) }
+      it { should contain_exec('run sample with docker').with_command(/--restart="on-failure"/) }
+      it { should contain_exec('run sample with docker').with_command(/base command/) }
+      it { should contain_exec('run sample with docker').with_timeout(0) }
+    end
+
+    context 'with restart policy set to on-failure:3' do
+      let(:params) { {'restart' => 'on-failure:3', 'command' => 'command', 'image' => 'base', 'extra_parameters' => '-c 4'} }
+      it { should contain_exec('run sample with docker') }
+      it { should contain_exec('run sample with docker').with_unless(/\/var\/run\/docker-sample.cid/) }
+      it { should contain_exec('run sample with docker').with_unless(/-a/) }
+      it { should contain_exec('run sample with docker').with_command(/--cidfile=\/var\/run\/docker-sample.cid/) }
+      it { should contain_exec('run sample with docker').with_command(/-c 4/) }
+      it { should contain_exec('run sample with docker').with_command(/--restart="on-failure:3"/) }
+      it { should contain_exec('run sample with docker').with_command(/base command/) }
+      it { should contain_exec('run sample with docker').with_timeout(0) }
+    end
+
+    context 'when `docker_service` is false' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'docker_service' => false} }
+      it { should compile.with_all_deps }
+			it { should contain_service('docker-sample') }
+    end
+
+    context 'when `docker_service` is true' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'docker_service' => true} }
+			let(:pre_condition) { "service { 'docker': }" }
+      it { should compile.with_all_deps }
+			it { should contain_service('docker').that_comes_before('Service[docker-sample]') }
+    end
+
+    context 'when `docker_service` is `my-docker`' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'docker_service' => 'my-docker'} }
+			let(:pre_condition) { "service{ 'my-docker': }" }
+      it { should compile.with_all_deps }
+			it { should contain_service('my-docker').that_comes_before('Service[docker-sample]') }
+    end
+
+    context 'with extra_systemd_parameters' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'extra_systemd_parameters' => {'RestartSec' => 5}} }
+      if (systemd)
+        it { should contain_file(initscript).with_content(/^RestartSec=5$/) }
+      end
     end
 
   end

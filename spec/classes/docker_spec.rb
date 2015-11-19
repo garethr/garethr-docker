@@ -109,6 +109,14 @@ describe 'docker', :type => :class do
           it { should contain_file('/etc/sysconfig/docker').with_content(/export TMPDIR="\/bigtmp"/) }
         end
 
+        context 'when given specific storage options' do
+          let(:params) {{
+            'storage_driver' => 'devicemapper',
+            'dm_basesize'  => '3G'
+          }}
+          it { should contain_file(storage_config_file).with_content(/^(DOCKER_STORAGE_OPTIONS=" --storage-driver=devicemapper --storage-opt dm.basesize=3G)/) }
+        end
+
         context 'It should include default prerequired_packages' do
           it { should contain_package('device-mapper').with_ensure('present') }
         end
@@ -135,7 +143,7 @@ describe 'docker', :type => :class do
         it { should contain_file(service_config_file).with_content(/docker.io/) }
       end
 
-     context 'with a custom package name' do
+      context 'with a custom package name' do
         let(:params) { {'package_name' => 'docker-custom-pkg-name' } }
         it { should contain_package('docker').with_name('docker-custom-pkg-name').with_ensure('present') }
       end
@@ -179,9 +187,11 @@ describe 'docker', :type => :class do
         it { should contain_file(service_config_file).with_content(/-e native/) }
       end
 
-      context 'with storage driver param' do
-        let(:params) { { 'storage_driver' => 'devicemapper' }}
-        it { should contain_file(storage_config_file).with_content(/--storage-driver=devicemapper/) }
+      ['aufs', 'devicemapper', 'btrfs', 'overlay', 'vfs', 'zfs'].each do |driver|
+        context "with #{driver} storage driver" do
+          let(:params) { { 'storage_driver' => driver }}
+          it { should contain_file(storage_config_file).with_content(/--storage-driver=#{driver}/) }
+        end
       end
 
       context 'with thinpool device param' do
@@ -303,6 +313,20 @@ describe 'docker', :type => :class do
           expect {
             should contain_package('docker')
           }.to raise_error(Puppet::Error, /log_level must be one of debug, info, warn, error or fatal/)
+        end
+      end
+
+      context 'with specific log_driver' do
+        let(:params) { { 'log_driver' => 'json-file' } }
+        it { should contain_file(service_config_file).with_content(/--log-driver json-file/) }
+      end
+
+      context 'with an invalid log_driver' do
+        let(:params) { { 'log_driver' => 'verbose'} }
+        it do
+          expect {
+            should contain_package('docker')
+          }.to raise_error(Puppet::Error, /log_driver must be one of none, json-file, syslog, journald, gelf or fluentd/)
         end
       end
 

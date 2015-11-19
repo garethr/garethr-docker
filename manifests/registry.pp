@@ -43,7 +43,8 @@ define docker::registry(
 
   if $ensure == 'present' {
     if $username != undef and $password != undef and $email != undef {
-      $auth_cmd = "${docker_command} login -u '${username}' -p '${password}' -e '${email}' ${server}"
+      $auth_cmd = "${docker_command} login -u '${username}' -p \"\${password}\" -e '${email}' ${server}"
+      $auth_environment = "password=${password}"
     }
     else {
       $auth_cmd = "${docker_command} login ${server}"
@@ -54,11 +55,12 @@ define docker::registry(
   }
 
   exec { "auth against ${server}":
-    command => $auth_cmd,
-    user    => $local_user,
-    cwd     => '/root',
-    path    => ['/bin', '/usr/bin'],
-    timeout => 0,
+    environment => $auth_environment,
+    command     => $auth_cmd,
+    user        => $local_user,
+    cwd         => '/root',
+    path        => ['/bin', '/usr/bin'],
+    timeout     => 0,
   }
 
 }

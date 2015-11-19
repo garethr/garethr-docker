@@ -26,11 +26,6 @@ describe 'docker' do
           restart => 'always',
           require => Docker::Image['nginx'],
         }
-        docker::run { 'nginx3':
-          image   => 'nginx',
-          use_name => true,
-          require => Docker::Image['nginx'],
-        }
     "}
 
     it 'should apply with no errors' do
@@ -39,12 +34,6 @@ describe 'docker' do
 
     it 'should be idempotent' do
       apply_manifest(pp, :catch_changes=>true)
-    end
-
-    it 'should be start a docker process' do
-      shell('ps -aux | grep docker') do |r|
-        expect(r.stdout).to match(/\/usr\/bin\/docker/)
-      end
     end
 
     describe package(package_name) do
@@ -65,17 +54,11 @@ describe 'docker' do
       its(:stdout) { should match /nginx/ }
     end
 
-    describe command("#{command} ps -l --no-trunc=true"), :sudo => true do
+    describe command("#{command} inspect nginx"), :sudo => true do
       its(:exit_status) { should eq 0 }
-      its(:stdout) { should match /nginx -g 'daemon off;'/ }
     end
 
-    describe command("#{command} ps"), :sudo => true do
-      its(:exit_status) { should eq 0 }
-      its(:stdout) { should match /nginx3/ }
-    end
-
-    describe command("#{command} inspect nginx3"), :sudo => true do
+    describe command("#{command} inspect nginx2"), :sudo => true do
       its(:exit_status) { should eq 0 }
     end
 
@@ -101,7 +84,7 @@ describe 'docker' do
       registry_port = 5000
       @registry_address = "#{registry_host}:#{registry_port}"
       @registry_email = 'user@example.com'
-      @config_file = shell('docker --version|cut -d"/" -f2').stdout < "1.7" ? '~/.dockercfg' : '~/.docker/config.json'
+      @config_file = '/root/.docker/config.json'
       @manifest = <<-EOS
         class { 'docker': }
         docker::run { 'registry':
@@ -115,7 +98,7 @@ describe 'docker' do
       apply_manifest(@manifest, :catch_failures=>true)
       # avoid a race condition with the registry taking time to start
       # on some operating systems
-      sleep 4
+      sleep 10
     end
 
     it 'should be able to login to the registry' do

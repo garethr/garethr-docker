@@ -27,6 +27,8 @@ class docker::service (
   $tcp_bind                          = $docker::tcp_bind,
   $socket_bind                       = $docker::socket_bind,
   $log_level                         = $docker::log_level,
+  $log_level                         = $docker::log_level,
+  $log_driver                        = $docker::log_driver,
   $selinux_enabled                   = $docker::selinux_enabled,
   $socket_group                      = $docker::socket_group,
   $dns                               = $docker::dns,
@@ -40,6 +42,15 @@ class docker::service (
   $no_proxy                          = $docker::no_proxy,
   $execdriver                        = $docker::execdriver,
   $storage_driver                    = $docker::storage_driver,
+  $dm_basesize                       = $docker::dm_basesize,
+  $dm_fs                             = $docker::dm_fs,
+  $dm_mkfsarg                        = $docker::dm_mkfsarg,
+  $dm_mountopt                       = $docker::dm_mountopt,
+  $dm_blocksize                      = $docker::dm_blocksize,
+  $dm_loopdatasize                   = $docker::dm_loopdatasize,
+  $dm_loopmetadatasize               = $docker::dm_loopmetadatasize,
+  $dm_datadev                        = $docker::dm_datadev,
+  $dm_metadatadev                    = $docker::dm_metadatadev,
   $tmp_dir                           = $docker::tmp_dir,
   $nowarn_kernel                     = $docker::nowarn_kernel,
   $dm_thinpooldev                    = $docker::dm_thinpooldev,
@@ -55,7 +66,7 @@ class docker::service (
   $storage_auto_extend_pool          = $docker::storage_auto_extend_pool,
   $storage_pool_autoextend_threshold = $docker::storage_pool_autoextend_threshold,
   $storage_pool_autoextend_percent   = $docker::storage_pool_autoextend_percent,
-) {
+) inherits docker::params {
   $dns_array = any2array($dns)
   $dns_search_array = any2array($dns_search)
   $extra_parameters_array = any2array($extra_parameters)
