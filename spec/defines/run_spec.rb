@@ -40,13 +40,26 @@ require 'spec_helper'
       end
     end
 
+    context 'when passing `after` containers' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'after' => ['foo', 'bar']} }
+      if (systemd)
+        it { should contain_file(initscript).with_content(/After=(.*\s+)?docker-foo.service/) }
+        it { should contain_file(initscript).with_content(/After=(.*\s+)?docker-bar.service/) }
+        it { should contain_file(initscript).with_content(/Wants=(.*\s+)?docker-foo.service/) }
+        it { should contain_file(initscript).with_content(/Wants=(.*\s+)?docker-bar.service/) }
+      else
+        it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-foo/) }
+        it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-bar/) }
+      end
+    end
+
     context 'when passing `depends` containers' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'depends' => ['foo', 'bar']} }
       if (systemd)
-        it { should contain_file(initscript).with_content(/After=.*\s+docker-foo.service/) }
-        it { should contain_file(initscript).with_content(/After=.*\s+docker-bar.service/) }
-        it { should contain_file(initscript).with_content(/Requires=.*\s+docker-foo.service/) }
-        it { should contain_file(initscript).with_content(/Requires=.*\s+docker-bar.service/) }
+        it { should contain_file(initscript).with_content(/After=(.*\s+)?docker-foo.service/) }
+        it { should contain_file(initscript).with_content(/After=(.*\s+)?docker-bar.service/) }
+        it { should contain_file(initscript).with_content(/Requires=(.*\s+)?docker-foo.service/) }
+        it { should contain_file(initscript).with_content(/Requires=(.*\s+)?docker-bar.service/) }
       else
         it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-foo/) }
         it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-bar/) }

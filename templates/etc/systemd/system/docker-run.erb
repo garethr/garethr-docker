@@ -3,8 +3,12 @@
 
 [Unit]
 Description=Daemon for <%= @title %>
-After=docker.service<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " #{@service_prefix}#{d}.service" %><% end %><% end %>
-Requires=docker.service<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " #{@service_prefix}#{d}.service" %><% end %><% end %>
+After=docker.service
+<% if @after %>After=<%= @sanitised_after_array.map{ |a| "#{@service_prefix}#{a}.service"}.join(" ") %><% end %>
+<% if @depends %>After=<%= @sanitised_depends_array.map{ |d| "#{@service_prefix}#{d}.service"}.join(" ") %><% end %>
+Requires=docker.service
+<% if @after %>Wants=<%= @sanitised_after_array.map{ |a| "#{@service_prefix}#{a}.service"}.join(" ") %><% end %>
+<% if @depends %>Requires=<%= @sanitised_depends_array.map{ |d| "#{@service_prefix}#{d}.service"}.join(" ") %><% end %>
 
 [Service]
 Restart=on-failure
