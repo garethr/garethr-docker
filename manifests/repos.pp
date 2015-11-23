@@ -7,24 +7,24 @@ class docker::repos {
 
   case $::osfamily {
     'Debian': {
-      include apt
-      if $::operatingsystem == 'Debian' and $::lsbdistcodename == 'wheezy' {
-        include apt::backports
-      }
-      Exec['apt_update'] -> Package[$docker::prerequired_packages]
-      if ($docker::use_upstream_package_source) {
-        apt::source { 'docker':
-          location          => $docker::package_source_location,
-          release           => $docker::package_release,
-          repos             => $docker::package_repos,
-          key               => $docker::package_key,
-          key_source        => $docker::package_key_source,
-          # apt-transport-https is required by the apt to get the sources
-          required_packages => 'debian-keyring debian-archive-keyring apt-transport-https',
-          pin               => '10',
-          include_src       => false,
+      if $docker::manage_package {
+        include apt
+        if $::operatingsystem == 'Debian' and $::lsbdistcodename == 'wheezy' {
+          include apt::backports
         }
-        if $docker::manage_package {
+        Exec['apt_update'] -> Package[$docker::prerequired_packages]
+        if ($docker::use_upstream_package_source) {
+          apt::source { 'docker':
+            location          => $docker::package_source_location,
+            release           => $docker::package_release,
+            repos             => $docker::package_repos,
+            key               => $docker::package_key,
+            key_source        => $docker::package_key_source,
+            # apt-transport-https is required by the apt to get the sources
+            required_packages => 'debian-keyring debian-archive-keyring apt-transport-https',
+            pin               => '10',
+            include_src       => false,
+          }
           Apt::Source['docker'] -> Package['docker']
         }
       }
