@@ -8,9 +8,6 @@ class docker::repos {
   case $::osfamily {
     'Debian': {
       include apt
-      # apt-transport-https is required by the apt to get the sources
-      ensure_packages(['apt-transport-https'])
-      Package['apt-transport-https'] -> Apt::Source <||>
       if $::operatingsystem == 'Debian' and $::lsbdistcodename == 'wheezy' {
         include apt::backports
       }
@@ -22,7 +19,8 @@ class docker::repos {
           repos             => $docker::package_repos,
           key               => $docker::package_key,
           key_source        => $docker::package_key_source,
-          required_packages => 'debian-keyring debian-archive-keyring',
+          # apt-transport-https is required by the apt to get the sources
+          required_packages => 'debian-keyring debian-archive-keyring apt-transport-https',
           pin               => '10',
           include_src       => false,
         }
