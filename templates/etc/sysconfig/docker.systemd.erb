@@ -1,10 +1,7 @@
 # This file is managed by Puppet and local changes
 # may be overwritten
 
-DOCKER="/usr/bin/<%= @docker_command %>"
-
-other_args="<% -%>
-<% if @root_dir %> -g <%= @root_dir %><% end -%>
+OPTIONS="<% if @root_dir %> -g <%= @root_dir %><% end -%>
 <% if @tcp_bind %> -H <%= @tcp_bind %><% end -%>
 <% if @socket_bind %> -H <%= @socket_bind %><% end -%>
 <% if @log_level %> -l <%= @log_level %><% end -%>
@@ -17,12 +14,9 @@ other_args="<% -%>
 <% if @execdriver %> -e <%= @execdriver %> <% end -%>
 <% if @extra_parameters %><% @extra_parameters_array.each do |param| %> <%= param %><% end %><% end -%>"
 
-<% if @proxy %>export http_proxy='<%= @proxy %>'
-export https_proxy='<%= @proxy %>'<% end %>
-<% if @no_proxy %>export no_proxy='<%= @no_proxy %>'<% end %>
+<% if @proxy %>http_proxy='<%= @proxy %>'
+  https_proxy='<%= @proxy %>'<% end %>
+<% if @no_proxy %>no_proxy='<%= @no_proxy %>'<% end %>
 # This is also a handy place to tweak where Docker's temporary files go.
-export TMPDIR="<%= @tmp_dir %>"
-<% if @shell_values %><% @shell_values_array.each do |param| %>
-<%= param %><% end %><% end -%>
-<% if @nowarn_kernel %># Resolves: rhbz#1176302 (docker issue #407)
-DOCKER_NOWARN_KERNEL_VERSION=1<% end %>
+# TMPDIR="<%= @tmp_dir %>"
+<% if @shell_values %><% @shell_values_array.each do |param| %> <%= param %><% end %><% end -%>

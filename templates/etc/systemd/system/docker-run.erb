@@ -3,11 +3,10 @@
 
 [Unit]
 Description=Daemon for <%= @title %>
-After=docker.service<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " docker-#{d}.service" %><% end %><% end %>
-Requires=docker.service<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " docker-#{d}.service" %><% end %><% end %>
+After=docker.service<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " #{@service_prefix}#{d}.service" %><% end %><% end %>
+Requires=docker.service<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " #{@service_prefix}#{d}.service" %><% end %><% end %>
 
 [Service]
-<%- if @username -%>User=<%= @username %><%- end -%>
 Restart=on-failure
 StartLimitInterval=20
 StartLimitBurst=5
@@ -15,16 +14,17 @@ TimeoutStartSec=0
 Environment="HOME=/root"
 ExecStartPre=-/usr/bin/<%= @docker_command %> kill <%= @sanitised_title %>
 ExecStartPre=-/usr/bin/<%= @docker_command %> rm <%= @sanitised_title %>
-<%- if @pull_on_start %>ExecStartPre=/usr/bin/<%= @docker_command %> pull <%= @image %>
+<% @extra_systemd_parameters.each do |key, value| -%><%= key %>=<%= value %>
+<% end -%>
+<%- if @pull_on_start %>ExecStartPre=-/usr/bin/<%= @docker_command %> pull <%= @image %>
 <% end -%>
 ExecStart=/usr/bin/<%= @docker_command %> run \
         <%= @docker_run_flags %> \
         --name <%= @sanitised_title %> \
-        <% if @extra_parameters %><% @extra_parameters_array.each do |param| %>  \
-            <%= param %> <% end %> \
-        <% end -%> \
         <%= @image %> \
         <% if @command %> <%= @command %><% end %>
+<%- if @before_stop %>ExecStop=-<%= @before_stop %>
+<% end -%>
 ExecStop=-/usr/bin/<%= @docker_command %> stop <%= @sanitised_title %>
 
 [Install]

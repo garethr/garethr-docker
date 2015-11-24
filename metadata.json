@@ -1,6 +1,6 @@
 {
   "name": "garethr-docker",
-  "version": "4.0.2",
+  "version": "4.1.1",
   "author": "Gareth Rushgrove",
   "summary": "Module for installing and managing docker",
   "license": "Apache-2.0",
@@ -24,6 +24,12 @@
       "operatingsystemrelease": [
         "12.04",
         "14.04"
+      ]
+    },{
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "7.8",
+        "8.0"
       ]
     },{
       "operatingsystem": "Archlinux"
@@ -50,13 +56,10 @@
       "version_requirement": ">= 4.1.0"
     },{
       "name": "puppetlabs/apt",
-      "version_requirement": ">= 1.1.0 <= 1.8.0"
+      "version_requirement": ">= 1.8.0 <= 3.0.0"
     },{
       "name": "stahnma/epel",
       "version_requirement": ">= 0.0.6"
-    },{
-      "name": "stankevich/python",
-      "version_requirement": ">= 1.9.4"
     }
   ]
 }

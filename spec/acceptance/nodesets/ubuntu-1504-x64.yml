@@ -1,0 +1,12 @@
+HOSTS:
+  ubuntu-1504-x64:
+    roles:
+      - default
+    platform: ubuntu-15.04-amd64
+    box: ubuntu/vivid64
+    hypervisor: vagrant
+
+CONFIG:
+  log_level: verbose
+  type: foss
+  color: false
