@@ -5,5 +5,7 @@ fixtures:
       ref: 1.8.0
     stdlib: git://github.com/puppetlabs/puppetlabs-stdlib.git
     epel: git://github.com/stahnma/puppet-module-epel.git
+  forge_modules:
+    python: stankevich/python
   symlinks:
     docker: "#{source_dir}"

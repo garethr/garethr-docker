@@ -50,6 +50,9 @@ class docker::params {
   $storage_auto_extend_pool          = undef
   $storage_pool_autoextend_threshold = undef
   $storage_pool_autoextend_percent   = undef
+  $docker_compose                    = true
+  $docker_compose_version            = undef
+  $manage_python                     = true
 
   case $::osfamily {
     'Debian' : {

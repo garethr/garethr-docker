@@ -322,3 +322,51 @@ docker::exec { 'cron_allow_root':
 }
 ```
 
+### Docker-compose
+
+Docker-compose allows you to configure and run multple containers from a single erb file.
+If your OS has Python 2.6 please set the docker compose version to 1.2.0 
+The Puppet module expects to find the docker-compose.yml file first.
+```puppet
+file { '/root/docker-compose.yml':
+  ensure    => file,
+  content   => template('helloworld/docker-compose.yml.erb'), 
+  }
+```
+Then will build the containers with the following statement
+
+```puppet
+docker_compose {'Hello World':
+  ensure   => present, 
+  source   => '/root',  
+  scale    => ['1', '3']
+  }
+```
+Source is the directory where the docker-compose.yml lives. This defaults to /tmp if no value is passed
+Scale sets the number of conatiner instances of an application. This needs to be passed as an array and will index the againist the conatiner applcation key name in the docker-compose.yml from top to bottom. This defaults to 1 for each application if no value is passed.
+For example. If your docker-compose.yml looks like this
+````
+container1:  
+    image: docker/helloworld
+    hostname: hello1
+    command: '/bin/sh -c "while true; do echo hello world; sleep 1; done"'
+
+container2:  
+    image: docker/helloworld
+    hostname: hello2
+    command: '/bin/sh -c "while true; do echo hello world; sleep 1; done"'
+
+container3:  
+    image: docker/helloworld
+    hostname: hello3
+    command: '/bin/sh -c "while true; do echo hello world; sleep 1; done"'
+````
+and your scale decleration looks like
+````
+scale    => ['1', '3', '1']
+````
+conatiner1 would have 1 instance
+
+conatiner2 would have 3 instances
+
+conatiner3 would have 1 instance
