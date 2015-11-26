@@ -1,6 +1,6 @@
 Puppet::Type.type(:docker_network).provide(:ruby) do
   desc "Support for Docker Networking"
- 
+
   mk_resource_methods
   
   commands :docker_network => "docker"
