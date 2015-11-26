@@ -278,6 +278,42 @@ If using hiera, there's a `docker::run_instance` class you can configure, for ex
       command: '/bin/sh -c "while true; do echo hello world; sleep 1; done"'
 ```
 
+###Docker Networking
+The following class will set up the native Docker networking in Docker engine 1.9.1 and above. There are 2 functions of the class to create a network, or connect a container to a network. Please note you can't declare both connect and create in the same class. 
+Below is an example for creating a network:
+
+```puppet
+docker_network { 'my-net':
+  ensure => present,
+  create => true, 
+  driver => 'overlay',
+}
+``` 
+The above example covers the minimum params to create a simple network. For a more advance configuration you can add the following:
+```puppet 
+docker_network { 'my-net':
+  ensure  => present,
+  create  => true, 
+  driver  => 'overlay',
+  subnet  => '192.168.1.0/24',
+  gateway => '192.168.1.1',
+  iprange => ' 192.168.1.4/32'
+}
+```
+To delete a network use the following:
+```puppet
+docker_network { 'my-net':
+  ensure  => absent }
+```
+To connect a container that is already running please do the following:
+```puppet
+docker_network { 'my-net':
+  ensure  => present,
+  connect => 'example-container'
+ } 
+
+``` 
+
 ### Private registries
 By default images will be pushed and pulled from [index.docker.io](http://index.docker.io) unless you've specified a server. If you have your own private registry without authentication, you can fully qualify your image name. If your private registry requires authentication you may configure a registry:
 
@@ -345,7 +381,7 @@ docker_compose {'Hello World':
 Source is the directory where the docker-compose.yml lives. This defaults to /tmp if no value is passed
 Scale sets the number of conatiner instances of an application. This needs to be passed as an array and will index the againist the conatiner applcation key name in the docker-compose.yml from top to bottom. This defaults to 1 for each application if no value is passed.
 For example. If your docker-compose.yml looks like this
-````
+````puppet
 container1:  
     image: docker/helloworld
     hostname: hello1
@@ -362,7 +398,7 @@ container3:
     command: '/bin/sh -c "while true; do echo hello world; sleep 1; done"'
 ````
 and your scale decleration looks like
-````
+````puppet
 scale    => ['1', '3', '1']
 ````
 conatiner1 would have 1 instance
