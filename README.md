@@ -280,7 +280,7 @@ If using hiera, there's a `docker::run_instance` class you can configure, for ex
 
 ###Docker Networking
 The following class will set up the native Docker networking in Docker engine 1.9.1 and above. There are 2 functions of the class to create a network, or connect a container to a network. Please note you can't declare both connect and create in the same class. 
-Below is an example for creating a network:
+Below is an example of how to to create a network:
 
 ```puppet
 docker_network { 'my-net':
