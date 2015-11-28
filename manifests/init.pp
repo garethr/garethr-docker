@@ -300,9 +300,6 @@ class docker(
   $storage_auto_extend_pool          = $docker::params::storage_auto_extend_pool,
   $storage_pool_autoextend_threshold = $docker::params::storage_pool_autoextend_threshold,
   $storage_pool_autoextend_percent   = $docker::params::storage_pool_autoextend_percent,
-  $docker_compose                    = $docker::params::docker_compose,
-  $docker_compose_version            = $docker::params::docker_compose_version,
-  $manage_python                     = $docker::params::manage_python,
 ) inherits docker::params {
 
   validate_string($version)
@@ -311,7 +308,7 @@ class docker(
   validate_bool($manage_package)
   validate_array($docker_users)
   validate_array($log_opt)
-  validate_bool($docker_compose)
+  
 
   if $log_level {
     validate_re($log_level, '^(debug|info|warn|error|fatal)$', 'log_level must be one of debug, info, warn, error or fatal')
@@ -362,8 +359,4 @@ class docker(
   # and is running.
   Class['docker'] -> Docker::Registry <||> -> Docker::Run <||>
   Class['docker'] -> Docker::Image <||>
-
-  if ($docker_compose) {
-    class {'docker::docker_compose':}
-  }
 }
