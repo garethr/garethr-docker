@@ -280,6 +280,16 @@ If using hiera, there's a `docker::run_instance` class you can configure, for ex
 
 ###Docker Networking
 The following class will set up the native Docker networking in Docker engine 1.9.1 and above. There are 2 functions of the class to create a network, or connect a container to a network. Please note you can't declare both connect and create in the same class. 
+
+To use the networking function please make sure you have the following options set in the Docker daemon.
+```puppet
+extra_parameters => '--cluster-store=<backend>://172.17.8.101:<port> --cluster-advertise=<interface>:2376'
+```
+a full example using consul would look like:
+```puppet
+extra_parameters => '--cluster-store=consul://172.17.8.101:8500 --cluster-advertise=enp0s8:2376'
+```
+
 Below is an example of how to to create a network:
 
 ```puppet
