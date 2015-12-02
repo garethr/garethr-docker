@@ -74,51 +74,42 @@ class docker::service (
 
   case $::osfamily {
     'Debian': {
+      $service_config = "/etc/default/${service_name}"
+
       if $::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '15.04') < 0 {
-        $hasstatus = true
+        $hasstatus  = true
         $hasrestart = false
+        $provider   = 'upstart'
+
         file { '/etc/init.d/docker':
           ensure => 'link',
           target => '/lib/init/upstart-job',
           force  => true,
           notify => Service['docker'],
         }
-      } else {
-        $hasstatus = undef
-        $hasrestart = undef
       }
 
       if ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemmajrelease, '8') >= 0) or ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '15.04') >= 0) {
-        file { '/etc/systemd/system/docker.service.d':
-          ensure => directory;
-        }
-        file { '/etc/systemd/system/docker.service.d/service-overrides.conf':
-          ensure  => present,
-          content => template('docker/etc/systemd/system/docker.service.d/service-overrides-debian.conf.erb'),
-          notify  => Exec['docker-systemd-reload'];
-        }
+        $provider = 'systemd'
+        $systemd_service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-debian.conf.erb'
+        $service_config_template = 'docker/etc/sysconfig/docker.systemd.erb'
+
         file { '/etc/default/docker-storage':
           ensure  => present,
           force   => true,
           content => template('docker/etc/sysconfig/docker-storage.erb'),
           notify  => Service['docker'],
         }
-        $template = 'docker/etc/sysconfig/docker.systemd.erb'
       } else {
-        $template = 'docker/etc/default/docker.erb'
+        $service_config_template = 'docker/etc/default/docker.erb'
       }
-
-      file { "/etc/default/${service_name}":
-        ensure  => present,
-        force   => true,
-        content => template($template),
-        notify  => Service['docker'],
-      }
-
     }
     'RedHat': {
+      $service_config = '/etc/sysconfig/docker'
+
       if ($::operatingsystem == 'Fedora') or (versioncmp($::operatingsystemrelease, '7.0') >= 0) {
-        $template = 'docker.systemd.erb'
+        $provider = 'systemd'
+        $service_config_template = 'docker/etc/sysconfig/docker.systemd.erb'
 
         file { '/etc/sysconfig/docker-storage-setup':
           ensure  => present,
@@ -128,30 +119,11 @@ class docker::service (
           notify  => Service['docker'],
         }
 
+        if ($docker::use_upstream_package_source) {
+          $systemd_service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-rhel.conf.erb'
+        }
       } else {
-        $template = 'docker.erb'
-      }
-      $hasstatus     = undef
-      $hasrestart    = undef
-
-      if ($docker::use_upstream_package_source) {
-        file { '/etc/systemd/system/docker.service.d':
-          ensure => directory;
-        }
-
-        file { '/etc/systemd/system/docker.service.d/service-overrides.conf':
-          ensure  => present,
-          content => template('docker/etc/systemd/system/docker.service.d/service-overrides-rhel.conf.erb'),
-          notify  => Exec['docker-systemd-reload'];
-        }
-      }
-
-      file { '/etc/sysconfig/docker':
-        ensure  => present,
-        force   => true,
-        content => template("docker/etc/sysconfig/${template}"),
-        before  => Service['docker'],
-        notify  => Service['docker'],
+        $service_config_template = 'docker/etc/sysconfig/docker.erb'
       }
 
       file { '/etc/sysconfig/docker-storage':
@@ -163,35 +135,39 @@ class docker::service (
       }
     }
     'Archlinux': {
+      $provider   = 'systemd'
+      $systemd_service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-archlinux.conf.erb'
       $hasstatus  = true
       $hasrestart = true
-
-      file { '/etc/systemd/system/docker.service.d':
-        ensure => directory;
-      }
-
-      file { '/etc/systemd/system/docker.service.d/service-overrides.conf':
-        ensure  => present,
-        content => template('docker/etc/systemd/system/docker.service.d/service-overrides-archlinux.conf.erb'),
-        notify  => Exec['docker-systemd-reload'];
-      }
-
-      file { '/etc/conf.d/docker':
-        ensure  => present,
-        force   => true,
-        content => template('docker/etc/conf.d/docker.erb'),
-        notify  => Service['docker'];
-      }
+      $service_config = '/etc/conf.d/docker'
+      $service_config_template = 'docker/etc/conf.d/docker.erb'
     }
     default: {
       fail('Docker needs a Debian, RedHat or Archlinux based system.')
     }
   }
 
-  if $::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '15.04') < 0 {
-    $provider = 'upstart'
-  } else {
-    $provider = undef
+  if $provider == 'systemd' {
+    file { '/etc/systemd/system/docker.service.d':
+      ensure => directory
+    }
+
+    if $systemd_service_overrides_template {
+      file { '/etc/systemd/system/docker.service.d/service-overrides.conf':
+        ensure  => present,
+        content => template($systemd_service_overrides_template),
+        notify  => Exec['docker-systemd-reload']
+      }
+    }
+  }
+
+  if $service_config {
+    file { $service_config:
+      ensure  => present,
+      force   => true,
+      content => template($service_config_template),
+      notify  => Service['docker'],
+    }
   }
 
   service { 'docker':
