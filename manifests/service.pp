@@ -66,103 +66,78 @@ class docker::service (
   $storage_auto_extend_pool          = $docker::storage_auto_extend_pool,
   $storage_pool_autoextend_threshold = $docker::storage_pool_autoextend_threshold,
   $storage_pool_autoextend_percent   = $docker::storage_pool_autoextend_percent,
-) inherits docker::params {
+  $storage_config                    = $docker::storage_config,
+  $storage_config_template           = $docker::storage_config_template,
+  $service_provider                  = $docker::service_provider,
+  $service_config                    = $docker::service_config,
+  $service_config_template           = $docker::service_config_template,
+  $service_overrides_template        = $docker::service_overrides_template,
+  $service_hasstatus                 = $docker::service_hasstatus,
+  $service_hasrestart                = $docker::service_hasrestart,
+) {
+
+  unless $::osfamily =~ /(Debian|RedHat|Archlinux)/ {
+    fail('The docker::service class needs a Debian, RedHat or Archlinux based system.')
+  }
+
   $dns_array = any2array($dns)
   $dns_search_array = any2array($dns_search)
   $extra_parameters_array = any2array($extra_parameters)
   $shell_values_array = any2array($shell_values)
 
-  case $::osfamily {
-    'Debian': {
-      $service_config = "/etc/default/${service_name}"
-
-      if $::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '15.04') < 0 {
-        $hasstatus  = true
-        $hasrestart = false
-        $provider   = 'upstart'
-
-        file { '/etc/init.d/docker':
-          ensure => 'link',
-          target => '/lib/init/upstart-job',
-          force  => true,
-          notify => Service['docker'],
-        }
-      }
-
-      if ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemmajrelease, '8') >= 0) or ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '15.04') >= 0) {
-        $provider = 'systemd'
-        $systemd_service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-debian.conf.erb'
-        $service_config_template = 'docker/etc/sysconfig/docker.systemd.erb'
-
-        file { '/etc/default/docker-storage':
-          ensure  => present,
-          force   => true,
-          content => template('docker/etc/sysconfig/docker-storage.erb'),
-          notify  => Service['docker'],
-        }
-      } else {
-        $service_config_template = 'docker/etc/default/docker.erb'
-      }
-    }
-    'RedHat': {
-      $service_config = '/etc/sysconfig/docker'
-
-      if ($::operatingsystem == 'Fedora') or (versioncmp($::operatingsystemrelease, '7.0') >= 0) {
-        $provider = 'systemd'
-        $service_config_template = 'docker/etc/sysconfig/docker.systemd.erb'
-
-        file { '/etc/sysconfig/docker-storage-setup':
-          ensure  => present,
-          force   => true,
-          content => template('docker/etc/sysconfig/docker-storage-setup.erb'),
-          before  => Service['docker'],
-          notify  => Service['docker'],
-        }
-
-        if ($docker::use_upstream_package_source) {
-          $systemd_service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-rhel.conf.erb'
-        }
-      } else {
-        $service_config_template = 'docker/etc/sysconfig/docker.erb'
-      }
-
-      file { '/etc/sysconfig/docker-storage':
-        ensure  => present,
-        force   => true,
-        content => template('docker/etc/sysconfig/docker-storage.erb'),
-        before  => Service['docker'],
-        notify  => Service['docker'],
-      }
-    }
-    'Archlinux': {
-      $provider   = 'systemd'
-      $systemd_service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-archlinux.conf.erb'
-      $hasstatus  = true
-      $hasrestart = true
-      $service_config = '/etc/conf.d/docker'
-      $service_config_template = 'docker/etc/conf.d/docker.erb'
-    }
-    default: {
-      fail('Docker needs a Debian, RedHat or Archlinux based system.')
-    }
-  }
-
-  if $provider == 'systemd' {
-    file { '/etc/systemd/system/docker.service.d':
-      ensure => directory
-    }
-
-    if $systemd_service_overrides_template {
-      file { '/etc/systemd/system/docker.service.d/service-overrides.conf':
-        ensure  => present,
-        content => template($systemd_service_overrides_template),
-        notify  => Exec['docker-systemd-reload']
-      }
-    }
-  }
-
   if $service_config {
-    file { $service_config:
+    $_service_config = $service_config
+  } else {
+    if $::osfamily == 'Debian' {
+      $_service_config = "/etc/default/${service_name}"
+    }
+  }
+
+  if $::osfamily == 'RedHat' {
+    file { '/etc/sysconfig/docker-storage-setup':
+      ensure  => present,
+      force   => true,
+      content => template('docker/etc/sysconfig/docker-storage-setup.erb'),
+      before  => Service['docker'],
+      notify  => Service['docker'],
+    }
+  }
+
+  case $service_provider {
+    'systemd': {
+      file { '/etc/systemd/system/docker.service.d':
+        ensure => directory
+      }
+
+      if $service_overrides_template {
+        file { '/etc/systemd/system/docker.service.d/service-overrides.conf':
+          ensure  => present,
+          content => template($service_overrides_template),
+          notify  => Exec['docker-systemd-reload']
+        }
+      }
+    }
+    'upstart': {
+      file { '/etc/init.d/docker':
+        ensure => 'link',
+        target => '/lib/init/upstart-job',
+        force  => true,
+        notify => Service['docker'],
+      }
+    }
+  }
+
+  if $storage_config {
+    file { $storage_config:
+      ensure  => present,
+      force   => true,
+      content => template($storage_config_template),
+      notify  => Service['docker'],
+    }
+  }
+
+  if $_service_config {
+    file { $_service_config:
       ensure  => present,
       force   => true,
       content => template($service_config_template),
@@ -174,9 +149,8 @@ class docker::service (
     ensure     => $service_state,
     name       => $service_name,
     enable     => $service_enable,
-    hasstatus  => $hasstatus,
-    hasrestart => $hasrestart,
-    provider   => $provider,
+    hasstatus  => $service_hasstatus,
+    hasrestart => $service_hasrestart,
+    provider   => $service_provider,
   }
-
 }
