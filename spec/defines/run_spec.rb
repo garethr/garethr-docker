@@ -68,6 +68,21 @@ require 'spec_helper'
       end
     end
 
+    context 'when passing `depend_services`' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'depend_services' => ['foo', 'bar']} }
+      if (systemd)
+        it { should contain_file(initscript).with_content(/After=(.*\s+)?foo.service/) }
+        it { should contain_file(initscript).with_content(/After=(.*\s+)?bar.service/) }
+        it { should contain_file(initscript).with_content(/Requires=(.*\s+)?foo.service/) }
+        it { should contain_file(initscript).with_content(/Requires=(.*\s+)?bar.service/) }
+      else
+        it { should contain_file(initscript).with_content(/Required-Start:.*\s+foo/) }
+        it { should contain_file(initscript).with_content(/Required-Start:.*\s+bar/) }
+        it { should contain_file(initscript).with_content(/Required-Stop:.*\s+foo/) }
+        it { should contain_file(initscript).with_content(/Required-Stop:.*\s+bar/) }
+      end
+    end
+
     context 'with autorestart functionality' do
       let(:params) { {'command' => 'command', 'image' => 'base'} }
       if (systemd)
