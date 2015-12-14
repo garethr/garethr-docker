@@ -1,3 +1,13 @@
+<%-
+	@required_start = ["$network", "docker"] +
+		@sanitised_after_array.map{ |s| "#{@service_prefix}#{s}"} +
+		@sanitised_depends_array.map{ |s| "#{@service_prefix}#{s}"} +
+		@depends_service_array
+
+	@required_stop = ["$network", "docker"] +
+		@sanitised_depends_array.map{ |d| "#{@service_prefix}#{d}"} +
+		@depends_service_array
+-%>
 #!/bin/sh
 #
 # This file is managed by Puppet and local changes
@@ -12,8 +22,8 @@
 
 ### BEGIN INIT INFO
 # Provides:       <%= @service_prefix %><%= @sanitised_title %>
-# Required-Start: $network docker<% if @after %><% @sanitised_after_array.each do |a| %><%= " #{@service_prefix}#{a}" %><% end %><% end %><% if @depends %><% @sanitised_depends_array.each do |d| %><%= " #{@service_prefix}#{d}" %><% end %><% end %>
-# Required-Stop: $network docker<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " #{@service_prefix}#{d}" %><% end %><% end %>
+# Required-Start: <%= @required_start.uniq.join(" ") %>
+# Required-Stop:  <%= @required_stop.uniq.join(" ") %>
 # Should-Start:
 # Should-Stop:
 # Default-Start: 2 3 4 5

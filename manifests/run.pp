@@ -75,7 +75,9 @@ define docker::run(
   $extra_systemd_parameters = {},
   $pull_on_start = false,
   $after = [],
+  $after_service = [],
   $depends = [],
+  $depends_service = [],
   $tty = false,
   $socket_connect = [],
   $hostentries = [],
@@ -127,6 +129,7 @@ define docker::run(
   $extra_parameters_array = any2array($extra_parameters)
   $after_array = any2array($after)
   $depends_array = any2array($depends)
+  $depends_service_array = any2array($depends_service)
 
   $docker_run_flags = docker_run_flags({
     cpuset          => any2array($cpuset),
