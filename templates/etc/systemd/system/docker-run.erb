@@ -2,11 +2,11 @@
 	@after = ["docker.service"] +
 		@sanitised_after_array.map{ |s| "#{@service_prefix}#{s}.service"} +
 		@sanitised_depends_array.map{ |s| "#{@service_prefix}#{s}.service"} +
-		@depends_service_array.map{|s| "#{s}.service"}
+		@depend_services_array.map{|s| "#{s}.service"}
 	@wants = @sanitised_after_array.map{ |a| "#{@service_prefix}#{a}.service"}
 	@requires = ["docker.service"] +
 		@sanitised_depends_array.map{ |d| "#{@service_prefix}#{d}.service"} +
-		@depends_service_array.map{|s| "#{s}.service"}
+		@depend_services_array.map{|s| "#{s}.service"}
 -%>
 # This file is managed by Puppet and local changes
 # may be overwritten

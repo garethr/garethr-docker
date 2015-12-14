@@ -2,11 +2,11 @@
 	@required_start = ["$network", "docker"] +
 		@sanitised_after_array.map{ |s| "#{@service_prefix}#{s}"} +
 		@sanitised_depends_array.map{ |s| "#{@service_prefix}#{s}"} +
-		@depends_service_array
+		@depend_services_array
 
 	@required_stop = ["$network", "docker"] +
 		@sanitised_depends_array.map{ |d| "#{@service_prefix}#{d}"} +
-		@depends_service_array
+		@depend_services_array
 -%>
 #!/bin/sh
 #
