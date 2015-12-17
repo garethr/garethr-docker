@@ -338,6 +338,7 @@ class docker(
   validate_bool($manage_service)
   validate_array($docker_users)
   validate_array($log_opt)
+  validate_array($tcp_bind)
 
   if $log_level {
     validate_re($log_level, '^(debug|info|warn|error|fatal)$', 'log_level must be one of debug, info, warn, error or fatal')
