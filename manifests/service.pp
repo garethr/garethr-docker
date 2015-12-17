@@ -44,6 +44,8 @@ class docker::service (
   $ip_forward                        = $docker::ip_forward,
   $iptables                          = $docker::iptables,
   $ip_masq                           = $docker::ip_masq,
+  $bridge                            = $docker::bridge,
+  $fixed_cidr                        = $docker::fixed_cidr,
   $socket_bind                       = $docker::socket_bind,
   $log_level                         = $docker::log_level,
   $log_driver                        = $docker::log_driver,

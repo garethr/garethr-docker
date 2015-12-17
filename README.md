@@ -121,6 +121,8 @@ class { 'docker':
   ip_forward  => true,
   iptables    => true,
   ip_masq     => true,
+  bridge      => br0,
+  fixed_cidr  => '10.20.1.0/24',
 }
 ```
 
