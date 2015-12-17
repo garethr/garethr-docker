@@ -10,6 +10,8 @@ class docker::params {
   $ip_forward                        = true
   $iptables                          = true
   $ip_masq                           = true
+  $fixed_cidr                        = undef
+  $bridge                            = undef
   $socket_bind                       = 'unix:///var/run/docker.sock'
   $log_level                         = undef
   $log_driver                        = undef

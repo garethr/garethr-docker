@@ -37,6 +37,16 @@
 #   Enable IP masquerading for bridge's IP range.
 #   The default is true.
 #
+# [*bridge*]
+#   Attach containers to a pre-existing network bridge 
+#   use 'none' to disable container networking
+#   Defaults to undefined.
+#
+# [*fixed_cidr*]
+#   IPv4 subnet for fixed IPs
+#   10.20.0.0/16
+#   Defaults to undefined
+#
 # [*socket_bind*]
 #   The unix socket to bind to. Defaults to
 #   unix:///var/run/docker.sock.
@@ -357,6 +367,10 @@ class docker(
   validate_bool($ip_forward)
   validate_bool($iptables)
   validate_bool($ip_masq)
+
+  if $fixed_cidr {
+    validate_string($bridge)
+  }
 
   if $log_level {
     validate_re($log_level, '^(debug|info|warn|error|fatal)$', 'log_level must be one of debug, info, warn, error or fatal')
