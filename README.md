@@ -1,6 +1,6 @@
 Puppet module for installing, configuring and managing
 [Docker](https://github.com/docker/docker) from the [official repository](http://docs.docker.com/installation/) or alternatively from [EPEL on RedHat](http://docs.docker.io/en/latest/installation/rhel/) based distributions.
- 
+
 [![Puppet
 Forge](http://img.shields.io/puppetforge/v/garethr/docker.svg)](https://forge.puppetlabs.com/garethr/docker) [![Build
 Status](https://secure.travis-ci.org/garethr/garethr-docker.png)](http://travis-ci.org/garethr/garethr-docker) [![Documentation
@@ -182,6 +182,20 @@ docker::image { 'ubuntu':
 }
 ```
 
+You can trigger a rebuild of the image by subscribing to external events like Dockerfile changes:
+
+```puppet
+docker::image { 'ubuntu':
+  docker_file => '/tmp/Dockerfile'
+  subscribe => File['/tmp/Dockerfile'],
+}
+
+file { '/tmp/Dockerfile':
+  ensure => file,
+  source => 'puppet:///modules/someModule/Dockerfile',
+}
+```
+
 You can also remove images you no longer need with:
 
 ```puppet
@@ -202,6 +216,7 @@ docker::images:
   ubuntu:
     image_tag: 'precise'
 ```
+
 
 ### Containers
 

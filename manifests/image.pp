@@ -86,11 +86,18 @@ define docker::image(
       timeout     => 0,
     }
   } else {
+    exec { "check_image_${image}_install":
+      command => 'echo > /dev/null',
+      path    => ['/bin', '/usr/bin'],
+      unless  => $image_find,
+      notify  => Exec[$image_install],
+    }
+
     exec { $image_install:
       environment => 'HOME=/root',
       path        => ['/bin', '/usr/bin'],
-      unless      => $image_find,
       timeout     => 0,
+      refreshonly => true,
     }
   }
 }
