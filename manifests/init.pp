@@ -292,6 +292,8 @@ class docker(
   $ip_masq                           = $docker::params::ip_masq,
   $iptables                          = $docker::params::iptables,
   $socket_bind                       = $docker::params::socket_bind,
+  $fixed_cidr                        = $docker::params::fixed_cidr,
+  $bridge                            = $docker::params::bridge,
   $default_gateway                   = $docker::params::default_gateway,
   $log_level                         = $docker::params::log_level,
   $log_driver                        = $docker::params::log_driver,
@@ -374,9 +376,12 @@ class docker(
   validate_bool($ip_forward)
   validate_bool($iptables)
   validate_bool($ip_masq)
+  validate_string($bridge)
+  validate_string($fixed_cidr)
+  validate_string($default_gateway)
 
-  if $fixed_cidr or $default_gateway {
-    validate_string($bridge)
+  if ($fixed_cidr or $default_gateway) and (!$bridge) {
+    fail('You must provide the $bridge parameter.')
   }
 
   if $log_level {

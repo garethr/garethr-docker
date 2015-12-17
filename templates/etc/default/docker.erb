@@ -22,9 +22,9 @@ DOCKER_OPTS="\
 <% if @root_dir %> -g <%= @root_dir %><% end -%>
 <% if @tcp_bind %><% @tcp_bind.each do |param| %> -H <%= param %><% end %> <% end -%>
 <% if @socket_bind %> -H <%= @socket_bind %><% end -%>
-<% if @ip_forward %> --ip-forward <%= @ip_forward %><% end -%>
-<% if @iptables %> --iptables <%= @iptables %><% end -%>
-<% if @iptables %> --ip-masq <%= @ip_masq %><% end -%>
+ --ip-forward=<%= @ip_forward -%>
+ --iptables=<%= @iptables -%>
+ --ip-masq=<%= @ip_masq -%>
 <% if @fixed_cidr %> --fixed-cidr <%= @fixed_cidr %><% end -%>
 <% if @bridge %> --bridge <%= @bridge %><% end -%>
 <% if @default_gateway %> --default-gateway <%= @default_gateway %><% end -%>
