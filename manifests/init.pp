@@ -25,6 +25,10 @@
 #   tcp://127.0.0.1:4243
 #   Defaults to undefined
 #
+# [*ip_forward*]
+#   Enables IP forwarding on the Docker host.
+#   The default is true.
+#
 # [*socket_bind*]
 #   The unix socket to bind to. Defaults to
 #   unix:///var/run/docker.sock.
@@ -260,6 +264,7 @@ class docker(
   $prerequired_packages              = $docker::params::prerequired_packages,
   $docker_cs                         = $docker::params::docker_cs,
   $tcp_bind                          = $docker::params::tcp_bind,
+  $ip_forward                        = $docker::params::ip_forward,
   $socket_bind                       = $docker::params::socket_bind,
   $log_level                         = $docker::params::log_level,
   $log_driver                        = $docker::params::log_driver,
@@ -339,6 +344,7 @@ class docker(
   validate_array($docker_users)
   validate_array($log_opt)
   validate_array($tcp_bind)
+  validate_bool($ip_forward)
 
   if $log_level {
     validate_re($log_level, '^(debug|info|warn|error|fatal)$', 'log_level must be one of debug, info, warn, error or fatal')
