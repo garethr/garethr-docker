@@ -47,6 +47,12 @@
 #   10.20.0.0/16
 #   Defaults to undefined
 #
+# [*default_gateway*]
+#   IPv4 address of the container default gateway;
+#   this address must be part of the bridge subnet
+#   (which is defined by bridge)
+#   Defaults to undefined
+#
 # [*socket_bind*]
 #   The unix socket to bind to. Defaults to
 #   unix:///var/run/docker.sock.
@@ -286,6 +292,7 @@ class docker(
   $ip_masq                           = $docker::params::ip_masq,
   $iptables                          = $docker::params::iptables,
   $socket_bind                       = $docker::params::socket_bind,
+  $default_gateway                   = $docker::params::default_gateway,
   $log_level                         = $docker::params::log_level,
   $log_driver                        = $docker::params::log_driver,
   $log_opt                           = $docker::params::log_opt,
@@ -368,7 +375,7 @@ class docker(
   validate_bool($iptables)
   validate_bool($ip_masq)
 
-  if $fixed_cidr {
+  if $fixed_cidr or $default_gateway {
     validate_string($bridge)
   }
 
