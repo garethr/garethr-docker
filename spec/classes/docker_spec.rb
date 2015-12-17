@@ -330,6 +330,22 @@ describe 'docker', :type => :class do
         end
       end
 
+      context 'with specific log_driver and log_opt' do
+        let(:params) {
+          { 'log_driver' => 'json-file',
+            'log_opt' => [ 'max-size=1m','max-file=3' ]
+          }
+        }
+        it { should contain_file(service_config_file).with_content(/--log-driver json-file/) }
+        it { should contain_file(service_config_file).with_content(/--log-opt max-size=1m/) }
+        it { should contain_file(service_config_file).with_content(/--log-opt max-file=3/) }
+      end
+
+      context 'without log_driver no log_opt' do
+        let(:params) { { 'log_opt' => [ 'max-size=1m' ] } }
+        it { should_not contain_file(service_config_file).with_content(/--log-opt max-size=1m/) }
+      end
+
       context 'with specific selinux_enabled parameter' do
         let(:params) { { 'selinux_enabled' => 'true' } }
         it { should contain_file(service_config_file).with_content(/--selinux-enabled=true/) }
