@@ -27,7 +27,6 @@ class docker::service (
   $tcp_bind                          = $docker::tcp_bind,
   $socket_bind                       = $docker::socket_bind,
   $log_level                         = $docker::log_level,
-  $log_level                         = $docker::log_level,
   $log_driver                        = $docker::log_driver,
   $log_opt                           = $docker::log_opt,
   $selinux_enabled                   = $docker::selinux_enabled,
