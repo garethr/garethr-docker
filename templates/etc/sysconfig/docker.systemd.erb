@@ -6,6 +6,7 @@ OPTIONS="<% if @root_dir %> -g <%= @root_dir %><% end -%>
 <% if @socket_bind %> -H <%= @socket_bind %><% end -%>
 <% if @ip_forward %> --ip-forward <%= @ip_forward %><% end -%>
 <% if @iptables %> --iptables <%= @iptables %><% end -%>
+<% if @iptables %> --ip-masq <%= @ip_masq %><% end -%>
 <% if @log_level %> -l <%= @log_level %><% end -%>
 <% if @log_driver %> --log-driver <%= @log_driver %><% end -%>
 <% if @log_driver %><% if @log_opt %><% @log_opt.each do |param| %> --log-opt <%= param %><% end %><% end -%><% end -%>

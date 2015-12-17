@@ -33,6 +33,10 @@
 #   Enable Docker's addition of iptables rules.
 #   Default is true.
 #
+# [*ip_masq*]
+#   Enable IP masquerading for bridge's IP range.
+#   The default is true.
+#
 # [*socket_bind*]
 #   The unix socket to bind to. Defaults to
 #   unix:///var/run/docker.sock.
@@ -269,6 +273,7 @@ class docker(
   $docker_cs                         = $docker::params::docker_cs,
   $tcp_bind                          = $docker::params::tcp_bind,
   $ip_forward                        = $docker::params::ip_forward,
+  $ip_masq                           = $docker::params::ip_masq,
   $iptables                          = $docker::params::iptables,
   $socket_bind                       = $docker::params::socket_bind,
   $log_level                         = $docker::params::log_level,
@@ -351,6 +356,7 @@ class docker(
   validate_array($tcp_bind)
   validate_bool($ip_forward)
   validate_bool($iptables)
+  validate_bool($ip_masq)
 
   if $log_level {
     validate_re($log_level, '^(debug|info|warn|error|fatal)$', 'log_level must be one of debug, info, warn, error or fatal')

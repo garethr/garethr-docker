@@ -13,6 +13,9 @@
 # [*iptables*]
 #   Enable Docker's addition of iptables rules
 #
+# [*ip_masq*]
+#   Enable IP masquerading for bridge's IP range.
+#
 # [*socket_bind*]
 #   Which local unix socket to bind the docker service to.
 #
@@ -40,6 +43,7 @@ class docker::service (
   $tcp_bind                          = $docker::tcp_bind,
   $ip_forward                        = $docker::ip_forward,
   $iptables                          = $docker::iptables,
+  $ip_masq                           = $docker::ip_masq,
   $socket_bind                       = $docker::socket_bind,
   $log_level                         = $docker::log_level,
   $log_driver                        = $docker::log_driver,
