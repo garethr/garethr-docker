@@ -29,6 +29,10 @@
 #   Enables IP forwarding on the Docker host.
 #   The default is true.
 #
+# [*iptables*]
+#   Enable Docker's addition of iptables rules.
+#   Default is true.
+#
 # [*socket_bind*]
 #   The unix socket to bind to. Defaults to
 #   unix:///var/run/docker.sock.
@@ -265,6 +269,7 @@ class docker(
   $docker_cs                         = $docker::params::docker_cs,
   $tcp_bind                          = $docker::params::tcp_bind,
   $ip_forward                        = $docker::params::ip_forward,
+  $iptables                          = $docker::params::iptables,
   $socket_bind                       = $docker::params::socket_bind,
   $log_level                         = $docker::params::log_level,
   $log_driver                        = $docker::params::log_driver,
@@ -345,6 +350,7 @@ class docker(
   validate_array($log_opt)
   validate_array($tcp_bind)
   validate_bool($ip_forward)
+  validate_bool($iptables)
 
   if $log_level {
     validate_re($log_level, '^(debug|info|warn|error|fatal)$', 'log_level must be one of debug, info, warn, error or fatal')

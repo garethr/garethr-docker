@@ -7,6 +7,8 @@ class docker::params {
   $ensure                            = present
   $docker_cs                         = false
   $tcp_bind                          = undef
+  $ip_forward                        = true
+  $iptables                          = true
   $socket_bind                       = 'unix:///var/run/docker.sock'
   $log_level                         = undef
   $log_driver                        = undef

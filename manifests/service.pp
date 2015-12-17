@@ -7,7 +7,11 @@
 #   Which tcp port, if any, to bind the docker service to.
 #
 # [*ip_forward*]
-#   Use ip_forward. 
+#   This flag interacts with the IP forwarding setting on 
+#   your host system's kernel
+#
+# [*iptables*]
+#   Enable Docker's addition of iptables rules
 #
 # [*socket_bind*]
 #   Which local unix socket to bind the docker service to.
@@ -35,6 +39,7 @@ class docker::service (
   $daemon_subcommand                 = $docker::daemon_subcommand,
   $tcp_bind                          = $docker::tcp_bind,
   $ip_forward                        = $docker::ip_forward,
+  $iptables                          = $docker::iptables,
   $socket_bind                       = $docker::socket_bind,
   $log_level                         = $docker::log_level,
   $log_driver                        = $docker::log_driver,
