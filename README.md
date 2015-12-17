@@ -120,6 +120,7 @@ class { 'docker':
   socket_bind => 'unix:///var/run/docker.sock',
   ip_forward  => true,
   iptables    => true,
+  ip_masq     => true,
 }
 ```
 
