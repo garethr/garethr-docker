@@ -13,6 +13,7 @@ describe 'docker', :type => :class do
           :lsbdistcodename        => 'wheezy',
           :kernelrelease          => '3.2.0-4-amd64',
           :operatingsystemrelease => '7.3',
+          :operatingsystemmajrelease => '7',
         } }
         service_config_file = '/etc/default/docker'
         storage_config_file = '/etc/default/docker'
@@ -31,6 +32,7 @@ describe 'docker', :type => :class do
           :lsbdistcodename        => 'maverick',
           :kernelrelease          => '3.8.0-29-generic',
           :operatingsystemrelease => '10.04',
+          :operatingsystemmajrelease => '10',
         } }
         service_config_file = '/etc/default/docker'
         storage_config_file = '/etc/default/docker'
@@ -88,7 +90,8 @@ describe 'docker', :type => :class do
         let(:facts) { {
           :osfamily => osfamily,
           :operatingsystem => 'RedHat',
-          :operatingsystemrelease => '6.5'
+          :operatingsystemrelease => '6.5',
+          :operatingsystemmajrelease => '7',
         } }
         service_config_file = '/etc/sysconfig/docker'
         storage_config_file = '/etc/sysconfig/docker-storage'
@@ -420,6 +423,8 @@ describe 'docker', :type => :class do
       :operatingsystem => 'Debian',
       :lsbdistid       => 'Debian',
       :lsbdistcodename => 'wheezy',
+      :operatingsystemrelease => '7.9',
+      :operatingsystemmajrelease => '7',
       :kernelrelease   => '3.12-1-amd64'
     } }
 
@@ -439,7 +444,8 @@ describe 'docker', :type => :class do
     let(:facts) { {
       :osfamily => 'RedHat',
       :operatingsystem => 'RedHat',
-      :operatingsystemrelease => '6.5'
+      :operatingsystemrelease => '6.5',
+      :operatingsystemmajrelease => '6',
     } }
 
     it { should contain_class('epel') }
@@ -461,6 +467,7 @@ describe 'docker', :type => :class do
       :osfamily => 'RedHat',
       :operatingsystem => 'RedHat',
       :operatingsystemrelease => '6.5',
+      :operatingsystemmajrelease => '6',
       :kernelversion => '2.6.32'
     } }
     it { should contain_file('/etc/sysconfig/docker').with_content(/DOCKER_NOWARN_KERNEL_VERSION=1/) }
@@ -471,6 +478,7 @@ describe 'docker', :type => :class do
       :osfamily => 'RedHat',
       :operatingsystem => 'RedHat',
       :operatingsystemrelease => '6.5',
+      :operatingsystemmajrelease => '6',
       :kernelversion => '2.6.31'
     } }
     it { should_not contain_file('/etc/sysconfig/docker').with_content(/DOCKER_NOWARN_KERNEL_VERSION=1/) }
@@ -480,7 +488,8 @@ describe 'docker', :type => :class do
     let(:facts) { {
       :osfamily => 'RedHat',
       :operatingsystem => 'Family',
-      :operatingsystemrelease => '21.0'
+      :operatingsystemrelease => '21.0',
+      :operatingsystemmajrelease => '21',
     } }
 
     it { should contain_package('docker').with_name('docker-engine') }
@@ -634,7 +643,8 @@ describe 'docker', :type => :class do
     let(:facts) { {
       :osfamily => 'RedHat',
       :operatingsystem => 'RedHat',
-      :operatingsystemrelease => '6.4'
+      :operatingsystemrelease => '6.4',
+      :operatingsystemmajrelease => '6',
     } }
     it do
       expect {

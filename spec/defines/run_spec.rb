@@ -3,20 +3,34 @@ require 'spec_helper'
 ['Debian', 'RedHat', 'Archlinux'].each do |osfamily|
 
   describe 'docker::run', :type => :define do
-    let(:facts) { {:osfamily => osfamily} }
     let(:title) { 'sample' }
 
     context "on #{osfamily}" do
 
     if osfamily == 'Debian'
+      let(:facts) { {
+        :osfamily               => 'Debian',
+        :lsbdistid              => 'Ubuntu',
+        :operatingsystem        => 'Ubuntu',
+        :lsbdistcodename        => 'trusty',
+        :operatingsystemrelease => '14.04',
+        :kernelrelease          => '3.8.0-29-generic'
+      } }
       initscript = '/etc/init.d/docker-sample'
       command = 'docker'
       systemd = false
     elsif osfamily == 'Archlinux'
+      let(:facts) { {:osfamily => osfamily} }
       initscript = '/etc/systemd/system/docker-sample.service'
       command = 'docker'
       systemd = true
     else
+      let(:facts) { {
+        :osfamily => 'RedHat',
+        :operatingsystem => 'RedHat',
+        :operatingsystemrelease => '6.6',
+        :operatingsystemmajrelease => '6',
+      } }
       initscript = '/etc/init.d/docker-sample'
       command = 'docker'
       systemd = false
