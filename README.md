@@ -116,7 +116,7 @@ socket if required.
 
 ```puppet
 class { 'docker':
-  tcp_bind        => ['tcp://127.0.0.1:4243','tcp:://10.0.0.1:4243'],
+  tcp_bind        => ['tcp://127.0.0.1:4243','tcp://10.0.0.1:4243'],
   socket_bind     => 'unix:///var/run/docker.sock',
   ip_forward      => true,
   iptables        => true,
