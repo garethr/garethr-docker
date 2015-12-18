@@ -12,6 +12,11 @@ RSpec.configure do |c|
   # Readable test descriptions
   c.formatter = :documentation
 
+  # show retry status in spec process
+  c.verbose_retry = true
+  # show exception that triggers a retry if verbose_retry is set to true
+  c.display_try_failure_messages = true
+
   # Configure all nodes in nodeset
   c.before :suite do
     # Install module and dependencies

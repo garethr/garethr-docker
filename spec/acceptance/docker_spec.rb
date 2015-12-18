@@ -101,7 +101,7 @@ describe 'docker' do
       sleep 10
     end
 
-    it 'should be able to login to the registry' do
+    it 'should be able to login to the registry', :retry => 3, :retry_wait => 10 do
       manifest = <<-EOS
         docker::registry { '#{@registry_address}':
           username => 'username',

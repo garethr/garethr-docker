@@ -10,6 +10,7 @@ group :test do
   gem "puppetlabs_spec_helper"
   gem "metadata-json-lint"
   gem "rspec", '< 3.2.0'
+  gem "rspec-retry"
 end
 
 group :development do
