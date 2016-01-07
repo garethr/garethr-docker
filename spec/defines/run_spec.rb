@@ -482,7 +482,6 @@ require 'spec_helper'
       let(:params) { {'ensure' => 'absent', 'command' => 'command', 'image' => 'base'} }
       it { should compile.with_all_deps }
       it { should contain_service('docker-sample').with_ensure(false) }
-      it { should contain_file(initscript).with_ensure('absent') }
       it { should contain_exec("remove container docker-sample").with_command('docker rm -v sample') }
     end
 

@@ -223,17 +223,13 @@ define docker::run(
           ensure    => false,
           enable    => false,
           hasstatus => $hasstatus,
-        } -> file { $initscript:
-            ensure  => absent,
-            content => template($init_template),
-            mode    => $mode,
-            notify  => Exec["remove container ${service_prefix}${sanitised_title}"]
-          }
+        }
 
         exec {
           "remove container ${service_prefix}${sanitised_title}":
             command     => "docker rm -v ${sanitised_title}",
             refreshonly => true,
+            onlyif      => "docker ps --no-trunc -a --format='table {{.Names}}' | grep '^${sanitised_title}$'",
             path        => ['/bin', '/usr/bin'],
             environment => 'HOME=/root',
             timeout     => 0
