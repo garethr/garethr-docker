@@ -514,6 +514,56 @@ describe 'the Puppet Docker module' do
         expect(r.stdout).to match(/^1$/)
       end
     end
+
+    it 'should stop a running container and remove container' do
+      pp=<<-EOS
+        class { 'docker':}
+
+        docker::image { 'ubuntu':
+          require => Class['docker'],
+        }
+
+        docker::run { 'container_3_6':
+          image   => 'ubuntu',
+          command => 'init',
+          require => Docker::Image['ubuntu'],
+        }
+      EOS
+
+      pp2=<<-EOS
+        class { 'docker':}
+
+        docker::image { 'ubuntu':
+          require => Class['docker'],
+        }
+
+        docker::run { 'container_3_6':
+          ensure  => 'absent',
+          image   => 'ubuntu',
+          require => Docker::Image['ubuntu'],
+        }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
+
+      # A sleep to give docker time to execute properly
+      sleep 4
+
+      shell('docker ps -a | wc -l') do |r|
+        expect(r.stdout).to match(/^2$/)
+      end
+
+      apply_manifest(pp2, :catch_failures => true)
+      apply_manifest(pp2, :catch_changes => true) unless fact('selinux') == 'true'
+
+      # A sleep to give docker time to execute properly
+      sleep 4
+
+      shell('docker ps -a | wc -l') do |r|
+        expect(r.stdout).to match(/^1$/)
+      end
+    end
   end
 
   describe "docker::exec" do
