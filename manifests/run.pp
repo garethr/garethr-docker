@@ -45,6 +45,7 @@
 #
 define docker::run(
   $image,
+  $ensure = 'present',
   $command = undef,
   $memory_limit = '0b',
   $cpuset = [],
@@ -88,6 +89,7 @@ define docker::run(
   validate_re($image, '^[\S]*$')
   validate_re($title, '^[\S]*$')
   validate_re($memory_limit, '^[\d]*(b|k|m|g)$')
+  validate_re($ensure, '^(present|absent)')
   if $restart {
     validate_re($restart, '^(no|always|on-failure)|^on-failure:[\d]+$')
   }
@@ -215,6 +217,30 @@ define docker::run(
       }
     }
 
+
+    if $ensure == 'absent' {
+        service { "${service_prefix}${sanitised_title}":
+          ensure    => false,
+          enable    => false,
+          hasstatus => $hasstatus,
+        } -> file { $initscript:
+            ensure  => absent,
+            content => template($init_template),
+            mode    => $mode,
+            notify  => Exec["remove container ${service_prefix}${sanitised_title}"]
+          }
+
+        exec {
+          "remove container ${service_prefix}${sanitised_title}":
+            command     => "docker rm -v ${sanitised_title}",
+            refreshonly => true,
+            path        => ['/bin', '/usr/bin'],
+            environment => 'HOME=/root',
+            timeout     => 0
+        }
+
+    }
+    else {
     file { $initscript:
       ensure  => present,
       content => template($init_template),
@@ -281,6 +307,7 @@ define docker::run(
     }
     else {
       File[$initscript] -> Service<| title == "${service_prefix}${sanitised_title}" |>
+    }
     }
   }
 }
