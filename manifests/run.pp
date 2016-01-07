@@ -241,73 +241,73 @@ define docker::run(
 
     }
     else {
-    file { $initscript:
-      ensure  => present,
-      content => template($init_template),
-      mode    => $mode,
-    }
+      file { $initscript:
+        ensure  => present,
+        content => template($init_template),
+        mode    => $mode,
+      }
 
-    if $manage_service {
-      if $running == false {
-        service { "${service_prefix}${sanitised_title}":
-          ensure    => $running,
-          enable    => false,
-          hasstatus => $hasstatus,
-          require   => File[$initscript],
+      if $manage_service {
+        if $running == false {
+          service { "${service_prefix}${sanitised_title}":
+            ensure    => $running,
+            enable    => false,
+            hasstatus => $hasstatus,
+            require   => File[$initscript],
+          }
         }
+        else {
+          # Transition help from moving from CID based container detection to
+          # Name-based container detection. See #222 for context.
+          # This code should be considered temporary until most people have
+          # transitioned. - 2015-04-15
+          if $initscript == "/etc/init.d/${service_prefix}${sanitised_title}" {
+            # This exec sequence will ensure the old-style CID container is stopped
+            # before we replace the init script with the new-style.
+            exec { "/bin/sh /etc/init.d/${service_prefix}${sanitised_title} stop":
+              onlyif  => "/usr/bin/test -f /var/run/docker-${sanitised_title}.cid && /usr/bin/test -f /etc/init.d/${service_prefix}${sanitised_title}",
+              require => [],
+            } ->
+            file { "/var/run/docker-${sanitised_title}.cid":
+              ensure => absent,
+            } ->
+            File[$initscript]
+          }
+
+          if $uses_systemd {
+            $provider = 'systemd'
+          } else {
+            $provider = undef
+          }
+
+          service { "${service_prefix}${sanitised_title}":
+            ensure    => $running,
+            enable    => true,
+            provider  => $provider,
+            hasstatus => $hasstatus,
+            require   => File[$initscript],
+          }
+        }
+
+        if $docker_service {
+          if $docker_service == true {
+            Service['docker'] -> Service["${service_prefix}${sanitised_title}"]
+          } else {
+            Service[$docker_service] -> Service["${service_prefix}${sanitised_title}"]
+          }
+        }
+      }
+      if $uses_systemd {
+        File[$initscript] ~> Exec['docker-systemd-reload']
+        Exec['docker-systemd-reload'] -> Service<| title == "${service_prefix}${sanitised_title}" |>
+      }
+
+      if $restart_service {
+        File[$initscript] ~> Service<| title == "${service_prefix}${sanitised_title}" |>
       }
       else {
-        # Transition help from moving from CID based container detection to
-        # Name-based container detection. See #222 for context.
-        # This code should be considered temporary until most people have
-        # transitioned. - 2015-04-15
-        if $initscript == "/etc/init.d/${service_prefix}${sanitised_title}" {
-          # This exec sequence will ensure the old-style CID container is stopped
-          # before we replace the init script with the new-style.
-          exec { "/bin/sh /etc/init.d/${service_prefix}${sanitised_title} stop":
-            onlyif  => "/usr/bin/test -f /var/run/docker-${sanitised_title}.cid && /usr/bin/test -f /etc/init.d/${service_prefix}${sanitised_title}",
-            require => [],
-          } ->
-          file { "/var/run/docker-${sanitised_title}.cid":
-            ensure => absent,
-          } ->
-          File[$initscript]
-        }
-
-        if $uses_systemd {
-          $provider = 'systemd'
-        } else {
-          $provider = undef
-        }
-
-        service { "${service_prefix}${sanitised_title}":
-          ensure    => $running,
-          enable    => true,
-          provider  => $provider,
-          hasstatus => $hasstatus,
-          require   => File[$initscript],
-        }
+        File[$initscript] -> Service<| title == "${service_prefix}${sanitised_title}" |>
       }
-
-      if $docker_service {
-        if $docker_service == true {
-          Service['docker'] -> Service["${service_prefix}${sanitised_title}"]
-        } else {
-          Service[$docker_service] -> Service["${service_prefix}${sanitised_title}"]
-        }
-      }
-    }
-    if $uses_systemd {
-      File[$initscript] ~> Exec['docker-systemd-reload']
-      Exec['docker-systemd-reload'] -> Service<| title == "${service_prefix}${sanitised_title}" |>
-    }
-
-    if $restart_service {
-      File[$initscript] ~> Service<| title == "${service_prefix}${sanitised_title}" |>
-    }
-    else {
-      File[$initscript] -> Service<| title == "${service_prefix}${sanitised_title}" |>
-    }
     }
   }
 }
