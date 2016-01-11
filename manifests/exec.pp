@@ -39,7 +39,7 @@ define docker::exec(
   $unless_command = $unless ? {
       undef              => undef,
       ''                 => undef,
-      default            => "${docker_command} exec ${docker_exec_flags} ${sanitised_container} ${unless}",
+      default            => "${docker_command} exec ${docker_exec_flags} ${sanitised_container} ${$unless}",
   }
 
   exec { $exec:
