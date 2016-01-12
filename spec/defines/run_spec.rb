@@ -249,6 +249,19 @@ require 'spec_helper'
     context 'when stopping the service' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'running' => false} }
       it { should contain_service('docker-sample').with_ensure(false) }
+      it { should contain_service('docker-sample').with_enable(false) }
+    end
+
+    context 'when stopping the service and it needs to remain enabled' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'running' => false, 'enable' => true} }
+      it { should contain_service('docker-sample').with_ensure(false) }
+      it { should contain_service('docker-sample').with_enable(true) }
+    end
+
+    context 'when disabling the service' do
+      # running defaults to true
+      let(:params) {{ 'command' => 'command', 'image' => 'base', 'enable' => false} }
+      it { should contain_service('docker-sample').with_enable(false) }
     end
 
     context 'when passing a memory limit in bytes' do
