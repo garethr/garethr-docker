@@ -295,6 +295,14 @@ class docker(
   $storage_auto_extend_pool          = $docker::params::storage_auto_extend_pool,
   $storage_pool_autoextend_threshold = $docker::params::storage_pool_autoextend_threshold,
   $storage_pool_autoextend_percent   = $docker::params::storage_pool_autoextend_percent,
+  $storage_config                    = $docker::params::storage_config,
+  $storage_config_template           = $docker::params::storage_config_template,
+  $service_provider                  = $docker::params::service_provider,
+  $service_config                    = $docker::params::service_config,
+  $service_config_template           = $docker::params::service_config_template,
+  $service_overrides_template        = $docker::params::service_overrides_template,
+  $service_hasstatus                 = $docker::params::service_hasstatus,
+  $service_hasrestart                = $docker::params::service_hasrestart,
 ) inherits docker::params {
 
   validate_string($version)
@@ -338,6 +346,10 @@ class docker(
 
   if ($dm_datadev and !$dm_metadatadev) or (!$dm_datadev and $dm_metadatadev) {
     fail('You need to provide both $dm_datadev and $dm_metadatadev parameters for direct lvm.')
+  }
+
+  if ($dm_basesize or $dm_fs or $dm_mkfsarg or $dm_mountopt or $dm_blocksize or $dm_loopdatasize or $dm_loopmetadatasize or $dm_datadev or $dm_metadatadev) and ($storage_driver != 'devicemapper') {
+    fail('Values for dm_ variables will be ignored unless storage_driver is set to devicemapper.')
   }
 
   class { 'docker::repos': } ->

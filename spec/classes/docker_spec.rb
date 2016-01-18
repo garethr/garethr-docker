@@ -349,6 +349,30 @@ describe 'docker', :type => :class do
         it { should_not contain_file(service_config_file).with_content(/--log-opt max-size=1m/) }
       end
 
+      context 'with storage_driver set to devicemapper and dm_* options set' do
+        let(:params) { {'storage_driver' => 'devicemapper',
+                        'dm_datadev'     => '/dev/sda',
+                        'dm_metadatadev' => '/dev/sdb', } }
+        it { should contain_file(storage_config_file).with_content(/dm.datadev=\/dev\/sda/) }
+      end
+
+      context 'with storage_driver unset and dm_ options set' do
+        let(:params) { {'dm_datadev'     => '/dev/sda',
+                        'dm_metadatadev' => '/dev/sdb', } }
+        it { should raise_error(Puppet::Error, /Values for dm_ variables will be ignored unless storage_driver is set to devicemapper./) }
+      end
+
+      context 'with storage_driver and dm_basesize set' do
+        let(:params) { {'storage_driver' => 'devicemapper',
+                        'dm_basesize'    => '20G', }}
+        it { should contain_file(storage_config_file).with_content(/dm.basesize=20G/) }
+      end
+
+      context 'with storage_driver unset and dm_basesize set' do
+        let(:params) { {'dm_basesize'    => '20G' }}
+        it { should raise_error(Puppet::Error, /Values for dm_ variables will be ignored unless storage_driver is set to devicemapper./) }
+      end
+
       context 'with specific selinux_enabled parameter' do
         let(:params) { { 'selinux_enabled' => 'true' } }
         it { should contain_file(service_config_file).with_content(/--selinux-enabled=true/) }
@@ -636,6 +660,34 @@ describe 'docker', :type => :class do
     it { should contain_service('docker').with_provider('upstart') }
     it { should contain_package('docker').with_name('docker-engine').with_ensure('present')  }
     it { should contain_package('apparmor') }
+  end
+
+  context 'newer versions of Debian and Ubuntu' do
+    context 'Ubuntu >= 15.04' do
+      let(:facts) { {
+        :osfamily               => 'Debian',
+        :lsbdistid              => 'Ubuntu',
+        :operatingsystem        => 'Ubuntu',
+        :lsbdistcodename        => 'trusty',
+        :operatingsystemrelease => '15.04',
+        :kernelrelease          => '3.8.0-29-generic'
+      } }
+
+      it { should contain_service('docker').with_provider('systemd') }
+    end
+
+    context 'Debian >= 8' do
+      let(:facts) { {
+        :osfamily                  => 'Debian',
+        :operatingsystem           => 'Debian',
+        :lsbdistid                 => 'Debian',
+        :lsbdistcodename           => 'jessie',
+        :kernelrelease             => '3.2.0-4-amd64',
+        :operatingsystemmajrelease => '8',
+      } }
+
+      it { should contain_service('docker').with_provider('systemd') }
+    end
   end
 
 
