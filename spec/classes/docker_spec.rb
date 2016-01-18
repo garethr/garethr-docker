@@ -349,6 +349,30 @@ describe 'docker', :type => :class do
         it { should_not contain_file(service_config_file).with_content(/--log-opt max-size=1m/) }
       end
 
+      context 'with storage_driver set to devicemapper and dm_* options set' do
+        let(:params) { {'storage_driver' => 'devicemapper',
+                        'dm_datadev'     => '/dev/sda',
+                        'dm_metadatadev' => '/dev/sdb', } }
+        it { should contain_file(storage_config_file).with_content(/dm.datadev=\/dev\/sda/) }
+      end
+
+      context 'with storage_driver unset and dm_ options set' do
+        let(:params) { {'dm_datadev'     => '/dev/sda',
+                        'dm_metadatadev' => '/dev/sdb', } }
+        it { should raise_error(Puppet::Error, /Values for dm_ variables will be ignored unless storage_driver is set to devicemapper./) }
+      end
+
+      context 'with storage_driver and dm_basesize set' do
+        let(:params) { {'storage_driver' => 'devicemapper',
+                        'dm_basesize'    => '20G', }}
+        it { should contain_file(storage_config_file).with_content(/dm.basesize=20G/) }
+      end
+
+      context 'with storage_driver unset and dm_basesize set' do
+        let(:params) { {'dm_basesize'    => '20G' }}
+        it { should raise_error(Puppet::Error, /Values for dm_ variables will be ignored unless storage_driver is set to devicemapper./) }
+      end
+
       context 'with specific selinux_enabled parameter' do
         let(:params) { { 'selinux_enabled' => 'true' } }
         it { should contain_file(service_config_file).with_content(/--selinux-enabled=true/) }
