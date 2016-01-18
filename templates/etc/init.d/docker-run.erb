@@ -64,7 +64,7 @@ start() {
     fi
 
     printf "Starting $prog:\t"
-    $docker rm <%= @sanitised_title %> >/dev/null 2>&1
+    $docker rm -v <%= @sanitised_title %> >/dev/null 2>&1
     <% if @pull_on_start -%>
         $docker pull <%= @image %>
     <% end -%>
@@ -89,7 +89,7 @@ stop() {
         <%= @before_stop %>
     <% end -%>
     $docker stop <%= @sanitised_title %>
-    $docker rm <%= @sanitised_title %>
+    $docker rm -v <%= @sanitised_title %>
     return $?
 }
 
@@ -101,7 +101,7 @@ clean() {
     else
         cid="$(cat $cidfile)"
 	rm $cidfile
-        $docker rm -f $cid
+        $docker rm -v -f $cid
         retval=$?
         return $retval
     fi
