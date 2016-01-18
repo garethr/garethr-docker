@@ -295,6 +295,14 @@ class docker(
   $storage_auto_extend_pool          = $docker::params::storage_auto_extend_pool,
   $storage_pool_autoextend_threshold = $docker::params::storage_pool_autoextend_threshold,
   $storage_pool_autoextend_percent   = $docker::params::storage_pool_autoextend_percent,
+  $storage_config                    = $docker::params::storage_config,
+  $storage_config_template           = $docker::params::storage_config_template,
+  $service_provider                  = $docker::params::service_provider,
+  $service_config                    = $docker::params::service_config,
+  $service_config_template           = $docker::params::service_config_template,
+  $service_overrides_template        = $docker::params::service_overrides_template,
+  $service_hasstatus                 = $docker::params::service_hasstatus,
+  $service_hasrestart                = $docker::params::service_hasrestart,
 ) inherits docker::params {
 
   validate_string($version)
