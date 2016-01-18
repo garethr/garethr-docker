@@ -58,12 +58,14 @@ class docker::params {
           $package_release = "ubuntu-${::lsbdistcodename}"
           if (versioncmp($::operatingsystemrelease, '15.04') >= 0) {
             include docker::systemd_reload
+            include docker::systemd_reload_before_service
           }
         }
         default: {
           $package_release = "debian-${::lsbdistcodename}"
           if (versioncmp($::operatingsystemmajrelease, '8') >= 0) {
             include docker::systemd_reload
+            include docker::systemd_reload_before_service
           }
         }
       }
@@ -128,6 +130,7 @@ class docker::params {
           $docker_group = 'dockerroot'
         }
         include docker::systemd_reload
+        include docker::systemd_reload_before_service
       }
 
       # repo_opt to specify install_options for docker package
@@ -157,6 +160,7 @@ class docker::params {
     }
     'Archlinux' : {
       include docker::systemd_reload
+      include docker::systemd_reload_before_service
       $manage_epel = false
       $docker_group = $docker_group_default
       $package_key_source = undef

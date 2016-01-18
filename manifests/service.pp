@@ -95,7 +95,8 @@ class docker::service (
         file { '/etc/systemd/system/docker.service.d/service-overrides.conf':
           ensure  => present,
           content => template('docker/etc/systemd/system/docker.service.d/service-overrides-debian.conf.erb'),
-          notify  => Exec['docker-systemd-reload'];
+          notify  => Exec['docker-systemd-reload-before-service'],
+          before  => Service['docker'],
         }
         file { '/etc/default/docker-storage':
           ensure  => present,
@@ -142,7 +143,8 @@ class docker::service (
         file { '/etc/systemd/system/docker.service.d/service-overrides.conf':
           ensure  => present,
           content => template('docker/etc/systemd/system/docker.service.d/service-overrides-rhel.conf.erb'),
-          notify  => Exec['docker-systemd-reload'];
+          notify  => Exec['docker-systemd-reload-before-service'],
+          before  => Service['docker'],
         }
       }
 
@@ -173,7 +175,8 @@ class docker::service (
       file { '/etc/systemd/system/docker.service.d/service-overrides.conf':
         ensure  => present,
         content => template('docker/etc/systemd/system/docker.service.d/service-overrides-archlinux.conf.erb'),
-        notify  => Exec['docker-systemd-reload'];
+        notify  => Exec['docker-systemd-reload-before-service'],
+        before  => Service['docker'],
       }
 
       file { '/etc/conf.d/docker':
