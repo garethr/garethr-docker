@@ -638,6 +638,34 @@ describe 'docker', :type => :class do
     it { should contain_package('apparmor') }
   end
 
+  context 'newer versions of Debian and Ubuntu' do
+    context 'Ubuntu >= 15.04' do
+      let(:facts) { {
+        :osfamily               => 'Debian',
+        :lsbdistid              => 'Ubuntu',
+        :operatingsystem        => 'Ubuntu',
+        :lsbdistcodename        => 'trusty',
+        :operatingsystemrelease => '15.04',
+        :kernelrelease          => '3.8.0-29-generic'
+      } }
+
+      it { should contain_service('docker').with_provider('systemd') }
+    end
+
+    context 'Debian >= 8' do
+      let(:facts) { {
+        :osfamily                  => 'Debian',
+        :operatingsystem           => 'Debian',
+        :lsbdistid                 => 'Debian',
+        :lsbdistcodename           => 'jessie',
+        :kernelrelease             => '3.2.0-4-amd64',
+        :operatingsystemmajrelease => '8',
+      } }
+
+      it { should contain_service('docker').with_provider('systemd') }
+    end
+  end
+
 
   context 'specific to older RedHat based distros' do
     let(:facts) { {

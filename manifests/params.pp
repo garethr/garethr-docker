@@ -50,6 +50,8 @@ class docker::params {
   $storage_auto_extend_pool          = undef
   $storage_pool_autoextend_threshold = undef
   $storage_pool_autoextend_percent   = undef
+  $storage_config_template           = 'docker/etc/sysconfig/docker-storage.erb'
+
 
   case $::osfamily {
     'Debian' : {
@@ -57,13 +59,27 @@ class docker::params {
         'Ubuntu' : {
           $package_release = "ubuntu-${::lsbdistcodename}"
           if (versioncmp($::operatingsystemrelease, '15.04') >= 0) {
+            $service_provider        = 'systemd'
+            $storage_config          = '/etc/default/docker-storage'
+            $service_config_template = 'docker/etc/sysconfig/docker.systemd.erb'
             include docker::systemd_reload
+          } else {
+            $service_config_template = 'docker/etc/default/docker.erb'
+            $service_provider        = 'upstart'
+            $service_hasstatus       = true
+            $service_hasrestart      = false
           }
         }
         default: {
           $package_release = "debian-${::lsbdistcodename}"
           if (versioncmp($::operatingsystemmajrelease, '8') >= 0) {
+            $service_provider           = 'systemd'
+            $storage_config             = '/etc/default/docker-storage'
+            $service_config_template    = 'docker/etc/sysconfig/docker.systemd.erb'
+            $service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-debian.conf.erb'
             include docker::systemd_reload
+          } else {
+            $service_config_template = 'docker/etc/default/docker.erb'
           }
         }
       }
@@ -89,6 +105,17 @@ class docker::params {
 
     }
     'RedHat' : {
+      $service_config = '/etc/sysconfig/docker'
+      $storage_config = '/etc/sysconfig/docker-storage'
+
+      if ($::operatingsystem == 'Fedora') or (versioncmp($::operatingsystemrelease, '7.0') >= 0) {
+        $service_provider           = 'systemd'
+        $service_config_template    = 'docker/etc/sysconfig/docker.systemd.erb'
+        $service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-rhel.conf.erb'
+      } else {
+        $service_config_template = 'docker/etc/sysconfig/docker.erb'
+      }
+
       if (versioncmp($::operatingsystemrelease, '7.0') < 0) and $::operatingsystem != 'Amazon' {
         $package_name = 'docker-io'
         $use_upstream_package_source = false
@@ -171,6 +198,12 @@ class docker::params {
       $detach_service_in_init = false
       $repo_opt = undef
       $nowarn_kernel = false
+      $service_provider   = 'systemd'
+      $service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-archlinux.conf.erb'
+      $service_hasstatus  = true
+      $service_hasrestart = true
+      $service_config = '/etc/conf.d/docker'
+      $service_config_template = 'docker/etc/conf.d/docker.erb'
     }
     default: {
       $manage_epel = false
