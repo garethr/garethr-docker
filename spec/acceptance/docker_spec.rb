@@ -139,5 +139,6 @@ describe 'docker' do
       shell("grep #{@registry_address} #{@config_file}", :acceptable_exit_codes => [1,2])
       shell("grep #{@registry_email} #{@config_file}", :acceptable_exit_codes => [1,2])
     end
+  end
 
 end
