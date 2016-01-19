@@ -23,5 +23,4 @@ group :development do
   gem "guard-rake"
   gem "pry"
   gem "yard"
-  gem "vagrant-wrapper"
 end
