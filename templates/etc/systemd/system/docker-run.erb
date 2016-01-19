@@ -1,10 +1,21 @@
+<%-
+	@after = ["docker.service"] +
+		@sanitised_after_array.map{ |s| "#{@service_prefix}#{s}.service"} +
+		@sanitised_depends_array.map{ |s| "#{@service_prefix}#{s}.service"} +
+		@depend_services_array.map{|s| "#{s}.service"}
+	@wants = @sanitised_after_array.map{ |a| "#{@service_prefix}#{a}.service"}
+	@requires = ["docker.service"] +
+		@sanitised_depends_array.map{ |d| "#{@service_prefix}#{d}.service"} +
+		@depend_services_array.map{|s| "#{s}.service"}
+-%>
 # This file is managed by Puppet and local changes
 # may be overwritten
 
 [Unit]
 Description=Daemon for <%= @title %>
-After=docker.service<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " #{@service_prefix}#{d}.service" %><% end %><% end %>
-Requires=docker.service<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " #{@service_prefix}#{d}.service" %><% end %><% end %>
+After=<%= @after.uniq.join(" ") %>
+Wants=<%= @wants.uniq.join(" ") %>
+Requires=<%= @requires.uniq.join(" ") %>
 
 [Service]
 Restart=on-failure

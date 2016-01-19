@@ -75,7 +75,10 @@ define docker::run(
   $extra_parameters = undef,
   $extra_systemd_parameters = {},
   $pull_on_start = false,
+  $after = [],
+  $after_service = [],
   $depends = [],
+  $depend_services = [],
   $tty = false,
   $socket_connect = [],
   $hostentries = [],
@@ -125,7 +128,10 @@ define docker::run(
     $valid_detach = $detach
   }
 
+  $extra_parameters_array = any2array($extra_parameters)
+  $after_array = any2array($after)
   $depends_array = any2array($depends)
+  $depend_services_array = any2array($depend_services)
 
   $docker_run_flags = docker_run_flags({
     cpuset          => any2array($cpuset),
@@ -159,6 +165,13 @@ define docker::run(
   }
   else {
     $sanitised_depends_array = regsubst($depends_array, '[^0-9A-Za-z.\-]', '-', 'G')
+  }
+
+  if empty($after_array) {
+    $sanitised_after_array = []
+  }
+  else {
+    $sanitised_after_array = regsubst($after_array, '[^0-9A-Za-z.\-]', '-', 'G')
   }
 
   if $restart {

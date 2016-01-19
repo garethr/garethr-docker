@@ -257,6 +257,7 @@ docker::run { 'helloworld':
   privileged      => false,
   pull_on_start   => false,
   before_stop     => 'echo "So Long, and Thanks for All the Fish"',
+  after           => [ 'container_b', 'mysql' ],
   depends         => [ 'container_a', 'postgres' ],
 }
 ```
@@ -267,7 +268,9 @@ Specifying `pull_on_start` will pull the image before each time it is started.
 
 Specifying `before_stop` will execute a command before stopping the container.
 
-The `depends` option allows expressing containers that must be started before. This affects the generation of the init.d/systemd script.
+The `after` option allows expressing containers that must be started before. This affects the generation of the init.d/systemd script.
+
+The `depends` option allows expressing container dependencies. The depended container will be started before this container(s), and this container will be stopped before the depended container(s). This affects the generation of the init.d/systemd script. You can use `depend_services` to specify dependency for generic services (non-docker) that should be started before this container.
 
 The service file created for systemd based systems enables automatic restarting of the service on failure by default.
 
