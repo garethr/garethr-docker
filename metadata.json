@@ -1,6 +1,6 @@
 {
   "name": "garethr-docker",
-  "version": "3.5.0",
+  "version": "5.0.0",
   "author": "Gareth Rushgrove",
   "summary": "Module for installing and managing docker",
   "license": "Apache-2.0",
@@ -13,21 +13,32 @@
       "operatingsystemrelease": [
         "7"
       ]
-    },{
+    },
+    {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
         "7",
         "6.6"
       ]
-    },{
+    },
+    {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
         "12.04",
         "14.04"
       ]
-    },{
+    },
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "7.8",
+        "8.0"
+      ]
+    },
+    {
       "operatingsystem": "Archlinux"
-    },{
+    },
+    {
       "operatingsystem": "Fedora",
       "operatingsystemrelease": [
         "21"
@@ -45,15 +56,8 @@
     }
   ],
   "dependencies": [
-    {
-      "name": "puppetlabs/stdlib",
-      "version_requirement": ">= 4.1.0"
-    },{
-      "name": "puppetlabs/apt",
-      "version_requirement": ">= 1.1.0"
-    },{
-      "name": "stahnma/epel",
-      "version_requirement": ">= 0.0.6"
-    }
+    {"name":"puppetlabs/stdlib","version_requirement":">= 4.1.0"},
+    {"name":"puppetlabs/apt","version_requirement":">= 1.8.0 <= 3.0.0"},
+    {"name":"stahnma/epel","version_requirement":">= 0.0.6"}
   ]
 }

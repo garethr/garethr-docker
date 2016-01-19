@@ -1,30 +1,41 @@
+<%-
+	@after = ["docker.service"] +
+		@sanitised_after_array.map{ |s| "#{@service_prefix}#{s}.service"} +
+		@sanitised_depends_array.map{ |s| "#{@service_prefix}#{s}.service"} +
+		@depend_services_array.map{|s| "#{s}.service"}
+	@wants = @sanitised_after_array.map{ |a| "#{@service_prefix}#{a}.service"}
+	@requires = ["docker.service"] +
+		@sanitised_depends_array.map{ |d| "#{@service_prefix}#{d}.service"} +
+		@depend_services_array.map{|s| "#{s}.service"}
+-%>
 # This file is managed by Puppet and local changes
 # may be overwritten
 
 [Unit]
 Description=Daemon for <%= @title %>
-After=docker.service<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " docker-#{d}.service" %><% end %><% end %>
-Requires=docker.service<% if @depends %><% @sanitised_depends_array.each do |d| %><%= " docker-#{d}.service" %><% end %><% end %>
+After=<%= @after.uniq.join(" ") %>
+Wants=<%= @wants.uniq.join(" ") %>
+Requires=<%= @requires.uniq.join(" ") %>
 
 [Service]
-<%- if @username -%>User=<%= @username %><%- end -%>
 Restart=on-failure
 StartLimitInterval=20
 StartLimitBurst=5
 TimeoutStartSec=0
 Environment="HOME=/root"
 ExecStartPre=-/usr/bin/<%= @docker_command %> kill <%= @sanitised_title %>
-ExecStartPre=-/usr/bin/<%= @docker_command %> rm <%= @sanitised_title %>
-<%- if @pull_on_start %>ExecStartPre=/usr/bin/<%= @docker_command %> pull <%= @image %>
+ExecStartPre=-/usr/bin/<%= @docker_command %> rm -v <%= @sanitised_title %>
+<% @extra_systemd_parameters.each do |key, value| -%><%= key %>=<%= value %>
+<% end -%>
+<%- if @pull_on_start %>ExecStartPre=-/usr/bin/<%= @docker_command %> pull <%= @image %>
 <% end -%>
 ExecStart=/usr/bin/<%= @docker_command %> run \
         <%= @docker_run_flags %> \
         --name <%= @sanitised_title %> \
-        <% if @extra_parameters %><% @extra_parameters_array.each do |param| %>  \
-            <%= param %> <% end %> \
-        <% end -%> \
         <%= @image %> \
         <% if @command %> <%= @command %><% end %>
+<%- if @before_stop %>ExecStop=-<%= @before_stop %>
+<% end -%>
 ExecStop=-/usr/bin/<%= @docker_command %> stop <%= @sanitised_title %>
 
 [Install]

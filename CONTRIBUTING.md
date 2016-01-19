@@ -29,7 +29,7 @@ By default the tests use a baseline version of Puppet.
 If you have Ruby 2.x or want a specific version of Puppet,
 you must set an environment variable such as:
 
-    export PUPPET_VERSION="~> 3.2.0"
+    export PUPPET_GEM_VERSION="~> 3.2.0"
 
 Install the dependencies like so...
 
@@ -80,5 +80,5 @@ run the integration tests against Centos 6.5 with:
 
 Or with Ubuntu 14.04 with:
 
-    BEAKER_set=ubuntu-server-1404-x64 bundle exec rake beaker
+    BEAKER_set=ubuntu-1404-x64 bundle exec rake beaker
 

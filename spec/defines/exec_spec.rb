@@ -17,4 +17,14 @@ describe 'docker::exec', :type => :define do
       let(:params) { {'command' => 'command', 'container' => 'container', 'interactive' => true} }
       it { should contain_exec('docker exec --interactive=true container command') }
   end
+
+  context 'when running with unless' do
+      let(:params) { {'command' => 'command', 'container' => 'container', 'interactive' => true, 'unless' => 'some_command arg1'} }
+      it { should contain_exec('docker exec --interactive=true container command').with_unless ('docker exec --interactive=true container some_command arg1') }
+  end
+
+  context 'when running without unless' do
+      let(:params) { {'command' => 'command', 'container' => 'container', 'interactive' => true,} }
+      it { should contain_exec('docker exec --interactive=true container command').with_unless (nil) }
+  end
 end

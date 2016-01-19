@@ -23,6 +23,8 @@ DOCKER_OPTS="\
 <% if @tcp_bind %> -H <%= @tcp_bind %><% end -%>
 <% if @socket_bind %> -H <%= @socket_bind %><% end -%>
 <% if @log_level %> -l <%= @log_level %><% end -%>
+<% if @log_driver %> --log-driver <%= @log_driver %><% end -%>
+<% if @log_driver %><% if @log_opt %><% @log_opt.each do |param| %> --log-opt <%= param %><% end %><% end -%><% end -%>
 <% if @selinux_enabled %> --selinux-enabled=<%= @selinux_enabled %><% end -%>
 <% if @socket_group %> -G <%= @socket_group %><% end -%>
 <% if @dns %><% @dns_array.each do |address| %> --dns <%= address %><% end %><% end -%>
@@ -37,8 +39,14 @@ DOCKER_OPTS="\
 <% if @dm_blocksize %> --storage-opt dm.blocksize=<%= @dm_blocksize %><% end -%>
 <% if @dm_loopdatasize %> --storage-opt dm.loopdatasize=<%= @dm_loopdatasize %><% end -%>
 <% if @dm_loopmetadatasize %> --storage-opt dm.loopmetadatasize=<%= @dm_loopmetadatasize %><% end -%>
+<% if @dm_thinpooldev %> --storage-opt dm.thinpooldev=<%= @dm_thinpooldev -%>
+<% else -%>
 <% if @dm_datadev %> --storage-opt dm.datadev=<%= @dm_datadev %><% end -%>
 <% if @dm_metadatadev %> --storage-opt dm.metadatadev=<%= @dm_metadatadev %><% end -%>
+<% end -%>
+<% if @dm_use_deferred_removal %> --storage-opt dm.use_deferred_removal=<%= @dm_use_deferred_removal %><% end -%>
+<% if @dm_blkdiscard %> --storage-opt dm.blkdiscard=<%= @dm_blkdiscard %><% end -%>
+<% if @dm_override_udev_sync_check %> --storage-opt dm.override_udev_sync_check=<%= @dm_override_udev_sync_check %><% end -%>
 <% end -%>
 <% if @extra_parameters %><% @extra_parameters_array.each do |param| %> <%= param %><% end %><% end -%>
 "
