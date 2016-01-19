@@ -5,6 +5,7 @@
 # and Archlinux based distributions.
 #
 class docker::install {
+  $docker_command = $docker::params::docker_command
   validate_string($docker::version)
   validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', 'This module only works on Debian, Red Hat and Archlinux based systems.')
   validate_string($::kernelrelease)
@@ -83,10 +84,10 @@ class docker::install {
 
   # Wrapper used by docker::image to ensure images are up to date
   file { '/usr/local/bin/update_docker_image.sh':
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0555',
-    source => 'puppet:///modules/docker/update_docker_image.sh',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0555',
+    content => template('docker/update_docker_image.sh.erb'),
   }
 
 }
