@@ -67,17 +67,38 @@ class docker::install {
   }
 
   if $docker::manage_package {
+
     if $docker::repo_opt {
-      package { 'docker':
+      $docker_hash = { 'install_options' => $docker::repo_opt }
+    } else {
+      $docker_hash = {}
+    }
+
+    if $docker::package_source {
+      case $::osfamily {
+        'Debian' : {
+          $pk_provider = 'dpkg'
+        }
+        'RedHat' : {
+          $pk_provider = 'rpm'
+        }
+        default : {
+          $pk_provider = undef
+        }
+      }
+
+      ensure_resource('package', 'docker', merge($docker_hash, {
+        ensure          => $ensure,
+        provider        => $pk_provider,
+        source          => $docker::package_source,
+        name            => $docker::package_name,
+      }))
+
+    } else {
+      ensure_resource('package', 'docker', merge($docker_hash, {
         ensure          => $ensure,
         name            => $docker::package_name,
-        install_options => $docker::repo_opt,
-      }
-    } else {
-        package { 'docker':
-          ensure => $ensure,
-          name   => $docker::package_name,
-        }
+      }))
     }
   }
 }
