@@ -93,8 +93,7 @@ define docker::image(
       environment => 'HOME=/root',
       path        => ['/bin', '/usr/bin'],
       timeout     => 0,
-      returns     => ['0', '1']
-      refreshonly => true,
+      returns     => ['0', '1'],
       require     => File['/usr/local/bin/update_docker_image.sh'],
     }
   }
