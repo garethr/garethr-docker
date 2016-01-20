@@ -279,6 +279,7 @@ class docker(
   $dm_override_udev_sync_check       = $docker::params::dm_override_udev_sync_check,
   $execdriver                        = $docker::params::execdriver,
   $manage_package                    = $docker::params::manage_package,
+  $package_source                    = $docker::params::package_source,
   $manage_epel                       = $docker::params::manage_epel,
   $package_name                      = $docker::params::package_name,
   $service_name                      = $docker::params::service_name,

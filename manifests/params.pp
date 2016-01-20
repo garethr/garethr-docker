@@ -36,6 +36,7 @@ class docker::params {
   $dm_blkdiscard                     = undef
   $dm_override_udev_sync_check       = undef
   $manage_package                    = true
+  $package_source                    = undef
   $manage_kernel                     = true
   $package_name_default              = 'docker-engine'
   $service_name_default              = 'docker'
