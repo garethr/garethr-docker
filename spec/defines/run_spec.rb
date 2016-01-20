@@ -325,6 +325,16 @@ require 'spec_helper'
       it { should_not contain_file(initscript).with_content(/docker pull base/) }
     end
 
+    context 'when `before_start` is set' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'before_start' => "echo before_start" } }
+      it { should contain_file(initscript).with_content(/before_start/) }
+    end
+
+    context 'when `before_start` is not set' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'before_start' => false } }
+      it { should_not contain_file(initscript).with_content(/before_start/) }
+    end
+
     context 'when `before_stop` is set' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'before_stop' => "echo before_stop" } }
       it { should contain_file(initscript).with_content(/before_stop/) }

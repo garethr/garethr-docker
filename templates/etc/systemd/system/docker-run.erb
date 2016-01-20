@@ -23,6 +23,8 @@ StartLimitInterval=20
 StartLimitBurst=5
 TimeoutStartSec=0
 Environment="HOME=/root"
+<%- if @before_start %>ExecStartPre=-<%= @before_start %>
+<% end -%>
 ExecStartPre=-/usr/bin/<%= @docker_command %> kill <%= @sanitised_title %>
 ExecStartPre=-/usr/bin/<%= @docker_command %> rm -v <%= @sanitised_title %>
 <% @extra_systemd_parameters.each do |key, value| -%><%= key %>=<%= value %>
