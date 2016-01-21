@@ -348,6 +348,11 @@ describe 'docker', :type => :class do
         it { should contain_service('docker').with_enable('true') }
       end
 
+      context 'with service_manage set to false' do
+        let(:params) { {'manage_service' => false} }
+        it { subject.should_not contain_service('docker') }
+      end
+
       context 'with specific log_level' do
         let(:params) { { 'log_level' => 'debug' } }
         it { should contain_file(service_config_file).with_content(/-l debug/) }

@@ -15,6 +15,7 @@ class docker::params {
   $socket_group                      = undef
   $service_state                     = running
   $service_enable                    = true
+  $manage_service                    = true
   $root_dir                          = undef
   $tmp_dir                           = '/tmp/'
   $dns                               = undef

@@ -21,6 +21,11 @@
 # [*shell_values*]
 #   Array of shell values to pass into init script config files
 #
+# [*manage_service*]
+#   Specify whether the service should be managed.
+#   Valid values are 'true', 'false'.
+#   Defaults to 'true'.
+#
 class docker::service (
   $docker_command                    = $docker::docker_command,
   $service_name                      = $docker::service_name,
@@ -35,6 +40,7 @@ class docker::service (
   $dns_search                        = $docker::dns_search,
   $service_state                     = $docker::service_state,
   $service_enable                    = $docker::service_enable,
+  $manage_service                    = $docker::manage_service,
   $root_dir                          = $docker::root_dir,
   $extra_parameters                  = $docker::extra_parameters,
   $shell_values                      = $docker::shell_values,
@@ -95,13 +101,19 @@ class docker::service (
     }
   }
 
+  $_manage_service = $manage_service ? {
+    false   => undef,
+    true    => 'Service[docker]',
+    default => undef,
+  }
+
   if $::osfamily == 'RedHat' {
     file { '/etc/sysconfig/docker-storage-setup':
       ensure  => present,
       force   => true,
       content => template('docker/etc/sysconfig/docker-storage-setup.erb'),
-      before  => Service['docker'],
-      notify  => Service['docker'],
+      before  => $_manage_service,
+      notify  => $_manage_service,
     }
   }
 
@@ -116,12 +128,12 @@ class docker::service (
           ensure  => present,
           content => template($service_overrides_template),
           notify  => Exec['docker-systemd-reload-before-service'],
-          before  => Service['docker'],
+          before  => $_manage_service,
         }
         exec { 'docker-systemd-reload-before-service':
           path    => ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/'],
           command => 'systemctl daemon-reload',
-          before  => Service['docker'],
+          before  => $_manage_service,
           unless  => "systemctl status ${service_name}",
         }
       }
@@ -131,7 +143,7 @@ class docker::service (
         ensure => 'link',
         target => '/lib/init/upstart-job',
         force  => true,
-        notify => Service['docker'],
+        notify => $_manage_service,
       }
     }
   }
@@ -141,7 +153,7 @@ class docker::service (
       ensure  => present,
       force   => true,
       content => template($storage_config_template),
-      notify  => Service['docker'],
+      notify  => $_manage_service,
     }
   }
 
@@ -154,12 +166,14 @@ class docker::service (
     }
   }
 
-  service { 'docker':
-    ensure     => $service_state,
-    name       => $service_name,
-    enable     => $service_enable,
-    hasstatus  => $service_hasstatus,
-    hasrestart => $service_hasrestart,
-    provider   => $service_provider,
+  if $manage_service {
+    service { 'docker':
+      ensure     => $service_state,
+      name       => $service_name,
+      enable     => $service_enable,
+      hasstatus  => $service_hasstatus,
+      hasrestart => $service_hasrestart,
+      provider   => $service_provider,
+    }
   }
 }
