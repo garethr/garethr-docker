@@ -21,6 +21,11 @@
 # [*shell_values*]
 #   Array of shell values to pass into init script config files
 #
+# [*service_manage*]
+#   Specify whether the service should be managed.
+#   Valid values are 'true', 'false'.
+#   Defaults to 'true'.
+#
 class docker::service (
   $docker_command                    = $docker::docker_command,
   $service_name                      = $docker::service_name,
@@ -35,6 +40,7 @@ class docker::service (
   $dns_search                        = $docker::dns_search,
   $service_state                     = $docker::service_state,
   $service_enable                    = $docker::service_enable,
+  $service_manage                    = $docker::service_manage,
   $root_dir                          = $docker::root_dir,
   $extra_parameters                  = $docker::extra_parameters,
   $shell_values                      = $docker::shell_values,
@@ -93,13 +99,19 @@ class docker::service (
     }
   }
 
+  $_service_manage = $service_manage ? {
+    false   => undef,
+    true    => 'Service[docker]',
+    default => undef,
+  }
+
   if $::osfamily == 'RedHat' {
     file { '/etc/sysconfig/docker-storage-setup':
       ensure  => present,
       force   => true,
       content => template('docker/etc/sysconfig/docker-storage-setup.erb'),
-      before  => Service['docker'],
-      notify  => Service['docker'],
+      before  => $_service_manage,
+      notify  => $_service_manage,
     }
   }
 
@@ -122,7 +134,7 @@ class docker::service (
         ensure => 'link',
         target => '/lib/init/upstart-job',
         force  => true,
-        notify => Service['docker'],
+        notify => $_service_manage,
       }
     }
   }
@@ -145,12 +157,14 @@ class docker::service (
     }
   }
 
-  service { 'docker':
-    ensure     => $service_state,
-    name       => $service_name,
-    enable     => $service_enable,
-    hasstatus  => $service_hasstatus,
-    hasrestart => $service_hasrestart,
-    provider   => $service_provider,
+  if $service_manage {
+    service { 'docker':
+      ensure     => $service_state,
+      name       => $service_name,
+      enable     => $service_enable,
+      hasstatus  => $service_hasstatus,
+      hasrestart => $service_hasrestart,
+      provider   => $service_provider,
+    }
   }
 }
