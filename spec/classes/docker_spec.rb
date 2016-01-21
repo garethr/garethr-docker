@@ -636,7 +636,7 @@ describe 'docker', :type => :class do
     service_config_file = '/etc/sysconfig/docker'
     it { should contain_file(service_config_file).with_content(/^http_proxy='http:\/\/127.0.0.1:3128'/) }
     it { should contain_file(service_config_file).with_content(/^  https_proxy='http:\/\/127.0.0.1:3128'/) }
-
+    it { should contain_service('docker').with_provider('systemd').with_hasstatus(true).with_hasrestart(true) }
   end
 
   context 'specific to Oracle Linux 7 or above' do
@@ -707,7 +707,7 @@ describe 'docker', :type => :class do
         :kernelrelease          => '3.8.0-29-generic'
       } }
 
-      it { should contain_service('docker').with_provider('systemd') }
+      it { should contain_service('docker').with_provider('systemd').with_hasstatus(true).with_hasrestart(true) }
     end
 
     context 'Debian >= 8' do
@@ -720,7 +720,7 @@ describe 'docker', :type => :class do
         :operatingsystemmajrelease => '8',
       } }
 
-      it { should contain_service('docker').with_provider('systemd') }
+      it { should contain_service('docker').with_provider('systemd').with_hasstatus(true).with_hasrestart(true) }
     end
   end
 
