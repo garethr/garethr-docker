@@ -193,6 +193,7 @@ describe 'the Puppet Docker module' do
         EOS
 
         pp2=<<-EOS
+          class { 'docker': }
           docker::image { 'ubuntu_from_commit':
             docker_tar => "/root/rootfs.tar"
           }
@@ -436,7 +437,7 @@ describe 'the Puppet Docker module' do
       container_1 = shell("docker ps | awk 'FNR == 2 {print $NF}'")
 
       pp2=<<-EOS
-      class { 'docker':}
+        class { 'docker':}
 
         docker::image { 'ubuntu':
           require => Class['docker'],
@@ -591,6 +592,7 @@ describe 'the Puppet Docker module' do
       container_1 = shell("docker ps | awk 'FNR == 2 {print $NF}'")
 
       pp2=<<-EOS
+        class { 'docker':}
         docker::exec { 'test_command':
           container => '#{container_1.stdout.strip}',
           command   => 'touch /root/test_command_file.txt',
