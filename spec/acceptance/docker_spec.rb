@@ -78,6 +78,21 @@ describe 'docker' do
     end
   end
 
+  context "When asked to have the latest image of something" do
+    let(:pp) {"
+        class { 'docker':
+          docker_users => [ 'testuser' ]
+        }
+	docker::image { 'busybox': ensure => latest }
+    "}
+    it 'should apply with no errors' do
+      apply_manifest(pp, :catch_failures=>true)
+    end
+    it 'should be idempotent' do
+      apply_manifest(pp, :catch_changes=>true)
+    end
+  end
+
   context 'registry' do
     before(:all) do
       registry_host = 'localhost'
@@ -124,7 +139,6 @@ describe 'docker' do
       shell("grep #{@registry_address} #{@config_file}", :acceptable_exit_codes => [1,2])
       shell("grep #{@registry_email} #{@config_file}", :acceptable_exit_codes => [1,2])
     end
-
   end
 
 end

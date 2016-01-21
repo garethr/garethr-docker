@@ -70,7 +70,7 @@ define docker::image(
   } elsif $docker_tar {
     $image_install = "${docker_command} load -i ${docker_tar}"
   } else {
-    $image_install = "${docker_command} pull ${image_arg}"
+    $image_install = "/usr/local/bin/update_docker_image.sh ${image_arg}"
   }
 
   if $ensure == 'absent' {
@@ -80,24 +80,22 @@ define docker::image(
       timeout => 0,
     }
   } elsif $ensure == 'latest' {
-    exec { $image_install:
+    exec { "echo 'Update of ${image_arg} complete'":
       environment => 'HOME=/root',
       path        => ['/bin', '/usr/bin'],
       timeout     => 0,
+      onlyif      => $image_install,
+      require     => File['/usr/local/bin/update_docker_image.sh'],
     }
-  } else {
-    exec { "check_image_${image}_install":
-      command => 'echo > /dev/null',
-      path    => ['/bin', '/usr/bin'],
-      unless  => $image_find,
-      notify  => Exec[$image_install],
-    }
-
+  } elsif $ensure == 'present' {
     exec { $image_install:
+      unless      => $image_find,
       environment => 'HOME=/root',
       path        => ['/bin', '/usr/bin'],
       timeout     => 0,
-      refreshonly => true,
+      returns     => ['0', '1'],
+      require     => File['/usr/local/bin/update_docker_image.sh'],
     }
   }
+
 }
