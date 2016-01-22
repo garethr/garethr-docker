@@ -63,6 +63,8 @@ class docker::params {
             $service_provider        = 'systemd'
             $storage_config          = '/etc/default/docker-storage'
             $service_config_template = 'docker/etc/sysconfig/docker.systemd.erb'
+            $service_hasstatus       = true
+            $service_hasrestart      = true
             include docker::systemd_reload
           } else {
             $service_config_template = 'docker/etc/default/docker.erb'
@@ -78,6 +80,8 @@ class docker::params {
             $storage_config             = '/etc/default/docker-storage'
             $service_config_template    = 'docker/etc/sysconfig/docker.systemd.erb'
             $service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-debian.conf.erb'
+            $service_hasstatus       = true
+            $service_hasrestart      = true
             include docker::systemd_reload
           } else {
             $service_config_template = 'docker/etc/default/docker.erb'
@@ -108,6 +112,8 @@ class docker::params {
     'RedHat' : {
       $service_config = '/etc/sysconfig/docker'
       $storage_config = '/etc/sysconfig/docker-storage'
+      $service_hasstatus  = true
+      $service_hasrestart = true
 
       if ($::operatingsystem == 'Fedora') or (versioncmp($::operatingsystemrelease, '7.0') >= 0) {
         $service_provider           = 'systemd'
@@ -215,6 +221,8 @@ class docker::params {
       $package_repos = undef
       $package_release = undef
       $use_upstream_package_source = true
+      $service_hasstatus  = undef
+      $service_hasrestart = undef
       $package_name = $package_name_default
       $service_name = $service_name_default
       $docker_command = $docker_command_default
