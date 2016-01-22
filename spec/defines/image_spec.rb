@@ -20,6 +20,7 @@ describe 'docker::image', :type => :define do
 
   context 'with ensure => present' do
     let(:params) { { 'ensure' => 'present' } }
+    it { should contain_file('/usr/local/bin/update_docker_image.sh') }
     it { should contain_exec('/usr/local/bin/update_docker_image.sh base') }
   end
 
