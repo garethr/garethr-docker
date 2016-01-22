@@ -5,11 +5,11 @@ group :test do
   gem "puppet", ENV['PUPPET_GEM_VERSION'] || '~> 4.3.0'
   gem "puppet-lint"
   gem "puppet-lint-unquoted_string-check"
-  gem "rspec-puppet", :git => 'https://github.com/rodjek/rspec-puppet.git'
+  gem "rspec-puppet", "2.2.0"
   gem "puppet-syntax"
   gem "puppetlabs_spec_helper"
   gem "metadata-json-lint"
-  gem "rspec", '< 3.2.0'
+  gem "rspec"
   gem "rspec-retry"
 end
 
