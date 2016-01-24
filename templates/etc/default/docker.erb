@@ -20,7 +20,7 @@ export TMPDIR="<%= @tmp_dir %>"
 # # Use DOCKER_OPTS to modify the daemon startup options.
 DOCKER_OPTS="\
 <% if @root_dir %> -g <%= @root_dir %><% end -%>
-<% if @tcp_bind %><% @tcp_bind.each do |param| %> -H <%= param %><% end %> <% end -%>
+<% if @tcp_bind %><% @tcp_bind_array.each do |param| %> -H <%= param %><% end %> <% end -%>
 <% if @socket_bind %> -H <%= @socket_bind %><% end -%>
  --ip-forward=<%= @ip_forward -%>
  --iptables=<%= @iptables -%>

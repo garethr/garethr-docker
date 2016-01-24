@@ -372,7 +372,6 @@ class docker(
   validate_bool($manage_service)
   validate_array($docker_users)
   validate_array($log_opt)
-  validate_array($tcp_bind)
   validate_bool($ip_forward)
   validate_bool($iptables)
   validate_bool($ip_masq)

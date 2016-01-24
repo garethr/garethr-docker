@@ -109,6 +109,7 @@ class docker::service (
   $dns_search_array = any2array($dns_search)
   $extra_parameters_array = any2array($extra_parameters)
   $shell_values_array = any2array($shell_values)
+  $tcp_bind_array = any2array($tcp_bind)
 
   if $service_config {
     $_service_config = $service_config
