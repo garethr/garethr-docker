@@ -73,10 +73,63 @@ describe 'docker', :type => :class do
           it { should contain_package('docker') }
         end
 
-
         context 'when given a specific tmp_dir' do
           let(:params) {{ 'tmp_dir' => '/bigtmp' }}
           it { should contain_file('/etc/default/docker').with_content(/export TMPDIR="\/bigtmp"/) }
+        end
+
+        context 'with ip_forwaring param set to false' do
+          let(:params) {{ 'ip_forward' => false }}
+          it { should contain_file('/etc/default/docker').with_content(/ip-forward=false/) }
+        end
+
+        context 'with ip_masq param set to false' do
+          let(:params) {{ 'ip_masq' => false }}
+          it { should contain_file('/etc/default/docker').with_content(/ip-masq=false/) }
+        end
+
+        context 'with iptables param set to false' do
+          let(:params) {{ 'iptables' => false }}
+          it { should contain_file('/etc/default/docker').with_content(/iptables=false/) }
+        end
+
+        context 'with tcp_bind array param' do
+          let(:params) {{ 'tcp_bind' => ['tcp://127.0.0.1:2375', 'tcp://10.0.0.1:2375'] }}
+          it do
+            should contain_file('/etc/default/docker').with_content(
+              /tcp:\/\/127.0.0.1:2375 -H tcp:\/\/10.0.0.1:2375/
+            )
+          end
+        end
+        context 'with tcp_bind string param' do
+          let(:params) {{ 'tcp_bind' => 'tcp://127.0.0.1:2375' }}
+          it do
+            should contain_file('/etc/default/docker').with_content(
+              /tcp:\/\/127.0.0.1:2375/
+            )
+          end
+        end
+
+        context 'with fixed_cidr and bridge params' do
+          let(:params) {{ 'fixed_cidr' => '10.0.0.0/24' }}
+          let(:params) {{
+            'fixed_cidr'      => '10.0.0.0/24',
+            'bridge'          => 'br0',
+          }}
+          it { should contain_file('/etc/default/docker').with_content(/fixed-cidr 10.0.0.0\/24/) }
+        end
+
+        context 'with default_gateway and bridge params' do
+          let(:params) {{
+            'default_gateway' => '10.0.0.1',
+            'bridge'          => 'br0',
+          }}
+          it { should contain_file('/etc/default/docker').with_content(/default-gateway 10.0.0.1/) }
+        end
+
+        context 'with bridge param' do
+          let(:params) {{ 'bridge' => 'br0' }}
+          it { should contain_file('/etc/default/docker').with_content(/bridge br0/) }
         end
 
         context 'with custom service_name' do
@@ -110,6 +163,58 @@ describe 'docker', :type => :class do
         context 'when given a specific tmp_dir' do
           let(:params) {{ 'tmp_dir' => '/bigtmp' }}
           it { should contain_file('/etc/sysconfig/docker').with_content(/export TMPDIR="\/bigtmp"/) }
+        end
+
+        context 'with ip_forwaring param set to false' do
+          let(:params) {{ 'ip_forward' => false }}
+          it { should contain_file('/etc/sysconfig/docker').with_content(/ip-forward=false/) }
+        end
+
+        context 'with ip_masq param set to false' do
+          let(:params) {{ 'ip_masq' => false }}
+          it { should contain_file('/etc/sysconfig/docker').with_content(/ip-masq=false/) }
+        end
+
+        context 'with iptables param set to false' do
+          let(:params) {{ 'iptables' => false }}
+          it { should contain_file('/etc/sysconfig/docker').with_content(/iptables=false/) }
+        end
+
+        context 'with tcp_bind array param' do
+          let(:params) {{ 'tcp_bind' => ['tcp://127.0.0.1:2375', 'tcp://10.0.0.1:2375'] }}
+          it do
+            should contain_file('/etc/sysconfig/docker').with_content(
+              /tcp:\/\/127.0.0.1:2375 -H tcp:\/\/10.0.0.1:2375/)
+          end
+        end
+        context 'with tcp_bind string param' do
+          let(:params) {{ 'tcp_bind' => 'tcp://127.0.0.1:2375' }}
+          it do
+            should contain_file('/etc/sysconfig/docker').with_content(
+              /tcp:\/\/127.0.0.1:2375/)
+          end
+        end
+
+        context 'with fixed_cidr and bridge params' do
+          let(:params) {{ 'fixed_cidr' => '10.0.0.0/24' }}
+          let(:params) {{
+            'fixed_cidr'      => '10.0.0.0/24',
+            'bridge'          => 'br0',
+          }}
+          it { should contain_file('/etc/sysconfig/docker').with_content(/fixed-cidr 10.0.0.0\/24/) }
+        end
+
+        context 'with default_gateway and bridge params' do
+          let(:params) {{
+            'default_gateway' => '10.0.0.1',
+            'bridge'            => 'br0',
+          }}
+          it { should contain_file('/etc/sysconfig/docker').with_content(/default-gateway 10.0.0.1/) }
+        end
+
+        context 'with bridge param' do
+          let(:params) {{ 'bridge' => 'br0' }}
+          it { should contain_file('/etc/sysconfig/docker').with_content(/bridge br0/) }
         end
 
         context 'when given specific storage options' do
