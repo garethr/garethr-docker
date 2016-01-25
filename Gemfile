@@ -14,7 +14,6 @@ group :test do
   gem 'rubocop', '0.33.0', :require => false
   gem 'simplecov', '>= 0.11.0'
   gem 'simplecov-console'
-  gem 'parallel_tests'
 end
 
 group :development do
@@ -27,4 +26,5 @@ group :development do
   gem "guard-rake"
   gem "pry"
   gem "yard"
+  gem 'parallel_tests' # requires at least Ruby 1.9.3
 end

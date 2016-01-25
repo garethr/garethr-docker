@@ -1,7 +1,6 @@
 require 'rubygems'
 require 'bundler/setup'
 
-require 'parallel_tests/cli'
 require 'puppetlabs_spec_helper/rake_tasks'
 require 'rubocop/rake_task'
 
@@ -34,12 +33,22 @@ exclude_paths = [
 PuppetLint.configuration.ignore_paths = exclude_paths
 PuppetSyntax.exclude_paths = exclude_paths
 
-
-desc 'Run spec tests in parallel'
-task :parallel_spec do
-  Rake::Task[:spec_prep].invoke
-  ParallelTests::CLI.new.run('-o "--format=progress" -t rspec spec/classes spec/defines'.split)
-  Rake::Task[:spec_clean].invoke
+begin
+  require 'parallel_tests/cli'
+  desc 'Run spec tests in parallel'
+  task :parallel_spec do
+    Rake::Task[:spec_prep].invoke
+    ParallelTests::CLI.new.run('-o "--format=progress" -t rspec spec/classes spec/defines'.split)
+    Rake::Task[:spec_clean].invoke
+  end
+  desc 'Run syntax, lint, spec and metadata tests in parallel'
+  task :parallel_test => [
+    :syntax,
+    :lint,
+    :parallel_spec,
+    :metadata,
+  ]
+rescue LoadError # rubocop:disable Lint/HandleExceptions
 end
 
 desc 'Run syntax, lint, spec and metadata tests'
@@ -47,13 +56,5 @@ task :test => [
   :syntax,
   :lint,
   :spec,
-  :metadata,
-]
-
-desc 'Run syntax, lint, spec and metadata tests in parallel'
-task :parallel_test => [
-  :syntax,
-  :lint,
-  :parallel_spec,
   :metadata,
 ]
