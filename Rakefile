@@ -2,12 +2,16 @@ require 'rubygems'
 require 'bundler/setup'
 
 require 'puppetlabs_spec_helper/rake_tasks'
-require 'rubocop/rake_task'
 
 # These gems aren't always present, for instance
 # on Travis with --without development
 begin
   require 'puppet_blacksmith/rake_tasks'
+rescue LoadError # rubocop:disable Lint/HandleExceptions
+end
+
+begin
+  require 'rubocop/rake_task'
 rescue LoadError # rubocop:disable Lint/HandleExceptions
 end
 
