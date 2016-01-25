@@ -11,6 +11,10 @@ group :test do
   gem "metadata-json-lint"
   gem "rspec", '< 3.2.0' # Support for 1.8.7
   gem "rspec-retry"
+  gem 'rubocop', '0.33.0', require: false
+  gem 'simplecov', '>= 0.11.0'
+  gem 'simplecov-console'
+  gem 'parallel_tests'
 end
 
 group :development do

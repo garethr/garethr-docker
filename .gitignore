@@ -8,3 +8,4 @@ doc
 .ruby-version
 log
 Gemfile.lock
+coverage/*
