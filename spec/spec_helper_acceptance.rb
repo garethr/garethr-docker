@@ -34,6 +34,13 @@ RSpec.configure do |c|
       if fact_on(host, 'osfamily')== 'RedHat' && fact_on(host, 'operatingsystemmajrelease') == '7'
         on host, apply_manifest(pp), { :catch_failures => false }
       end
+
+      docker_compose_content = <<-EOS
+compose_test:
+  image: ubuntu:14.04
+  command: /bin/sh -c "while true; do echo hello world; sleep 1; done"
+      EOS
+      create_remote_file(host, "/tmp/docker-compose.yml", docker_compose_content)
     end
   end
 end
