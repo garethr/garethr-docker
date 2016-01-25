@@ -102,13 +102,4 @@ class docker::install {
       }))
     }
   }
-
-  # Wrapper used by docker::image to ensure images are up to date
-  file { '/usr/local/bin/update_docker_image.sh':
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0555',
-    content => template('docker/update_docker_image.sh.erb'),
-  }
-
 }
