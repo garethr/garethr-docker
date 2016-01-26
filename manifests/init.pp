@@ -220,6 +220,9 @@
 # [*storage_data_size*]
 #   The desired size for the docker data LV
 #
+# [*storage_min_data_size*]
+#   The minimum size of data volume otherwise pool creation fails
+#
 # [*storage_chunk_size*]
 #   Controls the chunk size/block size of thin pool.
 #
@@ -291,6 +294,7 @@ class docker(
   $storage_vg                        = $docker::params::storage_vg,
   $storage_root_size                 = $docker::params::storage_root_size,
   $storage_data_size                 = $docker::params::storage_data_size,
+  $storage_min_data_size             = $docker::params::storage_min_data_size,
   $storage_chunk_size                = $docker::params::storage_chunk_size,
   $storage_growpart                  = $docker::params::storage_growpart,
   $storage_auto_extend_pool          = $docker::params::storage_auto_extend_pool,

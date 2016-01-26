@@ -46,6 +46,7 @@ class docker::params {
   $storage_vg                        = undef
   $storage_root_size                 = undef
   $storage_data_size                 = undef
+  $storage_min_data_size             = undef
   $storage_chunk_size                = undef
   $storage_growpart                  = undef
   $storage_auto_extend_pool          = undef
