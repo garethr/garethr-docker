@@ -591,6 +591,11 @@ describe 'docker', :type => :class do
         it { should contain_file(storage_setup_file).with_content(/^DATA_SIZE=10G/) }
       end
 
+      context 'with storage min data size' do
+        let(:params) { { 'storage_min_data_size' => '2G' }}
+        it { should contain_file(storage_setup_file).with_content(/^MIN_DATA_SIZE=2G/) }
+      end
+
       context 'with storage chunk size' do
         let(:params) { { 'storage_chunk_size' => '10G' }}
         it { should contain_file(storage_setup_file).with_content(/^CHUNK_SIZE=10G/) }

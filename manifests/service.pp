@@ -61,6 +61,7 @@ class docker::service (
   $storage_vg                        = $docker::storage_vg,
   $storage_root_size                 = $docker::storage_root_size,
   $storage_data_size                 = $docker::storage_data_size,
+  $storage_min_data_size             = $docker::storage_min_data_size,
   $storage_chunk_size                = $docker::storage_chunk_size,
   $storage_growpart                  = $docker::storage_growpart,
   $storage_auto_extend_pool          = $docker::storage_auto_extend_pool,
