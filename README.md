@@ -334,6 +334,54 @@ You can do that on the `docker` class like so:
 extra_parameters => '--cluster-store=<backend>://172.17.8.101:<port> --cluster-advertise=<interface>:2376'
 ```
 
+### Compose
+
+Docker Compose allows for describing a set of containers in a simple
+YAML format, and then running a command to build and run those
+containers. The `docker_compose` type included in the module allows for
+using Puppet to run Compose. This means you can have Puppet remediate
+any issues and make sure reality matches the model in your Compose
+file.
+
+Here's an example. Given the following Compose file:
+
+```yaml
+compose_test:
+  image: ubuntu:14.04
+  command: /bin/sh -c "while true; do echo hello world; sleep 1; done"
+```
+
+That could be added to the machine you're running Puppet using a `file`
+resource or any other means.
+
+Then define a `docker_compose` resource pointing at the Compose file
+like so:
+
+```puppet
+docker_compose { '/tmp/docker-compose.yml':
+  ensure  => present,
+}
+```
+
+Now when Puppet runs it will automatically run Compose is required,
+for example because the relevant Compose services aren't running.
+
+You can also pass addition options (for example to enable experimental
+features) as well as provide scaling rules. The following example
+requests 2 containers be running for example. Puppet will now run
+Compose if the number of containers for a given service don't match the
+provided scale values.
+
+```puppet
+docker_compose { '/tmp/docker-compose.yml':
+  ensure  => present,
+  scale   => {
+    'compose_test' => 2,
+  },
+  options => '--x-networking'
+}
+```
+
 ### Private registries
 By default images will be pushed and pulled from [index.docker.io](http://index.docker.io) unless you've specified a server. If you have your own private registry without authentication, you can fully qualify your image name. If your private registry requires authentication you may configure a registry:
 
