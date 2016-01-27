@@ -308,6 +308,32 @@ If using hiera, there's a `docker::run_instance` class you can configure, for ex
       command: '/bin/sh -c "while true; do echo hello world; sleep 1; done"'
 ```
 
+### Networks
+
+As of Docker 1.9.x, Docker has official support for networks. The module
+now exposes a type, `docker_network`, used to manage those. This works
+like:
+
+```puppet
+docker_network { 'my-net':
+  ensure  => present,
+  driver  => 'overlay',
+  subnet  => '192.168.1.0/24',
+  gateway => '192.168.1.1',
+  iprange => '192.168.1.4/32',
+}
+```
+
+Only the name is required, along with an ensure value. If you don't pass
+a driver Docker network will use the default bridge. Note that some
+networks require the Docker daemon to be configured to use them, for
+instance for the overlay network you'll need a cluster store configured.
+You can do that on the `docker` class like so:
+
+```puppet
+extra_parameters => '--cluster-store=<backend>://172.17.8.101:<port> --cluster-advertise=<interface>:2376'
+```
+
 ### Private registries
 By default images will be pushed and pulled from [index.docker.io](http://index.docker.io) unless you've specified a server. If you have your own private registry without authentication, you can fully qualify your image name. If your private registry requires authentication you may configure a registry:
 
