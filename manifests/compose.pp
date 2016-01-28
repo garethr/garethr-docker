@@ -24,7 +24,7 @@ class docker::compose(
     exec { "Install Docker Compose ${version}":
       path    => '/usr/bin/',
       cwd     => '/tmp',
-      command => "curl -s -L https://github.com/docker/compose/releases/download/${version}/docker-compose-${::kernel}-${::hardwareisa} > /usr/local/bin/docker-compose-${version}",
+      command => "curl -s -L https://github.com/docker/compose/releases/download/${version}/docker-compose-${::kernel}-x86_64 > /usr/local/bin/docker-compose-${version}",
       creates => "/usr/local/bin/docker-compose-${version}"
     } ->
     file { "/usr/local/bin/docker-compose-${version}":
