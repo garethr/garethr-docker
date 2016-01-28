@@ -177,6 +177,9 @@
 # [*dm_use_deferred_removal*]
 #   Enables use of deferred device removal if libdm and the kernel driver support the mechanism.
 #
+# [*dm_use_deferred_deletion*]
+#    Enables use of deferred device deletion if libdm and the kernel driver support the mechanism.
+#
 # [*dm_blkdiscard*]
 #   Enables or disables the use of blkdiscard when removing devicemapper devices.
 #   Defaults to false
@@ -278,6 +281,7 @@ class docker(
   $dm_metadatadev                    = $docker::params::dm_metadatadev,
   $dm_thinpooldev                    = $docker::params::dm_thinpooldev,
   $dm_use_deferred_removal           = $docker::params::dm_use_deferred_removal,
+  $dm_use_deferred_deletion          = $docker::params::dm_use_deferred_deletion,
   $dm_blkdiscard                     = $docker::params::dm_blkdiscard,
   $dm_override_udev_sync_check       = $docker::params::dm_override_udev_sync_check,
   $execdriver                        = $docker::params::execdriver,
