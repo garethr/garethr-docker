@@ -5,11 +5,6 @@ describe 'docker' do
   service_name = 'docker'
   command = 'docker'
 
-  before(:all) do
-    # This is a hack to work around a dependency issue
-    shell('sudo yum install -y device-mapper', :pty=>true) if fact('osfamily') == 'RedHat'
-  end
-
   context 'with default parameters' do
     let(:pp) {"
         class { 'docker':

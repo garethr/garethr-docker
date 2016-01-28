@@ -4,8 +4,6 @@ describe 'docker network' do
   command = 'docker'
 
   before(:all) do
-    # This is a hack to work around a dependency issue
-    shell('sudo yum install -y device-mapper', :pty=>true) if fact('osfamily') == 'RedHat'
     install_code = "class { 'docker': }"
     apply_manifest(install_code, :catch_failures=>true)
   end

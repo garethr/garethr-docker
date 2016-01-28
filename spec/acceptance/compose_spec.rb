@@ -2,8 +2,6 @@ require 'spec_helper_acceptance'
 
 describe 'docker compose' do
   before(:all) do
-    # This is a hack to work around a dependency issue
-    shell('sudo yum install -y device-mapper', :pty=>true) if fact('osfamily') == 'RedHat'
     install_code = <<-code
       class { 'docker': }
       class { 'docker::compose': }

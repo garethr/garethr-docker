@@ -1,19 +1,6 @@
 require 'spec_helper_acceptance'
 
 describe 'the Puppet Docker module' do
-  before(:all) do
-    if default['platform'] =~ /el-7/
-      pp=<<-EOS
-        package {'device-mapper':
-          ensure => latest,
-        }
-      EOS
-      apply_manifest(pp, :catch_failures => true)
-      # A sleep to give docker time to execute properly
-      sleep 4
-    end
-  end
-
   describe 'docker class' do
     context 'without any parameters' do
       let(:pp) {"
@@ -551,9 +538,7 @@ describe 'the Puppet Docker module' do
       # A sleep to give docker time to execute properly
       sleep 4
 
-      shell('docker ps -a | wc -l') do |r|
-        expect(r.stdout).to match(/^2$/)
-      end
+      shell('docker inspect container-3-6', :acceptable_exit_codes => [0])
 
       apply_manifest(pp2, :catch_failures => true)
       apply_manifest(pp2, :catch_changes => true) unless fact('selinux') == 'true'
@@ -561,9 +546,7 @@ describe 'the Puppet Docker module' do
       # A sleep to give docker time to execute properly
       sleep 4
 
-      shell('docker ps -a | wc -l') do |r|
-        expect(r.stdout).to match(/^1$/)
-      end
+      shell('docker inspect container-3-6', :acceptable_exit_codes => [1])
     end
   end
 
