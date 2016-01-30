@@ -67,6 +67,7 @@ class docker::params {
             $service_hasstatus       = true
             $service_hasrestart      = true
             include docker::systemd_reload
+            include docker::systemd_reload_before_service
           } else {
             $service_config_template = 'docker/etc/default/docker.erb'
             $service_provider        = 'upstart'
@@ -84,6 +85,7 @@ class docker::params {
             $service_hasstatus       = true
             $service_hasrestart      = true
             include docker::systemd_reload
+            include docker::systemd_reload_before_service
           } else {
             $service_config_template = 'docker/etc/default/docker.erb'
           }
@@ -163,6 +165,7 @@ class docker::params {
           $docker_group = 'dockerroot'
         }
         include docker::systemd_reload
+        include docker::systemd_reload_before_service
       }
 
       # repo_opt to specify install_options for docker package
@@ -192,6 +195,8 @@ class docker::params {
     }
     'Archlinux' : {
       include docker::systemd_reload
+      include docker::systemd_reload_before_service
+
       $manage_epel = false
       $docker_group = $docker_group_default
       $package_key_source = undef

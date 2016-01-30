@@ -114,7 +114,8 @@ class docker::service (
         file { '/etc/systemd/system/docker.service.d/service-overrides.conf':
           ensure  => present,
           content => template($service_overrides_template),
-          notify  => Exec['docker-systemd-reload']
+          notify  => Exec['docker-systemd-reload-before-service'],
+          before  => Service['docker'],
         }
       }
     }
