@@ -368,7 +368,5 @@ class docker(
 
   # Only bother trying extra docker stuff after docker has been installed,
   # and is running.
-  Class['docker'] -> Docker::Registry <||> -> Docker::Run <||>
-  Class['docker'] -> Docker::Image <||>
-
+  Class['docker'] -> Docker::Registry <||> -> Docker::Image <||> -> Docker::Run <||>
 }
