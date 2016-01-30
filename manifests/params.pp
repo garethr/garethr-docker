@@ -201,6 +201,7 @@ class docker::params {
     }
     'Archlinux' : {
       include docker::systemd_reload
+
       $manage_epel = false
       $docker_group = $docker_group_default
       $package_key_source = undef
