@@ -63,6 +63,7 @@ module Puppet::Parser::Functions
       ['-e %s',             'env'],
       ['--env-file %s',     'env_file'],
       ['-p %s',             'ports'],
+      ['-l %s',             'labels'],
       ['--add-host %s',     'hostentries'],
       ['-v %s',             'volumes'],
       ['-H %s',             'socket_connect'],

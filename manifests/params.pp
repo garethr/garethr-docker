@@ -3,51 +3,88 @@
 # Default parameter values for the docker module
 #
 class docker::params {
-  $version                      = undef
-  $ensure                       = present
-  $tcp_bind                     = undef
-  $socket_bind                  = 'unix:///var/run/docker.sock'
-  $log_level                    = undef
-  $selinux_enabled              = undef
-  $socket_group                 = undef
-  $service_state                = running
-  $service_enable               = true
-  $root_dir                     = undef
-  $tmp_dir                      = '/tmp/'
-  $dns                          = undef
-  $dns_search                   = undef
-  $proxy                        = undef
-  $no_proxy                     = undef
-  $execdriver                   = undef
-  $storage_driver               = undef
-  $dm_basesize                  = undef
-  $dm_fs                        = undef
-  $dm_mkfsarg                   = undef
-  $dm_mountopt                  = undef
-  $dm_blocksize                 = undef
-  $dm_loopdatasize              = undef
-  $dm_loopmetadatasize          = undef
-  $dm_datadev                   = undef
-  $dm_metadatadev               = undef
-  $manage_package               = true
-  $manage_kernel                = true
-  $package_name_default         = 'docker-engine'
-  $service_name_default         = 'docker'
-  $docker_command_default       = 'docker'
-  $docker_group_default         = 'docker'
+  $version                           = undef
+  $ensure                            = present
+  $tcp_bind                          = undef
+  $socket_bind                       = 'unix:///var/run/docker.sock'
+  $log_level                         = undef
+  $log_driver                        = undef
+  $log_opt                           = []
+  $selinux_enabled                   = undef
+  $socket_group                      = undef
+  $service_state                     = running
+  $service_enable                    = true
+  $root_dir                          = undef
+  $tmp_dir                           = '/tmp/'
+  $dns                               = undef
+  $dns_search                        = undef
+  $proxy                             = undef
+  $no_proxy                          = undef
+  $execdriver                        = undef
+  $storage_driver                    = undef
+  $dm_basesize                       = undef
+  $dm_fs                             = undef
+  $dm_mkfsarg                        = undef
+  $dm_mountopt                       = undef
+  $dm_blocksize                      = undef
+  $dm_loopdatasize                   = undef
+  $dm_loopmetadatasize               = undef
+  $dm_datadev                        = undef
+  $dm_metadatadev                    = undef
+  $dm_thinpooldev                    = undef
+  $dm_use_deferred_removal           = undef
+  $dm_blkdiscard                     = undef
+  $dm_override_udev_sync_check       = undef
+  $manage_package                    = true
+  $package_source                    = undef
+  $manage_kernel                     = true
+  $package_name_default              = 'docker-engine'
+  $service_name_default              = 'docker'
+  $docker_command_default            = 'docker'
+  $docker_group_default              = 'docker'
+  $storage_devs                      = undef
+  $storage_vg                        = undef
+  $storage_root_size                 = undef
+  $storage_data_size                 = undef
+  $storage_chunk_size                = undef
+  $storage_growpart                  = undef
+  $storage_auto_extend_pool          = undef
+  $storage_pool_autoextend_threshold = undef
+  $storage_pool_autoextend_percent   = undef
+  $storage_config_template           = 'docker/etc/sysconfig/docker-storage.erb'
+
+
   case $::osfamily {
     'Debian' : {
       case $::operatingsystem {
         'Ubuntu' : {
           $package_release = "ubuntu-${::lsbdistcodename}"
           if (versioncmp($::operatingsystemrelease, '15.04') >= 0) {
+            $service_provider        = 'systemd'
+            $storage_config          = '/etc/default/docker-storage'
+            $service_config_template = 'docker/etc/sysconfig/docker.systemd.erb'
+            $service_hasstatus       = true
+            $service_hasrestart      = true
             include docker::systemd_reload
+          } else {
+            $service_config_template = 'docker/etc/default/docker.erb'
+            $service_provider        = 'upstart'
+            $service_hasstatus       = true
+            $service_hasrestart      = false
           }
         }
         default: {
           $package_release = "debian-${::lsbdistcodename}"
           if (versioncmp($::operatingsystemmajrelease, '8') >= 0) {
+            $service_provider           = 'systemd'
+            $storage_config             = '/etc/default/docker-storage'
+            $service_config_template    = 'docker/etc/sysconfig/docker.systemd.erb'
+            $service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-debian.conf.erb'
+            $service_hasstatus       = true
+            $service_hasrestart      = true
             include docker::systemd_reload
+          } else {
+            $service_config_template = 'docker/etc/default/docker.erb'
           }
         }
       }
@@ -73,6 +110,19 @@ class docker::params {
 
     }
     'RedHat' : {
+      $service_config = '/etc/sysconfig/docker'
+      $storage_config = '/etc/sysconfig/docker-storage'
+      $service_hasstatus  = true
+      $service_hasrestart = true
+
+      if ($::operatingsystem == 'Fedora') or (versioncmp($::operatingsystemrelease, '7.0') >= 0) {
+        $service_provider           = 'systemd'
+        $service_config_template    = 'docker/etc/sysconfig/docker.systemd.erb'
+        $service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-rhel.conf.erb'
+      } else {
+        $service_config_template = 'docker/etc/sysconfig/docker.erb'
+      }
+
       if (versioncmp($::operatingsystemrelease, '7.0') < 0) and $::operatingsystem != 'Amazon' {
         $package_name = 'docker-io'
         $use_upstream_package_source = false
@@ -118,6 +168,8 @@ class docker::params {
       if (versioncmp($::operatingsystemmajrelease, '7') == 0) {
         if $::operatingsystem == 'RedHat' {
           $repo_opt = '--enablerepo=rhel7-extras'
+        } elsif $::operatingsystem == 'CentOS' {
+          $repo_opt = '--enablerepo=extras'
         } elsif $::operatingsystem == 'OracleLinux' {
           $repo_opt = '--enablerepo=ol7_addons'
         } elsif $::operatingsystem == 'Scientific' {
@@ -153,6 +205,12 @@ class docker::params {
       $detach_service_in_init = false
       $repo_opt = undef
       $nowarn_kernel = false
+      $service_provider   = 'systemd'
+      $service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-archlinux.conf.erb'
+      $service_hasstatus  = true
+      $service_hasrestart = true
+      $service_config = '/etc/conf.d/docker'
+      $service_config_template = 'docker/etc/conf.d/docker.erb'
     }
     default: {
       $manage_epel = false
@@ -163,6 +221,8 @@ class docker::params {
       $package_repos = undef
       $package_release = undef
       $use_upstream_package_source = true
+      $service_hasstatus  = undef
+      $service_hasrestart = undef
       $package_name = $package_name_default
       $service_name = $service_name_default
       $docker_command = $docker_command_default

@@ -5,16 +5,18 @@ OPTIONS="<% if @root_dir %> -g <%= @root_dir %><% end -%>
 <% if @tcp_bind %> -H <%= @tcp_bind %><% end -%>
 <% if @socket_bind %> -H <%= @socket_bind %><% end -%>
 <% if @log_level %> -l <%= @log_level %><% end -%>
+<% if @log_driver %> --log-driver <%= @log_driver %><% end -%>
+<% if @log_driver %><% if @log_opt %><% @log_opt.each do |param| %> --log-opt <%= param %><% end %><% end -%><% end -%>
 <% if @selinux_enabled %> --selinux-enabled=<%= @selinux_enabled %><% end -%>
 <% if @socket_group %> -G <%= @socket_group %><% end -%>
 <% if @dns %><% @dns_array.each do |address| %> --dns <%= address %><% end %><% end -%>
 <% if @dns_search %><% @dns_search_array.each do |domain| %> --dns-search <%= domain %><% end %><% end -%>
 <% if @execdriver %> -e <%= @execdriver %> <% end -%>
-<% if @extra_parameters %><% @extra_parameters_array.each do |param| %> <%= param %><% end %><% end -%>
-<% if @shell_values %><% @shell_values_array.each do |param| %> <%= param %><% end %><% end -%>"
+<% if @extra_parameters %><% @extra_parameters_array.each do |param| %> <%= param %><% end %><% end -%>"
 
 <% if @proxy %>http_proxy='<%= @proxy %>'
   https_proxy='<%= @proxy %>'<% end %>
 <% if @no_proxy %>no_proxy='<%= @no_proxy %>'<% end %>
 # This is also a handy place to tweak where Docker's temporary files go.
 # TMPDIR="<%= @tmp_dir %>"
+<% if @shell_values %><% @shell_values_array.each do |param| %> <%= param %><% end %><% end -%>

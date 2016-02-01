@@ -1,6 +1,6 @@
 Puppet module for installing, configuring and managing
 [Docker](https://github.com/docker/docker) from the [official repository](http://docs.docker.com/installation/) or alternatively from [EPEL on RedHat](http://docs.docker.io/en/latest/installation/rhel/) based distributions.
- 
+
 [![Puppet
 Forge](http://img.shields.io/puppetforge/v/garethr/docker.svg)](https://forge.puppetlabs.com/garethr/docker) [![Build
 Status](https://secure.travis-ci.org/garethr/garethr-docker.png)](http://travis-ci.org/garethr/garethr-docker) [![Documentation
@@ -121,6 +121,18 @@ class { 'docker':
 }
 ```
 
+And if you want to install a specific rpm package of docker you can do so:
+
+```puppet
+class { 'docker' :
+  manage_package              => true,
+  use_upstream_package_source => false,
+  package_name                => 'docker-engine'
+  package_source              => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm',
+  prerequired_packages        => [ 'glibc.i686', 'glibc.x86_64', 'sqlite.i686', 'sqlite.x86_64', 'device-mapper', 'device-mapper-libs', 'device-mapper-event-libs', 'device-mapper-event' ]
+}
+```
+
 And if you want to track the latest version you can do so:
 
 ```puppet
@@ -182,6 +194,20 @@ docker::image { 'ubuntu':
 }
 ```
 
+You can trigger a rebuild of the image by subscribing to external events like Dockerfile changes:
+
+```puppet
+docker::image { 'ubuntu':
+  docker_file => '/tmp/Dockerfile'
+  subscribe => File['/tmp/Dockerfile'],
+}
+
+file { '/tmp/Dockerfile':
+  ensure => file,
+  source => 'puppet:///modules/someModule/Dockerfile',
+}
+```
+
 You can also remove images you no longer need with:
 
 ```puppet
@@ -202,6 +228,7 @@ docker::images:
   ubuntu:
     image_tag: 'precise'
 ```
+
 
 ### Containers
 
@@ -229,7 +256,6 @@ docker::run { 'helloworld':
   ports           => ['4444', '4555'],
   expose          => ['4666', '4777'],
   links           => ['mysql:db'],
-  use_name        => true,
   volumes         => ['/var/lib/couchdb', '/var/log'],
   volumes_from    => '6446ea52fbc9',
   memory_limit    => '10m', # (format: '<number><unit>', where unit = b, k, m or g)
@@ -243,6 +269,7 @@ docker::run { 'helloworld':
   privileged      => false,
   pull_on_start   => false,
   before_stop     => 'echo "So Long, and Thanks for All the Fish"',
+  after           => [ 'container_b', 'mysql' ],
   depends         => [ 'container_a', 'postgres' ],
 }
 ```
@@ -253,7 +280,9 @@ Specifying `pull_on_start` will pull the image before each time it is started.
 
 Specifying `before_stop` will execute a command before stopping the container.
 
-The `depends` option allows expressing containers that must be started before. This affects the generation of the init.d/systemd script.
+The `after` option allows expressing containers that must be started before. This affects the generation of the init.d/systemd script.
+
+The `depends` option allows expressing container dependencies. The depended container will be started before this container(s), and this container will be stopped before the depended container(s). This affects the generation of the init.d/systemd script. You can use `depend_services` to specify dependency for generic services (non-docker) that should be started before this container.
 
 The service file created for systemd based systems enables automatic restarting of the service on failure by default.
 
@@ -310,15 +339,15 @@ docker::registry_auth::registries:
 
 ### Exec
 
-Docker also supports running arbitrary comments within the context of a
+Docker also supports running arbitrary commands within the context of a
 running container. And now so does the Puppet module.
 
 ```puppet
-docker::exec { 'helloworld-uptime':
-  detach    => true,
-  container => 'helloworld',
-  command   => 'uptime',
-  tty       => true,
+docker::exec { 'cron_allow_root':
+  detach       => true,
+  container    => 'mycontainer',
+  command      => '/bin/echo root >> /usr/lib/cron/cron.allow',
+  tty          => true,
+  unless       => 'grep root /usr/lib/cron/cron.allow 2>/dev/null',
 }
 ```
-

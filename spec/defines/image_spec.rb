@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe 'docker::image', :type => :define do
   let(:title) { 'base' }
-  it { should contain_exec('docker pull base') }
 
   context 'with ensure => absent' do
     let(:params) { { 'ensure' => 'absent' } }
@@ -21,14 +20,14 @@ describe 'docker::image', :type => :define do
 
   context 'with ensure => present' do
     let(:params) { { 'ensure' => 'present' } }
-    it { should contain_exec('docker pull base') }
+    it { should contain_file('/usr/local/bin/update_docker_image.sh') }
+    it { should contain_exec('/usr/local/bin/update_docker_image.sh base') }
   end
 
   context 'with docker_file => Dockerfile' do
     let(:params) { { 'docker_file' => 'Dockerfile' }}
     it { should contain_exec('docker build -t base - < Dockerfile') }
   end
-
 
   context 'with ensure => present and docker_file => Dockerfile' do
     let(:params) { { 'ensure' => 'present', 'docker_file' => 'Dockerfile' } }
@@ -47,7 +46,7 @@ describe 'docker::image', :type => :define do
 
   context 'with ensure => present and image_tag => precise' do
     let(:params) { { 'ensure' => 'present', 'image_tag' => 'precise' } }
-    it { should contain_exec('docker pull base:precise') }
+    it { should contain_exec('/usr/local/bin/update_docker_image.sh base:precise') }
   end
 
   context 'with ensure => present and image_tag => precise and docker_file => Dockerfile' do
@@ -99,19 +98,19 @@ describe 'docker::image', :type => :define do
 
   context 'with ensure => latest' do
     let(:params) { { 'ensure' => 'latest' } }
-    it { should contain_exec('docker pull base') }
+    it { should contain_exec("echo 'Update of base complete'").with_onlyif('/usr/local/bin/update_docker_image.sh base') }
   end
 
   context 'with ensure => latest and image_tag => precise' do
     let(:params) { { 'ensure' => 'latest', 'image_tag' => 'precise' } }
-    it { should contain_exec('docker pull base:precise') }
+    it { should contain_exec("echo 'Update of base:precise complete'") }
   end
 
   context 'with an invalid image name' do
     let(:title) { 'with spaces' }
     it do
       expect {
-        should contain_exec('docker pull with spaces')
+        should contain_exec('/usr/local/bin/update_docker_image.sh with spaces')
       }.to raise_error(Puppet::Error)
     end
   end
