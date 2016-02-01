@@ -26,13 +26,12 @@ class docker::install {
           default: { $kernelpackage = "linux-image-extra-${::kernelrelease}" }
         }
         $manage_kernel = $docker::manage_kernel
-        # new versions are setup this way
-        $real_docker_version = "${docker::version}-0~${::lsbdistcodename}"
       } else {
-        $real_docker_version = $docker::version
         # Debian does not need extra kernel packages
         $manage_kernel = false
       }
+      # new versions are setup this way
+      $real_docker_version = "${docker::version}-0~${::lsbdistcodename}"
     }
     'RedHat': {
       $real_docker_version = $docker::version
@@ -48,6 +47,7 @@ class docker::install {
     }
     'Archlinux': {
       $manage_kernel = false
+      $real_docker_version = $docker::ensure
       if $docker::version {
         notify { 'docker::version unsupported on Archlinux':
           message => 'Versions other than latest are not supported on Arch Linux. This setting will be ignored.'

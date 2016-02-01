@@ -22,6 +22,11 @@ describe 'docker', :type => :class do
           it { should contain_package('apt-transport-https').with_ensure('present') }
           it { should contain_package('cgroupfs-mount').with_ensure('present') }
         end
+
+        context 'with a custom version' do
+          let(:params) { {'version' => '0.5.5' } }
+          it { should contain_package('docker').with_name('docker-engine').with_ensure('0.5.5-0~wheezy') }
+        end
       end
 
       if osfamily == 'Ubuntu'
@@ -49,6 +54,11 @@ describe 'docker', :type => :class do
           it { should contain_package('cgroup-lite').with_ensure('present') }
           it { should contain_package('apparmor').with_ensure('present') }
         end
+
+        context 'with a custom version' do
+          let(:params) { {'version' => '0.5.5' } }
+          it { should contain_package('docker').with_name('docker-engine').with_ensure('0.5.5-0~maverick') }
+        end
       end
 
       if osfamily == 'Ubuntu' or osfamily == 'Debian'
@@ -58,15 +68,6 @@ describe 'docker', :type => :class do
         it { should contain_package('docker').with_name('docker-engine').with_ensure('present') }
         it { should contain_apt__source('docker').with_location('https://apt.dockerproject.org/repo') }
         it { should contain_package('docker').with_install_options(nil) }
-
-        context 'with a custom version' do
-          let(:params) { {'version' => '0.5.5' } }
-<<<<<<< 785de43041df6555241e75a10f47b3d52a1563a1
-          it { should contain_package('docker').with_ensure('0.5.5').with_name('docker-engine') }
-=======
-          it { should contain_package('docker').with_name('docker-engine').with_ensure('0.5.5-0~maverick') }
->>>>>>> fixed various issues discovered while testing this on an ubuntu 14.04 instance
-        end
 
         context 'with no upstream package source' do
           let(:params) { {'use_upstream_package_source' => false } }
@@ -80,7 +81,6 @@ describe 'docker', :type => :class do
           it { should_not contain_class('epel') }
           it { should contain_package('docker') }
         end
-
 
         context 'when given a specific tmp_dir' do
           let(:params) {{ 'tmp_dir' => '/bigtmp' }}
@@ -165,13 +165,14 @@ describe 'docker', :type => :class do
             )
           end
 
-        context 'with a custom package name and version' do
-          # version is ignored in archlinux
-          let(:params) { {
-             'version'      => '0.5.5',
-             'package_name' => 'docker-custom-pkg-name',
-          } }
-          it { should contain_package('docker').with_name('docker-custom-pkg-name').with_ensure('0.5.5') }
+          context 'with a custom package name and version' do
+            # version is ignored in archlinux
+            let(:params) { {
+               'version'      => '0.5.5',
+               'package_name' => 'docker-custom-pkg-name',
+            } }
+            it { should contain_package('docker').with_name('docker-custom-pkg-name').with_ensure('0.5.5') }
+          end
         end
 
       end
@@ -210,17 +211,6 @@ describe 'docker', :type => :class do
         it { should contain_package('docker').with_name('docker-custom-pkg-name').with_ensure('present') }
       end
 
-<<<<<<< 785de43041df6555241e75a10f47b3d52a1563a1
-      context 'with a custom package name and version' do
-        let(:params) { {
-           'version'      => '0.5.5',
-           'package_name' => 'docker-custom-pkg-name',
-        } }
-        it { should contain_package('docker').with_name('docker-custom-pkg-name').with_ensure('0.5.5') }
-      end
-
-=======
->>>>>>> fixed various issues discovered while testing this on an ubuntu 14.04 instance
       context 'when not managing the package' do
         let(:params) { {'manage_package' => false } }
         it { should_not contain_package('docker') }
