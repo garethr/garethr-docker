@@ -36,6 +36,7 @@ class docker::repos {
       if $docker::manage_package {
         if ($docker::use_upstream_package_source) {
           yumrepo { 'docker':
+            descr    => 'Docker',
             baseurl  => $docker::package_source_location,
             gpgkey   => $docker::package_key_source,
             gpgcheck => true,
