@@ -551,7 +551,7 @@ describe 'docker', :type => :class do
     } }
 
     it { should contain_package('docker').with_name('docker-engine') }
-    it { should contain_yumrepo('docker') }
+    it { should contain_yumrepo('docker').with_descr('Docker') }
     it { should_not contain_class('epel') }
   end
 
