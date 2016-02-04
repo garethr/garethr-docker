@@ -739,6 +739,16 @@ describe 'docker', :type => :class do
     end
   end
 
+  context 'specific to Amazon Linux (based on centos6) distros' do
+    let(:facts) { {
+      :osfamily => 'RedHat',
+      :operatingsystem => 'Amazon',
+      :operatingsystemrelease => '2015.09',
+      :operatingsystemmajrelease => '2015',
+    } }
+    it {should contain_service('docker').without_provider }
+  end
+
   context 'with an invalid distro name' do
     let(:facts) { {:osfamily => 'Gentoo'} }
     it do
