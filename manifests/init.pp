@@ -98,6 +98,11 @@
 #   Whether you want to docker daemon to start up at boot
 #   Defaults to true
 #
+# [*service_manage*]
+#   Specify whether the service should be managed.
+#   Valid values are 'true', 'false'.
+#   Defaults to 'true'.
+#
 # [*root_dir*]
 #   Custom root directory for containers
 #   Defaults to undefined
@@ -256,6 +261,7 @@ class docker(
   $package_key_source                = $docker::params::package_key_source,
   $service_state                     = $docker::params::service_state,
   $service_enable                    = $docker::params::service_enable,
+  $service_manage                    = $docker::params::service_manage,
   $root_dir                          = $docker::params::root_dir,
   $tmp_dir                           = $docker::params::tmp_dir,
   $manage_kernel                     = $docker::params::manage_kernel,
@@ -314,6 +320,7 @@ class docker(
   validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', 'This module only works on Debian and Red Hat based systems.')
   validate_bool($manage_kernel)
   validate_bool($manage_package)
+  validate_bool($service_manage)
   validate_array($docker_users)
   validate_array($log_opt)
 
