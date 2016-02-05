@@ -249,6 +249,15 @@ describe 'docker', :type => :class do
         it { should contain_file(storage_config_file).with_content(/--storage-opt dm\.use_deferred_removal=true/) }
       end
 
+      context 'with use deferred deletion param' do
+        let(:params) {
+          { 'storage_driver' => 'devicemapper',
+            'dm_use_deferred_deletion' => 'true'
+          }
+        }
+        it { should contain_file(storage_config_file).with_content(/--storage-opt dm\.use_deferred_deletion=true/) }
+      end
+
       context 'with block discard param' do
         let(:params) {
           { 'storage_driver' => 'devicemapper',

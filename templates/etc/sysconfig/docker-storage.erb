@@ -30,6 +30,7 @@ DOCKER_STORAGE_OPTIONS="<% -%>
 <% if @dm_metadatadev %> --storage-opt dm.metadatadev=<%= @dm_metadatadev %><% end -%>
 <% end -%>
 <% if @dm_use_deferred_removal %> --storage-opt dm.use_deferred_removal=<%= @dm_use_deferred_removal %><% end -%>
+<% if @dm_use_deferred_deletion %> --storage-opt dm.use_deferred_deletion=<%= @dm_use_deferred_deletion %><% end -%>
 <% if @dm_blkdiscard %> --storage-opt dm.blkdiscard=<%= @dm_blkdiscard %><% end -%>
 <% if @dm_override_udev_sync_check %> --storage-opt dm.override_udev_sync_check=<%= @dm_override_udev_sync_check %><% end -%>
 <% end -%>
