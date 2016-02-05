@@ -24,6 +24,7 @@
 class docker::service (
   $docker_command                    = $docker::docker_command,
   $service_name                      = $docker::service_name,
+  $daemon_flag                       = $docker::daemon_flag,
   $tcp_bind                          = $docker::tcp_bind,
   $socket_bind                       = $docker::socket_bind,
   $log_level                         = $docker::log_level,

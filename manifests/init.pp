@@ -204,6 +204,10 @@
 #   Specify a custom docker command name
 #   Default is set on a per system basis in docker::params
 #
+# [*daemon_flag*]
+#  Specify a flag for running docker as daemon
+#  Default is set on a per system basis in docker::params
+#
 # [*docker_users*]
 #   Specify an array of users to add to the docker group
 #   Default is empty
@@ -291,6 +295,7 @@ class docker(
   $package_name                      = $docker::params::package_name,
   $service_name                      = $docker::params::service_name,
   $docker_command                    = $docker::params::docker_command,
+  $daemon_flag                       = $docker::params::daemon_flag,
   $docker_users                      = [],
   $repo_opt                          = $docker::params::repo_opt,
   $nowarn_kernel                     = $docker::params::nowarn_kernel,
