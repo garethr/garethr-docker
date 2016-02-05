@@ -55,6 +55,7 @@ class docker::service (
   $nowarn_kernel                     = $docker::nowarn_kernel,
   $dm_thinpooldev                    = $docker::dm_thinpooldev,
   $dm_use_deferred_removal           = $docker::dm_use_deferred_removal,
+  $dm_use_deferred_deletion          = $docker::dm_use_deferred_deletion,
   $dm_blkdiscard                     = $docker::dm_blkdiscard,
   $dm_override_udev_sync_check       = $docker::dm_override_udev_sync_check,
   $storage_devs                      = $docker::storage_devs,
