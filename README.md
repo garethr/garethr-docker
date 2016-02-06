@@ -316,11 +316,11 @@ like:
 
 ```puppet
 docker_network { 'my-net':
-  ensure  => present,
-  driver  => 'overlay',
-  subnet  => '192.168.1.0/24',
-  gateway => '192.168.1.1',
-  iprange => '192.168.1.4/32',
+  ensure   => present,
+  driver   => 'overlay',
+  subnet   => '192.168.1.0/24',
+  gateway  => '192.168.1.1',
+  ip_range => '192.168.1.4/32',
 }
 ```
 

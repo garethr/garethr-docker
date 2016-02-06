@@ -12,13 +12,13 @@ Puppet::Type.type(:docker_network).provide(:ruby) do
     }
 
     [
-      ['--driver %s',       :driver],
-      ['--subnet %s',       :subnet],
-      ['--gateway %s',      :gateway],
-      ['--ip-range %s',     :ip_range],
-      ['--ipam-driver %s',  :ipam_driver],
-      ['--aux-address %s',  :aux_address],
-      ['--opt %s',          :options],
+      ['--driver=%s',       :driver],
+      ['--subnet=%s',       :subnet],
+      ['--gateway=%s',      :gateway],
+      ['--ip-range=%s',     :ip_range],
+      ['--ipam-driver=%s',  :ipam_driver],
+      ['--aux-address=%s',  :aux_address],
+      ['--opt=%s',          :options],
     ].each do |(format, key)|
       values    = resource[key]
       new_flags = multi_flags.call(values, format)
