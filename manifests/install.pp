@@ -89,16 +89,16 @@ class docker::install {
       }
 
       ensure_resource('package', 'docker', merge($docker_hash, {
-        ensure          => $ensure,
-        provider        => $pk_provider,
-        source          => $docker::package_source,
-        name            => $docker::package_name,
+        ensure   => $ensure,
+        provider => $pk_provider,
+        source   => $docker::package_source,
+        name     => $docker::package_name,
       }))
 
     } else {
       ensure_resource('package', 'docker', merge($docker_hash, {
-        ensure          => $ensure,
-        name            => $docker::package_name,
+        ensure => $ensure,
+        name   => $docker::package_name,
       }))
     }
   }
