@@ -5,7 +5,7 @@
 # and Archlinux based distributions.
 #
 class docker::install {
-  $docker_command = $docker::params::docker_command
+  $docker_command = $docker::docker_command
   validate_string($docker::version)
   validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', 'This module only works on Debian, Red Hat and Archlinux based systems.')
   validate_string($::kernelrelease)
