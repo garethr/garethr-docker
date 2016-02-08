@@ -122,7 +122,7 @@ class docker::params {
       $service_hasstatus  = true
       $service_hasrestart = true
 
-      if ($::operatingsystem == 'Fedora') or (versioncmp($::operatingsystemrelease, '7.0') >= 0) {
+      if ($::operatingsystem == 'Fedora') or (versioncmp($::operatingsystemrelease, '7.0') >= 0) and $::operatingsystem != 'Amazon' {
         $service_provider           = 'systemd'
         $service_config_template    = 'docker/etc/sysconfig/docker.systemd.erb'
         $service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-rhel.conf.erb'
@@ -157,7 +157,7 @@ class docker::params {
       $package_release = undef
       $service_name = $service_name_default
       $docker_command = $docker_command_default
-      if versioncmp($::operatingsystemrelease, '7.0') < 0 {
+      if (versioncmp($::operatingsystemrelease, '7.0') < 0) or ($::operatingsystem == 'Amazon') {
         $detach_service_in_init = true
         if $::operatingsystem == 'OracleLinux' {
           $docker_group = 'dockerroot'
