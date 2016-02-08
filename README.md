@@ -88,6 +88,17 @@ class { 'docker':
 }
 ```
 
+Docker also provide a [commercially
+supported](https://docs.docker.com/docker-trusted-registry/install/install-csengine/)
+version of the Docker Engine, called Docker CS, available from a separate repository.
+This can be installed with the module using the following:
+
+```puppet
+class { 'docker':
+  docker_cs => true,
+}
+```
+
 The module also now uses the upstream repositories by default for RHEL
 based distros, including Fedora. If you want to stick with the distro packages
 you should use the following:

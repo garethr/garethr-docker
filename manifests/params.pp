@@ -5,6 +5,7 @@
 class docker::params {
   $version                           = undef
   $ensure                            = present
+  $docker_cs                         = false
   $tcp_bind                          = undef
   $socket_bind                       = 'unix:///var/run/docker.sock'
   $log_level                         = undef
@@ -96,13 +97,17 @@ class docker::params {
       $service_name = $service_name_default
       $docker_command = $docker_command_default
       $docker_group = $docker_group_default
-      $package_source_location = 'https://apt.dockerproject.org/repo'
-      $package_key_source = 'https://apt.dockerproject.org/gpg'
-      $package_key = '58118E89F3A912897C070ADBF76221572C52609D'
       $package_repos = 'main'
       $use_upstream_package_source = true
       $repo_opt = undef
       $nowarn_kernel = false
+
+      $package_cs_source_location = 'https://packages.docker.com/1.9/apt/repo'
+      $package_cs_key_source = 'https://packages.docker.com/1.9/apt/gpg'
+      $package_cs_key = '0xee6d536cf7dc86e2d7d56f59a178ac6c6238f52e'
+      $package_source_location = 'https://apt.dockerproject.org/repo'
+      $package_key_source = 'https://apt.dockerproject.org/gpg'
+      $package_key = '58118E89F3A912897C070ADBF76221572C52609D'
 
       if ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemmajrelease, '8') >= 0) or ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '15.04') >= 0) {
         $detach_service_in_init = false
@@ -144,7 +149,10 @@ class docker::params {
       } else {
         $package_source_location = "https://yum.dockerproject.org/repo/main/centos/${::operatingsystemmajrelease}"
       }
+      $package_cs_source_location = "https://packages.docker.com/1.9/yum/repo/main/centos/${::operatingsystemmajrelease}"
+      $package_cs_key_source = 'https://packages.docker.com/1.9/yum/gpg'
       $package_key = undef
+      $package_cs_ke = undef
       $package_repos = undef
       $package_release = undef
       $service_name = $service_name_default

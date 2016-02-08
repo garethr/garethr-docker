@@ -16,6 +16,10 @@
 #   An array of additional packages that need to be installed to support
 #   docker. Defaults change depending on the operating system.
 #
+# [*docker_cs*]
+#   Whether or not to use the CS (Commercial Support) Docker packages.
+#   Defaults to false.
+#
 # [*tcp_bind*]
 #   The tcp socket to bind to in the format
 #   tcp://127.0.0.1:4243
@@ -245,6 +249,7 @@ class docker(
   $version                           = $docker::params::version,
   $ensure                            = $docker::params::ensure,
   $prerequired_packages              = $docker::params::prerequired_packages,
+  $docker_cs                         = $docker::params::docker_cs,
   $tcp_bind                          = $docker::params::tcp_bind,
   $socket_bind                       = $docker::params::socket_bind,
   $log_level                         = $docker::params::log_level,
@@ -318,6 +323,7 @@ class docker(
   validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', 'This module only works on Debian and Red Hat based systems.')
   validate_bool($manage_kernel)
   validate_bool($manage_package)
+  validate_bool($docker_cs)
   validate_array($docker_users)
   validate_array($log_opt)
 
@@ -370,7 +376,6 @@ class docker(
   contain 'docker::config'
   contain 'docker::service'
 
-  # Only bother trying extra docker stuff after docker has been installed,
-  # and is running.
   Class['docker'] -> Docker::Registry <||> -> Docker::Image <||> -> Docker::Run <||>
+  Class['docker'] -> Docker::Image <||> -> Docker::Run <||>
 }
