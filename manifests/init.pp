@@ -390,4 +390,5 @@ class docker(
 
   Class['docker'] -> Docker::Registry <||> -> Docker::Image <||> -> Docker::Run <||>
   Class['docker'] -> Docker::Image <||> -> Docker::Run <||>
+  Class['docker'] -> Docker::Run <||>
 }
