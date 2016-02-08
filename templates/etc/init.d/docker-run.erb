@@ -77,7 +77,9 @@ start() {
     <% if @before_start -%>
         <%= @before_start %>
     <% end -%>
-    $docker rm -v <%= @sanitised_title %> >/dev/null 2>&1
+    <% if @remove_container_on_stop -%>
+        $docker rm <% if @remove_volume_on_start %>-v<% end %> <%= @sanitised_title %> >/dev/null 2>&1
+    <% end -%>
     <% if @pull_on_start -%>
         $docker pull <%= @image %>
     <% end -%>
@@ -102,7 +104,9 @@ stop() {
         <%= @before_stop %>
     <% end -%>
     $docker stop <%= @sanitised_title %>
-    $docker rm -v <%= @sanitised_title %>
+    <% if @remove_container_on_stop -%>
+        $docker rm <% if @remove_volume_on_stop %>-v<% end %> <%= @sanitised_title %>
+    <% end -%>
     return $?
 }
 
@@ -113,7 +117,7 @@ clean() {
         printf "$cidfile does not exist.\n"
     else
         cid="$(cat $cidfile)"
-	rm $cidfile
+        rm $cidfile
         $docker rm -v -f $cid
         retval=$?
         return $retval

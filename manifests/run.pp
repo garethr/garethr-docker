@@ -85,6 +85,10 @@ define docker::run(
   $restart = undef,
   $before_start = false,
   $before_stop = false,
+  $remove_container_on_start = true,
+  $remove_container_on_stop = true,
+  $remove_volume_on_start = false,
+  $remove_volume_on_stop = false,
 ) {
   include docker::params
   $docker_command = $docker::params::docker_command
@@ -113,8 +117,19 @@ define docker::run(
   validate_bool($privileged)
   validate_bool($restart_service)
   validate_bool($tty)
-
+  validate_bool($remove_container_on_start)
+  validate_bool($remove_container_on_stop)
+  validate_bool($remove_volume_on_start)
+  validate_bool($remove_volume_on_stop)
   validate_bool($use_name)
+
+  if ($remove_volume_on_start and !$remove_container_on_start) {
+    fail("In order to remove the volume on start for ${title} you need to also remove the container")
+  }
+
+  if ($remove_volume_on_stop and !$remove_container_on_stop) {
+    fail("In order to remove the volume on stop for ${title} you need to also remove the container")
+  }
 
   if $use_name {
     notify { "docker use_name warning: ${title}":

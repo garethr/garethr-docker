@@ -350,7 +350,7 @@ describe 'docker', :type => :class do
 
       context 'with service_manage set to false' do
         let(:params) { {'manage_service' => false} }
-        it { subject.should_not contain_service('docker') }
+        it { should_not contain_service('docker') }
       end
 
       context 'with specific log_level' do

@@ -306,6 +306,19 @@ docker::run { 'helloworld':
 }
 ```
 
+By default the generated init scripts will remove the container (but not
+any associated volumes) when the service is stoped or started. This
+behaviour can be modified using the following, with defaults shown:
+
+```puppet
+docker::run { 'helloworld':
+  remove_container_on_start => true,
+  remove_volume_on_start    => false,
+  remove_container_on_stop  => true,
+  remove_volume_on_stop     => false,
+}
+```
+
 If using hiera, there's a `docker::run_instance` class you can configure, for example:
 
 ```yaml

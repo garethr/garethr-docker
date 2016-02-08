@@ -107,6 +107,104 @@ require 'spec_helper'
       end
     end
 
+    context 'removing containers and volumes' do
+      context 'when trying to remove the volume and not the container on stop' do
+        let(:params) {{
+          'command' => 'command',
+          'image' => 'base',
+          'remove_container_on_stop' => false,
+          'remove_volume_on_stop' => true,
+        }}
+        it do
+          expect {
+            should contain_service('docker-sample')
+          }.to raise_error(Puppet::Error)
+        end
+      end
+
+      context 'when trying to remove the volume and not the container on start' do
+        let(:params) {{
+          'command' => 'command',
+          'image' => 'base',
+          'remove_container_on_start' => false,
+          'remove_volume_on_start' => true,
+        }}
+        it do
+          expect {
+            should contain_service('docker-sample')
+          }.to raise_error(Puppet::Error)
+        end
+      end
+
+      context 'when not removing containers on container start and stop' do
+        let(:params) {{
+          'command' => 'command',
+          'image' => 'base',
+          'remove_container_on_start' => false,
+          'remove_container_on_stop' => false,
+        }}
+        if (systemd)
+          it { should_not contain_file(initscript).with_content(/ExecStartPre=-\/usr\/bin\/docker rm/) }
+        else
+          it { should_not contain_file(initscript).with_content(/\$docker rm  sample/) }
+        end
+      end
+
+      context 'when removing containers on container start' do
+        let(:params) { {'command' => 'command', 'image' => 'base', 'remove_container_on_start' => true} }
+        if (systemd)
+          it { should contain_file(initscript).with_content(/ExecStartPre=-\/usr\/bin\/docker rm/) }
+        else
+          it { should contain_file(initscript).with_content(/\$docker rm  sample/) }
+        end
+      end
+
+      context 'when removing containers on container stop' do
+        let(:params) { {'command' => 'command', 'image' => 'base', 'remove_container_on_stop' => true} }
+        if (systemd)
+          it { should contain_file(initscript).with_content(/ExecStop=-\/usr\/bin\/docker rm/) }
+        else
+          it { should contain_file(initscript).with_content(/\$docker rm  sample/) }
+        end
+      end
+
+      context 'when not removing volumes on container start' do
+        let(:params) { {'command' => 'command', 'image' => 'base', 'remove_volume_on_start' => false} }
+        if (systemd)
+          it { should_not contain_file(initscript).with_content(/ExecStartPre=-\/usr\/bin\/docker rm -v/) }
+        else
+          it { should_not contain_file(initscript).with_content(/\$docker rm -v sample/) }
+        end
+      end
+
+      context 'when removing volumes on container start' do
+        let(:params) { {'command' => 'command', 'image' => 'base', 'remove_volume_on_start' => true} }
+        if (systemd)
+          it { should contain_file(initscript).with_content(/ExecStartPre=-\/usr\/bin\/docker rm -v/) }
+        else
+          it { should contain_file(initscript).with_content(/\$docker rm -v/) }
+        end
+      end
+
+      context 'when not removing volumes on container stop' do
+        let(:params) { {'command' => 'command', 'image' => 'base', 'remove_volume_on_stop' => false} }
+        if (systemd)
+          it { should_not contain_file(initscript).with_content(/ExecStop=-\/usr\/bin\/docker rm -v/) }
+        else
+          it { should_not contain_file(initscript).with_content(/\$docker rm -v sample/) }
+        end
+      end
+
+      context 'when removing volumes on container stop' do
+        let(:params) { {'command' => 'command', 'image' => 'base', 'remove_volume_on_stop' => true} }
+        if (systemd)
+          it { should contain_file(initscript).with_content(/ExecStop=-\/usr\/bin\/docker rm -v/) }
+        else
+          it { should contain_file(initscript).with_content(/\$docker rm -v/) }
+        end
+      end
+    end
+
     context 'with autorestart functionality' do
       let(:params) { {'command' => 'command', 'image' => 'base'} }
       if (systemd)

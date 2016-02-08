@@ -26,7 +26,8 @@ Environment="HOME=/root"
 <%- if @before_start %>ExecStartPre=-<%= @before_start %>
 <% end -%>
 ExecStartPre=-/usr/bin/<%= @docker_command %> kill <%= @sanitised_title %>
-ExecStartPre=-/usr/bin/<%= @docker_command %> rm -v <%= @sanitised_title %>
+<%- if @remove_container_on_start %>ExecStartPre=-/usr/bin/<%= @docker_command %> rm <% if @remove_volume_on_start %>-v<% end %> <%= @sanitised_title %>
+<% end -%>
 <% @extra_systemd_parameters.each do |key, value| -%><%= key %>=<%= value %>
 <% end -%>
 <%- if @pull_on_start %>ExecStartPre=-/usr/bin/<%= @docker_command %> pull <%= @image %>
@@ -39,7 +40,8 @@ ExecStart=/usr/bin/<%= @docker_command %> run \
 <%- if @before_stop %>ExecStop=-<%= @before_stop %>
 <% end -%>
 ExecStop=-/usr/bin/<%= @docker_command %> kill <%= @sanitised_title %>
-ExecStop=-/usr/bin/<%= @docker_command %> rm -v <%= @sanitised_title %>
+<%- if @remove_container_on_stop %>ExecStop=-/usr/bin/<%= @docker_command %> rm <% if @remove_volume_on_stop %>-v<% end %> <%= @sanitised_title %>
+<% end -%>
 
 [Install]
 WantedBy=multi-user.target
