@@ -163,7 +163,7 @@ class docker::service (
       ensure  => present,
       force   => true,
       content => template($service_config_template),
-      notify  => Service['docker'],
+      notify  => $_manage_service,
     }
   }
 
