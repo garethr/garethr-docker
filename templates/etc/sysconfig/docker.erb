@@ -5,8 +5,14 @@ DOCKER="/usr/bin/<%= @docker_command %>"
 
 other_args="<% -%>
 <% if @root_dir %> -g <%= @root_dir %><% end -%>
-<% if @tcp_bind %> -H <%= @tcp_bind %><% end -%>
+<% if @tcp_bind %><% @tcp_bind_array.each do |param| %> -H <%= param %><% end %> <% end -%>
 <% if @socket_bind %> -H <%= @socket_bind %><% end -%>
+ --ip-forward=<%= @ip_forward -%>
+ --iptables=<%= @iptables -%>
+ --ip-masq=<%= @ip_masq -%>
+<% if @fixed_cidr %> --fixed-cidr <%= @fixed_cidr %><% end -%>
+<% if @bridge %> --bridge <%= @bridge %><% end -%>
+<% if @default_gateway %> --default-gateway <%= @default_gateway %><% end -%>
 <% if @log_level %> -l <%= @log_level %><% end -%>
 <% if @log_driver %> --log-driver <%= @log_driver %><% end -%>
 <% if @log_driver %><% if @log_opt %><% @log_opt.each do |param| %> --log-opt <%= param %><% end %><% end -%><% end -%>

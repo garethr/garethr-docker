@@ -25,6 +25,34 @@
 #   tcp://127.0.0.1:4243
 #   Defaults to undefined
 #
+# [*ip_forward*]
+#   Enables IP forwarding on the Docker host.
+#   The default is true.
+#
+# [*iptables*]
+#   Enable Docker's addition of iptables rules.
+#   Default is true.
+#
+# [*ip_masq*]
+#   Enable IP masquerading for bridge's IP range.
+#   The default is true.
+#
+# [*bridge*]
+#   Attach containers to a pre-existing network bridge 
+#   use 'none' to disable container networking
+#   Defaults to undefined.
+#
+# [*fixed_cidr*]
+#   IPv4 subnet for fixed IPs
+#   10.20.0.0/16
+#   Defaults to undefined
+#
+# [*default_gateway*]
+#   IPv4 address of the container default gateway;
+#   this address must be part of the bridge subnet
+#   (which is defined by bridge)
+#   Defaults to undefined
+#
 # [*socket_bind*]
 #   The unix socket to bind to. Defaults to
 #   unix:///var/run/docker.sock.
@@ -260,7 +288,13 @@ class docker(
   $prerequired_packages              = $docker::params::prerequired_packages,
   $docker_cs                         = $docker::params::docker_cs,
   $tcp_bind                          = $docker::params::tcp_bind,
+  $ip_forward                        = $docker::params::ip_forward,
+  $ip_masq                           = $docker::params::ip_masq,
+  $iptables                          = $docker::params::iptables,
   $socket_bind                       = $docker::params::socket_bind,
+  $fixed_cidr                        = $docker::params::fixed_cidr,
+  $bridge                            = $docker::params::bridge,
+  $default_gateway                   = $docker::params::default_gateway,
   $log_level                         = $docker::params::log_level,
   $log_driver                        = $docker::params::log_driver,
   $log_opt                           = $docker::params::log_opt,
@@ -338,6 +372,16 @@ class docker(
   validate_bool($manage_service)
   validate_array($docker_users)
   validate_array($log_opt)
+  validate_bool($ip_forward)
+  validate_bool($iptables)
+  validate_bool($ip_masq)
+  validate_string($bridge)
+  validate_string($fixed_cidr)
+  validate_string($default_gateway)
+
+  if ($fixed_cidr or $default_gateway) and (!$bridge) {
+    fail('You must provide the $bridge parameter.')
+  }
 
   if $log_level {
     validate_re($log_level, '^(debug|info|warn|error|fatal)$', 'log_level must be one of debug, info, warn, error or fatal')

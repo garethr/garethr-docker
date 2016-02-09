@@ -30,7 +30,7 @@ describe 'the Puppet Docker module' do
       before(:all) do
         @pp =<<-EOS
           class { 'docker':
-            tcp_bind => 'tcp://127.0.0.1:4444',
+            tcp_bind => ['tcp://127.0.0.1:4444'],
           }
         EOS
         apply_manifest(@pp, :catch_failures => true)

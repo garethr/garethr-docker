@@ -6,6 +6,16 @@
 # [*tcp_bind*]
 #   Which tcp port, if any, to bind the docker service to.
 #
+# [*ip_forward*]
+#   This flag interacts with the IP forwarding setting on 
+#   your host system's kernel
+#
+# [*iptables*]
+#   Enable Docker's addition of iptables rules
+#
+# [*ip_masq*]
+#   Enable IP masquerading for bridge's IP range.
+#
 # [*socket_bind*]
 #   Which local unix socket to bind the docker service to.
 #
@@ -31,6 +41,12 @@ class docker::service (
   $service_name                      = $docker::service_name,
   $daemon_subcommand                 = $docker::daemon_subcommand,
   $tcp_bind                          = $docker::tcp_bind,
+  $ip_forward                        = $docker::ip_forward,
+  $iptables                          = $docker::iptables,
+  $ip_masq                           = $docker::ip_masq,
+  $bridge                            = $docker::bridge,
+  $fixed_cidr                        = $docker::fixed_cidr,
+  $default_gateway                   = $docker::default_gateway,
   $socket_bind                       = $docker::socket_bind,
   $log_level                         = $docker::log_level,
   $log_driver                        = $docker::log_driver,
@@ -93,6 +109,7 @@ class docker::service (
   $dns_search_array = any2array($dns_search)
   $extra_parameters_array = any2array($extra_parameters)
   $shell_values_array = any2array($shell_values)
+  $tcp_bind_array = any2array($tcp_bind)
 
   if $service_config {
     $_service_config = $service_config
