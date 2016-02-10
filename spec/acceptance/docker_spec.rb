@@ -8,18 +8,7 @@ describe 'docker' do
   context 'with default parameters' do
     let(:pp) {"
         class { 'docker':
-          docker_users => [ 'testuser' ],
-        }
-        docker::image { 'nginx': }
-        docker::run { 'nginx':
-          image   => 'nginx',
-          net     => 'host',
-          require => Docker::Image['nginx'],
-        }
-        docker::run { 'nginx2':
-          image   => 'nginx',
-          restart => 'always',
-          require => Docker::Image['nginx'],
+          docker_cs => true,
         }
     "}
 
