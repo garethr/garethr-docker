@@ -7,7 +7,7 @@ class docker::repos {
 
   case $::osfamily {
     'Debian': {
-      if $docker::manage_apt {
+      if $docker::manage_package {
         include apt
         # apt-transport-https is required by the apt to get the sources
         ensure_packages(['apt-transport-https'])
