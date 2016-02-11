@@ -73,6 +73,11 @@ describe 'docker', :type => :class do
           it { should contain_package('docker') }
         end
 
+        context 'with no manage apt' do
+          let(:params) { {'manage_apt' => false } }
+            it { should_not contain_class('apt') }
+        end
+
         context 'when given a specific tmp_dir' do
           let(:params) {{ 'tmp_dir' => '/bigtmp' }}
           it { should contain_file('/etc/default/docker').with_content(/export TMPDIR="\/bigtmp"/) }

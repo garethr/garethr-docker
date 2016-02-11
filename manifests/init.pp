@@ -38,7 +38,7 @@
 #   The default is true.
 #
 # [*bridge*]
-#   Attach containers to a pre-existing network bridge 
+#   Attach containers to a pre-existing network bridge
 #   use 'none' to disable container networking
 #   Defaults to undefined.
 #
@@ -225,6 +225,10 @@
 #   By default, the devicemapper backend attempts to synchronize with the udev device manager for the Linux kernel. This option allows disabling that synchronization, to continue even though the configuration may be buggy.
 #   Defaults to true
 #
+# [*manage_apt*]
+#   Allows to turn of including apt class and apt repository management.
+#   Defaults to true
+#
 # [*manage_package*]
 #   Won't install or define the docker package, useful if you want to use your own package
 #   Defaults to true
@@ -335,6 +339,7 @@ class docker(
   $dm_override_udev_sync_check       = $docker::params::dm_override_udev_sync_check,
   $execdriver                        = $docker::params::execdriver,
   $manage_package                    = $docker::params::manage_package,
+  $manage_apt                        = $docker::params::manage_apt,
   $package_source                    = $docker::params::package_source,
   $manage_epel                       = $docker::params::manage_epel,
   $package_name                      = $docker::params::package_name,
