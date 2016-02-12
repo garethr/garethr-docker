@@ -288,6 +288,7 @@ docker::run { 'helloworld':
   before_stop     => 'echo "So Long, and Thanks for All the Fish"',
   after           => [ 'container_b', 'mysql' ],
   depends         => [ 'container_a', 'postgres' ],
+  extra_parameters => [ '--net=my-user-def-net' ],
 }
 ```
 
@@ -300,6 +301,8 @@ Specifying `before_stop` will execute a command before stopping the container.
 The `after` option allows expressing containers that must be started before. This affects the generation of the init.d/systemd script.
 
 The `depends` option allows expressing container dependencies. The depended container will be started before this container(s), and this container will be stopped before the depended container(s). This affects the generation of the init.d/systemd script. You can use `depend_services` to specify dependency for generic services (non-docker) that should be started before this container.
+
+`extra_parameters` : An array of additional command line arguments to pass to the `docker run` command. Useful for adding additional new or experimental options that the module does not yet support.
 
 The service file created for systemd based systems enables automatic restarting of the service on failure by default.
 
