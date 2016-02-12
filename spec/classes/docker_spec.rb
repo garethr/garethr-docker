@@ -263,6 +263,41 @@ describe 'docker', :type => :class do
           end
         end
 
+        context 'It uses default docker::repo_opt' do
+          let(:params) { {
+            'manage_package'              => true,
+            'use_upstream_package_source' => false,
+            'package_name'                => 'docker-engine',
+            'package_source'              => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm'
+          } }
+          it do
+            should contain_package('docker').with(
+              'ensure'          => 'present',
+              'source'          => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm',
+              'name'            => 'docker-engine',
+              'install_options' => /--enablerepo/
+            )
+          end
+        end
+
+        context 'It allows overwriting docker::repo_opt with empty string' do
+          let(:params) { {
+            'manage_package'              => true,
+            'use_upstream_package_source' => false,
+            'package_name'                => 'docker-engine',
+            'package_source'              => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm',
+            'repo_opt'                    => ''
+          } }
+          it do
+            should contain_package('docker').with(
+              'ensure'          => 'present',
+              'source'          => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm',
+              'name'            => 'docker-engine',
+              'install_options' => nil
+            )
+          end
+        end
+
       end
 
       if osfamily == 'Archlinux'
