@@ -8,7 +8,6 @@ describe 'docker' do
   context 'with default parameters' do
     let(:pp) {"
         class { 'docker':
-          docker_cs => true,
         }
     "}
 
