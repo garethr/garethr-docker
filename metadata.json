@@ -48,11 +48,11 @@
   "requirements": [
     {
       "name": "pe",
-      "version_requirement": "3.7"
+      "version_requirement": ">= 3.7"
     },
     {
       "name": "puppet",
-      "version_requirement": "3.4"
+      "version_requirement": ">= 3.4"
     }
   ],
   "dependencies": [
