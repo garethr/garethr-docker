@@ -28,7 +28,7 @@ Environment="HOME=/root"
 ExecStartPre=-/usr/bin/<%= @docker_command %> kill <%= @sanitised_title %>
 <%- if @remove_container_on_start %>ExecStartPre=-/usr/bin/<%= @docker_command %> rm <% if @remove_volume_on_start %>-v<% end %> <%= @sanitised_title %>
 <% end -%>
-<% @extra_systemd_parameters.each do |key, value| -%><%= key %>=<%= value %>
+<% @valid_extra_systemd_parameters.each do |key, value| -%><%= key %>=<%= value %>
 <% end -%>
 <%- if @pull_on_start %>ExecStartPre=-/usr/bin/<%= @docker_command %> pull <%= @image %>
 <% end -%>

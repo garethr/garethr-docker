@@ -315,6 +315,7 @@ class docker(
   $dns_search                        = $docker::params::dns_search,
   $socket_group                      = $docker::params::socket_group,
   $extra_parameters                  = undef,
+  $extra_systemd_parameters          = {},
   $shell_values                      = undef,
   $proxy                             = $docker::params::proxy,
   $no_proxy                          = $docker::params::no_proxy,
