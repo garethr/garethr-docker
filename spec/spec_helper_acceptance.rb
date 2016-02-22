@@ -23,7 +23,7 @@ RSpec.configure do |c|
     # Install module and dependencies
     puppet_module_install(:source => proj_root, :module_name => 'docker')
     hosts.each do |host|
-      on host, shell('sudo yum update -y -q', :pty=>true) if fact_on(host, 'osfamily') == 'RedHat'
+      on(host, 'sudo yum update -y -q') if fact_on(host, 'osfamily') == 'RedHat'
 
       on host, puppet('module', 'install', 'puppetlabs-stdlib'), { :acceptable_exit_codes => [0,1] }
       on host, puppet('module', 'install', 'puppetlabs-apt', '--version', '2.1.0'), { :acceptable_exit_codes => [0,1] }
