@@ -31,7 +31,7 @@ RSpec.configure do |c|
 
       # net-tools required for netstat utility being used by some tests
       if fact_on(host, 'osfamily') == 'RedHat' && fact_on(host, 'operatingsystemmajrelease') == '7'
-        on(host, 'yum install -y net-tools')
+        on(host, 'yum install -y net-tools device-mapper')
       end
 
       docker_compose_content = <<-EOS
