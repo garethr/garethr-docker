@@ -15,6 +15,11 @@ begin
 rescue LoadError # rubocop:disable Lint/HandleExceptions
 end
 
+begin
+  require 'puppet-strings/rake_tasks'
+rescue LoadError # rubocop:disable Lint/HandleExceptions
+end
+
 PuppetLint.configuration.relative = true
 PuppetLint.configuration.disable_80chars
 PuppetLint.configuration.log_format = "%{path}:%{linenumber}:%{check}:%{KIND}:%{message}"
@@ -53,6 +58,11 @@ begin
     :metadata,
   ]
 rescue LoadError # rubocop:disable Lint/HandleExceptions
+end
+
+# This fixes a backwards incompatibility in puppetlabs_spec_helper 1.1.0
+if Rake::Task.task_defined?('metadata_lint')
+  task :metadata => :metadata_lint
 end
 
 desc 'Run syntax, lint, spec and metadata tests'
