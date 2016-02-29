@@ -7,7 +7,7 @@
 #   Which tcp port, if any, to bind the docker service to.
 #
 # [*ip_forward*]
-#   This flag interacts with the IP forwarding setting on 
+#   This flag interacts with the IP forwarding setting on
 #   your host system's kernel
 #
 # [*iptables*]
@@ -120,9 +120,8 @@ class docker::service (
   }
 
   $_manage_service = $manage_service ? {
-    false   => undef,
-    true    => 'Service[docker]',
-    default => undef,
+    true    => Service['docker'],
+    default => [],
   }
 
   if $::osfamily == 'RedHat' {
