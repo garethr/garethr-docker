@@ -19,7 +19,7 @@
 #
 class docker::compose(
   $ensure = 'present',
-  $version = $docker::params::compose_version
+  $version = $docker::params::compose_version,
   $install_from = "https://github.com/docker/compose/releases/download/${version}/docker-compose-${::kernel}-x86_64"
 ) inherits docker::params {
   validate_string($version)
