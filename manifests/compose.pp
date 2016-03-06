@@ -13,9 +13,14 @@
 #   The version of Docker Compose to install.
 #   Defaults to the value set in $docker::params::compose_version
 #
+# [*install_from*]
+#   The URL to use to install docker-compose.
+#   Defaults to the URL recommended by https://docs.docker.com/compose/install/
+#
 class docker::compose(
   $ensure = 'present',
   $version = $docker::params::compose_version
+  $install_from = "https://github.com/docker/compose/releases/download/${version}/docker-compose-${::kernel}-x86_64"
 ) inherits docker::params {
   validate_string($version)
   validate_re($ensure, '^(present|absent)$')
@@ -24,7 +29,7 @@ class docker::compose(
     exec { "Install Docker Compose ${version}":
       path    => '/usr/bin/',
       cwd     => '/tmp',
-      command => "curl -s -L https://github.com/docker/compose/releases/download/${version}/docker-compose-${::kernel}-x86_64 > /usr/local/bin/docker-compose-${version}",
+      command => "curl -s -L ${install_from} > /usr/local/bin/docker-compose-${version}",
       creates => "/usr/local/bin/docker-compose-${version}"
     } ->
     file { "/usr/local/bin/docker-compose-${version}":
