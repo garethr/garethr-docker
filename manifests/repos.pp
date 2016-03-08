@@ -25,15 +25,20 @@ class docker::repos {
       }
       Exec['apt_update'] -> Package[$docker::prerequired_packages]
       if ($docker::use_upstream_package_source) {
+        ensure_packages(['debian-keyring', 'debian-archive-keyring'])
         apt::source { 'docker':
           location          => $location,
           release           => $docker::package_release,
           repos             => $docker::package_repos,
-          key               => $package_key,
-          key_source        => $key_source,
-          required_packages => 'debian-keyring debian-archive-keyring',
+          key               => {
+            'id'     => $package_key,
+            'server' => 'hkp://keyserver.ubuntu.com:80',
+          },
           pin               => '10',
-          include_src       => false,
+          require           => [
+            Package['debian-keyring'],
+            Package['debian-archive-keyring'],
+          ],
         }
         if $docker::manage_package {
           Apt::Source['docker'] -> Package['docker']
