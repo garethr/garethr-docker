@@ -27,15 +27,15 @@ class docker::repos {
       if ($docker::use_upstream_package_source) {
         ensure_packages(['debian-keyring', 'debian-archive-keyring'])
         apt::source { 'docker':
-          location          => $location,
-          release           => $docker::package_release,
-          repos             => $docker::package_repos,
-          key               => {
+          location => $location,
+          release  => $docker::package_release,
+          repos    => $docker::package_repos,
+          key      => {
             'id'     => $package_key,
             'server' => 'hkp://keyserver.ubuntu.com:80',
           },
-          pin               => '10',
-          require           => [
+          pin      => '10',
+          require  => [
             Package['debian-keyring'],
             Package['debian-archive-keyring'],
           ],
