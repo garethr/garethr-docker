@@ -247,6 +247,30 @@ require 'spec_helper'
       it { should contain_file(initscript).without_content(/--cpuset=/) }
     end
 
+    context 'when not passing a cpuset-cpus arg' do
+      let(:params) { {'command' => 'command', 'image' => 'base'} }
+      it { should contain_file(initscript).without_content(/--cpuset-cpus=/) }
+    end
+
+    context 'when passing a cpuset-cpus arg' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'cpuset_cpus' => '3'} }
+      it { should contain_file(initscript).with_content(/--cpuset-cpus=3/) }
+    end
+
+    context 'when passing a multiple args for cpuset-cpus' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'cpuset_cpus' => ['0', '3']} }
+      it { should contain_file(initscript).with_content(/--cpuset-cpus=0,3/) }
+    end
+
+    context 'when passing both cpuset-cpus and cpuset args' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'cpuset' => ['0', '3'], 'cpuset_cpus' => ['0', '3']} }
+      it do
+        expect {
+          should contain_file(initscript)
+        }.to raise_error(Puppet::Error,/You have arguments for both \$cpuset\(03\) and \$cpuset_cpus\(03\), pick one. Note: cpuset was deprecated in Docker 1.8 and removed in docker 1.10/)
+      end
+    end
+
     context 'when passing a links option' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'links' => ['example:one', 'example:two']} }
       it { should contain_file(initscript).with_content(/ --link example:one --link example:two /) }

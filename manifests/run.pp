@@ -49,6 +49,7 @@ define docker::run(
   $command = undef,
   $memory_limit = '0b',
   $cpuset = [],
+  $cpuset_cpus = [],
   $ports = [],
   $labels = [],
   $expose = [],
@@ -152,8 +153,13 @@ define docker::run(
   $depends_array = any2array($depends)
   $depend_services_array = any2array($depend_services)
 
+  if (!empty($cpuset) and !empty($cpuset_cpus)) {
+    fail("You have arguments for both \$cpuset(${cpuset}) and \$cpuset_cpus(${cpuset_cpus}), pick one. Note: cpuset was deprecated in Docker 1.8 and removed in docker 1.10")
+  }
+
   $docker_run_flags = docker_run_flags({
     cpuset          => any2array($cpuset),
+    cpuset_cpus     => any2array($cpuset_cpus),
     detach          => $valid_detach,
     disable_network => $disable_network,
     dns             => any2array($dns),

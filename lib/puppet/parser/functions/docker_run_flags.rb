@@ -26,6 +26,12 @@ module Puppet::Parser::Functions
       flags << "-m #{opts['memory_limit']}"
     end
 
+    cpuset_cpus = [opts['cpuset_cpus']].flatten.compact
+    unless cpuset_cpus.empty?
+      value = cpuset_cpus.join(',')
+      flags << "--cpuset-cpus=#{value}"
+    end
+
     cpusets = [opts['cpuset']].flatten.compact
     unless cpusets.empty?
       value = cpusets.join(',')

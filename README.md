@@ -276,7 +276,8 @@ docker::run { 'helloworld':
   volumes         => ['/var/lib/couchdb', '/var/log'],
   volumes_from    => '6446ea52fbc9',
   memory_limit    => '10m', # (format: '<number><unit>', where unit = b, k, m or g)
-  cpuset          => ['0', '3'],
+  cpuset          => ['0', '3'], # Docker < 1.10
+  cpuset_cpus     => ['0', '3'], # Docker >= 1.10
   username        => 'example',
   hostname        => 'example.com',
   env             => ['FOO=BAR', 'FOO2=BAR2'],
