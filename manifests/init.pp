@@ -38,7 +38,7 @@
 #   The default is true.
 #
 # [*bridge*]
-#   Attach containers to a pre-existing network bridge 
+#   Attach containers to a pre-existing network bridge
 #   use 'none' to disable container networking
 #   Defaults to undefined.
 #
@@ -121,6 +121,16 @@
 # [*package_source_location*]
 #   If you're using an upstream package source, what is it's
 #   location. Defaults to https://get.docker.com/ubuntu on Debian
+#
+# [*package_cs_source_location*]
+#   If you want to override the hard coded Docer CS repo (for a newer version or
+#   internal mirror or something)
+#
+# [*package_cs_key_source*]
+#   If you want to override the hard coded Docer CS key source
+#
+# [*package_cs_key*]
+#   If you want to override the hard coded Docer CS key ID
 #
 # [*service_state*]
 #   Whether you want to docker daemon to start up
@@ -301,6 +311,9 @@ class docker(
   $selinux_enabled                   = $docker::params::selinux_enabled,
   $use_upstream_package_source       = $docker::params::use_upstream_package_source,
   $package_source_location           = $docker::params::package_source_location,
+  $package_cs_source_location        = $docker::params::package_cs_source_location,
+  $package_cs_key_source             = $docker::params::package_cs_key_source,
+  $package_cs_key                    = $docker::params::package_cs_key,
   $package_release                   = $docker::params::package_release,
   $package_repos                     = $docker::params::package_repos,
   $package_key                       = $docker::params::package_key,
