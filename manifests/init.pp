@@ -38,7 +38,7 @@
 #   The default is true.
 #
 # [*bridge*]
-#   Attach containers to a pre-existing network bridge 
+#   Attach containers to a pre-existing network bridge
 #   use 'none' to disable container networking
 #   Defaults to undefined.
 #
@@ -365,7 +365,7 @@ class docker(
 ) inherits docker::params {
 
   validate_string($version)
-  validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', 'This module only works on Debian and Red Hat based systems.')
+  validate_re($::osfamily, '^(Debian|RedHat|Archlinux|Gentoo)$', 'This module only works on Debian or Red Hat based systems or on Archlinux as on Gentoo.')
   validate_bool($manage_kernel)
   validate_bool($manage_package)
   validate_bool($docker_cs)
