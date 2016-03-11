@@ -7,7 +7,7 @@
 #   Which tcp port, if any, to bind the docker service to.
 #
 # [*ip_forward*]
-#   This flag interacts with the IP forwarding setting on 
+#   This flag interacts with the IP forwarding setting on
 #   your host system's kernel
 #
 # [*iptables*]
@@ -101,8 +101,8 @@ class docker::service (
   $service_hasrestart                = $docker::service_hasrestart,
 ) {
 
-  unless $::osfamily =~ /(Debian|RedHat|Archlinux)/ {
-    fail('The docker::service class needs a Debian, RedHat or Archlinux based system.')
+  unless $::osfamily =~ /(Debian|RedHat|Archlinux|Gentoo)/ {
+    fail('The docker::service class needs a Debian, RedHat, Archlinux or Gentoo based system.')
   }
 
   $dns_array = any2array($dns)

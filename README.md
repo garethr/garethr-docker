@@ -27,6 +27,7 @@ too:
 * Archlinux
 * Amazon Linux
 * Fedora
+* Gentoo
 
 ## Examples
 

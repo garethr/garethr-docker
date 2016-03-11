@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'docker', :type => :class do
 
-  ['Debian', 'Ubuntu', 'RedHat', 'Archlinux'].each do |osfamily|
+  ['Debian', 'Ubuntu', 'RedHat', 'Archlinux', 'Gentoo'].each do |osfamily|
     context "on #{osfamily}" do
 
       if osfamily == 'Debian'
@@ -273,6 +273,13 @@ describe 'docker', :type => :class do
         storage_config_file = '/etc/conf.d/docker'
       end
 
+      if osfamily == 'Gentoo'
+        let(:facts) { {
+          :osfamily => osfamily,
+        } }
+        service_config_file = '/etc/conf.d/docker'
+        storage_config_file = '/etc/conf.d/docker'
+      end
 
       it { should compile.with_all_deps }
       it { should contain_class('docker::repos').that_comes_before('docker::install') }
@@ -874,11 +881,11 @@ describe 'docker', :type => :class do
   end
 
   context 'with an invalid distro name' do
-    let(:facts) { {:osfamily => 'Gentoo'} }
+    let(:facts) { {:osfamily => 'Whatever'} }
     it do
       expect {
         should contain_package('docker')
-      }.to raise_error(Puppet::Error, /This module only works on Debian and Red Hat based systems/)
+      }.to raise_error(Puppet::Error, /This module only works on Debian or Red Hat based systems or on Archlinux as on Gentoo./)
     end
   end
 
