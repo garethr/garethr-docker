@@ -7,6 +7,11 @@ class docker::params {
   $ensure                            = present
   $docker_cs                         = false
   $tcp_bind                          = undef
+  $tls_enable                        = false
+  $tls_verify                        = true
+  $tls_cacert                        = '/etc/docker/ca.pem'
+  $tls_cert                          = '/etc/docker/cert.pem'
+  $tls_key                           = '/etc/docker/cert.key'
   $ip_forward                        = true
   $iptables                          = true
   $ip_masq                           = true
@@ -64,12 +69,6 @@ class docker::params {
   $storage_pool_autoextend_percent   = undef
   $storage_config_template           = 'docker/etc/sysconfig/docker-storage.erb'
   $compose_version                   = '1.5.2'
-
-  $tls_enable = false
-  $tls_verify = true
-  $tls_cacert = '/etc/docker/tls/ca.pem'
-  $tls_cert   = '/etc/docker/tls/cert.pem'
-  $tls_key    = '/etc/docker/tls/cert.key'
 
   case $::osfamily {
     'Debian' : {
