@@ -7,7 +7,7 @@
 #   Which tcp port, if any, to bind the docker service to.
 #
 # [*ip_forward*]
-#   This flag interacts with the IP forwarding setting on 
+#   This flag interacts with the IP forwarding setting on
 #   your host system's kernel
 #
 # [*iptables*]
@@ -99,6 +99,11 @@ class docker::service (
   $service_overrides_template        = $docker::service_overrides_template,
   $service_hasstatus                 = $docker::service_hasstatus,
   $service_hasrestart                = $docker::service_hasrestart,
+  $tls_enable                        = $docker::tls_enable,
+  $tls_verify                        = $docker::tls_verify,
+  $tls_cacert                        = $docker::tls_cacert,
+  $tls_cert                          = $docker::tls_cert,
+  $tls_key                           = $docker::tls_key,
 ) {
 
   unless $::osfamily =~ /(Debian|RedHat|Archlinux)/ {

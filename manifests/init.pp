@@ -38,7 +38,7 @@
 #   The default is true.
 #
 # [*bridge*]
-#   Attach containers to a pre-existing network bridge 
+#   Attach containers to a pre-existing network bridge
 #   use 'none' to disable container networking
 #   Defaults to undefined.
 #
@@ -362,6 +362,11 @@ class docker(
   $service_overrides_template        = $docker::params::service_overrides_template,
   $service_hasstatus                 = $docker::params::service_hasstatus,
   $service_hasrestart                = $docker::params::service_hasrestart,
+  $tls_enable                        = $docker::params::tls_enable,
+  $tls_verify                        = $docker::params::tls_verify,
+  $tls_cacert                        = $docker::params::tls_cacert,
+  $tls_cert                          = $docker::params::tls_cert,
+  $tls_key                           = $docker::params::tls_key,
 ) inherits docker::params {
 
   validate_string($version)
@@ -378,6 +383,7 @@ class docker(
   validate_string($bridge)
   validate_string($fixed_cidr)
   validate_string($default_gateway)
+  validate_bool($tls_enable)
 
   if ($fixed_cidr or $default_gateway) and (!$bridge) {
     fail('You must provide the $bridge parameter.')
@@ -421,6 +427,13 @@ class docker(
 
   if ($dm_basesize or $dm_fs or $dm_mkfsarg or $dm_mountopt or $dm_blocksize or $dm_loopdatasize or $dm_loopmetadatasize or $dm_datadev or $dm_metadatadev) and ($storage_driver != 'devicemapper') {
     fail('Values for dm_ variables will be ignored unless storage_driver is set to devicemapper.')
+  }
+
+  if($tls_enable) {
+    validate_array($tcp_bind)
+    validate_string($tls_cacert)
+    validate_string($tls_cert)
+    validate_string($tls_key)
   }
 
   class { 'docker::repos': } ->

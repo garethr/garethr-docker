@@ -65,6 +65,12 @@ class docker::params {
   $storage_config_template           = 'docker/etc/sysconfig/docker-storage.erb'
   $compose_version                   = '1.5.2'
 
+  $tls_enable = false
+  $tls_verify = true
+  $tls_cacert = '/etc/docker/tls/ca.pem'
+  $tls_cert   = '/etc/docker/tls/cert.pem'
+  $tls_key    = '/etc/docker/tls/cert.key'
+
   case $::osfamily {
     'Debian' : {
       case $::operatingsystem {
