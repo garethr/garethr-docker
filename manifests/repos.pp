@@ -47,12 +47,17 @@ class docker::repos {
           $baseurl = $docker::package_source_location
           $gpgkey = $docker::package_key_source
         }
+        if ($gpgkey == '') {
+            $gpgcheck = '0'
+        } else {
+            $gpgcheck = '1'
+        }
         if ($docker::use_upstream_package_source) {
           yumrepo { 'docker':
             descr    => 'Docker',
             baseurl  => $baseurl,
             gpgkey   => $gpgkey,
-            gpgcheck => true,
+            gpgcheck => $gpgcheck,
           }
           Yumrepo['docker'] -> Package['docker']
         }
