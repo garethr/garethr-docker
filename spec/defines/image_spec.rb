@@ -68,6 +68,25 @@ describe 'docker::image', :type => :define do
     end
   end
 
+  context 'with docker_file => Dockerfile and build_args => [FOO=bar, BAR=foo]' do
+    let(:params) { { 'docker_file' => 'Dockerfile', 'build_args' => ['FOO=bar','BAR=foo'] }}
+    it { should contain_exec('docker build --build-arg FOO=bar --build-arg BAR=foo -t base - < Dockerfile') }
+  end
+
+  context 'with docker_dir => /tmp/docker_images/test1 and build_args => [FOO=bar, BAR=foo]' do
+    let(:params) { { 'docker_dir' => '/tmp/docker_images/test1', 'build_args' => ['FOO=bar', 'BAR=foo'] } }
+    it { should contain_exec('docker build --build-arg FOO=bar --build-arg BAR=foo -t base /tmp/docker_images/test1') }
+  end
+
+  context 'with docker_dir => /tmp/docker_images/test1 and build_args => FOO=bar' do
+    let(:params) { { 'docker_dir' => '/tmp/docker_images/test1', 'build_args' => 'FOO=bar' }}
+    it do
+      expect {
+        should have_exec_resource_count(1)
+      }.to raise_error(Puppet::Error)
+    end
+  end
+
   context 'with docker_tar => /tmp/docker_tars/test1.tar' do
     let(:params) { { 'docker_tar' => '/tmp/docker_tars/test1.tar' } }
     it { should contain_exec('docker load -i /tmp/docker_tars/test1.tar') }
