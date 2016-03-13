@@ -77,7 +77,7 @@ define docker::image(
 
   if $build_args {
     validate_array($build_args)
-    $build_args_string = join ( regsubst ($build_args, '^(.*)$', '--build-arg \\1 '), '')
+    $build_args_string = join ( regsubst ($build_args, '^(.*)$', '--build-arg \1 '), '')
   } else {
     $build_args_string = ''
   }
