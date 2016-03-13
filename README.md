@@ -127,6 +127,19 @@ class { 'docker':
 }
 ```
 
+For TLS setup you should upload related files (such as CA certificate, server certificate and key) and use their paths in manifest
+
+```puppet
+class { 'docker':
+  tcp_bind        => ['tcp://127.0.0.1:2376'],
+  tls_enable      => true,
+  tls_verify      => true,
+  tls_cacert      => '/etc/docker/ca.pem',
+  tls_cert        => '/etc/docker/cert.pem',
+  tls_key         => '/etc/docker/cert.key',
+}
+```
+
 Unless specified this installs the latest version of docker from the docker
 repository on first run. However if you want to specify a specific version you
 can do so, unless you are using Archlinux which only supports the latest release.
