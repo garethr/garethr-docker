@@ -211,6 +211,15 @@ docker::image { 'ubuntu':
 }
 ```
 
+You can also set build-time variables `build_args` property setting an array like `['FOO=bar','BAR=foo']` this is equivalent to running `docker build --build-arg FOO=bar --build-arg BAR=foo -t ubuntu /tmp/ubuntu_image` or `docker build --build-arg FOO=bar --build-arg BAR=foo -t ubuntu - < /tmp/Dockerfile`
+
+```puppet
+docker::image { 'ubuntu':
+  build_args => ['FOO=bar','BAR=foo'],
+  docker_file => '/tmp/Dockerfile',
+}
+```
+
 You can trigger a rebuild of the image by subscribing to external events like Dockerfile changes:
 
 ```puppet
