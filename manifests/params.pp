@@ -10,6 +10,8 @@ class docker::params {
   $ip_forward                        = true
   $iptables                          = true
   $ip_masq                           = true
+  $bip                               = undef
+  $mtu                               = undef
   $fixed_cidr                        = undef
   $bridge                            = undef
   $default_gateway                   = undef

@@ -37,6 +37,14 @@
 #   Enable IP masquerading for bridge's IP range.
 #   The default is true.
 #
+# [*bip*]
+#   Specify docker's network bridge IP, in CIDR notation.
+#   Defaults to undefined.
+#
+# [*mtu*]
+#   Docker network MTU.
+#   Defaults to undefined.
+#
 # [*bridge*]
 #   Attach containers to a pre-existing network bridge 
 #   use 'none' to disable container networking
@@ -290,6 +298,8 @@ class docker(
   $tcp_bind                          = $docker::params::tcp_bind,
   $ip_forward                        = $docker::params::ip_forward,
   $ip_masq                           = $docker::params::ip_masq,
+  $bip                               = $docker::params::bip,
+  $mtu                               = $docker::params::mtu,
   $iptables                          = $docker::params::iptables,
   $socket_bind                       = $docker::params::socket_bind,
   $fixed_cidr                        = $docker::params::fixed_cidr,
@@ -378,6 +388,7 @@ class docker(
   validate_string($bridge)
   validate_string($fixed_cidr)
   validate_string($default_gateway)
+  validate_string($bip)
 
   if ($fixed_cidr or $default_gateway) and (!$bridge) {
     fail('You must provide the $bridge parameter.')
