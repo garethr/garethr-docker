@@ -333,8 +333,14 @@ define docker::run(
         }
       }
       if $uses_systemd {
-        File[$initscript] ~> Exec['docker-systemd-reload']
-        Exec['docker-systemd-reload'] -> Service<| title == "${service_prefix}${sanitised_title}" |>
+        exec { "docker-${sanitised_title}-systemd-reload":
+          path        => ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/'],
+          command     => 'systemctl daemon-reload',
+          refreshonly => true,
+          require     => File[$initscript],
+          subscribe   => File[$initscript],
+        }
+        Exec["docker-${sanitised_title}-systemd-reload"] -> Service<| title == "${service_prefix}${sanitised_title}" |>
       }
 
       if $restart_service {
