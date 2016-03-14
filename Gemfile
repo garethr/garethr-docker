@@ -19,6 +19,7 @@ group :test do
   gem "rspec-retry"
   gem 'simplecov', '>= 0.11.0'
   gem 'simplecov-console'
+  gem 'json' # required by Strings under 1.8.7
 end
 
 group :development do
