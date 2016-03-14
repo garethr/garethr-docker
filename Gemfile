@@ -33,5 +33,5 @@ group :development do
   gem "yard"
   gem 'parallel_tests' # requires at least Ruby 1.9.3
   gem 'rubocop', :require => false # requires at least Ruby 1.9.2
-  gem 'puppet-strings', :git => 'https://github.com/puppetlabs/puppetlabs-strings.git'
+  gem 'puppet-strings', :git => 'https://github.com/puppetlabs/puppetlabs-strings.git', :require => false
 end
