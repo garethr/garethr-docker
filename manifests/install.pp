@@ -72,10 +72,10 @@ class docker::install {
 
   if $docker::manage_package {
 
-    if $docker::repo_opt {
-      $docker_hash = { 'install_options' => $docker::repo_opt }
-    } else {
+    if empty($docker::repo_opt) {
       $docker_hash = {}
+    } else {
+      $docker_hash = { 'install_options' => $docker::repo_opt }
     }
 
     if $docker::package_source {
