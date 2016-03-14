@@ -78,13 +78,9 @@ describe 'docker::image', :type => :define do
     it { should contain_exec('docker build --build-arg FOO=bar --build-arg BAR=foo -t base /tmp/docker_images/test1') }
   end
 
-  context 'with docker_dir => /tmp/docker_images/test1 and build_args => FOO=bar' do
-    let(:params) { { 'docker_dir' => '/tmp/docker_images/test1', 'build_args' => 'FOO=bar' }}
-    it do
-      expect {
-        should have_exec_resource_count(1)
-      }.to raise_error(Puppet::Error)
-    end
+  context 'with docker_dir => /tmp/docker_images/test1 and build_args => FOO=bar }' do
+    let(:params) { { 'docker_dir' => '/tmp/docker_images/test1', 'build_args' => 'FOO=bar' } }
+    it { should contain_exec('docker build --build-arg FOO=bar -t base /tmp/docker_images/test1') }
   end
 
   context 'with docker_tar => /tmp/docker_tars/test1.tar' do
