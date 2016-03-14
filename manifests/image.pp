@@ -75,11 +75,9 @@ define docker::image(
     $image_find    = "${docker_command} images | cut -d ' ' -f 1 | egrep '^(docker\\.io/)?${image}$'"
   }
 
-  if !empty($build_args) {
+  if $build_args {
     $build_args_array = any2array($build_args)
     $build_args_string = join ( regsubst ($build_args_array, '^(.*)$', '--build-arg \1 '), '')
-  } else {
-    $build_args_string = ''
   }
 
   if $docker_dir {
