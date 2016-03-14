@@ -368,14 +368,14 @@ You can do that on the `docker` class like so:
 extra_parameters => '--cluster-store=<backend>://172.17.8.101:<port> --cluster-advertise=<interface>:2376'
 ```
 
-If using hiera, there's a `docker::network` class you can configure, for example:
+If using hiera, there's a `docker::networks` class you can configure, for example:
 
 ```yaml
 ---
   classes:
-    - docker::network
+    - docker::networks
 
-docker::network::network:
+docker::networks::networks:
   local-docker:
     ensure: 'present'
     subnet: '192.168.1.0/24'
