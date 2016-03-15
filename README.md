@@ -131,12 +131,11 @@ For TLS setup you should upload related files (such as CA certificate, server ce
 
 ```puppet
 class { 'docker':
-  tcp_bind        => ['tcp://127.0.0.1:2376'],
+  tcp_bind        => ['tcp://0.0.0.0:2376'],
   tls_enable      => true,
-  tls_verify      => true,
-  tls_cacert      => '/etc/docker/ca.pem',
-  tls_cert        => '/etc/docker/cert.pem',
-  tls_key         => '/etc/docker/cert.key',
+  tls_cacert      => '/etc/docker/tls/ca.pem',
+  tls_cert        => '/etc/docker/tls/cert.pem',
+  tls_key         => '/etc/docker/tls/key.pem',
 }
 ```
 

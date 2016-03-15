@@ -9,9 +9,9 @@ class docker::params {
   $tcp_bind                          = undef
   $tls_enable                        = false
   $tls_verify                        = true
-  $tls_cacert                        = '/etc/docker/ca.pem'
-  $tls_cert                          = '/etc/docker/cert.pem'
-  $tls_key                           = '/etc/docker/cert.key'
+  $tls_cacert                        = '/etc/docker/tls/ca.pem'
+  $tls_cert                          = '/etc/docker/tls/cert.pem'
+  $tls_key                           = '/etc/docker/tls/key.pem'
   $ip_forward                        = true
   $iptables                          = true
   $ip_masq                           = true
