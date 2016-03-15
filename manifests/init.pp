@@ -450,7 +450,9 @@ class docker(
   }
 
   if($tls_enable) {
-    validate_array($tcp_bind)
+    if(!$tcp_bind) {
+        fail('You need to provide tcp bind parameter for TLS.')
+    }
     validate_string($tls_cacert)
     validate_string($tls_cert)
     validate_string($tls_key)
