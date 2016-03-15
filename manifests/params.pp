@@ -15,6 +15,8 @@ class docker::params {
   $ip_forward                        = true
   $iptables                          = true
   $ip_masq                           = true
+  $bip                               = undef
+  $mtu                               = undef
   $fixed_cidr                        = undef
   $bridge                            = undef
   $default_gateway                   = undef
@@ -235,6 +237,28 @@ class docker::params {
       $service_hasrestart = true
       $service_config = '/etc/conf.d/docker'
       $service_config_template = 'docker/etc/conf.d/docker.erb'
+    }
+    'Gentoo' : {
+      $manage_epel = false
+      $docker_group = $docker_group_default
+      $package_key_source = undef
+      $package_source_location = undef
+      $package_key = undef
+      $package_repos = undef
+      $package_release = undef
+      $use_upstream_package_source = false
+      $package_name = 'app-emulation/docker'
+      $service_name = $service_name_default
+      $docker_command = $docker_command_default
+      $detach_service_in_init = true
+      $repo_opt = undef
+      $nowarn_kernel = false
+      $service_provider   = 'openrc'
+      $service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-archlinux.conf.erb'
+      $service_hasstatus  = true
+      $service_hasrestart = true
+      $service_config = '/etc/conf.d/docker'
+      $service_config_template = 'docker/etc/conf.d/docker.gentoo.erb'
     }
     default: {
       $manage_epel = false

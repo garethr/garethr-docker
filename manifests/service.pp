@@ -106,8 +106,8 @@ class docker::service (
   $tls_key                           = $docker::tls_key,
 ) {
 
-  unless $::osfamily =~ /(Debian|RedHat|Archlinux)/ {
-    fail('The docker::service class needs a Debian, RedHat or Archlinux based system.')
+  unless $::osfamily =~ /(Debian|RedHat|Archlinux|Gentoo)/ {
+    fail('The docker::service class needs a Debian, RedHat, Archlinux or Gentoo based system.')
   }
 
   $dns_array = any2array($dns)
@@ -154,10 +154,10 @@ class docker::service (
           before  => $_manage_service,
         }
         exec { 'docker-systemd-reload-before-service':
-          path    => ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/'],
-          command => 'systemctl daemon-reload',
-          before  => $_manage_service,
-          unless  => "systemctl status ${service_name}",
+          path        => ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/'],
+          command     => 'systemctl daemon-reload',
+          before      => $_manage_service,
+          refreshonly => true,
         }
       }
     }

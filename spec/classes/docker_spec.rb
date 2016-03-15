@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'docker', :type => :class do
 
-  ['Debian', 'Ubuntu', 'RedHat', 'Archlinux'].each do |osfamily|
+  ['Debian', 'Ubuntu', 'RedHat', 'Archlinux', 'Gentoo'].each do |osfamily|
     context "on #{osfamily}" do
 
       if osfamily == 'Debian'
@@ -277,6 +277,41 @@ describe 'docker', :type => :class do
           end
         end
 
+        context 'It uses default docker::repo_opt' do
+          let(:params) { {
+            'manage_package'              => true,
+            'use_upstream_package_source' => false,
+            'package_name'                => 'docker-engine',
+            'package_source'              => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm'
+          } }
+          it do
+            should contain_package('docker').with(
+              'ensure'          => 'present',
+              'source'          => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm',
+              'name'            => 'docker-engine',
+              'install_options' => /--enablerepo/
+            )
+          end
+        end
+
+        context 'It allows overwriting docker::repo_opt with empty string' do
+          let(:params) { {
+            'manage_package'              => true,
+            'use_upstream_package_source' => false,
+            'package_name'                => 'docker-engine',
+            'package_source'              => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm',
+            'repo_opt'                    => ''
+          } }
+          it do
+            should contain_package('docker').with(
+              'ensure'          => 'present',
+              'source'          => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm',
+              'name'            => 'docker-engine',
+              'install_options' => nil
+            )
+          end
+        end
+
       end
 
       if osfamily == 'Archlinux'
@@ -287,6 +322,13 @@ describe 'docker', :type => :class do
         storage_config_file = '/etc/conf.d/docker'
       end
 
+      if osfamily == 'Gentoo'
+        let(:facts) { {
+          :osfamily => osfamily,
+        } }
+        service_config_file = '/etc/conf.d/docker'
+        storage_config_file = '/etc/conf.d/docker'
+      end
 
       it { should compile.with_all_deps }
       it { should contain_class('docker::repos').that_comes_before('docker::install') }
@@ -888,11 +930,11 @@ describe 'docker', :type => :class do
   end
 
   context 'with an invalid distro name' do
-    let(:facts) { {:osfamily => 'Gentoo'} }
+    let(:facts) { {:osfamily => 'Whatever'} }
     it do
       expect {
         should contain_package('docker')
-      }.to raise_error(Puppet::Error, /This module only works on Debian and Red Hat based systems/)
+      }.to raise_error(Puppet::Error, /This module only works on Debian or Red Hat based systems or on Archlinux as on Gentoo./)
     end
   end
 

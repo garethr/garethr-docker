@@ -244,8 +244,15 @@ define docker::run(
         $mode           = '0644'
         $uses_systemd   = true
       }
+      'Gentoo': {
+        $initscript     = "/etc/init.d/${service_prefix}${sanitised_title}"
+        $init_template  = 'docker/etc/init.d/docker-run.gentoo.erb'
+        $hasstatus      = true
+        $mode           = '0775'
+        $uses_systemd   = false
+      }
       default: {
-        fail('Docker needs a Debian, RedHat or Archlinux based system.')
+        fail('Docker needs a Debian, RedHat, Archlinux or Gentoo based system.')
       }
     }
 
@@ -326,8 +333,14 @@ define docker::run(
         }
       }
       if $uses_systemd {
-        File[$initscript] ~> Exec['docker-systemd-reload']
-        Exec['docker-systemd-reload'] -> Service<| title == "${service_prefix}${sanitised_title}" |>
+        exec { "docker-${sanitised_title}-systemd-reload":
+          path        => ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/'],
+          command     => 'systemctl daemon-reload',
+          refreshonly => true,
+          require     => File[$initscript],
+          subscribe   => File[$initscript],
+        }
+        Exec["docker-${sanitised_title}-systemd-reload"] -> Service<| title == "${service_prefix}${sanitised_title}" |>
       }
 
       if $restart_service {

@@ -57,6 +57,14 @@
 #   Enable IP masquerading for bridge's IP range.
 #   The default is true.
 #
+# [*bip*]
+#   Specify docker's network bridge IP, in CIDR notation.
+#   Defaults to undefined.
+#
+# [*mtu*]
+#   Docker network MTU.
+#   Defaults to undefined.
+#
 # [*bridge*]
 #   Attach containers to a pre-existing network bridge
 #   use 'none' to disable container networking
@@ -315,6 +323,8 @@ class docker(
   $tls_key                           = $docker::params::tls_key,
   $ip_forward                        = $docker::params::ip_forward,
   $ip_masq                           = $docker::params::ip_masq,
+  $bip                               = $docker::params::bip,
+  $mtu                               = $docker::params::mtu,
   $iptables                          = $docker::params::iptables,
   $socket_bind                       = $docker::params::socket_bind,
   $fixed_cidr                        = $docker::params::fixed_cidr,
@@ -390,20 +400,21 @@ class docker(
 ) inherits docker::params {
 
   validate_string($version)
-  validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', 'This module only works on Debian and Red Hat based systems.')
+  validate_re($::osfamily, '^(Debian|RedHat|Archlinux|Gentoo)$', 'This module only works on Debian or Red Hat based systems or on Archlinux as on Gentoo.')
   validate_bool($manage_kernel)
   validate_bool($manage_package)
   validate_bool($docker_cs)
   validate_bool($manage_service)
   validate_array($docker_users)
   validate_array($log_opt)
+  validate_bool($tls_enable)
   validate_bool($ip_forward)
   validate_bool($iptables)
   validate_bool($ip_masq)
   validate_string($bridge)
   validate_string($fixed_cidr)
   validate_string($default_gateway)
-  validate_bool($tls_enable)
+  validate_string($bip)
 
   if ($fixed_cidr or $default_gateway) and (!$bridge) {
     fail('You must provide the $bridge parameter.')
