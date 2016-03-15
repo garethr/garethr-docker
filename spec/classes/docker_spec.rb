@@ -208,6 +208,20 @@ describe 'docker', :type => :class do
               /tcp:\/\/127.0.0.1:2375/)
           end
         end
+        context 'with tls param' do
+          let(:params) {{
+              'tcp_bind' => 'tcp://127.0.0.1:2375',
+              'tls_enable' => true,
+          }}
+          it do
+            should contain_file('/etc/sysconfig/docker').with_content(
+              /tcp:\/\/127.0.0.1:2375/
+            )
+            should contain_file('/etc/sysconfig/docker').with_content(
+              /--tlsverify --tlscacert=\/etc\/docker\/tls\/ca.pem --tlscert=\/etc\/docker\/tls\/cert.pem --tlskey=\/etc\/docker\/tls\/key.pem/
+            )
+          end
+        end
 
         context 'with fixed_cidr and bridge params' do
           let(:params) {{ 'fixed_cidr' => '10.0.0.0/24' }}
