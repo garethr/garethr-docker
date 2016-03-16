@@ -53,6 +53,7 @@ class docker::service (
   $log_opt                           = $docker::log_opt,
   $selinux_enabled                   = $docker::selinux_enabled,
   $socket_group                      = $docker::socket_group,
+  $labels                            = $docker::labels,
   $dns                               = $docker::dns,
   $dns_search                        = $docker::dns_search,
   $service_state                     = $docker::service_state,

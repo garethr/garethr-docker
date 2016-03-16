@@ -23,6 +23,7 @@ other_args="<% -%>
 <% if @execdriver %> -e <%= @execdriver %> <% end -%>
 <% if @bip %> --bip=<%= @bip %> <% end -%>
 <% if @mtu %> --mtu=<%= @mtu %> <% end -%>
+<% @labels.each do |label| %> --label <%= label %><% end -%>
 <% if @extra_parameters %><% @extra_parameters_array.each do |param| %> <%= param %><% end %><% end -%>"
 
 <% if @proxy %>export http_proxy='<%= @proxy %>'

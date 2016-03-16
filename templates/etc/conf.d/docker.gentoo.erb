@@ -40,6 +40,7 @@ DOCKER_OPTS="<% -%>
 <% if @dm_blkdiscard %> --storage-opt dm.blkdiscard=<%= @dm_blkdiscard %><% end -%>
 <% if @dm_override_udev_sync_check %> --storage-opt dm.override_udev_sync_check=<%= @dm_override_udev_sync_check %><% end -%>
 <% end -%>
+<% @labels.each do |label| %> --label <%= label %><% end -%>
 <% if @extra_parameters %><% @extra_parameters_array.each do |param| %> <%= param %><% end %><% end -%>
 "
 <% if @proxy %>export http_proxy='<%= @proxy %>'
@@ -49,4 +50,3 @@ export https_proxy='<%= @proxy %>'<% end %>
 export TMPDIR="<%= @tmp_dir %>"
 <% if @shell_values %><% @shell_values_array.each do |param| %>
 <%= param %><% end %><% end -%>
-
