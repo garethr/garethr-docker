@@ -137,7 +137,9 @@ class docker::params {
         $service_config_template    = 'docker/etc/sysconfig/docker.systemd.erb'
         $service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-rhel.conf.erb'
       } else {
-        $service_config_template = 'docker/etc/sysconfig/docker.erb'
+        $service_config_template    = 'docker/etc/sysconfig/docker.erb'
+        $service_provider           = undef
+        $service_overrides_template = undef
       }
 
       if (versioncmp($::operatingsystemrelease, '7.0') < 0) and $::operatingsystem != 'Amazon' {
