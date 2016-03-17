@@ -477,8 +477,8 @@ describe 'docker', :type => :class do
 
       context 'with labels set' do
         let(:params) { { 'labels' => ['storage=ssd','stage=production'] }}
-        it { should contain_file(service_config_file).with_content(/--label storage=ssd'/) }
-        it { should contain_file(service_config_file).with_content(/--label stage=production'/) }
+        it { should contain_file(service_config_file).with_content(/--label storage=ssd/) }
+        it { should contain_file(service_config_file).with_content(/--label stage=production/) }
       end
 
       context 'with service_state set to stopped' do
