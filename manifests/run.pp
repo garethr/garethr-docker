@@ -43,6 +43,10 @@
 # command. Useful for adding additional new or experimental options that the
 # module does not yet support.
 #
+# [*service_tempalte_override*]
+#   Specify an template that overrides the template used for systemd or init.d
+#   Default does not override the templates provided by the module.
+#
 define docker::run(
   $image,
   $ensure = 'present',
@@ -89,6 +93,7 @@ define docker::run(
   $remove_container_on_stop = true,
   $remove_volume_on_start = false,
   $remove_volume_on_stop = false,
+  $service_template_override = '',
 ) {
   include docker::params
   $docker_command = $docker::params::docker_command
@@ -103,6 +108,7 @@ define docker::run(
   }
   validate_string($docker_command)
   validate_string($service_name)
+  validate_string($service_template_override)
   if $command {
     validate_string($command)
   }
@@ -276,9 +282,16 @@ define docker::run(
 
     }
     else {
+
+      if $service_template_override != "" {
+        $real_init_template = $service_template_override
+      } else {
+        $real_init_template = $init_template
+      }
+
       file { $initscript:
         ensure  => present,
-        content => template($init_template),
+        content => template($real_init_template),
         mode    => $mode,
       }
 
