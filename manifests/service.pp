@@ -150,7 +150,7 @@ class docker::service (
         }
         exec { 'docker-systemd-reload-before-service':
           path        => ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/'],
-          command     => 'systemctl daemon-reload',
+          command     => 'systemctl daemon-reload > /dev/null',
           before      => $_manage_service,
           refreshonly => true,
         }
