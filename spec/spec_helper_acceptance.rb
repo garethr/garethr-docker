@@ -23,6 +23,9 @@ RSpec.configure do |c|
     # Install module and dependencies
     puppet_module_install(:source => proj_root, :module_name => 'docker')
     hosts.each do |host|
+      # Due to RE-6764, running yum update renders the machine unable to install
+      # other software. Thus this workaround.
+      on(host, 'mv /etc/yum.repos.d/redhat.repo /etc/yum.repos.d/internal-mirror.repo')
       on(host, 'yum update -y -q') if fact_on(host, 'osfamily') == 'RedHat'
 
       on host, puppet('module', 'install', 'puppetlabs-stdlib'), { :acceptable_exit_codes => [0,1] }
