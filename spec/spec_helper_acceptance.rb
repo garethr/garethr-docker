@@ -25,7 +25,7 @@ RSpec.configure do |c|
     hosts.each do |host|
       # Due to RE-6764, running yum update renders the machine unable to install
       # other software. Thus this workaround.
-      if fact_on(host, 'operatingsystem') == 'RedHat' do
+      if fact_on(host, 'operatingsystem') == 'RedHat'
         on(host, 'mv /etc/yum.repos.d/redhat.repo /etc/yum.repos.d/internal-mirror.repo')
       end
       on(host, 'yum update -y -q') if fact_on(host, 'osfamily') == 'RedHat'
