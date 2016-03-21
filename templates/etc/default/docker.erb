@@ -36,6 +36,8 @@ DOCKER_OPTS="\
 <% if @dns %><% @dns_array.each do |address| %> --dns <%= address %><% end %><% end -%>
 <% if @dns_search %><% @dns_search_array.each do |domain| %> --dns-search <%= domain %><% end %><% end -%>
 <% if @execdriver %> -e <%= @execdriver %> <% end -%>
+<% if @bip %> --bip=<%= @bip %> <% end -%>
+<% if @mtu %> --mtu=<%= @mtu %> <% end -%>
 <% if @storage_driver %> --storage-driver=<%= @storage_driver %><% end -%>
 <% if @storage_driver == 'devicemapper' -%>
 <% if @dm_basesize %> --storage-opt dm.basesize=<%= @dm_basesize %><% end -%>
