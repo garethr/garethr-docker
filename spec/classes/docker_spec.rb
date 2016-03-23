@@ -816,7 +816,6 @@ describe 'docker', :type => :class do
     it { should contain_package('docker').with_name('docker-engine') }
     it { should_not contain_class('epel') }
     it { should contain_package('docker').with_install_options('--enablerepo=ol7_addons') }
-
   end
 
   context 'specific to Scientific Linux 7 or above' do
@@ -829,8 +828,6 @@ describe 'docker', :type => :class do
 
     it { should contain_package('docker').with_name('docker-engine') }
     it { should_not contain_class('epel') }
-    it { should contain_package('docker').with_install_options('--enablerepo=sl-extras') }
-
   end
 
   context 'specific to Ubuntu Precise' do
