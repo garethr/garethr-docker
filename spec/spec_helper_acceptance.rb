@@ -21,8 +21,8 @@ RSpec.configure do |c|
   # Configure all nodes in nodeset
   c.before :suite do
     # Install module and dependencies
-    puppet_module_install(:source => proj_root, :module_name => 'docker')
     hosts.each do |host|
+      copy_module_to(host, :source => proj_root, :module_name => 'docker')
       # Due to RE-6764, running yum update renders the machine unable to install
       # other software. Thus this workaround.
       if fact_on(host, 'operatingsystem') == 'RedHat'
