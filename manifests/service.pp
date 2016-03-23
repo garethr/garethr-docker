@@ -64,6 +64,8 @@ class docker::service (
   $proxy                             = $docker::proxy,
   $no_proxy                          = $docker::no_proxy,
   $execdriver                        = $docker::execdriver,
+  $bip                               = $docker::bip,
+  $mtu                               = $docker::mtu,
   $storage_driver                    = $docker::storage_driver,
   $dm_basesize                       = $docker::dm_basesize,
   $dm_fs                             = $docker::dm_fs,
