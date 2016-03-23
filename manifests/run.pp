@@ -283,7 +283,7 @@ define docker::run(
     }
     else {
 
-      if $service_template_override != "" {
+      if $service_template_override != '' {
         $real_init_template = $service_template_override
       } else {
         $real_init_template = $init_template
