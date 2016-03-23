@@ -195,7 +195,7 @@ class docker::params {
         } elsif $::operatingsystem == 'OracleLinux' {
           $repo_opt = '--enablerepo=ol7_addons'
         } elsif $::operatingsystem == 'Scientific' {
-          $repo_opt = '--enablerepo=sl-extras'
+          $repo_opt = ''
         } else {
           $repo_opt = undef
         }
