@@ -343,6 +343,7 @@ describe 'docker', :type => :class do
       context 'when not managing the package' do
         let(:params) { {'manage_package' => false } }
         it { should_not contain_package('docker') }
+        it { should_not contain_class('apt') }
       end
 
       context 'It should accept custom prerequired_packages' do
