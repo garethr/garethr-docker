@@ -52,6 +52,16 @@
       Puppet Plugin List
     </a>
   
+    <a class="full_list_link" id="puppet_type_list_link"
+        href="puppet_type_list.html">
+      Puppet Type List
+    </a>
+  
+    <a class="full_list_link" id="puppet_provider_list_link"
+        href="puppet_provider_list.html">
+      Puppet Provider List
+    </a>
+  
     <a class="full_list_link" id="class_list_link"
         href="class_list.html">
       Class List
@@ -73,11 +83,11 @@
 
     <iframe id="search_frame"></iframe>
 
-    <div id="content"><h1>Hostclass: docker
-  
-  
-  
-</h1>
+    <div id="content"><div class='module_header'>
+  <h1>
+    Puppet Class: docker
+  </h1>
+</div>
 
 <dl class="box">
   
@@ -104,7 +114,7 @@
 
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
-    
+    <p>
 <h2 id="label-Class%3A+docker">Class: docker</h2>
 
 <p>Module to install an up-to-date version of Docker from package.</p>
@@ -121,10 +131,56 @@ undefined</p>
 <dd>
 <p>An array of additional packages that need to be installed to support
 docker. Defaults change depending on the operating system.</p>
+</dd><dt><strong>docker_cs</strong>
+<dd>
+<p>Whether or not to use the CS (Commercial Support) Docker packages. Defaults
+to false.</p>
 </dd><dt><strong>tcp_bind</strong>
 <dd>
 <p>The tcp socket to bind to in the format tcp://127.0.0.1:4243 Defaults to
 undefined</p>
+</dd><dt><strong>tls_enable</strong>
+<dd>
+<p>Enable TLS. Defaults to false</p>
+</dd><dt><strong>tls_verify</strong>
+<dd>
+<p>Use TLS and verify the remote Defaults to true</p>
+</dd><dt><strong>tls_cacert</strong>
+<dd>
+<p>Path to TLS CA certificate Defaults to &#39;/etc/docker/ca.pem&#39;</p>
+</dd><dt><strong>tls_cert</strong>
+<dd>
+<p>Path to TLS certificate file Defaults to &#39;/etc/docker/cert.pem&#39;</p>
+</dd><dt><strong>tls_key</strong>
+<dd>
+<p>Path to TLS key file Defaults to &#39;/etc/docker/cert.key&#39;</p>
+</dd><dt><strong>ip_forward</strong>
+<dd>
+<p>Enables IP forwarding on the Docker host. The default is true.</p>
+</dd><dt><strong>iptables</strong>
+<dd>
+<p>Enable Docker&#39;s addition of iptables rules. Default is true.</p>
+</dd><dt><strong>ip_masq</strong>
+<dd>
+<p>Enable IP masquerading for bridge&#39;s IP range. The default is true.</p>
+</dd><dt><strong>bip</strong>
+<dd>
+<p>Specify docker&#39;s network bridge IP, in CIDR notation. Defaults to
+undefined.</p>
+</dd><dt><strong>mtu</strong>
+<dd>
+<p>Docker network MTU. Defaults to undefined.</p>
+</dd><dt><strong>bridge</strong>
+<dd>
+<p>Attach containers to a pre-existing network bridge use &#39;none&#39; to
+disable container networking Defaults to undefined.</p>
+</dd><dt><strong>fixed_cidr</strong>
+<dd>
+<p>IPv4 subnet for fixed IPs 10.20.0.0/16 Defaults to undefined</p>
+</dd><dt><strong>default_gateway</strong>
+<dd>
+<p>IPv4 address of the container default gateway; this address must be part of
+the bridge subnet (which is defined by bridge) Defaults to undefined</p>
 </dd><dt><strong>socket_bind</strong>
 <dd>
 <p>The unix socket to bind to. Defaults to unix:///var/run/docker.sock.</p>
@@ -132,6 +188,51 @@ undefined</p>
 <dd>
 <p>Set the logging level Defaults to undef: docker defaults to info if no
 value specified Valid values: debug, info, warn, error, fatal</p>
+</dd><dt><strong>log_driver</strong>
+<dd>
+<p>Set the log driver. Defaults to undef. Docker default is json-file. Valid
+values: none, json-file, syslog, journald, gelf, fluentd Valid values
+description:</p>
+
+<pre class="code ruby"><code class="ruby">none     : Disables any logging for the container.
+           docker logs won&#39;t be available with this driver.
+json-file: Default logging driver for Docker.
+           Writes JSON messages to file.
+syslog   : Syslog logging driver for Docker.
+           Writes log messages to syslog.
+journald : Journald logging driver for Docker.
+           Writes log messages to journald.
+gelf     : Graylog Extended Log Format (GELF) logging driver for Docker.
+           Writes log messages to a GELF endpoint: Graylog or Logstash.
+fluentd  : Fluentd logging driver for Docker.
+           Writes log messages to fluentd (forward input).</code></pre>
+</dd><dt><strong>log_opt</strong>
+<dd>
+<p>Set the log driver specific options Defaults to undef Valid values per log
+driver:</p>
+
+<pre class="code ruby"><code class="ruby">none     : undef
+json-file:
+           max-size=[0-9+][k|m|g]
+           max-file=[0-9+]
+syslog   :
+           syslog-address=[tcp|udp]://host:port
+           syslog-address=unix://path
+           syslog-facility=daemon|kern|user|mail|auth|
+                           syslog|lpr|news|uucp|cron|
+                           authpriv|ftp|
+                           local0|local1|local2|local3|
+                           local4|local5|local6|local7
+           syslog-tag=&quot;some_tag&quot;
+journald : undef
+gelf     :
+           gelf-address=udp://host:port
+           gelf-tag=&quot;some_tag&quot;
+fluentd  :
+           fluentd-address=host:port
+           fluentd-tag={{.ID}} - short container id (12 characters)|
+                       {{.FullID}} - full container id
+                       {{.Name}} - container name</code></pre>
 </dd><dt><strong>selinux_enabled</strong>
 <dd>
 <p>Enable selinux support. Default is false. SELinux does  not  presently
@@ -143,14 +244,18 @@ package mirror, you may set this to false.</p>
 </dd><dt><strong>package_source_location</strong>
 <dd>
 <p>If you&#39;re using an upstream package source, what is it&#39;s location.
-Defaults to <a href="https://get.docker.io/ubuntu">get.docker.io/ubuntu</a>
-on Debian</p>
+Defaults to <a
+href="http://get.docker.com/ubuntu">get.docker.com/ubuntu</a> on Debian</p>
 </dd><dt><strong>service_state</strong>
 <dd>
 <p>Whether you want to docker daemon to start up Defaults to running</p>
 </dd><dt><strong>service_enable</strong>
 <dd>
 <p>Whether you want to docker daemon to start up at boot Defaults to true</p>
+</dd><dt><strong>manage_service</strong>
+<dd>
+<p>Specify whether the service should be managed. Valid values are
+&#39;true&#39;, &#39;false&#39;. Defaults to &#39;true&#39;.</p>
 </dd><dt><strong>root_dir</strong>
 <dd>
 <p>Custom root directory for containers Defaults to undefined</p>
@@ -184,7 +289,7 @@ to undefined</p>
 </dd><dt><strong>storage_driver</strong>
 <dd>
 <p>Specify a storage driver to use Default is undef: let docker choose the
-correct one Valid values: aufs, devicemapper, btrfs, overlayfs, vfs</p>
+correct one Valid values: aufs, devicemapper, btrfs, overlay, vfs, zfs</p>
 </dd><dt><strong>dm_basesize</strong>
 <dd>
 <p>The size to use when creating the base device, which limits the size of
@@ -213,10 +318,33 @@ device which is used for the thin pool Default size is 100G</p>
 “metadata” device which is used for the thin pool Default size is 2G</p>
 </dd><dt><strong>dm_datadev</strong>
 <dd>
-<p>A custom blockdevice to use for data for the thin pool.</p>
+<p>(deprecated - dm_thinpooldev should be used going forward) A custom
+blockdevice to use for data for the thin pool.</p>
 </dd><dt><strong>dm_metadatadev</strong>
 <dd>
-<p>A custom blockdevice to use for metadata for the thin pool.</p>
+<p>(deprecated - dm_thinpooldev should be used going forward) A custom
+blockdevice to use for metadata for the thin pool.</p>
+</dd><dt><strong>dm_thinpooldev</strong>
+<dd>
+<p>Specifies a custom block storage device to use for the thin pool.</p>
+</dd><dt><strong>dm_use_deferred_removal</strong>
+<dd>
+<p>Enables use of deferred device removal if libdm and the kernel driver
+support the mechanism.</p>
+</dd><dt><strong>dm_use_deferred_deletion</strong>
+<dd>
+<p>Enables use of deferred device deletion if libdm and the kernel driver
+support the mechanism.</p>
+</dd><dt><strong>dm_blkdiscard</strong>
+<dd>
+<p>Enables or disables the use of blkdiscard when removing devicemapper
+devices. Defaults to false</p>
+</dd><dt><strong>dm_override_udev_sync_check</strong>
+<dd>
+<p>By default, the devicemapper backend attempts to synchronize with the udev
+device manager for the Linux kernel. This option allows disabling that
+synchronization, to continue even though the configuration may be buggy.
+Defaults to true</p>
 </dd><dt><strong>manage_package</strong>
 <dd>
 <p>Won&#39;t install or define the docker package, useful if you want to use
@@ -233,545 +361,67 @@ docker::params</p>
 <dd>
 <p>Specify a custom docker command name Default is set on a per system basis
 in docker::params</p>
+</dd><dt><strong>daemon_subcommand</strong>
+<dd>
+<p>Specify a subcommand/flag for running docker as daemon Default is set on a
+per system basis in docker::params</p>
 </dd><dt><strong>docker_users</strong>
 <dd>
-<p>Specifc a array of users to add to the docker group Default is empty</p>
+<p>Specify an array of users to add to the docker group Default is empty</p>
+</dd><dt><strong>repo_opt</strong>
+<dd>
+<p>Specify a string to pass as repository options (RedHat only)</p>
+</dd><dt><strong>storage_devs</strong>
+<dd>
+<p>A quoted, space-separated list of devices to be used.</p>
+</dd><dt><strong>storage_vg</strong>
+<dd>
+<p>The volume group to use for docker storage.</p>
+</dd><dt><strong>storage_root_size</strong>
+<dd>
+<p>The size to which the root filesystem should be grown.</p>
+</dd><dt><strong>storage_data_size</strong>
+<dd>
+<p>The desired size for the docker data LV</p>
+</dd><dt><strong>storage_min_data_size</strong>
+<dd>
+<p>The minimum size of data volume otherwise pool creation fails</p>
+</dd><dt><strong>storage_chunk_size</strong>
+<dd>
+<p>Controls the chunk size/block size of thin pool.</p>
+</dd><dt><strong>storage_growpart</strong>
+<dd>
+<p>Enable resizing partition table backing root volume group.</p>
+</dd><dt><strong>storage_auto_extend_pool</strong>
+<dd>
+<p>Enable/disable automatic pool extension using lvm</p>
+</dd><dt><strong>storage_pool_autoextend_threshold</strong>
+<dd>
+<p>Auto pool extension threshold (in % of pool size)</p>
+</dd><dt><strong>storage_pool_autoextend_percent</strong>
+<dd>
+<p>Extend the pool by specified percentage when threshold is hit.</p>
 </dd></dl>
-
-
+</p>
   </div>
 </div>
 <div class="tags">
   
-
-</div><h2>Parameter Summary<small>(<a href="#" class="summary_toggle">collapse</a>)</small></h2>
-<ul class="summary">
   
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>version</strong>
-          
-            
-            => $docker::params::version
-          
-        </span>
-        
-      </a>
-    </li>
   
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>ensure</strong>
-          
-            
-            => $docker::params::ensure
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>prerequired_packages</strong>
-          
-            
-            => $docker::params::prerequired_packages
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>tcp_bind</strong>
-          
-            
-            => $docker::params::tcp_bind
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>socket_bind</strong>
-          
-            
-            => $docker::params::socket_bind
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>log_level</strong>
-          
-            
-            => $docker::params::log_level
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>selinux_enabled</strong>
-          
-            
-            => $docker::params::selinux_enabled
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>use_upstream_package_source</strong>
-          
-            
-            => $docker::params::use_upstream_package_source
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>package_source_location</strong>
-          
-            
-            => $docker::params::package_source_location
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>service_state</strong>
-          
-            
-            => $docker::params::service_state
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>service_enable</strong>
-          
-            
-            => $docker::params::service_enable
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>root_dir</strong>
-          
-            
-            => $docker::params::root_dir
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>tmp_dir</strong>
-          
-            
-            => $docker::params::tmp_dir
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>manage_kernel</strong>
-          
-            
-            => $docker::params::manage_kernel
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>dns</strong>
-          
-            
-            => $docker::params::dns
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>dns_search</strong>
-          
-            
-            => $docker::params::dns_search
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>socket_group</strong>
-          
-            
-            => $docker::params::socket_group
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>extra_parameters</strong>
-          
-            
-            => undef
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>shell_values</strong>
-          
-            
-            => undef
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>proxy</strong>
-          
-            
-            => $docker::params::proxy
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>no_proxy</strong>
-          
-            
-            => $docker::params::no_proxy
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>storage_driver</strong>
-          
-            
-            => $docker::params::storage_driver
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>dm_basesize</strong>
-          
-            
-            => $docker::params::dm_basesize
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>dm_fs</strong>
-          
-            
-            => $docker::params::dm_fs
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>dm_mkfsarg</strong>
-          
-            
-            => $docker::params::dm_mkfsarg
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>dm_mountopt</strong>
-          
-            
-            => $docker::params::dm_mountopt
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>dm_blocksize</strong>
-          
-            
-            => $docker::params::dm_blocksize
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>dm_loopdatasize</strong>
-          
-            
-            => $docker::params::dm_loopdatasize
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>dm_loopmetadatasize</strong>
-          
-            
-            => $docker::params::dm_loopmetadatasize
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>dm_datadev</strong>
-          
-            
-            => $docker::params::dm_datadev
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>dm_metadatadev</strong>
-          
-            
-            => $docker::params::dm_metadatadev
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>execdriver</strong>
-          
-            
-            => $docker::params::execdriver
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>manage_package</strong>
-          
-            
-            => $docker::params::manage_package
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>package_name</strong>
-          
-            
-            => $docker::params::package_name
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>service_name</strong>
-          
-            
-            => $docker::params::service_name
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>docker_command</strong>
-          
-            
-            => $docker::params::docker_command
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>docker_users</strong>
-          
-            
-            => []
-          
-        </span>
-        
-      </a>
-    </li>
-  
-</ul>
+</div>
+<h2>Parameter Summary</h2>
+<div class="tags">
+  <ul class="param">
+    <li><span class="name">version </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::version</tt></li><li><span class="name">ensure </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::ensure</tt></li><li><span class="name">prerequired_packages </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::prerequired_packages</tt></li><li><span class="name">docker_cs </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::docker_cs</tt></li><li><span class="name">tcp_bind </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::tcp_bind</tt></li><li><span class="name">tls_enable </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::tls_enable</tt></li><li><span class="name">tls_verify </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::tls_verify</tt></li><li><span class="name">tls_cacert </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::tls_cacert</tt></li><li><span class="name">tls_cert </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::tls_cert</tt></li><li><span class="name">tls_key </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::tls_key</tt></li><li><span class="name">ip_forward </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::ip_forward</tt></li><li><span class="name">ip_masq </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::ip_masq</tt></li><li><span class="name">bip </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::bip</tt></li><li><span class="name">mtu </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::mtu</tt></li><li><span class="name">iptables </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::iptables</tt></li><li><span class="name">socket_bind </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::socket_bind</tt></li><li><span class="name">fixed_cidr </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::fixed_cidr</tt></li><li><span class="name">bridge </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::bridge</tt></li><li><span class="name">default_gateway </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::default_gateway</tt></li><li><span class="name">log_level </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::log_level</tt></li><li><span class="name">log_driver </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::log_driver</tt></li><li><span class="name">log_opt </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::log_opt</tt></li><li><span class="name">selinux_enabled </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::selinux_enabled</tt></li><li><span class="name">use_upstream_package_source </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::use_upstream_package_source</tt></li><li><span class="name">package_source_location </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::package_source_location</tt></li><li><span class="name">package_release </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::package_release</tt></li><li><span class="name">package_repos </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::package_repos</tt></li><li><span class="name">package_key </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::package_key</tt></li><li><span class="name">package_key_source </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::package_key_source</tt></li><li><span class="name">service_state </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::service_state</tt></li><li><span class="name">service_enable </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::service_enable</tt></li><li><span class="name">manage_service </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::manage_service</tt></li><li><span class="name">root_dir </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::root_dir</tt></li><li><span class="name">tmp_dir </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::tmp_dir</tt></li><li><span class="name">manage_kernel </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::manage_kernel</tt></li><li><span class="name">dns </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::dns</tt></li><li><span class="name">dns_search </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::dns_search</tt></li><li><span class="name">socket_group </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::socket_group</tt></li><li><span class="name">labels </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::labels</tt></li><li><span class="name">extra_parameters </span><span class="type">(<tt>Any</tt>)</span><tt> => undef</tt></li><li><span class="name">shell_values </span><span class="type">(<tt>Any</tt>)</span><tt> => undef</tt></li><li><span class="name">proxy </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::proxy</tt></li><li><span class="name">no_proxy </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::no_proxy</tt></li><li><span class="name">storage_driver </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::storage_driver</tt></li><li><span class="name">dm_basesize </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::dm_basesize</tt></li><li><span class="name">dm_fs </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::dm_fs</tt></li><li><span class="name">dm_mkfsarg </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::dm_mkfsarg</tt></li><li><span class="name">dm_mountopt </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::dm_mountopt</tt></li><li><span class="name">dm_blocksize </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::dm_blocksize</tt></li><li><span class="name">dm_loopdatasize </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::dm_loopdatasize</tt></li><li><span class="name">dm_loopmetadatasize </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::dm_loopmetadatasize</tt></li><li><span class="name">dm_datadev </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::dm_datadev</tt></li><li><span class="name">dm_metadatadev </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::dm_metadatadev</tt></li><li><span class="name">dm_thinpooldev </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::dm_thinpooldev</tt></li><li><span class="name">dm_use_deferred_removal </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::dm_use_deferred_removal</tt></li><li><span class="name">dm_use_deferred_deletion </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::dm_use_deferred_deletion</tt></li><li><span class="name">dm_blkdiscard </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::dm_blkdiscard</tt></li><li><span class="name">dm_override_udev_sync_check </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::dm_override_udev_sync_check</tt></li><li><span class="name">execdriver </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::execdriver</tt></li><li><span class="name">manage_package </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::manage_package</tt></li><li><span class="name">package_source </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::package_source</tt></li><li><span class="name">manage_epel </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::manage_epel</tt></li><li><span class="name">package_name </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::package_name</tt></li><li><span class="name">service_name </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::service_name</tt></li><li><span class="name">docker_command </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::docker_command</tt></li><li><span class="name">daemon_subcommand </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::daemon_subcommand</tt></li><li><span class="name">docker_users </span><span class="type">(<tt>Any</tt>)</span><tt> => []</tt></li><li><span class="name">repo_opt </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::repo_opt</tt></li><li><span class="name">nowarn_kernel </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::nowarn_kernel</tt></li><li><span class="name">storage_devs </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::storage_devs</tt></li><li><span class="name">storage_vg </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::storage_vg</tt></li><li><span class="name">storage_root_size </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::storage_root_size</tt></li><li><span class="name">storage_data_size </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::storage_data_size</tt></li><li><span class="name">storage_min_data_size </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::storage_min_data_size</tt></li><li><span class="name">storage_chunk_size </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::storage_chunk_size</tt></li><li><span class="name">storage_growpart </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::storage_growpart</tt></li><li><span class="name">storage_auto_extend_pool </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::storage_auto_extend_pool</tt></li><li><span class="name">storage_pool_autoextend_threshold </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::storage_pool_autoextend_threshold</tt></li><li><span class="name">storage_pool_autoextend_percent </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::storage_pool_autoextend_percent</tt></li><li><span class="name">storage_config </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::storage_config</tt></li><li><span class="name">storage_config_template </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::storage_config_template</tt></li><li><span class="name">service_provider </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::service_provider</tt></li><li><span class="name">service_config </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::service_config</tt></li><li><span class="name">service_config_template </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::service_config_template</tt></li><li><span class="name">service_overrides_template </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::service_overrides_template</tt></li><li><span class="name">service_hasstatus </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::service_hasstatus</tt></li><li><span class="name">service_hasrestart </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::service_hasrestart</tt></li>
+  </ul>
+</div>
 </div>
 
     <div id="footer">
-  Generated on Tue Apr 21 16:25:40 2015 by
+  Generated on Tue Mar 29 18:10:27 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.8.7.6 (ruby-2.1.4).
+  0.8.7.6 (ruby-2.1.5).
 </div>
 
   </body>

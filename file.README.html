@@ -50,6 +50,16 @@
       Puppet Plugin List
     </a>
   
+    <a class="full_list_link" id="puppet_type_list_link"
+        href="puppet_type_list.html">
+      Puppet Type List
+    </a>
+  
+    <a class="full_list_link" id="puppet_provider_list_link"
+        href="puppet_provider_list.html">
+      Puppet Provider List
+    </a>
+  
     <a class="full_list_link" id="class_list_link"
         href="class_list.html">
       Class List
@@ -73,13 +83,11 @@
 
     <div id="content"><div id='filecontents'>
 <p>Puppet module for installing, configuring and managing <a
-href="https://github.com/dotcloud/docker">Docker</a> from the <a
-href="http://docs.docker.io/en/latest/installation/ubuntulinux/">official
-repository</a> on Ubuntu, from <a
+href="https://github.com/docker/docker">Docker</a> from the <a
+href="http://docs.docker.com/installation/">official repository</a> or
+alternatively from <a
 href="http://docs.docker.io/en/latest/installation/rhel/">EPEL on
-RedHat</a> based distributions or the <a
-href="http://docs.docker.com/installation/archlinux/">standard
-repositories</a> for Archlinux and Fedora.</p>
+RedHat</a> based distributions.</p>
 
 <p><a href="https://forge.puppetlabs.com/garethr/docker"><img
 src="http://img.shields.io/puppetforge/v/garethr/docker.svg"></a> <a
@@ -96,6 +104,10 @@ src="https://img.shields.io/puppetforge/e/garethr/docker.svg"></a></p>
 
 <p>This module is currently tested on:</p>
 <ul><li>
+<p>Debian 8.0</p>
+</li><li>
+<p>Debian 7.8</p>
+</li><li>
 <p>Ubuntu 12.04</p>
 </li><li>
 <p>Ubuntu 14.04</p>
@@ -115,7 +127,7 @@ too:</p>
 </li><li>
 <p>Fedora</p>
 </li><li>
-<p>Debian</p>
+<p>Gentoo</p>
 </li></ul>
 
 <h2 id="label-Examples">Examples</h2>
@@ -164,23 +176,89 @@ Archlinux as there is no further upstream):</p>
 }
 </code></pre>
 
+<p>Docker recently <a
+href="http://blog.docker.com/2015/07/new-apt-and-yum-repos/#comment-247448">launched
+new official repositories</a> which are now the default for the module from
+version 5. If you want to stick with the old respoitories you can do so
+with the following:</p>
+
+<pre class="code ruby"><code class="ruby">class { &#39;docker&#39;:
+  package_name =&gt; &#39;lxc-docker&#39;,
+  package_source_location =&gt; &#39;https://get.docker.com/ubuntu&#39;,
+  package_key_source =&gt; &#39;https://get.docker.com/gpg&#39;,
+  package_key =&gt; &#39;36A1D7869245C8950F966E92D8576A8BA88D21E&#39;,
+  package_release =&gt; &#39;docker&#39;,
+}
+</code></pre>
+
+<p>Docker also provide a <a
+href="https://docs.docker.com/docker-trusted-registry/install/install-csengine/">commercially
+supported</a> version of the Docker Engine, called Docker CS, available
+from a separate repository. This can be installed with the module using the
+following:</p>
+
+<pre class="code ruby"><code class="ruby">class { &#39;docker&#39;:
+  docker_cs =&gt; true,
+}
+</code></pre>
+
+<p>The module also now uses the upstream repositories by default for RHEL
+based distros, including Fedora. If you want to stick with the distro
+packages you should use the following:</p>
+
+<pre class="code ruby"><code class="ruby">class { &#39;docker&#39;:
+  use_upstream_package_source =&gt; false,
+  package_name =&gt; &#39;docker&#39;,
+}
+</code></pre>
+
 <p>By default the docker daemon will bind to a unix socket at
 /var/run/docker.sock. This can be changed, as well as binding to a tcp
 socket if required.</p>
 
 <pre class="code ruby"><code class="ruby">class { &#39;docker&#39;:
-  tcp_bind    =&gt; &#39;tcp://127.0.0.1:4243&#39;,
-  socket_bind =&gt; &#39;unix:///var/run/docker.sock&#39;,
+  tcp_bind        =&gt; [&#39;tcp://127.0.0.1:4243&#39;,&#39;tcp://10.0.0.1:4243&#39;],
+  socket_bind     =&gt; &#39;unix:///var/run/docker.sock&#39;,
+  ip_forward      =&gt; true,
+  iptables        =&gt; true,
+  ip_masq         =&gt; true,
+  bridge          =&gt; br0,
+  fixed_cidr      =&gt; &#39;10.20.1.0/24&#39;,
+  default_gateway =&gt; &#39;10.20.0.1&#39;,
+}
+</code></pre>
+
+<p>For TLS setup you should upload related files (such as CA certificate,
+server certificate and key) and use their paths in manifest</p>
+
+<pre class="code ruby"><code class="ruby">class { &#39;docker&#39;:
+  tcp_bind        =&gt; [&#39;tcp://0.0.0.0:2376&#39;],
+  tls_enable      =&gt; true,
+  tls_cacert      =&gt; &#39;/etc/docker/tls/ca.pem&#39;,
+  tls_cert        =&gt; &#39;/etc/docker/tls/cert.pem&#39;,
+  tls_key         =&gt; &#39;/etc/docker/tls/key.pem&#39;,
 }
 </code></pre>
 
 <p>Unless specified this installs the latest version of docker from the docker
-inc repository on first run. However if you want to specify a specific
-version you can do so, unless you are using Archlinux which only supports
-the latest release:</p>
+repository on first run. However if you want to specify a specific version
+you can do so, unless you are using Archlinux which only supports the
+latest release. Note that this relies on a package with that version
+existing in the reposiroty.</p>
 
 <pre class="code ruby"><code class="ruby">class { &#39;docker&#39;:
   version =&gt; &#39;0.5.5&#39;,
+}
+</code></pre>
+
+<p>And if you want to install a specific rpm package of docker you can do so:</p>
+
+<pre class="code ruby"><code class="ruby">class { &#39;docker&#39; :
+  manage_package              =&gt; true,
+  use_upstream_package_source =&gt; false,
+  package_name                =&gt; &#39;docker-engine&#39;
+  package_source              =&gt; &#39;https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm&#39;,
+  prerequired_packages        =&gt; [ &#39;glibc.i686&#39;, &#39;glibc.x86_64&#39;, &#39;sqlite.i686&#39;, &#39;sqlite.x86_64&#39;, &#39;device-mapper&#39;, &#39;device-mapper-libs&#39;, &#39;device-mapper-event-libs&#39;, &#39;device-mapper-event&#39; ]
 }
 </code></pre>
 
@@ -202,7 +280,14 @@ you give a dns server to the docker daemon like this:</p>
 <p>To add users to the Docker group you can pass an array like this:</p>
 
 <pre class="code ruby"><code class="ruby">class { &#39;docker&#39;:
-  docker_users =&gt; [ &#39;user1&#39;, &#39;user2&#39; ],
+  docker_users =&gt; [&#39;user1&#39;, &#39;user2&#39;],
+}
+</code></pre>
+
+<p>To add daemon labels you can pass an array like this:</p>
+
+<pre class="code ruby"><code class="ruby">class { &#39;docker&#39;:
+  labels =&gt; [&#39;storage=ssd&#39;,&#39;stage=production&#39;],
 }
 </code></pre>
 
@@ -248,6 +333,20 @@ with the <code>docker_dir</code> property, this is equivalent to running
 }
 </code></pre>
 
+<p>You can trigger a rebuild of the image by subscribing to external events
+like Dockerfile changes:</p>
+
+<pre class="code ruby"><code class="ruby">docker::image { &#39;ubuntu&#39;:
+  docker_file =&gt; &#39;/tmp/Dockerfile&#39;
+  subscribe =&gt; File[&#39;/tmp/Dockerfile&#39;],
+}
+
+file { &#39;/tmp/Dockerfile&#39;:
+  ensure =&gt; file,
+  source =&gt; &#39;puppet:///modules/someModule/Dockerfile&#39;,
+}
+</code></pre>
+
 <p>You can also remove images you no longer need with:</p>
 
 <pre class="code ruby"><code class="ruby">docker::image { &#39;base&#39;:
@@ -260,17 +359,20 @@ docker::image { &#39;ubuntu&#39;:
 }
 </code></pre>
 
-<p>If using hiera, there&#39;s a docker::images class you can configure, for
-example:</p>
+<p>If using hiera, there&#39;s a <code>docker::images</code> class you can
+configure, for example:</p>
 
-<pre class="code ruby"><code class="ruby">docker::images:
+<pre class="code ruby"><code class="ruby">---
+  classes:
+    - docker::images
+
+docker::images::images:
   ubuntu:
     image_tag: &#39;precise&#39;</code></pre>
 
 <h3 id="label-Containers">Containers</h3>
 
-<p>Now you have an image you can run commands within a container managed by
-docker.</p>
+<p>Now you have an image you can launch containers:</p>
 
 <pre class="code ruby"><code class="ruby">docker::run { &#39;helloworld&#39;:
   image   =&gt; &#39;base&#39;,
@@ -278,11 +380,13 @@ docker.</p>
 }
 </code></pre>
 
-<p>This is equivalent to running the following under upstart:</p>
+<p>This is equivalent to running the following:</p>
 
 <pre class="code ruby"><code class="ruby">docker run -d base /bin/sh -c &quot;while true; do echo hello world; sleep 1; done&quot;</code></pre>
 
-<p>Run also contains a number of optional parameters:</p>
+<p>This will launch a Docker container managed by the local init system.</p>
+
+<p>Run also takes a number of optional parameters:</p>
 
 <pre class="code ruby"><code class="ruby">docker::run { &#39;helloworld&#39;:
   image           =&gt; &#39;base&#39;,
@@ -290,33 +394,51 @@ docker.</p>
   ports           =&gt; [&#39;4444&#39;, &#39;4555&#39;],
   expose          =&gt; [&#39;4666&#39;, &#39;4777&#39;],
   links           =&gt; [&#39;mysql:db&#39;],
-  use_name        =&gt; true,
   volumes         =&gt; [&#39;/var/lib/couchdb&#39;, &#39;/var/log&#39;],
   volumes_from    =&gt; &#39;6446ea52fbc9&#39;,
-  memory_limit    =&gt; 10m, # (format: &lt;number&gt;&lt;unit&gt;, where unit = b, k, m or g)
+  memory_limit    =&gt; &#39;10m&#39;, # (format: &#39;&lt;number&gt;&lt;unit&gt;&#39;, where unit = b, k, m or g)
   cpuset          =&gt; [&#39;0&#39;, &#39;3&#39;],
   username        =&gt; &#39;example&#39;,
   hostname        =&gt; &#39;example.com&#39;,
   env             =&gt; [&#39;FOO=BAR&#39;, &#39;FOO2=BAR2&#39;],
+  env_file        =&gt; [&#39;/etc/foo&#39;, &#39;/etc/bar&#39;],
   dns             =&gt; [&#39;8.8.8.8&#39;, &#39;8.8.4.4&#39;],
   restart_service =&gt; true,
   privileged      =&gt; false,
   pull_on_start   =&gt; false,
+  before_stop     =&gt; &#39;echo &quot;So Long, and Thanks for All the Fish&quot;&#39;,
+  after           =&gt; [ &#39;container_b&#39;, &#39;mysql&#39; ],
   depends         =&gt; [ &#39;container_a&#39;, &#39;postgres&#39; ],
+  extra_parameters =&gt; [ &#39;--net=my-user-def-net&#39; ],
 }
 </code></pre>
 
-<p>Ports, expose, env, dns and volumes can be set with either a single string
-or as above with an array of values.</p>
+<p>Ports, expose, env, env_file, dns and volumes can be set with either a
+single string or as above with an array of values.</p>
 
 <p>Specifying <code>pull_on_start</code> will pull the image before each time
 it is started.</p>
 
-<p>The <code>depends</code> option allows expressing containers that must be
+<p>Specifying <code>before_stop</code> will execute a command before stopping
+the container.</p>
+
+<p>The <code>after</code> option allows expressing containers that must be
 started before. This affects the generation of the init.d/systemd script.</p>
 
-<p>The service file created for systemd and upstart based systems enables
-automatic restarting of the service on failure by default.</p>
+<p>The <code>depends</code> option allows expressing container dependencies.
+The depended container will be started before this container(s), and this
+container will be stopped before the depended container(s). This affects
+the generation of the init.d/systemd script. You can use
+<code>depend_services</code> to specify dependency for generic services
+(non-docker) that should be started before this container.</p>
+
+<p><code>extra_parameters</code> : An array of additional command line
+arguments to pass to the <code>docker run</code> command. Useful for adding
+additional new or experimental options that the module does not yet
+support.</p>
+
+<p>The service file created for systemd based systems enables automatic
+restarting of the service on failure by default.</p>
 
 <p>To use an image tag just append the tag name to the image name separated by
 a semicolon:</p>
@@ -327,32 +449,160 @@ a semicolon:</p>
 }
 </code></pre>
 
-<p>If using hiera, there&#39;s a docker::run_instance class you can configure,
-for example:</p>
+<p>By default the generated init scripts will remove the container (but not
+any associated volumes) when the service is stopped or started. This
+behaviour can be modified using the following, with defaults shown:</p>
 
-<pre class="code ruby"><code class="ruby">docker::run_instance:
-  helloworld:
-    image: &#39;ubuntu:precise&#39;
-    command: &#39;/bin/sh -c &quot;while true; do echo hello world; sleep 1; done&quot;&#39;</code></pre>
+<pre class="code ruby"><code class="ruby">docker::run { &#39;helloworld&#39;:
+  remove_container_on_start =&gt; true,
+  remove_volume_on_start    =&gt; false,
+  remove_container_on_stop  =&gt; true,
+  remove_volume_on_stop     =&gt; false,
+}
+</code></pre>
+
+<p>If using hiera, there&#39;s a <code>docker::run_instance</code> class you
+can configure, for example:</p>
+
+<pre class="code ruby"><code class="ruby">---
+  classes:
+    - docker::run_instance
+
+  docker::run_instance::instance:
+    helloworld:
+      image: &#39;ubuntu:precise&#39;
+      command: &#39;/bin/sh -c &quot;while true; do echo hello world; sleep 1; done&quot;&#39;</code></pre>
+
+<h3 id="label-Networks">Networks</h3>
+
+<p>As of Docker 1.9.x, Docker has official support for networks. The module
+now exposes a type, <code>docker_network</code>, used to manage those. This
+works like:</p>
+
+<pre class="code ruby"><code class="ruby">docker_network { &#39;my-net&#39;:
+  ensure   =&gt; present,
+  driver   =&gt; &#39;overlay&#39;,
+  subnet   =&gt; &#39;192.168.1.0/24&#39;,
+  gateway  =&gt; &#39;192.168.1.1&#39;,
+  ip_range =&gt; &#39;192.168.1.4/32&#39;,
+}
+</code></pre>
+
+<p>Only the name is required, along with an ensure value. If you don&#39;t
+pass a driver Docker network will use the default bridge. Note that some
+networks require the Docker daemon to be configured to use them, for
+instance for the overlay network you&#39;ll need a cluster store
+configured. You can do that on the <code>docker</code> class like so:</p>
+
+<pre class="code ruby"><code class="ruby">extra_parameters =&gt; &#39;--cluster-store=&lt;backend&gt;://172.17.8.101:&lt;port&gt; --cluster-advertise=&lt;interface&gt;:2376&#39;
+</code></pre>
+
+<p>If using hiera, there&#39;s a <code>docker::networks</code> class you can
+configure, for example:</p>
+
+<pre class="code ruby"><code class="ruby">---
+  classes:
+    - docker::networks
+
+docker::networks::networks:
+  local-docker:
+    ensure: &#39;present&#39;
+    subnet: &#39;192.168.1.0/24&#39;
+    gateway: &#39;192.168.1.1&#39;</code></pre>
+
+<h3 id="label-Compose">Compose</h3>
+
+<p>Docker Compose allows for describing a set of containers in a simple YAML
+format, and then running a command to build and run those containers. The
+<code>docker_compose</code> type included in the module allows for using
+Puppet to run Compose. This means you can have Puppet remediate any issues
+and make sure reality matches the model in your Compose file.</p>
+
+<p>Here&#39;s an example. Given the following Compose file:</p>
+
+<pre class="code ruby"><code class="ruby">compose_test:
+  image: ubuntu:14.04
+  command: /bin/sh -c &quot;while true; do echo hello world; sleep 1; done&quot;</code></pre>
+
+<p>That could be added to the machine you&#39;re running Puppet using a
+<code>file</code> resource or any other means.</p>
+
+<p>Then define a <code>docker_compose</code> resource pointing at the Compose
+file like so:</p>
+
+<pre class="code ruby"><code class="ruby">docker_compose { &#39;/tmp/docker-compose.yml&#39;:
+  ensure  =&gt; present,
+}
+</code></pre>
+
+<p>Now when Puppet runs it will automatically run Compose is required, for
+example because the relevant Compose services aren&#39;t running.</p>
+
+<p>You can also pass addition options (for example to enable experimental
+features) as well as provide scaling rules. The following example requests
+2 containers be running for example. Puppet will now run Compose if the
+number of containers for a given service don&#39;t match the provided scale
+values.</p>
+
+<pre class="code ruby"><code class="ruby">docker_compose { &#39;/tmp/docker-compose.yml&#39;:
+  ensure  =&gt; present,
+  scale   =&gt; {
+    &#39;compose_test&#39; =&gt; 2,
+  },
+  options =&gt; &#39;--x-networking&#39;
+}
+</code></pre>
+
+<h3 id="label-Private+registries">Private registries</h3>
+
+<p>By default images will be pushed and pulled from <a
+href="http://index.docker.io">index.docker.io</a> unless you&#39;ve
+specified a server. If you have your own private registry without
+authentication, you can fully qualify your image name. If your private
+registry requires authentication you may configure a registry:</p>
+
+<pre class="code ruby"><code class="ruby">docker::registry { &#39;example.docker.io:5000&#39;:
+  username =&gt; &#39;user&#39;,
+  password =&gt; &#39;secret&#39;,
+  email    =&gt; &#39;user@example.com&#39;,
+}
+</code></pre>
+
+<p>You can logout of a registry if it is no longer required.</p>
+
+<pre class="code ruby"><code class="ruby">docker::registry { &#39;example.docker.io:5000&#39;:
+  ensure =&gt; &#39;absent&#39;,
+}
+</code></pre>
+
+<p>If using hiera, there&#39;s a docker::registry_auth class you can
+configure, for example:</p>
+
+<pre class="code ruby"><code class="ruby">docker::registry_auth::registries:
+  &#39;example.docker.io:5000&#39;:
+    username: &#39;user1&#39;
+    password: &#39;secret&#39;
+    email: &#39;user1@example.io&#39;</code></pre>
 
 <h3 id="label-Exec">Exec</h3>
 
-<p>Docker also supports running arbitrary comments within the context of a
+<p>Docker also supports running arbitrary commands within the context of a
 running container. And now so does the Puppet module.</p>
 
-<pre class="code ruby"><code class="ruby">docker::exec { &#39;helloworld-uptime&#39;:
-  detach    =&gt; true,
-  container =&gt; &#39;helloworld&#39;,
-  command   =&gt; &#39;uptime&#39;,
-  tty       =&gt; true,
+<pre class="code ruby"><code class="ruby">docker::exec { &#39;cron_allow_root&#39;:
+  detach       =&gt; true,
+  container    =&gt; &#39;mycontainer&#39;,
+  command      =&gt; &#39;/bin/echo root &gt;&gt; /usr/lib/cron/cron.allow&#39;,
+  tty          =&gt; true,
+  unless       =&gt; &#39;grep root /usr/lib/cron/cron.allow 2&gt;/dev/null&#39;,
 }
 </code></pre>
 </div></div>
 
     <div id="footer">
-  Generated on Tue Apr 21 16:25:40 2015 by
+  Generated on Tue Mar 29 18:10:26 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.8.7.6 (ruby-2.1.4).
+  0.8.7.6 (ruby-2.1.5).
 </div>
 
   </body>

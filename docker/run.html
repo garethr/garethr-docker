@@ -52,6 +52,16 @@
       Puppet Plugin List
     </a>
   
+    <a class="full_list_link" id="puppet_type_list_link"
+        href="../puppet_type_list.html">
+      Puppet Type List
+    </a>
+  
+    <a class="full_list_link" id="puppet_provider_list_link"
+        href="../puppet_provider_list.html">
+      Puppet Provider List
+    </a>
+  
     <a class="full_list_link" id="class_list_link"
         href="../class_list.html">
       Class List
@@ -73,11 +83,11 @@
 
     <iframe id="search_frame"></iframe>
 
-    <div id="content"><h1>Definedtype: docker::run
-  
-  
-  
-</h1>
+    <div id="content"><div class='module_header'>
+  <h1>
+    Puppet Defined Type: run
+  </h1>
+</div>
 
 <dl class="box">
   
@@ -96,7 +106,7 @@
 
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
-    
+    <p>
 <h2 id="label-Define%3A+docker%3Arun">Define: docker:run</h2>
 
 <p>A define which manages a running docker container.</p>
@@ -106,442 +116,66 @@
 <dd>
 <p>Sets a restart policy on the docker run. Note: If set, puppet will NOT
 setup an init script to manage, instead it will do a raw docker run command
-using a CID file to track the container  ID. If you want a normal named
-container with an init script and a restart policy you must use the
-extra_parameters feature and pass it in like this:</p>
+using a CID file to track the container ID.</p>
+
+<p>If you want a normal named container with an init script and a restart
+policy you must use the extra_parameters feature and pass it in like this:</p>
 
 <pre class="code ruby"><code class="ruby">extra_parameters =&gt; [&#39;--restart=always&#39;]
 </code></pre>
 
 <p>This will allow the docker container to be restarted if it dies, without
 puppet help.</p>
-<dl class="rdoc-list label-list"><dt><strong>extra_parameters</strong>
+<dl class="rdoc-list label-list"><dt><strong>service_prefix</strong>
+<dd>
+<p>(optional) The name to prefix the startup script with and the Puppet
+service resource title with.  Default: &#39;docker-&#39;</p>
+</dd><dt><strong>restart_service</strong>
+<dd>
+<p>(optional) Whether or not to restart the service if the the generated init
+script changes.  Default: true</p>
+</dd><dt><strong>restart_service_on_docker_refresh</strong>
+<dd>
+<p>Whether or not to restart the service if the docker service is restarted.
+Only has effect if the docker_service parameter is set. Default: true</p>
+</dd><dt><strong>manage_service</strong>
+<dd>
+<p>(optional) Whether or not to create a puppet Service resource for the init
+script.  Disabling this may be useful if integrating with existing modules.
+Default: true</p>
+</dd><dt><strong>docker_service</strong>
+<dd>
+<p>(optional) If (and how) the Docker service itself is managed by Puppet true
+-&gt; <a href="'docker'">Service</a> false         -&gt; no Service
+dependency anything else -&gt; <a href="docker_service">Service</a>
+Default: false</p>
+</dd><dt><strong>extra_parameters</strong>
 <dd>
 <p>An array of additional command line arguments to pass to the `docker run`
 command. Useful for adding additional new or experimental options that the
 module does not yet support.</p>
 </dd></dl>
 </dd></dl>
-
-
+</p>
   </div>
 </div>
 <div class="tags">
   
-
-</div><h2>Parameter Summary<small>(<a href="#" class="summary_toggle">collapse</a>)</small></h2>
-<ul class="summary">
   
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>image</strong>
-          
-        </span>
-        
-      </a>
-    </li>
   
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>command</strong>
-          
-            
-            => undef
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>memory_limit</strong>
-          
-            
-            => &#39;0b&#39;
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>cpuset</strong>
-          
-            
-            => []
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>ports</strong>
-          
-            
-            => []
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>expose</strong>
-          
-            
-            => []
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>volumes</strong>
-          
-            
-            => []
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>links</strong>
-          
-            
-            => []
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>use_name</strong>
-          
-            
-            => false
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>running</strong>
-          
-            
-            => true
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>volumes_from</strong>
-          
-            
-            => []
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>net</strong>
-          
-            
-            => &#39;bridge&#39;
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>username</strong>
-          
-            
-            => false
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>hostname</strong>
-          
-            
-            => false
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>env</strong>
-          
-            
-            => []
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>dns</strong>
-          
-            
-            => []
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>dns_search</strong>
-          
-            
-            => []
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>lxc_conf</strong>
-          
-            
-            => []
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>restart_service</strong>
-          
-            
-            => true
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>disable_network</strong>
-          
-            
-            => false
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>privileged</strong>
-          
-            
-            => false
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>detach</strong>
-          
-            
-            => undef
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>extra_parameters</strong>
-          
-            
-            => undef
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>pull_on_start</strong>
-          
-            
-            => false
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>depends</strong>
-          
-            
-            => []
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>tty</strong>
-          
-            
-            => false
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>socket_connect</strong>
-          
-            
-            => []
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>hostentries</strong>
-          
-            
-            => []
-          
-        </span>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="#">
-        <span class="summary_signature">
-          -
-          <strong>restart</strong>
-          
-            
-            => undef
-          
-        </span>
-        
-      </a>
-    </li>
-  
-</ul>
+</div>
+<h2>Parameter Summary</h2>
+<div class="tags">
+  <ul class="param">
+    <li><span class="name">image </span><span class="type">(<tt>Any</tt>)</span></li><li><span class="name">ensure </span><span class="type">(<tt>Any</tt>)</span><tt> => 'present'</tt></li><li><span class="name">command </span><span class="type">(<tt>Any</tt>)</span><tt> => undef</tt></li><li><span class="name">memory_limit </span><span class="type">(<tt>Any</tt>)</span><tt> => '0b'</tt></li><li><span class="name">cpuset </span><span class="type">(<tt>Any</tt>)</span><tt> => []</tt></li><li><span class="name">ports </span><span class="type">(<tt>Any</tt>)</span><tt> => []</tt></li><li><span class="name">labels </span><span class="type">(<tt>Any</tt>)</span><tt> => []</tt></li><li><span class="name">expose </span><span class="type">(<tt>Any</tt>)</span><tt> => []</tt></li><li><span class="name">volumes </span><span class="type">(<tt>Any</tt>)</span><tt> => []</tt></li><li><span class="name">links </span><span class="type">(<tt>Any</tt>)</span><tt> => []</tt></li><li><span class="name">use_name </span><span class="type">(<tt>Any</tt>)</span><tt> => false</tt></li><li><span class="name">running </span><span class="type">(<tt>Any</tt>)</span><tt> => true</tt></li><li><span class="name">volumes_from </span><span class="type">(<tt>Any</tt>)</span><tt> => []</tt></li><li><span class="name">net </span><span class="type">(<tt>Any</tt>)</span><tt> => 'bridge'</tt></li><li><span class="name">username </span><span class="type">(<tt>Any</tt>)</span><tt> => false</tt></li><li><span class="name">hostname </span><span class="type">(<tt>Any</tt>)</span><tt> => false</tt></li><li><span class="name">env </span><span class="type">(<tt>Any</tt>)</span><tt> => []</tt></li><li><span class="name">env_file </span><span class="type">(<tt>Any</tt>)</span><tt> => []</tt></li><li><span class="name">dns </span><span class="type">(<tt>Any</tt>)</span><tt> => []</tt></li><li><span class="name">dns_search </span><span class="type">(<tt>Any</tt>)</span><tt> => []</tt></li><li><span class="name">lxc_conf </span><span class="type">(<tt>Any</tt>)</span><tt> => []</tt></li><li><span class="name">service_prefix </span><span class="type">(<tt>Any</tt>)</span><tt> => 'docker-'</tt></li><li><span class="name">restart_service </span><span class="type">(<tt>Any</tt>)</span><tt> => true</tt></li><li><span class="name">restart_service_on_docker_refresh </span><span class="type">(<tt>Any</tt>)</span><tt> => true</tt></li><li><span class="name">manage_service </span><span class="type">(<tt>Any</tt>)</span><tt> => true</tt></li><li><span class="name">docker_service </span><span class="type">(<tt>Any</tt>)</span><tt> => false</tt></li><li><span class="name">disable_network </span><span class="type">(<tt>Any</tt>)</span><tt> => false</tt></li><li><span class="name">privileged </span><span class="type">(<tt>Any</tt>)</span><tt> => false</tt></li><li><span class="name">detach </span><span class="type">(<tt>Any</tt>)</span><tt> => undef</tt></li><li><span class="name">extra_parameters </span><span class="type">(<tt>Any</tt>)</span><tt> => undef</tt></li><li><span class="name">extra_systemd_parameters </span><span class="type">(<tt>Any</tt>)</span><tt> => {}</tt></li><li><span class="name">pull_on_start </span><span class="type">(<tt>Any</tt>)</span><tt> => false</tt></li><li><span class="name">after </span><span class="type">(<tt>Any</tt>)</span><tt> => []</tt></li><li><span class="name">after_service </span><span class="type">(<tt>Any</tt>)</span><tt> => []</tt></li><li><span class="name">depends </span><span class="type">(<tt>Any</tt>)</span><tt> => []</tt></li><li><span class="name">depend_services </span><span class="type">(<tt>Any</tt>)</span><tt> => []</tt></li><li><span class="name">tty </span><span class="type">(<tt>Any</tt>)</span><tt> => false</tt></li><li><span class="name">socket_connect </span><span class="type">(<tt>Any</tt>)</span><tt> => []</tt></li><li><span class="name">hostentries </span><span class="type">(<tt>Any</tt>)</span><tt> => []</tt></li><li><span class="name">restart </span><span class="type">(<tt>Any</tt>)</span><tt> => undef</tt></li><li><span class="name">before_start </span><span class="type">(<tt>Any</tt>)</span><tt> => false</tt></li><li><span class="name">before_stop </span><span class="type">(<tt>Any</tt>)</span><tt> => false</tt></li><li><span class="name">remove_container_on_start </span><span class="type">(<tt>Any</tt>)</span><tt> => true</tt></li><li><span class="name">remove_container_on_stop </span><span class="type">(<tt>Any</tt>)</span><tt> => true</tt></li><li><span class="name">remove_volume_on_start </span><span class="type">(<tt>Any</tt>)</span><tt> => false</tt></li><li><span class="name">remove_volume_on_stop </span><span class="type">(<tt>Any</tt>)</span><tt> => false</tt></li>
+  </ul>
+</div>
 </div>
 
     <div id="footer">
-  Generated on Tue Apr 21 16:25:40 2015 by
+  Generated on Tue Mar 29 18:10:27 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.8.7.6 (ruby-2.1.4).
+  0.8.7.6 (ruby-2.1.5).
 </div>
 
   </body>

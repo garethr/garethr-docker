@@ -4,7 +4,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>
-  Hostclass: docker::images
+  Hostclass: docker::compose
   
     &mdash; Documentation by YARD 0.8.7.6
   
@@ -17,7 +17,7 @@
 <script type="text/javascript" charset="utf-8">
   hasFrames = window.top.frames.main ? true : false;
   relpath = '../';
-  framesUrl = "../frames.html#!docker/images.html";
+  framesUrl = "../frames.html#!docker/compose.html";
 </script>
 
 
@@ -31,10 +31,10 @@
     <div id="header">
       <div id="menu">
   
-    <a href="../_index.html">Index (i)</a> &raquo;
+    <a href="../_index.html">Index (c)</a> &raquo;
     <span class='title'><span class='object_link'><a href="../docker.html" title="docker (hostclass)">docker</a></span></span>
      &raquo; 
-    <span class="title">images</span>
+    <span class="title">compose</span>
   
 
   <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
@@ -85,15 +85,29 @@
 
     <div id="content"><div class='module_header'>
   <h1>
-    Puppet Class: images
+    Puppet Class: compose
   </h1>
 </div>
 
 <dl class="box">
   
+    <dt class="r1">Inherits:</dt>
+    <dd class="r1">
+      <span class="inheritName"><span class='object_link'><a href="params.html" title="docker::params (hostclass)">docker::params</a></span></span>
+      <ul class="fullTree">
+        
+          <li class="next"><span class='object_link'><a href="params.html" title="docker::params (hostclass)">docker::params</a></span></li>
+        
+          <li class="next">docker::compose</li>
+        
+      </ul>
+      <a href="#" class="inheritanceTree">show all</a>
+    </dd>
+    
   
-    <dt class="r1 last">Defined in:</dt>
-    <dd class="r1 last">manifests/images.pp</dd>
+  
+    <dt class="r2 last">Defined in:</dt>
+    <dd class="r2 last">manifests/compose.pp</dd>
   
 </dl>
 <div class="clear"></div>
@@ -101,7 +115,20 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     <p>
-<p>docker::images</p>
+<h2 id="label-Class%3A+docker%3A%3Acompose">Class: docker::compose</h2>
+
+<p>Class to install Docker Compose using the recommended curl command.</p>
+
+<h3 id="label-Parameters">Parameters</h3>
+<dl class="rdoc-list label-list"><dt><strong>ensure</strong>
+<dd>
+<p>Whether to install or remove Docker Compose Valid values are absent present
+Defaults to present</p>
+</dd><dt><strong>version</strong>
+<dd>
+<p>The version of Docker Compose to install. Defaults to the value set in
+$docker::params::compose_version</p>
+</dd></dl>
 </p>
   </div>
 </div>
@@ -113,7 +140,7 @@
 <h2>Parameter Summary</h2>
 <div class="tags">
   <ul class="param">
-    <li><span class="name">images </span><span class="type">(<tt>Any</tt>)</span></li>
+    <li><span class="name">ensure </span><span class="type">(<tt>Any</tt>)</span><tt> => 'present'</tt></li><li><span class="name">version </span><span class="type">(<tt>Any</tt>)</span><tt> => $docker::params::compose_version</tt></li>
   </ul>
 </div>
 </div>

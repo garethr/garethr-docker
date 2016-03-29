@@ -52,6 +52,16 @@
       Puppet Plugin List
     </a>
   
+    <a class="full_list_link" id="puppet_type_list_link"
+        href="puppet_type_list.html">
+      Puppet Type List
+    </a>
+  
+    <a class="full_list_link" id="puppet_provider_list_link"
+        href="puppet_provider_list.html">
+      Puppet Provider List
+    </a>
+  
     <a class="full_list_link" id="class_list_link"
         href="class_list.html">
       Class List
@@ -73,384 +83,128 @@
 
     <iframe id="search_frame"></iframe>
 
-    <div id="content"><h1>Puppetnamespace: Puppet3xFunctions
-  
-  
-  
-</h1>
-
+    <div id="content"><div class='module_header'>
+  <h1>
+    Puppet 3 Functions
+  </h1>
+</div>
 <dl class="box">
+  <dt class="r1 last" style="height: 16px;">Defined in:</dt>
+  <dd class="r1 last">
   
+    <em>docker_exec_flags</em>:
+    lib/puppet/parser/functions/docker_exec_flags.rb (5)
+    <br/>
   
-    
+    <em>docker_run_flags</em>:
+    lib/puppet/parser/functions/docker_run_flags.rb (5)
+    <br/>
   
-    
-  
-  
-  
-    <dt class="r1 last">Defined in:</dt>
-    <dd class="r1 last">lib/puppet/parser/functions/docker_exec_flags.rb</dd>
-  
+  </dd>
 </dl>
-<div class="clear"></div>
-
-<h2>Overview</h2><div class="docstring">
-  <div class="discussion">
-    
-<p>Transforms a hash into a string of docker exec flags</p>
-
-
-  </div>
-</div>
-<div class="tags">
+<div class ="clear"></div>
+<h2>Available Functions</h2>
+<ul class="summary">
   
-
-</div>
+    <li class = "private">
+      <span class = "summary_signature">
+      <a href =#docker_exec_flags-instance_method>
+          
+            (<span class="type"><tt>rvalue</tt></span>)
+          
+        -
+       <strong>docker_exec_flags</strong>
+      </span>
+    </li></a>
+    <span class = "summary_desc">
+      <div class = "inline">
+        <p>Transforms a hash into a string of docker exec flags</p>
+      </div>
+    </span>
   
-    <h2>
-      Instance Method Summary
-      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
-    </h2>
-
-    <ul class="summary">
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#docker_exec_flags-instance_method" title="#docker_exec_flags (instance method)">- (rvalue) <strong>docker_exec_flags</strong> </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'>
-<p>Transforms a hash into a string of docker exec flags.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#docker_run_flags-instance_method" title="#docker_run_flags (instance method)">- (rvalue) <strong>docker_run_flags</strong> </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'>
-<p>Transforms a hash into a string of docker flags.</p>
-</div></span>
-  
-</li>
-
-      
-    </ul>
-  
-
-  <div id="instance_method_details" class="method_details_list">
-    <h2>Instance Method Details</h2>
-
-    
-      <div class="method_details first">
-  <h3 class="signature first" id="docker_exec_flags-instance_method">
-  
-    - (<tt>rvalue</tt>) <strong>docker_exec_flags</strong> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    
-<p>Transforms a hash into a string of docker exec flags</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>rvalue</tt>)</span>
-      
-      
-      
-    </li>
+    <li class = "private">
+      <span class = "summary_signature">
+      <a href =#docker_run_flags-instance_method>
+          
+            (<span class="type"><tt>rvalue</tt></span>)
+          
+        -
+       <strong>docker_run_flags</strong>
+      </span>
+    </li></a>
+    <span class = "summary_desc">
+      <div class = "inline">
+        <p>Transforms a hash into a string of docker flags</p>
+      </div>
+    </span>
   
 </ul>
+<h2>Function Details</h2>
 
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/puppet/parser/functions/docker_exec_flags.rb', line 5</span>
-
-<span class='id identifier rubyid_newfunction'>newfunction</span><span class='lparen'>(</span><span class='symbol'>:docker_exec_flags</span><span class='comma'>,</span> <span class='symbol'>:type</span> <span class='op'>=&gt;</span> <span class='symbol'>:rvalue</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_args'>args</span><span class='op'>|</span>
-  <span class='id identifier rubyid_opts'>opts</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
-  <span class='id identifier rubyid_flags'>flags</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
-
-  <span class='kw'>if</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>detach</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
-    <span class='id identifier rubyid_flags'>flags</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--detach=true</span><span class='tstring_end'>&#39;</span></span>
-  <span class='kw'>end</span>
-
-  <span class='kw'>if</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>interactive</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
-    <span class='id identifier rubyid_flags'>flags</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--interactive=true</span><span class='tstring_end'>&#39;</span></span>
-  <span class='kw'>end</span>
-
-  <span class='kw'>if</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>tty</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
-    <span class='id identifier rubyid_flags'>flags</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--tty=true</span><span class='tstring_end'>&#39;</span></span>
-  <span class='kw'>end</span>
-
-  <span class='id identifier rubyid_flags'>flags</span><span class='period'>.</span><span class='id identifier rubyid_flatten'>flatten</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
+  <h3 class="signature" id = docker_exec_flags-instance_method>
+    <strong>
+      
+        (<span class="type"><tt>rvalue</tt></span>)
+      
+      docker_exec_flags
+    </strong>
+  </h3>
+  <div class="docstring">
+    <div class="discussion">
+      <p>
+<p>Transforms a hash into a string of docker exec flags</p>
+</p>
+    </div>
+  </div>
+  <div class="tags">
     
-      <div class="method_details ">
-  <h3 class="signature " id="docker_run_flags-instance_method">
-  
-    - (<tt>rvalue</tt>) <strong>docker_run_flags</strong> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
     
+    
+      <p class="tag_title">Returns:</p>
+      <ul class="return">
+        <li>
+          (<span class="type"><tt>rvalue</tt></span>)- <div class="inline"><p></p></div>
+        </li>
+      </ul>
+    
+    
+  </div>
+
+  <h3 class="signature" id = docker_run_flags-instance_method>
+    <strong>
+      
+        (<span class="type"><tt>rvalue</tt></span>)
+      
+      docker_run_flags
+    </strong>
+  </h3>
+  <div class="docstring">
+    <div class="discussion">
+      <p>
 <p>Transforms a hash into a string of docker flags</p>
-
-
+</p>
+    </div>
   </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>rvalue</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/puppet/parser/functions/docker_run_flags.rb', line 5</span>
-
-<span class='id identifier rubyid_newfunction'>newfunction</span><span class='lparen'>(</span><span class='symbol'>:docker_run_flags</span><span class='comma'>,</span> <span class='symbol'>:type</span> <span class='op'>=&gt;</span> <span class='symbol'>:rvalue</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_args'>args</span><span class='op'>|</span>
-  <span class='id identifier rubyid_opts'>opts</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
-  <span class='id identifier rubyid_flags'>flags</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
-
-  <span class='kw'>if</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>username</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
-    <span class='id identifier rubyid_flags'>flags</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>-u &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>username</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_shellescape'>shellescape</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;</span><span class='tstring_end'>&quot;</span></span>
-  <span class='kw'>end</span>
-
-  <span class='kw'>if</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>hostname</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
-    <span class='id identifier rubyid_flags'>flags</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>-h &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>hostname</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_shellescape'>shellescape</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;</span><span class='tstring_end'>&quot;</span></span>
-  <span class='kw'>end</span>
-
-  <span class='kw'>if</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>restart</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
-    <span class='id identifier rubyid_flags'>flags</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>--restart &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>restart</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;</span><span class='tstring_end'>&quot;</span></span>
-  <span class='kw'>end</span>
-
-  <span class='kw'>if</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>net</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
-    <span class='id identifier rubyid_flags'>flags</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>--net </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>net</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
-  <span class='kw'>end</span>
-
-  <span class='kw'>if</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>memory_limit</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
-    <span class='id identifier rubyid_flags'>flags</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>-m </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>memory_limit</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
-  <span class='kw'>end</span>
-
-  <span class='id identifier rubyid_cpusets'>cpusets</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cpuset</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_flatten'>flatten</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
-  <span class='kw'>unless</span> <span class='id identifier rubyid_cpusets'>cpusets</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
-    <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='id identifier rubyid_cpusets'>cpusets</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>,</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_flags'>flags</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>--cpuset=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_value'>value</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
-  <span class='kw'>end</span>
-
-  <span class='kw'>if</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>disable_network</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
-    <span class='id identifier rubyid_flags'>flags</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-n false</span><span class='tstring_end'>&#39;</span></span>
-  <span class='kw'>end</span>
-
-  <span class='kw'>if</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>privileged</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
-    <span class='id identifier rubyid_flags'>flags</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--privileged</span><span class='tstring_end'>&#39;</span></span>
-  <span class='kw'>end</span>
-
-  <span class='kw'>if</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>detach</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
-    <span class='id identifier rubyid_flags'>flags</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--detach=true</span><span class='tstring_end'>&#39;</span></span>
-  <span class='kw'>end</span>
-
-  <span class='kw'>if</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>tty</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
-    <span class='id identifier rubyid_flags'>flags</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-t</span><span class='tstring_end'>&#39;</span></span>
-  <span class='kw'>end</span>
-
-  <span class='id identifier rubyid_multi_flags'>multi_flags</span> <span class='op'>=</span> <span class='id identifier rubyid_lambda'>lambda</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_values'>values</span><span class='comma'>,</span> <span class='id identifier rubyid_format'>format</span><span class='op'>|</span>
-    <span class='id identifier rubyid_filtered'>filtered</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='id identifier rubyid_values'>values</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_flatten'>flatten</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
-    <span class='id identifier rubyid_filtered'>filtered</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_val'>val</span><span class='op'>|</span> <span class='id identifier rubyid_sprintf'>sprintf</span><span class='lparen'>(</span><span class='id identifier rubyid_format'>format</span><span class='comma'>,</span> <span class='id identifier rubyid_val'>val</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
-  <span class='rbrace'>}</span>
-
-  <span class='lbracket'>[</span>
-    <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--dns %s</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>          <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>dns</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
-    <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--dns-search %s</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>   <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>dns_search</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
-    <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--expose=%s</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>       <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>expose</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
-    <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--link %s</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>         <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>links</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
-    <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--lxc-conf=&quot;%s&quot;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>   <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>lxc_conf</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
-    <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--volumes-from %s</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>volumes_from</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
-    <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-e %s</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>             <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>env</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
-    <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-p %s</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>             <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>ports</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
-    <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--add-host %s</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>     <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>hostentries</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
-    <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-v %s</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>             <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>volumes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
-    <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-H %s</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>             <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>socket_connect</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
-  <span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='lparen'>(</span><span class='id identifier rubyid_format'>format</span><span class='comma'>,</span> <span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span><span class='op'>|</span>
-    <span class='id identifier rubyid_values'>values</span>    <span class='op'>=</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='rbracket'>]</span>
-    <span class='id identifier rubyid_new_flags'>new_flags</span> <span class='op'>=</span> <span class='id identifier rubyid_multi_flags'>multi_flags</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_values'>values</span><span class='comma'>,</span> <span class='id identifier rubyid_format'>format</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_flags'>flags</span><span class='period'>.</span><span class='id identifier rubyid_concat'>concat</span><span class='lparen'>(</span><span class='id identifier rubyid_new_flags'>new_flags</span><span class='rparen'>)</span>
-  <span class='kw'>end</span>
-
-  <span class='id identifier rubyid_flags'>flags</span><span class='period'>.</span><span class='id identifier rubyid_flatten'>flatten</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
+  <div class="tags">
+    
+    
+    
+      <p class="tag_title">Returns:</p>
+      <ul class="return">
+        <li>
+          (<span class="type"><tt>rvalue</tt></span>)- <div class="inline"><p></p></div>
+        </li>
+      </ul>
+    
     
   </div>
 
 </div>
 
     <div id="footer">
-  Generated on Tue Apr 21 16:25:40 2015 by
+  Generated on Tue Mar 29 18:10:27 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.8.7.6 (ruby-2.1.4).
+  0.8.7.6 (ruby-2.1.5).
 </div>
 
   </body>
