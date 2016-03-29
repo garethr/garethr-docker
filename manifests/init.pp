@@ -324,6 +324,7 @@ class docker(
   $dns                               = $docker::params::dns,
   $dns_search                        = $docker::params::dns_search,
   $socket_group                      = $docker::params::socket_group,
+  $labels                            = $docker::params::labels,
   $extra_parameters                  = undef,
   $shell_values                      = undef,
   $proxy                             = $docker::params::proxy,

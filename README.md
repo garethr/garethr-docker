@@ -175,6 +175,14 @@ class { 'docker':
 }
 ```
 
+To add daemon labels you can pass an array like this:
+
+```puppet
+class { 'docker':
+  labels => ['storage=ssd','stage=production'],
+}
+```
+
 The class contains lots of other options, please see the inline code
 documentation for the full options.
 
