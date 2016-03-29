@@ -262,7 +262,11 @@ docker::image { 'ubuntu':
 If using hiera, there's a `docker::images` class you can configure, for example:
 
 ```yaml
-docker::images:
+---
+  classes:
+    - docker::images
+
+docker::images::images:
   ubuntu:
     image_tag: 'precise'
 ```
@@ -337,7 +341,7 @@ docker::run { 'helloworld':
 ```
 
 By default the generated init scripts will remove the container (but not
-any associated volumes) when the service is stoped or started. This
+any associated volumes) when the service is stopped or started. This
 behaviour can be modified using the following, with defaults shown:
 
 ```puppet
@@ -386,6 +390,20 @@ You can do that on the `docker` class like so:
 
 ```puppet
 extra_parameters => '--cluster-store=<backend>://172.17.8.101:<port> --cluster-advertise=<interface>:2376'
+```
+
+If using hiera, there's a `docker::networks` class you can configure, for example:
+
+```yaml
+---
+  classes:
+    - docker::networks
+
+docker::networks::networks:
+  local-docker:
+    ensure: 'present'
+    subnet: '192.168.1.0/24'
+    gateway: '192.168.1.1'
 ```
 
 ### Compose
