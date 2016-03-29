@@ -632,10 +632,26 @@ require 'spec_helper'
 			let(:pre_condition) { "service { 'docker': }" }
       it { should compile.with_all_deps }
 			it { should contain_service('docker').that_comes_before('Service[docker-sample]') }
+			it { should contain_service('docker').that_notifies('Service[docker-sample]') }
+    end
+
+    context 'when `docker_service` is true and `restart_service_on_docker_refresh` is false' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'docker_service' => true, 'restart_service_on_docker_refresh' => false} }
+			let(:pre_condition) { "service { 'docker': }" }
+      it { should compile.with_all_deps }
+			it { should contain_service('docker').that_comes_before('Service[docker-sample]') }
     end
 
     context 'when `docker_service` is `my-docker`' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'docker_service' => 'my-docker'} }
+			let(:pre_condition) { "service{ 'my-docker': }" }
+      it { should compile.with_all_deps }
+			it { should contain_service('my-docker').that_comes_before('Service[docker-sample]') }
+			it { should contain_service('my-docker').that_notifies('Service[docker-sample]') }
+    end
+
+    context 'when `docker_service` is `my-docker` and `restart_service_on_docker_refresh` is false' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'docker_service' => 'my-docker', 'restart_service_on_docker_refresh' => false} }
 			let(:pre_condition) { "service{ 'my-docker': }" }
       it { should compile.with_all_deps }
 			it { should contain_service('my-docker').that_comes_before('Service[docker-sample]') }
