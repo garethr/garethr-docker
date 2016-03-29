@@ -128,7 +128,7 @@
 #
 # [*package_source_location*]
 #   If you're using an upstream package source, what is it's
-#   location. Defaults to https://get.docker.com/ubuntu on Debian
+#   location. Defaults to http://get.docker.com/ubuntu on Debian
 #
 # [*service_state*]
 #   Whether you want to docker daemon to start up
