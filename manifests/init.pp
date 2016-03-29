@@ -25,6 +25,26 @@
 #   tcp://127.0.0.1:4243
 #   Defaults to undefined
 #
+# [*tls_enable*]
+#   Enable TLS.
+#   Defaults to false
+#
+# [*tls_verify*]
+#  Use TLS and verify the remote
+#  Defaults to true
+#
+# [*tls_cacert*]
+#   Path to TLS CA certificate
+#   Defaults to '/etc/docker/ca.pem'
+#
+# [*tls_cert*]
+#   Path to TLS certificate file
+#   Defaults to '/etc/docker/cert.pem'
+#
+# [*tls_key*]
+#   Path to TLS key file
+#   Defaults to '/etc/docker/cert.key'
+#
 # [*ip_forward*]
 #   Enables IP forwarding on the Docker host.
 #   The default is true.
@@ -296,6 +316,11 @@ class docker(
   $prerequired_packages              = $docker::params::prerequired_packages,
   $docker_cs                         = $docker::params::docker_cs,
   $tcp_bind                          = $docker::params::tcp_bind,
+  $tls_enable                        = $docker::params::tls_enable,
+  $tls_verify                        = $docker::params::tls_verify,
+  $tls_cacert                        = $docker::params::tls_cacert,
+  $tls_cert                          = $docker::params::tls_cert,
+  $tls_key                           = $docker::params::tls_key,
   $ip_forward                        = $docker::params::ip_forward,
   $ip_masq                           = $docker::params::ip_masq,
   $bip                               = $docker::params::bip,
@@ -383,6 +408,7 @@ class docker(
   validate_bool($manage_service)
   validate_array($docker_users)
   validate_array($log_opt)
+  validate_bool($tls_enable)
   validate_bool($ip_forward)
   validate_bool($iptables)
   validate_bool($ip_masq)
@@ -433,6 +459,15 @@ class docker(
 
   if ($dm_basesize or $dm_fs or $dm_mkfsarg or $dm_mountopt or $dm_blocksize or $dm_loopdatasize or $dm_loopmetadatasize or $dm_datadev or $dm_metadatadev) and ($storage_driver != 'devicemapper') {
     fail('Values for dm_ variables will be ignored unless storage_driver is set to devicemapper.')
+  }
+
+  if($tls_enable) {
+    if(!$tcp_bind) {
+        fail('You need to provide tcp bind parameter for TLS.')
+    }
+    validate_string($tls_cacert)
+    validate_string($tls_cert)
+    validate_string($tls_key)
   }
 
   class { 'docker::repos': } ->
