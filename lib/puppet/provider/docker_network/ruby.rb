@@ -1,3 +1,5 @@
+require 'json'
+
 Puppet::Type.type(:docker_network).provide(:ruby) do
   desc "Support for Docker Networking"
 
