@@ -8,9 +8,6 @@ class docker::repos {
   case $::osfamily {
     'Debian': {
       include apt
-      if $::operatingsystem == 'Debian' and $::lsbdistcodename == 'wheezy' {
-        include apt::backports
-      }
       if ($docker::docker_cs) {
         $location = $docker::package_cs_source_location
         $key_source = $docker::package_cs_key_source
@@ -22,6 +19,9 @@ class docker::repos {
       }
       Exec['apt_update'] -> Package[$docker::prerequired_packages]
       if ($docker::use_upstream_package_source) {
+        if $::operatingsystem == 'Debian' and $::lsbdistcodename == 'wheezy' {
+          include apt::backports
+        }
         apt::source { 'docker':
           location          => $location,
           release           => $docker::package_release,
@@ -36,7 +36,6 @@ class docker::repos {
           Apt::Source['docker'] -> Package['docker']
         }
       }
-
     }
     'RedHat': {
       if $docker::manage_package {
