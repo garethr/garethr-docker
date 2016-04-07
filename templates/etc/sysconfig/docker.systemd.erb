@@ -3,7 +3,7 @@
 
 OPTIONS="<% if @root_dir %> -g <%= @root_dir %><% end -%>
 <% if @tcp_bind %><% @tcp_bind_array.each do |param| %> -H <%= param %><% end %> <% end -%>
-<% if @tls_enable %><% if @tls_verify -%> --tlsverify<% end -%> --tlscacert=<%= @tls_cacert %> --tlscert=<%= @tls_cert %> --tlskey=<%= @tls_key %><% end -%>
+<% if @tls_enable %> --tls<% if @tls_verify -%> --tlsverify<% end -%> --tlscacert=<%= @tls_cacert %> --tlscert=<%= @tls_cert %> --tlskey=<%= @tls_key %><% end -%>
 <% if @socket_bind %> -H <%= @socket_bind %><% end -%>
  --ip-forward=<%= @ip_forward -%>
  --iptables=<%= @iptables -%>
