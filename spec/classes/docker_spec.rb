@@ -788,58 +788,70 @@ describe 'docker', :type => :class do
 
       storage_setup_file = '/etc/sysconfig/docker-storage-setup'
 
+      context 'with managed storage setup' do
+        let(:params) { { 'manage_storage_setup' => false }}
+        it { should_not contain_package('docker-storage-setup') }
+        it { should_not contain_service('docker-storage-setup') }
+      end
+
+      context 'with managed storage setup' do
+        let(:params) { { 'manage_storage_setup' => true }}
+        it { should contain_package('docker-storage-setup') }
+        it { should contain_service('docker-storage-setup').with_enable(true) }
+      end
+
       context 'with storage driver' do
-        let(:params) { { 'storage_driver' => 'devicemapper' }}
+        let(:params) { { 'manage_storage_setup' => true, 'storage_driver' => 'devicemapper' }}
         it { should contain_file(storage_setup_file).with_content(/^STORAGE_DRIVER=devicemapper/) }
       end
 
       context 'with storage devices' do
-        let(:params) { { 'storage_devs' => '/dev/sda,/dev/sdb' }}
+        let(:params) { { 'manage_storage_setup' => true, 'storage_setup_devs' => '/dev/sda,/dev/sdb' }}
         it { should contain_file(storage_setup_file).with_content(/^DEVS="\/dev\/sda,\/dev\/sdb"/) }
       end
 
       context 'with storage volume group' do
-        let(:params) { { 'storage_vg' => 'vg_test' }}
+        let(:params) { { 'manage_storage_setup' => true, 'storage_setup_vg' => 'vg_test' }}
         it { should contain_file(storage_setup_file).with_content(/^VG=vg_test/) }
       end
 
       context 'with storage root size' do
-        let(:params) { { 'storage_root_size' => '10G' }}
+        let(:params) { { 'manage_storage_setup' => true, 'storage_setup_root_size' => '10G' }}
         it { should contain_file(storage_setup_file).with_content(/^ROOT_SIZE=10G/) }
       end
 
       context 'with storage data size' do
-        let(:params) { { 'storage_data_size' => '10G' }}
+        let(:params) { { 'manage_storage_setup' => true, 'storage_setup_data_size' => '10G' }}
         it { should contain_file(storage_setup_file).with_content(/^DATA_SIZE=10G/) }
       end
 
       context 'with storage min data size' do
-        let(:params) { { 'storage_min_data_size' => '2G' }}
+        let(:params) { { 'manage_storage_setup' => true, 'storage_setup_min_data_size' => '2G' }}
         it { should contain_file(storage_setup_file).with_content(/^MIN_DATA_SIZE=2G/) }
       end
 
       context 'with storage chunk size' do
-        let(:params) { { 'storage_chunk_size' => '10G' }}
+        let(:params) { { 'manage_storage_setup' => true, 'storage_setup_chunk_size' => '10G' }}
         it { should contain_file(storage_setup_file).with_content(/^CHUNK_SIZE=10G/) }
       end
 
       context 'with storage grow partition' do
-        let(:params) { { 'storage_growpart' => 'true' }}
+        let(:params) { { 'manage_storage_setup' => true, 'storage_setup_growpart' => 'true' }}
         it { should contain_file(storage_setup_file).with_content(/^GROWPART=true/) }
       end
 
       context 'with storage auto extend pool' do
-        let(:params) { { 'storage_auto_extend_pool' => '1' }}
+        let(:params) { { 'manage_storage_setup' => true, 'storage_setup_auto_extend_pool' => '1' }}
         it { should contain_file(storage_setup_file).with_content(/^AUTO_EXTEND_POOL=1/) }
       end
 
       context 'with storage auto extend threshold' do
-        let(:params) { { 'storage_pool_autoextend_threshold' => '1' }}
+        let(:params) { { 'manage_storage_setup' => true, 'storage_setup_pool_autoextend_threshold' => '1' }}
         it { should contain_file(storage_setup_file).with_content(/^POOL_AUTOEXTEND_THRESHOLD=1/) }
       end
 
       context 'with storage auto extend percent' do
-        let(:params) { { 'storage_pool_autoextend_percent' => '10' }}
+        let(:params) { { 'manage_storage_setup' => true, 'storage_setup_pool_autoextend_percent' => '10' }}
         it { should contain_file(storage_setup_file).with_content(/^POOL_AUTOEXTEND_PERCENT=10/) }
       end
 
