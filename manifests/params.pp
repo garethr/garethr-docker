@@ -68,6 +68,7 @@ class docker::params {
   $storage_setup_min_data_size             = undef
   $storage_setup_chunk_size                = undef
   $storage_setup_growpart                  = undef
+  $storage_setup_device_wait_timeout       = undef
   $storage_setup_auto_extend_pool          = undef
   $storage_setup_pool_autoextend_threshold = undef
   $storage_setup_pool_autoextend_percent   = undef

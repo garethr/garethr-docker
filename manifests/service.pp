@@ -92,6 +92,7 @@ class docker::service (
   $storage_setup_min_data_size             = $docker::storage_setup_min_data_size,
   $storage_setup_chunk_size                = $docker::storage_setup_chunk_size,
   $storage_setup_growpart                  = $docker::storage_setup_growpart,
+  $storage_setup_device_wait_timeout       = $docker::storage_setup_device_wait_timeout,
   $storage_setup_auto_extend_pool          = $docker::storage_setup_auto_extend_pool,
   $storage_setup_pool_autoextend_threshold = $docker::storage_setup_pool_autoextend_threshold,
   $storage_setup_pool_autoextend_percent   = $docker::storage_setup_pool_autoextend_percent,

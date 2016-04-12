@@ -840,6 +840,11 @@ describe 'docker', :type => :class do
         it { should contain_file(storage_setup_file).with_content(/^GROWPART=true/) }
       end
 
+      context 'with storage device wait timeout' do
+        let(:params) { { 'manage_storage_setup' => true, 'storage_setup_device_wait_timeout' => '60' }}
+        it { should contain_file(storage_setup_file).with_content(/^DEVICE_WAIT_TIMEOUT=60/) }
+      end
+
       context 'with storage auto extend pool' do
         let(:params) { { 'manage_storage_setup' => true, 'storage_setup_auto_extend_pool' => '1' }}
         it { should contain_file(storage_setup_file).with_content(/^AUTO_EXTEND_POOL=1/) }

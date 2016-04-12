@@ -305,6 +305,9 @@
 # [*storage_setup_growpart*]
 #   Enable resizing partition table backing root volume group.
 #
+# [*storage_setup_device_wait_timeout*]
+#   Wait time for the mapped device to become available. (Default: 60, Disable: 0)
+#
 # [*storage_setup_auto_extend_pool*]
 #   Enable/disable automatic pool extension using lvm
 #
@@ -392,6 +395,7 @@ class docker(
   $storage_setup_min_data_size             = $docker::params::storage_setup_min_data_size,
   $storage_setup_chunk_size                = $docker::params::storage_setup_chunk_size,
   $storage_setup_growpart                  = $docker::params::storage_setup_growpart,
+  $storage_setup_device_wait_timeout       = $docker::params::storage_setup_device_wait_timeout,
   $storage_setup_auto_extend_pool          = $docker::params::storage_setup_auto_extend_pool,
   $storage_setup_pool_autoextend_threshold = $docker::params::storage_setup_pool_autoextend_threshold,
   $storage_setup_pool_autoextend_percent   = $docker::params::storage_setup_pool_autoextend_percent,
