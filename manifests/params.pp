@@ -91,6 +91,7 @@ class docker::params {
             $service_hasstatus       = true
             $service_hasrestart      = false
           }
+          $service_overrides_template = undef
         }
         default: {
           $package_release = "debian-${::lsbdistcodename}"
@@ -99,11 +100,12 @@ class docker::params {
             $storage_config             = '/etc/default/docker-storage'
             $service_config_template    = 'docker/etc/sysconfig/docker.systemd.erb'
             $service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-debian.conf.erb'
-            $service_hasstatus       = true
-            $service_hasrestart      = true
+            $service_hasstatus          = true
+            $service_hasrestart         = true
             include docker::systemd_reload
           } else {
-            $service_config_template = 'docker/etc/default/docker.erb'
+            $service_config_template    = 'docker/etc/default/docker.erb'
+            $service_overrides_template = undef
           }
         }
       }
@@ -117,6 +119,7 @@ class docker::params {
       $use_upstream_package_source = true
       $repo_opt = undef
       $nowarn_kernel = false
+      $service_config = undef
 
       $package_cs_source_location = 'http://packages.docker.com/1.9/apt/repo'
       $package_cs_key_source = 'http://packages.docker.com/1.9/apt/gpg'
@@ -272,6 +275,7 @@ class docker::params {
       $package_repos = undef
       $package_release = undef
       $use_upstream_package_source = true
+      $service_overrides_template = undef
       $service_hasstatus  = undef
       $service_hasrestart = undef
       $package_name = $package_name_default
@@ -280,6 +284,7 @@ class docker::params {
       $detach_service_in_init = true
       $repo_opt = undef
       $nowarn_kernel = false
+      $service_config = undef
     }
   }
 
