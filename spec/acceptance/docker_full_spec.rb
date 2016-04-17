@@ -340,6 +340,29 @@ describe 'the Puppet Docker module' do
         end
       end
 
+      it 'should start a container with an custom service template' do
+        pp=<<-EOS
+          class { 'docker':}
+
+          docker::image { 'ubuntu':
+            require => Class['docker'],
+          }
+
+          docker::run { 'container_3_3':
+            image                     => 'ubuntu',
+            command                   => 'init',
+            service_template_override => 'docker/etc/init.d/docker-run-test.erb',
+            require  => Docker::Image['ubuntu'],
+          }
+        EOS
+
+        shell("cp /etc/puppet/modules/docker/templates//etc/init.d/docker-run.erb /etc/puppet/modules/docker/templates/etc/init.d/docker-run-test.erb")
+        shell("echo 'TESTING TEMPLATE OVERRIDE' >> /etc/puppet/modules/docker/templates//etc/init.d/docker-run-test.erb")
+
+        apply_manifest(pp, :catch_failures => true)
+        apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
+      end
+
       it 'should start a container while mounting local volumes' do
         pp=<<-EOS
           class { 'docker':}

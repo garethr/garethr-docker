@@ -43,8 +43,9 @@
 # command. Useful for adding additional new or experimental options that the
 # module does not yet support.
 #
-# [*service_tempalte_override*]
-#   Specify an template that overrides the template used for systemd or init.d
+# [*service_template_override*]
+#   Specify the path of the template that overrides the default template used
+#   for systemd or init.d.
 #   Default does not override the templates provided by the module.
 #
 define docker::run(
