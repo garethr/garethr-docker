@@ -36,6 +36,11 @@
 #  script.  Disabling this may be useful if integrating with existing modules.
 #  Default: true
 #
+# [*enable*]
+#   (optional) Whether or not to enable puppet Service. If left unset enable in
+#   Service resource will be set to the value of [*running*].
+#   Default: undef
+#
 # [*docker_service*]
 #  (optional) If (and how) the Docker service itself is managed by Puppet
 #  true          -> Service['docker']
@@ -74,6 +79,7 @@ define docker::run(
   $restart_service = true,
   $restart_service_on_docker_refresh = true,
   $manage_service = true,
+  $enable = undef,
   $docker_service = false,
   $disable_network = false,
   $privileged = false,
@@ -264,23 +270,31 @@ define docker::run(
     }
 
 
+    $real_enable = $enable ? { undef => $running, default => $enable }
+
     if $ensure == 'absent' {
-        service { "${service_prefix}${sanitised_title}":
-          ensure    => false,
-          enable    => false,
-          hasstatus => $hasstatus,
-        }
+      service { "${service_prefix}${sanitised_title}":
+        ensure    => false,
+        enable    => false,
+        hasstatus => $hasstatus,
+      }
 
-        exec {
-          "remove container ${service_prefix}${sanitised_title}":
-            command     => "${docker_command} rm -v ${sanitised_title}",
-            refreshonly => true,
-            onlyif      => "${docker_command} ps --no-trunc -a --format='table {{.Names}}' | grep '^${sanitised_title}$'",
-            path        => ['/bin', '/usr/bin'],
-            environment => 'HOME=/root',
-            timeout     => 0
-        }
+      exec {
+        "remove container ${service_prefix}${sanitised_title}":
+          command     => "${docker_command} rm -v ${sanitised_title}",
+          refreshonly => true,
+          onlyif      => "${docker_command} ps --no-trunc -a --format='table {{.Names}}' | grep '^${sanitised_title}$'",
+          path        => ['/bin', '/usr/bin'],
+          environment => 'HOME=/root',
+          timeout     => 0
+      }
 
+      unless $uses_systemd {
+        file { "/etc/init.d/${service_prefix}${sanitised_title}.override":
+          ensure  => present,
+          content => 'manual',
+        }
+      }
     }
     else {
       file { $initscript:
@@ -293,7 +307,7 @@ define docker::run(
         if $running == false {
           service { "${service_prefix}${sanitised_title}":
             ensure    => $running,
-            enable    => false,
+            enable    => $real_enable,
             hasstatus => $hasstatus,
             require   => File[$initscript],
           }
@@ -319,12 +333,12 @@ define docker::run(
           if $uses_systemd {
             $provider = 'systemd'
           } else {
-            $provider = undef
+            $provider = 'upstart'
           }
 
           service { "${service_prefix}${sanitised_title}":
             ensure    => $running,
-            enable    => true,
+            enable    => $real_enable,
             provider  => $provider,
             hasstatus => $hasstatus,
             require   => File[$initscript],

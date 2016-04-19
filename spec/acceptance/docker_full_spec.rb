@@ -92,7 +92,7 @@ describe 'the Puppet Docker module' do
     end
 
     describe 'docker::image' do
-      
+
       it 'should successfully download an image from the Docker Hub' do
         pp=<<-EOS
           class { 'docker':}
@@ -484,7 +484,7 @@ describe 'the Puppet Docker module' do
             require => Class['docker'],
           }
 
-          docker::run { 'container_3_6':
+          docker::run { 'container_3_7':
             image   => 'ubuntu',
             command => 'init',
             require => Docker::Image['ubuntu'],
@@ -498,7 +498,7 @@ describe 'the Puppet Docker module' do
             require => Class['docker'],
           }
 
-          docker::run { 'container_3_6':
+          docker::run { 'container_3_7':
             ensure  => 'absent',
             image   => 'ubuntu',
             require => Docker::Image['ubuntu'],
@@ -511,7 +511,7 @@ describe 'the Puppet Docker module' do
         # A sleep to give docker time to execute properly
         sleep 4
 
-        shell('docker inspect container-3-6', :acceptable_exit_codes => [0])
+        shell('docker inspect container-3-7', :acceptable_exit_codes => [0])
 
         apply_manifest(pp2, :catch_failures => true)
         apply_manifest(pp2, :catch_changes => true) unless fact('selinux') == 'true'
@@ -519,7 +519,48 @@ describe 'the Puppet Docker module' do
         # A sleep to give docker time to execute properly
         sleep 4
 
-        shell('docker inspect container-3-6', :acceptable_exit_codes => [1])
+        shell('docker inspect container-3-7', :acceptable_exit_codes => [1])
+
+        if fact('osfamily') == 'RedHat'
+          shell('systemctl is-enabled docker-container-3-7', :acceptable_exit_codes => [1]) do |r|
+            expect(r.stdout).to match('disabled')
+          end
+        else
+          shell('ls /etc/init.d/docker-container-3-7.override | wc -l') do |r|
+            expect(r.stdout).to match(/^1$/)
+          end
+        end
+      end
+    end
+
+    it 'should allow you to enable a container but not start it' do
+      pp=<<-EOS
+        class { 'docker':}
+
+        docker::image { 'ubuntu':
+          require => Class['docker'],
+        }
+
+        docker::run { 'container_3_8':
+          image   => 'ubuntu',
+          command => 'init',
+          running => false,
+          enable  => true,
+          require => Docker::Image['ubuntu'],
+        }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
+
+      shell('docker ps | wc -l') do |r|
+        expect(r.stdout).to match(/^1$/)
+      end
+
+      if fact('osfamily') == 'RedHat'
+        shell('systemctl is-enabled docker-container-3-8') do |r|
+          expect(r.stdout).to match('enabled')
+        end
       end
     end
 
@@ -569,4 +610,3 @@ describe 'the Puppet Docker module' do
     end
   end
 end
-
