@@ -107,6 +107,17 @@ define docker::image(
       returns     => ['0', '1'],
       require     => File['/usr/local/bin/update_docker_image.sh'],
     }
+
+    exec { "refresh - ${image_install}":
+      command     => $image_install,
+      refreshonly => true,
+      onlyif      => $image_find,
+      environment => 'HOME=/root',
+      path        => ['/bin', '/usr/bin'],
+      timeout     => 0,
+      returns     => ['0', '1'],
+      require     => File['/usr/local/bin/update_docker_image.sh'],
+    }
   }
 
 }
