@@ -71,7 +71,7 @@ class docker::params {
   $storage_pool_autoextend_threshold = undef
   $storage_pool_autoextend_percent   = undef
   $storage_config_template           = 'docker/etc/sysconfig/docker-storage.erb'
-  $compose_version                   = '1.5.2'
+  $compose_version                   = '1.7.0'
 
   case $::osfamily {
     'Debian' : {

@@ -81,7 +81,7 @@ docker_compose { '/tmp/docker-compose.yml':
 
   context 'Removing docker compose' do
     before(:all) do
-      @version = '1.5.2'
+      @version = '1.7.0'
       @pp = <<-code
         class { 'docker::compose':
           ensure  => absent,
