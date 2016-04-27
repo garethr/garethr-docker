@@ -79,15 +79,25 @@ start() {
     <% end -%>
     <% if @remove_container_on_stop -%>
         $docker rm <% if @remove_volume_on_start %>-v<% end %> <%= @sanitised_title %> >/dev/null 2>&1
+    <% else %>
+        $docker create \
+        <%= @docker_run_flags %> \
+        --name <%= @sanitised_title %> \
+        <%= @image %> \
+        <% if @command %> <%= @command %><% end %>
     <% end -%>
     <% if @pull_on_start -%>
         $docker pull <%= @image %>
     <% end -%>
+    <% if @remove_container_on_stop -%>
     $docker run \
     <%= @docker_run_flags %> \
     --name <%= @sanitised_title %> \
     <%= @image %> \
     <% if @command %> <%= @command %><% end %>
+    <% else %>
+    $docker start -a <%= @sanitised_title %>
+    <% end -%>
 
     retval=$?
     echo

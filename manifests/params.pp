@@ -7,9 +7,16 @@ class docker::params {
   $ensure                            = present
   $docker_cs                         = false
   $tcp_bind                          = undef
+  $tls_enable                        = false
+  $tls_verify                        = true
+  $tls_cacert                        = '/etc/docker/tls/ca.pem'
+  $tls_cert                          = '/etc/docker/tls/cert.pem'
+  $tls_key                           = '/etc/docker/tls/key.pem'
   $ip_forward                        = true
   $iptables                          = true
   $ip_masq                           = true
+  $bip                               = undef
+  $mtu                               = undef
   $fixed_cidr                        = undef
   $bridge                            = undef
   $default_gateway                   = undef
@@ -19,6 +26,7 @@ class docker::params {
   $log_opt                           = []
   $selinux_enabled                   = undef
   $socket_group                      = undef
+  $labels                            = []
   $service_state                     = running
   $service_enable                    = true
   $manage_service                    = true
@@ -63,7 +71,7 @@ class docker::params {
   $storage_pool_autoextend_threshold = undef
   $storage_pool_autoextend_percent   = undef
   $storage_config_template           = 'docker/etc/sysconfig/docker-storage.erb'
-  $compose_version                   = '1.5.2'
+  $compose_version                   = '1.7.0'
 
   case $::osfamily {
     'Debian' : {
@@ -110,11 +118,11 @@ class docker::params {
       $repo_opt = undef
       $nowarn_kernel = false
 
-      $package_cs_source_location = 'https://packages.docker.com/1.9/apt/repo'
-      $package_cs_key_source = 'https://packages.docker.com/1.9/apt/gpg'
+      $package_cs_source_location = 'http://packages.docker.com/1.9/apt/repo'
+      $package_cs_key_source = 'http://packages.docker.com/1.9/apt/gpg'
       $package_cs_key = '0xee6d536cf7dc86e2d7d56f59a178ac6c6238f52e'
-      $package_source_location = 'https://apt.dockerproject.org/repo'
-      $package_key_source = 'https://apt.dockerproject.org/gpg'
+      $package_source_location = 'http://apt.dockerproject.org/repo'
+      $package_key_source = 'http://apt.dockerproject.org/gpg'
       $package_key = '58118E89F3A912897C070ADBF76221572C52609D'
 
       if ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemmajrelease, '8') >= 0) or ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '15.04') >= 0) {
@@ -135,7 +143,9 @@ class docker::params {
         $service_config_template    = 'docker/etc/sysconfig/docker.systemd.erb'
         $service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-rhel.conf.erb'
       } else {
-        $service_config_template = 'docker/etc/sysconfig/docker.erb'
+        $service_config_template    = 'docker/etc/sysconfig/docker.erb'
+        $service_provider           = undef
+        $service_overrides_template = undef
       }
 
       if (versioncmp($::operatingsystemrelease, '7.0') < 0) and $::operatingsystem != 'Amazon' {
@@ -191,7 +201,7 @@ class docker::params {
         } elsif $::operatingsystem == 'OracleLinux' {
           $repo_opt = '--enablerepo=ol7_addons'
         } elsif $::operatingsystem == 'Scientific' {
-          $repo_opt = '--enablerepo=sl-extras'
+          $repo_opt = ''
         } else {
           $repo_opt = undef
         }
@@ -230,6 +240,28 @@ class docker::params {
       $service_hasrestart = true
       $service_config = '/etc/conf.d/docker'
       $service_config_template = 'docker/etc/conf.d/docker.erb'
+    }
+    'Gentoo' : {
+      $manage_epel = false
+      $docker_group = $docker_group_default
+      $package_key_source = undef
+      $package_source_location = undef
+      $package_key = undef
+      $package_repos = undef
+      $package_release = undef
+      $use_upstream_package_source = false
+      $package_name = 'app-emulation/docker'
+      $service_name = $service_name_default
+      $docker_command = $docker_command_default
+      $detach_service_in_init = true
+      $repo_opt = undef
+      $nowarn_kernel = false
+      $service_provider   = 'openrc'
+      $service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-archlinux.conf.erb'
+      $service_hasstatus  = true
+      $service_hasrestart = true
+      $service_config = '/etc/conf.d/docker'
+      $service_config_template = 'docker/etc/conf.d/docker.gentoo.erb'
     }
     default: {
       $manage_epel = false

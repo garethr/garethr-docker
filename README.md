@@ -27,6 +27,7 @@ too:
 * Archlinux
 * Amazon Linux
 * Fedora
+* Gentoo
 
 ## Examples
 
@@ -127,6 +128,18 @@ class { 'docker':
 }
 ```
 
+For TLS setup you should upload related files (such as CA certificate, server certificate and key) and use their paths in manifest
+
+```puppet
+class { 'docker':
+  tcp_bind        => ['tcp://0.0.0.0:2376'],
+  tls_enable      => true,
+  tls_cacert      => '/etc/docker/tls/ca.pem',
+  tls_cert        => '/etc/docker/tls/cert.pem',
+  tls_key         => '/etc/docker/tls/key.pem',
+}
+```
+
 Unless specified this installs the latest version of docker from the docker
 repository on first run. However if you want to specify a specific version you
 can do so, unless you are using Archlinux which only supports the latest release.
@@ -171,6 +184,14 @@ To add users to the Docker group you can pass an array like this:
 ```puppet
 class { 'docker':
   docker_users => ['user1', 'user2'],
+}
+```
+
+To add daemon labels you can pass an array like this:
+
+```puppet
+class { 'docker':
+  labels => ['storage=ssd','stage=production'],
 }
 ```
 
@@ -241,7 +262,11 @@ docker::image { 'ubuntu':
 If using hiera, there's a `docker::images` class you can configure, for example:
 
 ```yaml
-docker::images:
+---
+  classes:
+    - docker::images
+
+docker::images::images:
   ubuntu:
     image_tag: 'precise'
 ```
@@ -288,6 +313,7 @@ docker::run { 'helloworld':
   before_stop     => 'echo "So Long, and Thanks for All the Fish"',
   after           => [ 'container_b', 'mysql' ],
   depends         => [ 'container_a', 'postgres' ],
+  extra_parameters => [ '--net=my-user-def-net' ],
 }
 ```
 
@@ -301,6 +327,8 @@ The `after` option allows expressing containers that must be started before. Thi
 
 The `depends` option allows expressing container dependencies. The depended container will be started before this container(s), and this container will be stopped before the depended container(s). This affects the generation of the init.d/systemd script. You can use `depend_services` to specify dependency for generic services (non-docker) that should be started before this container.
 
+`extra_parameters` : An array of additional command line arguments to pass to the `docker run` command. Useful for adding additional new or experimental options that the module does not yet support.
+
 The service file created for systemd based systems enables automatic restarting of the service on failure by default.
 
 To use an image tag just append the tag name to the image name separated by a semicolon:
@@ -313,7 +341,7 @@ docker::run { 'helloworld':
 ```
 
 By default the generated init scripts will remove the container (but not
-any associated volumes) when the service is stoped or started. This
+any associated volumes) when the service is stopped or started. This
 behaviour can be modified using the following, with defaults shown:
 
 ```puppet
@@ -362,6 +390,20 @@ You can do that on the `docker` class like so:
 
 ```puppet
 extra_parameters => '--cluster-store=<backend>://172.17.8.101:<port> --cluster-advertise=<interface>:2376'
+```
+
+If using hiera, there's a `docker::networks` class you can configure, for example:
+
+```yaml
+---
+  classes:
+    - docker::networks
+
+docker::networks::networks:
+  local-docker:
+    ensure: 'present'
+    subnet: '192.168.1.0/24'
+    gateway: '192.168.1.1'
 ```
 
 ### Compose

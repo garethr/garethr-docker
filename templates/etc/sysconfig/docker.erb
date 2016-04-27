@@ -6,6 +6,7 @@ DOCKER="/usr/bin/<%= @docker_command %>"
 other_args="<% -%>
 <% if @root_dir %> -g <%= @root_dir %><% end -%>
 <% if @tcp_bind %><% @tcp_bind_array.each do |param| %> -H <%= param %><% end %> <% end -%>
+<% if @tls_enable %> --tls<% if @tls_verify -%> --tlsverify<% end -%> --tlscacert=<%= @tls_cacert %> --tlscert=<%= @tls_cert %> --tlskey=<%= @tls_key %><% end -%>
 <% if @socket_bind %> -H <%= @socket_bind %><% end -%>
  --ip-forward=<%= @ip_forward -%>
  --iptables=<%= @iptables -%>
@@ -21,6 +22,9 @@ other_args="<% -%>
 <% if @dns %><% @dns_array.each do |address| %> --dns <%= address %><% end %><% end -%>
 <% if @dns_search %><% @dns_search_array.each do |domain| %> --dns-search <%= domain %><% end %><% end -%>
 <% if @execdriver %> -e <%= @execdriver %> <% end -%>
+<% if @bip %> --bip=<%= @bip %> <% end -%>
+<% if @mtu %> --mtu=<%= @mtu %> <% end -%>
+<% @labels.each do |label| %> --label <%= label %><% end -%>
 <% if @extra_parameters %><% @extra_parameters_array.each do |param| %> <%= param %><% end %><% end -%>"
 
 <% if @proxy %>export http_proxy='<%= @proxy %>'

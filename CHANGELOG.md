@@ -1,3 +1,19 @@
+##2016-03-30 - Version 5.2
+
+This release includes some minor features and several bug fixes,
+including:
+
+* Support for specifying TLS settings for Docker connectivity
+* Added support for BIP and MTU options
+* Ensure containers are restarted if Docker is restarted
+* Support creating Docker Networks using Hiera
+* Fix issues with left over containers when using
+  remove_container_on_stop
+* Use the plain HTTP package repository rather than HTTPS
+* Added Gentoo support
+* Support managing labels on Docker Engine
+
+
 ##2016-02-12 - Version 5.1
 
 Note that changes in Docker 1.10 changed the flag used to start the
