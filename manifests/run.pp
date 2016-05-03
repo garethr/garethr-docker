@@ -97,7 +97,12 @@ define docker::run(
   $remove_volume_on_stop = false,
 ) {
   include docker::params
-  $docker_command = $docker::params::docker_command
+  if ($socket_connect != []) {
+    $sockopts = join(any2array($socket_connect), ',')
+    $docker_command = "${docker::params::docker_command} -H ${sockopts}"
+  }else {
+    $docker_command = $docker::params::docker_command
+  }
   $service_name = $docker::params::service_name
 
   validate_re($image, '^[\S]*$')
