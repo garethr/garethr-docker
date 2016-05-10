@@ -417,7 +417,7 @@ class docker(
   validate_string($default_gateway)
   validate_string($bip)
 
-  if ($fixed_cidr or $default_gateway) and (!$bridge) {
+  if ($default_gateway) and (!$bridge) {
     fail('You must provide the $bridge parameter.')
   }
 
