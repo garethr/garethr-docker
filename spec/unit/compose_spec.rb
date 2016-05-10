@@ -14,10 +14,9 @@ describe 'docker::compose', :type => :class do
   end
 
   context 'when a new install_url is provided' do
-    let(:params) { {:install_url => 'http://example.com/docker/compose/download/file', :version => '1.5.2'} }
-
+    let(:params) { {:install_url => 'http://example.com/docker/compose/download/file',
+                   :version => '1.5.2'} }
     it { is_expected.to compile }
-
     it { is_expected.to contain_class('docker::compose').with_install_url(
            'http://example.com/docker/compose/download/file')
     }
@@ -25,8 +24,7 @@ describe 'docker::compose', :type => :class do
   end
 
   context 'when install_url is not a url' do
-    let(:params) { {:install_url => 'this is not a valid url', :version => '1.5.2'} }
-
+    let(:params)  { {:install_url => 'this is not a URL'} }
     it do
       expect {
         is_expected.to compile
