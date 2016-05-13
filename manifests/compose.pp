@@ -20,17 +20,25 @@
 class docker::compose(
   $ensure = 'present',
   $version = $docker::params::compose_version,
-  $install_url = "https://github.com/docker/compose/releases/download/${version}/docker-compose-${::kernel}-x86_64"
+  $install_url = 'UNSET',
 ) inherits docker::params {
+  #referening parameter variables in parameters is randomly successful
+  #  see https://tickets.puppetlabs.com/browse/PUP-1080 for details
+  if $install_url == 'UNSET' {
+    $install_url_real = "https://github.com/docker/compose/releases/download/${version}/docker-compose-${::kernel}-x86_64"
+  } else {
+    $install_url_real = $install_url
+  }
+
   validate_string($version)
   validate_re($ensure, '^(present|absent)$')
-  validate_re($install_url, '^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$')
+  validate_re($install_url_real, '^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$')
 
   if $ensure == 'present' {
     exec { "Install Docker Compose ${version}":
       path    => '/usr/bin/',
       cwd     => '/tmp',
-      command => "curl -s -L ${install_url} > /usr/local/bin/docker-compose-${version}",
+      command => "curl -s -L ${install_url_real} > /usr/local/bin/docker-compose-${version}",
       creates => "/usr/local/bin/docker-compose-${version}"
     } ->
     file { "/usr/local/bin/docker-compose-${version}":
