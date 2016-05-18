@@ -15,10 +15,20 @@ Puppet::Type.type(:docker_compose).provide(:ruby) do
       '--filter',
       "label=com.docker.compose.project=#{project}"
     ]).split("\n")
-    counts = Hash[*compose_file.each_key.collect { |key|
-      Puppet.info("Checking for compose service #{key}")
-      [key, containers.count(key)]
-    }.flatten]
+    counts = case compose_file["version"]
+    when /^2(\.0)?$/
+      Hash[*compose_file["services"].each_key.collect { |key|
+        Puppet.info("Checking for compose service #{key}")
+        [key, containers.count(key)]
+      }.flatten]
+    when nil
+      Hash[*compose_file.each_key.collect { |key|
+        Puppet.info("Checking for compose service #{key}")
+        [key, containers.count(key)]
+      }.flatten]
+    else
+      raise(Puppet::Error, "Unsupported docker compose file syntax version \"#{compose_file["version"]}\"!")
+    end
     # No containers found for the project
     if counts.empty? or
       # Containers described in the compose file are not running
