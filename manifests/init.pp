@@ -108,6 +108,8 @@
 #                Writes log messages to a GELF endpoint: Graylog or Logstash.
 #     fluentd  : Fluentd logging driver for Docker.
 #                Writes log messages to fluentd (forward input).
+#     splunk   : Splunk logging driver for Docker.
+#                Writes log messages to Splunk (HTTP Event Collector).
 #
 # [*log_opt*]
 #   Set the log driver specific options
@@ -135,6 +137,9 @@
 #                fluentd-tag={{.ID}} - short container id (12 characters)|
 #                            {{.FullID}} - full container id
 #                            {{.Name}} - container name
+#     splunk   :
+#                splunk-token=<splunk_http_event_collector_token>
+#                splunk-url=https://your_splunk_instance:8088
 #
 # [*selinux_enabled*]
 #   Enable selinux support. Default is false. SELinux does  not  presently
@@ -426,7 +431,7 @@ class docker(
   }
 
   if $log_driver {
-    validate_re($log_driver, '^(none|json-file|syslog|journald|gelf|fluentd)$', 'log_driver must be one of none, json-file, syslog, journald, gelf or fluentd')
+    validate_re($log_driver, '^(none|json-file|syslog|journald|gelf|fluentd|splunk)$', 'log_driver must be one of none, json-file, syslog, journald, gelf, fluentd or splunk')
   }
 
   if $selinux_enabled {
