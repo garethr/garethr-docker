@@ -4,6 +4,7 @@ pkg
 .vagrant
 .yardoc
 doc
+.idea/
 *.swp
 .ruby-version
 log
