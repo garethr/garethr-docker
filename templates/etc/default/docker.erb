@@ -26,6 +26,7 @@ DOCKER_OPTS="\
  --ip-forward=<%= @ip_forward -%>
  --iptables=<%= @iptables -%>
  --ip-masq=<%= @ip_masq -%>
+<% unless @icc == nil %> --icc=<%= @icc %><% end -%>
 <% if @fixed_cidr %> --fixed-cidr <%= @fixed_cidr %><% end -%>
 <% if @bridge %> --bridge <%= @bridge %><% end -%>
 <% if @default_gateway %> --default-gateway <%= @default_gateway %><% end -%>

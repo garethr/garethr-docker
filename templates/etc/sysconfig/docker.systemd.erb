@@ -8,6 +8,7 @@ OPTIONS="<% if @root_dir %> -g <%= @root_dir %><% end -%>
  --ip-forward=<%= @ip_forward -%>
  --iptables=<%= @iptables -%>
  --ip-masq=<%= @ip_masq -%>
+<% unless @icc == nil %> --icc=<%= @icc %><% end -%>
 <% if @fixed_cidr %> --fixed-cidr <%= @fixed_cidr %><% end -%>
 <% if @default_gateway %> --default-gateway <%= @default_gateway %><% end -%>
 <% if @bridge %> --bridge <%= @bridge %><% end -%>

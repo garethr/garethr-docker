@@ -57,6 +57,11 @@
 #   Enable IP masquerading for bridge's IP range.
 #   The default is true.
 #
+# [*icc*]
+#   Enable or disable Docker's unrestricted inter-container and Docker daemon host communication.
+#   (Requires iptables=true to disable)
+#   Default is undef. (Docker daemon's default is true)
+#
 # [*bip*]
 #   Specify docker's network bridge IP, in CIDR notation.
 #   Defaults to undefined.
@@ -326,6 +331,7 @@ class docker(
   $bip                               = $docker::params::bip,
   $mtu                               = $docker::params::mtu,
   $iptables                          = $docker::params::iptables,
+  $icc                               = $docker::params::icc,
   $socket_bind                       = $docker::params::socket_bind,
   $fixed_cidr                        = $docker::params::fixed_cidr,
   $bridge                            = $docker::params::bridge,
@@ -412,6 +418,9 @@ class docker(
   validate_bool($ip_forward)
   validate_bool($iptables)
   validate_bool($ip_masq)
+  if $icc != undef {
+    validate_bool($icc)
+  }
   validate_string($bridge)
   validate_string($fixed_cidr)
   validate_string($default_gateway)
