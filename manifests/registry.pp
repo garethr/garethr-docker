@@ -54,7 +54,7 @@ define docker::registry(
       $auth_cmd = "${docker_command} logout ${server}"
   }
 
-  exec { "auth against ${server}":
+  exec { "${title} auth":
     environment => $auth_environment,
     command     => $auth_cmd,
     user        => $local_user,
