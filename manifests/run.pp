@@ -26,6 +26,11 @@
 #   (optional) Whether or not to restart the service if the the generated init
 #   script changes.  Default: true
 #
+# [*restart_service_on_docker_refresh*]
+#   Whether or not to restart the service if the docker service is restarted.
+#   Only has effect if the docker_service parameter is set.
+#   Default: true
+#
 # [*manage_service*]
 #  (optional) Whether or not to create a puppet Service resource for the init
 #  script.  Disabling this may be useful if integrating with existing modules.
@@ -67,6 +72,7 @@ define docker::run(
   $lxc_conf = [],
   $service_prefix = 'docker-',
   $restart_service = true,
+  $restart_service_on_docker_refresh = true,
   $manage_service = true,
   $docker_service = false,
   $disable_network = false,
@@ -116,6 +122,7 @@ define docker::run(
   validate_bool($disable_network)
   validate_bool($privileged)
   validate_bool($restart_service)
+  validate_bool($restart_service_on_docker_refresh)
   validate_bool($tty)
   validate_bool($remove_container_on_start)
   validate_bool($remove_container_on_stop)
@@ -244,8 +251,15 @@ define docker::run(
         $mode           = '0644'
         $uses_systemd   = true
       }
+      'Gentoo': {
+        $initscript     = "/etc/init.d/${service_prefix}${sanitised_title}"
+        $init_template  = 'docker/etc/init.d/docker-run.gentoo.erb'
+        $hasstatus      = true
+        $mode           = '0775'
+        $uses_systemd   = false
+      }
       default: {
-        fail('Docker needs a Debian, RedHat or Archlinux based system.')
+        fail('Docker needs a Debian, RedHat, Archlinux or Gentoo based system.')
       }
     }
 
@@ -320,14 +334,26 @@ define docker::run(
         if $docker_service {
           if $docker_service == true {
             Service['docker'] -> Service["${service_prefix}${sanitised_title}"]
+            if $restart_service_on_docker_refresh == true {
+              Service['docker'] ~> Service["${service_prefix}${sanitised_title}"]
+            }
           } else {
             Service[$docker_service] -> Service["${service_prefix}${sanitised_title}"]
+            if $restart_service_on_docker_refresh == true {
+              Service[$docker_service] ~> Service["${service_prefix}${sanitised_title}"]
+            }
           }
         }
       }
       if $uses_systemd {
-        File[$initscript] ~> Exec['docker-systemd-reload']
-        Exec['docker-systemd-reload'] -> Service<| title == "${service_prefix}${sanitised_title}" |>
+        exec { "docker-${sanitised_title}-systemd-reload":
+          path        => ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/'],
+          command     => 'systemctl daemon-reload',
+          refreshonly => true,
+          require     => File[$initscript],
+          subscribe   => File[$initscript],
+        }
+        Exec["docker-${sanitised_title}-systemd-reload"] -> Service<| title == "${service_prefix}${sanitised_title}" |>
       }
 
       if $restart_service {

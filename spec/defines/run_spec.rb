@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-['Debian', 'RedHat', 'Archlinux', 'Amazon'].each do |osfamily|
+['Debian', 'RedHat', 'Archlinux', 'Amazon', 'Gentoo'].each do |osfamily|
 
   describe 'docker::run', :type => :define do
     let(:title) { 'sample' }
@@ -24,6 +24,11 @@ require 'spec_helper'
       initscript = '/etc/systemd/system/docker-sample.service'
       command = 'docker'
       systemd = true
+    elsif osfamily == 'Gentoo'
+      let(:facts) { {:osfamily => osfamily} }
+      initscript = '/etc/init.d/docker-sample'
+      command = 'docker'
+      systemd = false
     elsif osfamily == 'RedHat'
       let(:facts) { {
         :osfamily => 'RedHat',
@@ -72,8 +77,13 @@ require 'spec_helper'
         it { should contain_file(initscript).with_content(/Wants=(.*\s+)?docker-foo.service/) }
         it { should contain_file(initscript).with_content(/Wants=(.*\s+)?docker-bar.service/) }
       else
-        it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-foo/) }
-        it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-bar/) }
+        if (osfamily == 'Gentoo')
+          it { should contain_file(initscript).with_content(/after.*\s+docker-foo/) }
+          it { should contain_file(initscript).with_content(/after.*\s+docker-bar/) }
+        else
+          it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-foo/) }
+          it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-bar/) }
+        end
       end
     end
 
@@ -85,10 +95,17 @@ require 'spec_helper'
         it { should contain_file(initscript).with_content(/Requires=(.*\s+)?docker-foo.service/) }
         it { should contain_file(initscript).with_content(/Requires=(.*\s+)?docker-bar.service/) }
       else
-        it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-foo/) }
-        it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-bar/) }
-        it { should contain_file(initscript).with_content(/Required-Stop:.*\s+docker-foo/) }
-        it { should contain_file(initscript).with_content(/Required-Stop:.*\s+docker-bar/) }
+        if (osfamily == 'Gentoo')
+          it { should contain_file(initscript).with_content(/after.*\s+docker-foo/) }
+          it { should contain_file(initscript).with_content(/after.*\s+docker-bar/) }
+          it { should contain_file(initscript).with_content(/need.*\s+docker-foo/) }
+          it { should contain_file(initscript).with_content(/need.*\s+docker-bar/) }
+        else
+          it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-foo/) }
+          it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-bar/) }
+          it { should contain_file(initscript).with_content(/Required-Stop:.*\s+docker-foo/) }
+          it { should contain_file(initscript).with_content(/Required-Stop:.*\s+docker-bar/) }
+        end
       end
     end
 
@@ -100,10 +117,17 @@ require 'spec_helper'
         it { should contain_file(initscript).with_content(/Requires=(.*\s+)?foo.service/) }
         it { should contain_file(initscript).with_content(/Requires=(.*\s+)?bar.service/) }
       else
-        it { should contain_file(initscript).with_content(/Required-Start:.*\s+foo/) }
-        it { should contain_file(initscript).with_content(/Required-Start:.*\s+bar/) }
-        it { should contain_file(initscript).with_content(/Required-Stop:.*\s+foo/) }
-        it { should contain_file(initscript).with_content(/Required-Stop:.*\s+bar/) }
+        if (osfamily == 'Gentoo')
+          it { should contain_file(initscript).with_content(/after.*\s+foo/) }
+          it { should contain_file(initscript).with_content(/after.*\s+bar/) }
+          it { should contain_file(initscript).with_content(/need.*\s+foo/) }
+          it { should contain_file(initscript).with_content(/need.*\s+bar/) }
+        else
+          it { should contain_file(initscript).with_content(/Required-Start:.*\s+foo/) }
+          it { should contain_file(initscript).with_content(/Required-Start:.*\s+bar/) }
+          it { should contain_file(initscript).with_content(/Required-Stop:.*\s+foo/) }
+          it { should contain_file(initscript).with_content(/Required-Stop:.*\s+bar/) }
+        end
       end
     end
 
@@ -608,10 +632,26 @@ require 'spec_helper'
 			let(:pre_condition) { "service { 'docker': }" }
       it { should compile.with_all_deps }
 			it { should contain_service('docker').that_comes_before('Service[docker-sample]') }
+			it { should contain_service('docker').that_notifies('Service[docker-sample]') }
+    end
+
+    context 'when `docker_service` is true and `restart_service_on_docker_refresh` is false' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'docker_service' => true, 'restart_service_on_docker_refresh' => false} }
+			let(:pre_condition) { "service { 'docker': }" }
+      it { should compile.with_all_deps }
+			it { should contain_service('docker').that_comes_before('Service[docker-sample]') }
     end
 
     context 'when `docker_service` is `my-docker`' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'docker_service' => 'my-docker'} }
+			let(:pre_condition) { "service{ 'my-docker': }" }
+      it { should compile.with_all_deps }
+			it { should contain_service('my-docker').that_comes_before('Service[docker-sample]') }
+			it { should contain_service('my-docker').that_notifies('Service[docker-sample]') }
+    end
+
+    context 'when `docker_service` is `my-docker` and `restart_service_on_docker_refresh` is false' do
+      let(:params) { {'command' => 'command', 'image' => 'base', 'docker_service' => 'my-docker', 'restart_service_on_docker_refresh' => false} }
 			let(:pre_condition) { "service{ 'my-docker': }" }
       it { should compile.with_all_deps }
 			it { should contain_service('my-docker').that_comes_before('Service[docker-sample]') }

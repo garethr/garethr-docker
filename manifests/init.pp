@@ -25,6 +25,26 @@
 #   tcp://127.0.0.1:4243
 #   Defaults to undefined
 #
+# [*tls_enable*]
+#   Enable TLS.
+#   Defaults to false
+#
+# [*tls_verify*]
+#  Use TLS and verify the remote
+#  Defaults to true
+#
+# [*tls_cacert*]
+#   Path to TLS CA certificate
+#   Defaults to '/etc/docker/ca.pem'
+#
+# [*tls_cert*]
+#   Path to TLS certificate file
+#   Defaults to '/etc/docker/cert.pem'
+#
+# [*tls_key*]
+#   Path to TLS key file
+#   Defaults to '/etc/docker/cert.key'
+#
 # [*ip_forward*]
 #   Enables IP forwarding on the Docker host.
 #   The default is true.
@@ -37,8 +57,16 @@
 #   Enable IP masquerading for bridge's IP range.
 #   The default is true.
 #
+# [*bip*]
+#   Specify docker's network bridge IP, in CIDR notation.
+#   Defaults to undefined.
+#
+# [*mtu*]
+#   Docker network MTU.
+#   Defaults to undefined.
+#
 # [*bridge*]
-#   Attach containers to a pre-existing network bridge 
+#   Attach containers to a pre-existing network bridge
 #   use 'none' to disable container networking
 #   Defaults to undefined.
 #
@@ -120,7 +148,7 @@
 #
 # [*package_source_location*]
 #   If you're using an upstream package source, what is it's
-#   location. Defaults to https://get.docker.com/ubuntu on Debian
+#   location. Defaults to http://get.docker.com/ubuntu on Debian
 #
 # [*service_state*]
 #   Whether you want to docker daemon to start up
@@ -288,8 +316,15 @@ class docker(
   $prerequired_packages              = $docker::params::prerequired_packages,
   $docker_cs                         = $docker::params::docker_cs,
   $tcp_bind                          = $docker::params::tcp_bind,
+  $tls_enable                        = $docker::params::tls_enable,
+  $tls_verify                        = $docker::params::tls_verify,
+  $tls_cacert                        = $docker::params::tls_cacert,
+  $tls_cert                          = $docker::params::tls_cert,
+  $tls_key                           = $docker::params::tls_key,
   $ip_forward                        = $docker::params::ip_forward,
   $ip_masq                           = $docker::params::ip_masq,
+  $bip                               = $docker::params::bip,
+  $mtu                               = $docker::params::mtu,
   $iptables                          = $docker::params::iptables,
   $socket_bind                       = $docker::params::socket_bind,
   $fixed_cidr                        = $docker::params::fixed_cidr,
@@ -314,6 +349,7 @@ class docker(
   $dns                               = $docker::params::dns,
   $dns_search                        = $docker::params::dns_search,
   $socket_group                      = $docker::params::socket_group,
+  $labels                            = $docker::params::labels,
   $extra_parameters                  = undef,
   $shell_values                      = undef,
   $proxy                             = $docker::params::proxy,
@@ -365,19 +401,21 @@ class docker(
 ) inherits docker::params {
 
   validate_string($version)
-  validate_re($::osfamily, '^(Debian|RedHat|Archlinux)$', 'This module only works on Debian and Red Hat based systems.')
+  validate_re($::osfamily, '^(Debian|RedHat|Archlinux|Gentoo)$', 'This module only works on Debian or Red Hat based systems or on Archlinux as on Gentoo.')
   validate_bool($manage_kernel)
   validate_bool($manage_package)
   validate_bool($docker_cs)
   validate_bool($manage_service)
   validate_array($docker_users)
   validate_array($log_opt)
+  validate_bool($tls_enable)
   validate_bool($ip_forward)
   validate_bool($iptables)
   validate_bool($ip_masq)
   validate_string($bridge)
   validate_string($fixed_cidr)
   validate_string($default_gateway)
+  validate_string($bip)
 
   if ($fixed_cidr or $default_gateway) and (!$bridge) {
     fail('You must provide the $bridge parameter.')
@@ -421,6 +459,15 @@ class docker(
 
   if ($dm_basesize or $dm_fs or $dm_mkfsarg or $dm_mountopt or $dm_blocksize or $dm_loopdatasize or $dm_loopmetadatasize or $dm_datadev or $dm_metadatadev) and ($storage_driver != 'devicemapper') {
     fail('Values for dm_ variables will be ignored unless storage_driver is set to devicemapper.')
+  }
+
+  if($tls_enable) {
+    if(!$tcp_bind) {
+        fail('You need to provide tcp bind parameter for TLS.')
+    }
+    validate_string($tls_cacert)
+    validate_string($tls_cert)
+    validate_string($tls_key)
   }
 
   class { 'docker::repos': } ->

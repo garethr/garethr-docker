@@ -1,0 +1,94 @@
+<%-
+  @after = ["docker"] +
+    @sanitised_after_array.map{ |s| "#{@service_prefix}#{s}"} +
+    @sanitised_depends_array.map{ |s| "#{@service_prefix}#{s}"} +
+    @depend_services_array.map{|s| "#{s}.service"}
+  @need = ["docker"] +
+    @sanitised_depends_array.map{ |d| "#{@service_prefix}#{d}"} +
+    @depend_services_array.map{|s| "#{s}.service"}
+-%>
+#!/sbin/openrc-run
+# Copyright 1999-2013 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+#
+# This file is managed by Puppet and local changes
+# may be overwritten
+#
+#    /etc/init.d/<%= @service_prefix %><%= @sanitised_title %>
+#
+#    Daemon for <%= @title %>
+
+extra_commands="clean cleanRestart"
+
+export HOME=/root/
+docker="/usr/bin/<%= @docker_command %>"
+prog="<%= @service_prefix %><%= @sanitised_title %>"
+if [ -d /var/lock/subsys ]; then
+    lockfile="/var/lock/subsys/$prog"
+else
+    unset lockfile
+fi
+
+depend() {
+  need <%= @need.uniq.join(" ") %>
+  after <%= @after.uniq.join(" ") %>
+}
+
+start() {
+    [ -x $docker ] || exit 5
+
+    if [ "true" = "$($docker inspect --format='{{.State.Running}}' <%= @sanitised_title %> 2>/dev/null)" ]; then
+       printf "Container <%= @sanitised_title %> is still running.\n"
+       exit 7
+    fi
+
+    ebegin "Starting $prog"
+    <% if @before_start -%>
+        <%= @before_start %> 2>/dev/null
+    <% end -%>
+    <% if @remove_container_on_stop -%>
+        $docker rm <% if @remove_volume_on_start %>-v<% end %> <%= @sanitised_title %> >/dev/null
+    <% else %>
+    $docker create \
+    <%= @docker_run_flags %> \
+    --name <%= @sanitised_title %> \
+    <%= @image %> \
+    <% if @command %> <%= @command %><% end %>
+    <% end -%>
+    <% if @pull_on_start -%>
+        $docker pull <%= @image %>
+    <% end -%>
+    <% if @remove_container_on_stop -%>
+    $docker run \
+    <%= @docker_run_flags %> \
+    --name <%= @sanitised_title %> \
+    <%= @image %> \
+    <% if @command %> <%= @command %><% end %>
+    <% else %>
+    $docker start -a <%= @sanitised_title %>
+    <% end -%>
+
+    eend $?
+}
+
+stop() {
+    ebegin "Stopping $prog"
+    <% if @before_stop -%>
+        <%= @before_stop %>
+    <% end -%>
+    $docker stop <%= @sanitised_title %>
+    <% if @remove_container_on_stop -%>
+    $docker rm <% if @remove_volume_on_stop %>-v<% end %> <%= @sanitised_title %>
+    <% end -%>
+    eend $?
+}
+
+status() {
+    if [ "true" = "$($docker inspect --format='{{.State.Running}}' <%= @sanitised_title %> 2>/dev/null)" ]; then
+        echo $prog is running
+        eend 0
+    else
+        echo $prog not running
+        eend 1
+    fi
+}

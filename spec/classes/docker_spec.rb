@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'docker', :type => :class do
 
-  ['Debian', 'Ubuntu', 'RedHat', 'Archlinux'].each do |osfamily|
+  ['Debian', 'Ubuntu', 'RedHat', 'Archlinux', 'Gentoo'].each do |osfamily|
     context "on #{osfamily}" do
 
       if osfamily == 'Debian'
@@ -19,7 +19,6 @@ describe 'docker', :type => :class do
         storage_config_file = '/etc/default/docker'
 
         context 'It should include default prerequired_packages' do
-          it { should contain_package('apt-transport-https').with_ensure('present') }
           it { should contain_package('cgroupfs-mount').with_ensure('present') }
         end
       end
@@ -41,7 +40,6 @@ describe 'docker', :type => :class do
         it { should contain_file('/etc/init.d/docker').with_ensure('link').with_target('/lib/init/upstart-job') }
 
         context 'It should include default prerequired_packages' do
-          it { should contain_package('apt-transport-https').with_ensure('present') }
           it { should contain_package('cgroup-lite').with_ensure('present') }
           it { should contain_package('apparmor').with_ensure('present') }
         end
@@ -50,9 +48,8 @@ describe 'docker', :type => :class do
       if osfamily == 'Ubuntu' or osfamily == 'Debian'
 
         it { should contain_class('apt') }
-        it { should contain_package('apt-transport-https').that_comes_before('Apt::Source[docker]') }
         it { should contain_package('docker').with_name('docker-engine').with_ensure('present') }
-        it { should contain_apt__source('docker').with_location('https://apt.dockerproject.org/repo') }
+        it { should contain_apt__source('docker').with_location('http://apt.dockerproject.org/repo') }
         it { should contain_package('docker').with_install_options(nil) }
 
         context 'with a custom version' do
@@ -106,6 +103,35 @@ describe 'docker', :type => :class do
           it do
             should contain_file('/etc/default/docker').with_content(
               /tcp:\/\/127.0.0.1:2375/
+            )
+          end
+        end
+        context 'with tls param' do
+          let(:params) {{
+              'tcp_bind' => 'tcp://127.0.0.1:2375',
+              'tls_enable' => true,
+          }}
+          it do
+            should contain_file('/etc/default/docker').with_content(
+              /tcp:\/\/127.0.0.1:2375/
+            )
+            should contain_file('/etc/default/docker').with_content(
+              /--tls --tlsverify --tlscacert=\/etc\/docker\/tls\/ca.pem --tlscert=\/etc\/docker\/tls\/cert.pem --tlskey=\/etc\/docker\/tls\/key.pem/
+            )
+          end
+        end
+        context 'with tls param and without tlsverify' do
+          let(:params) {{
+              'tcp_bind' => 'tcp://127.0.0.1:2375',
+              'tls_enable' => true,
+              'tls_verify' => false,
+          }}
+          it do
+            should contain_file('/etc/default/docker').with_content(
+              /tcp:\/\/127.0.0.1:2375/
+            )
+            should contain_file('/etc/default/docker').with_content(
+              /--tls --tlscacert=\/etc\/docker\/tls\/ca.pem --tlscert=\/etc\/docker\/tls\/cert.pem --tlskey=\/etc\/docker\/tls\/key.pem/
             )
           end
         end
@@ -194,6 +220,35 @@ describe 'docker', :type => :class do
               /tcp:\/\/127.0.0.1:2375/)
           end
         end
+        context 'with tls param' do
+          let(:params) {{
+              'tcp_bind' => 'tcp://127.0.0.1:2375',
+              'tls_enable' => true,
+          }}
+          it do
+            should contain_file('/etc/sysconfig/docker').with_content(
+              /tcp:\/\/127.0.0.1:2375/
+            )
+            should contain_file('/etc/sysconfig/docker').with_content(
+              /--tls --tlsverify --tlscacert=\/etc\/docker\/tls\/ca.pem --tlscert=\/etc\/docker\/tls\/cert.pem --tlskey=\/etc\/docker\/tls\/key.pem/
+            )
+          end
+        end
+        context 'with tls param and without tlsverify' do
+          let(:params) {{
+              'tcp_bind' => 'tcp://127.0.0.1:2375',
+              'tls_enable' => true,
+              'tls_verify' => false,
+          }}
+          it do
+            should contain_file('/etc/sysconfig/docker').with_content(
+              /tcp:\/\/127.0.0.1:2375/
+            )
+            should contain_file('/etc/sysconfig/docker').with_content(
+              /--tls --tlscacert=\/etc\/docker\/tls\/ca.pem --tlscert=\/etc\/docker\/tls\/cert.pem --tlskey=\/etc\/docker\/tls\/key.pem/
+            )
+          end
+        end
 
         context 'with fixed_cidr and bridge params' do
           let(:params) {{ 'fixed_cidr' => '10.0.0.0/24' }}
@@ -263,6 +318,41 @@ describe 'docker', :type => :class do
           end
         end
 
+        context 'It uses default docker::repo_opt' do
+          let(:params) { {
+            'manage_package'              => true,
+            'use_upstream_package_source' => false,
+            'package_name'                => 'docker-engine',
+            'package_source'              => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm'
+          } }
+          it do
+            should contain_package('docker').with(
+              'ensure'          => 'present',
+              'source'          => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm',
+              'name'            => 'docker-engine',
+              'install_options' => /--enablerepo/
+            )
+          end
+        end
+
+        context 'It allows overwriting docker::repo_opt with empty string' do
+          let(:params) { {
+            'manage_package'              => true,
+            'use_upstream_package_source' => false,
+            'package_name'                => 'docker-engine',
+            'package_source'              => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm',
+            'repo_opt'                    => ''
+          } }
+          it do
+            should contain_package('docker').with(
+              'ensure'          => 'present',
+              'source'          => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm',
+              'name'            => 'docker-engine',
+              'install_options' => nil
+            )
+          end
+        end
+
       end
 
       if osfamily == 'Archlinux'
@@ -273,6 +363,13 @@ describe 'docker', :type => :class do
         storage_config_file = '/etc/conf.d/docker'
       end
 
+      if osfamily == 'Gentoo'
+        let(:facts) { {
+          :osfamily => osfamily,
+        } }
+        service_config_file = '/etc/conf.d/docker'
+        storage_config_file = '/etc/conf.d/docker'
+      end
 
       it { should compile.with_all_deps }
       it { should contain_class('docker::repos').that_comes_before('docker::install') }
@@ -431,6 +528,12 @@ describe 'docker', :type => :class do
       context 'with socket group set' do
         let(:params) { { 'socket_group' => 'notdocker' }}
         it { should contain_file(service_config_file).with_content(/-G notdocker/) }
+      end
+
+      context 'with labels set' do
+        let(:params) { { 'labels' => ['storage=ssd','stage=production'] }}
+        it { should contain_file(service_config_file).with_content(/--label storage=ssd/) }
+        it { should contain_file(service_config_file).with_content(/--label stage=production/) }
       end
 
       context 'with service_state set to stopped' do
@@ -774,7 +877,6 @@ describe 'docker', :type => :class do
     it { should contain_package('docker').with_name('docker-engine') }
     it { should_not contain_class('epel') }
     it { should contain_package('docker').with_install_options('--enablerepo=ol7_addons') }
-
   end
 
   context 'specific to Scientific Linux 7 or above' do
@@ -787,8 +889,6 @@ describe 'docker', :type => :class do
 
     it { should contain_package('docker').with_name('docker-engine') }
     it { should_not contain_class('epel') }
-    it { should contain_package('docker').with_install_options('--enablerepo=sl-extras') }
-
   end
 
   context 'specific to Ubuntu Precise' do
@@ -874,11 +974,11 @@ describe 'docker', :type => :class do
   end
 
   context 'with an invalid distro name' do
-    let(:facts) { {:osfamily => 'Gentoo'} }
+    let(:facts) { {:osfamily => 'Whatever'} }
     it do
       expect {
         should contain_package('docker')
-      }.to raise_error(Puppet::Error, /This module only works on Debian and Red Hat based systems/)
+      }.to raise_error(Puppet::Error, /This module only works on Debian or Red Hat based systems or on Archlinux as on Gentoo./)
     end
   end
 
