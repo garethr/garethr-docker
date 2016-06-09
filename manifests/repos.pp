@@ -31,7 +31,7 @@ class docker::repos {
             'id'     => $package_key,
             'server' => 'hkp://keyserver.ubuntu.com:80',
           },
-          pin      => '10',
+          pin      => 10,
           require  => [
             Package['debian-keyring'],
             Package['debian-archive-keyring'],
