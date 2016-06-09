@@ -32,6 +32,7 @@ class docker::repos {
             'server' => 'hkp://keyserver.ubuntu.com:80',
           },
           pin      => {
+            order       => 10,
             priority    => 10,
             origin      => split($location, '/')[2]
           },
