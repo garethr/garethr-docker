@@ -48,7 +48,7 @@ ExecStart=/usr/bin/<%= @docker_command %> start -a <%= @sanitised_title %>
 <% end -%>
 <%- if @before_stop %>ExecStop=-<%= @before_stop %>
 <% end -%>
-ExecStop=-/usr/bin/<%= @docker_command %> stop <%= @sanitised_title %>
+ExecStop=-/usr/bin/<%= @docker_command %> stop --time=<%= @stop_wait_time %> <%= @sanitised_title %>
 <%- if @remove_container_on_stop %>ExecStop=-/usr/bin/<%= @docker_command %> rm <% if @remove_volume_on_stop %>-v<% end %> <%= @sanitised_title %>
 <% end -%>
 

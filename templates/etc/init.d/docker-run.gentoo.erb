@@ -76,7 +76,7 @@ stop() {
     <% if @before_stop -%>
         <%= @before_stop %>
     <% end -%>
-    $docker stop <%= @sanitised_title %>
+    $docker stop --time=<%= @stop_wait_time %> <%= @sanitised_title %>
     <% if @remove_container_on_stop -%>
     $docker rm <% if @remove_volume_on_stop %>-v<% end %> <%= @sanitised_title %>
     <% end -%>
