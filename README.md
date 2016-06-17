@@ -271,6 +271,46 @@ docker::images::images:
     image_tag: 'precise'
 ```
 
+### Tagging
+
+You can manipulate image tags using `docker::tag`.
+
+For adding tags to existing image use
+
+```puppet
+docker::image { 'ubuntu':
+  image_tag => 'precise',
+  new_tag   => 'precise_copy'
+}
+```
+
+This command is equivalent to `docker tag -f ubuntu:precise linux:precise_copy` :
+
+```puppet
+docker::image { 'copy ubuntu':
+  image     => 'ubuntu',
+  image_tag => 'precise',
+  new_image => 'linux',
+  new_tag   => 'precise_copy',
+  force		=> true
+}
+```
+
+To remove image tag use
+
+```puppet
+docker::tag { 'ubuntu':
+  ensure    => 'absent',
+  image_tag => 'precise_copy'
+}
+
+docker::tag { 'untagging ubuntu':
+  ensure    => 'absent',
+  image 	=> 'linux'
+  image_tag => 'precise_copy',
+  force 	=> true
+}
+```
 
 ### Containers
 
