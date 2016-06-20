@@ -843,6 +843,11 @@ describe 'docker', :type => :class do
         it { should contain_file(storage_setup_file).with_content(/^POOL_AUTOEXTEND_PERCENT=10/) }
       end
 
+      context 'with custom storage_setup_file' do
+        let(:params) { { 'storage_setup_file' => '/etc/sysconfig/docker-latest-storage-setup' }}
+        it { should contain_file('/etc/sysconfig/docker-latest-storage-setup').with_content(/managed by Puppet/) }
+      end
+
     end
   end
 
