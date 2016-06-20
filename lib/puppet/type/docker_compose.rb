@@ -27,6 +27,13 @@ Puppet::Type.newtype(:docker_compose) do
 		end
 	end
 
+	newparam(:up_args) do
+    desc 'Arguments to be passed directly to docker-compose up.'
+		validate do |value|
+      fail 'up_args should be a String' unless value.is_a? String
+		end
+	end
+
   autorequire(:file) do
     self[:name]
   end

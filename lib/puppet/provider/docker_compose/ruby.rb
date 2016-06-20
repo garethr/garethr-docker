@@ -33,7 +33,7 @@ Puppet::Type.type(:docker_compose).provide(:ruby) do
 
   def create
     Puppet.info("Running compose project #{project}")
-    args = ['-f', name, 'up', '-d'].insert(2, resource[:options]).compact
+    args = ['-f', name, 'up', '-d'].insert(2, resource[:options]).insert(5,resource[:up_args]).compact
     dockercompose(args)
     if resource[:scale]
       instructions = resource[:scale].collect { |k,v| "#{k}=#{v}" }
