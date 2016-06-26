@@ -59,7 +59,7 @@ define docker::registry(
 
   if $ensure == 'server' {
     $auth_cmd = inline_template('<%= @docker_command %> swarm init<% if @listen_addr %> --listen_addr <%= @listen_addr %><% end -%><% if @secret %> --secret <%= @secret %><% end -%><% if @accept_policy %> --auto-accept <%= @accept_policy %><% end -%><% if @force_new_cluster %> --force-new-cluster <% end -%>')
-  } elseif (ensure == 'absent' or ensure == 'leave') {
+  } elseif ($ensure == 'absent' or $ensure == 'leave') {
     $auth_cmd = "${docker_command} swarm leave"
   } else {
     $auth_cmd = inline_template('<%= @docker_command %> swarm join<% if @listen_addr %> --listen_addr <%= @listen_addr %><% end -%><% if @secret %> --secret <%= @secret %><% end -%><% if @ensure == 'manager' %> --manager <% end -%> <%= @join_manager %>')
