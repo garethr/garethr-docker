@@ -25,7 +25,7 @@
 #   The local user to log in as. Docker will store credentials in this
 #   users home directory
 #
-define docker::registry(
+class docker::swarm(
   $ensure            = 'worker',
   $listen_addr       = undef,
   $join_manager      = undef,
@@ -41,7 +41,7 @@ define docker::registry(
   $docker_command = $docker::params::docker_command
   $exist_flag = "${docker::params::data_folder}/swarm/state.json"
 
-  if($ensure == 'worker' or $ensure == 'manager' or $ensure == 'present') {
+  if $ensure == 'worker' or $ensure == 'manager' or $ensure == 'present' {
     validate_string($join_manager)
   }
 
@@ -49,7 +49,7 @@ define docker::registry(
     validate_string($listen_addr)
   }
 
-  if ($ensure == 'server' and $accept_policy) {
+  if $ensure == 'server' and $accept_policy {
     validate_string($accept_policy)
   }
 
@@ -59,10 +59,10 @@ define docker::registry(
 
   if $ensure == 'server' {
     $auth_cmd = inline_template('<%= @docker_command %> swarm init<% if @listen_addr %> --listen_addr <%= @listen_addr %><% end -%><% if @secret %> --secret <%= @secret %><% end -%><% if @accept_policy %> --auto-accept <%= @accept_policy %><% end -%><% if @force_new_cluster %> --force-new-cluster <% end -%>')
-  } elseif ($ensure == 'absent' or $ensure == 'leave') {
+  } elsif $ensure == 'absent' or $ensure == 'leave' {
     $auth_cmd = "${docker_command} swarm leave"
   } else {
-    $auth_cmd = inline_template('<%= @docker_command %> swarm join<% if @listen_addr %> --listen_addr <%= @listen_addr %><% end -%><% if @secret %> --secret <%= @secret %><% end -%><% if @ensure == 'manager' %> --manager <% end -%> <%= @join_manager %>')
+    $auth_cmd = inline_template('<%= @docker_command %> swarm join<% if @listen_addr %> --listen_addr <%= @listen_addr %><% end -%><% if @secret %> --secret <%= @secret %><% end -%><% if @ensure == "manager" %> --manager <% end -%> <%= @join_manager %>')
   }
 
   if $ensure == 'absent' or $ensure == 'leave' {
