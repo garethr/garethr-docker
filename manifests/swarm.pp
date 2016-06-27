@@ -70,7 +70,7 @@ class docker::swarm(
     $auth_cmd = "${docker_cmd} leave"
   } else {
     $manager_tpl = '<% if @ensure == "manager" %> --manager <% end -%>'
-    
+
     $auth_cmd = inline_template('<%= @docker_cmd %> join', $listen_tpl, $secret_tpl, $manager_tpl, '<%= @join_manager %>')
   }
 
