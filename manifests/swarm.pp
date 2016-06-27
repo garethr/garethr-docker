@@ -38,7 +38,7 @@ class docker::swarm(
 
   validate_re($ensure, '^(present|absent|server|manager|worker|leave)$')
 
-  $docker_command = "${docker::params::docker_command} swarm"
+  $docker_cmd = "${docker::params::docker_command} swarm"
   $exist_flag = "${docker::params::data_folder}/swarm/state.json"
 
   if $ensure == 'worker' or $ensure == 'manager' or $ensure == 'present' {
@@ -57,20 +57,21 @@ class docker::swarm(
     validate_string($secret)
   }
 
-  $listen_template = '<% if @listen_addr %> --listen_addr <%= @listen_addr %><% end -%>'
-  $secret_template = '<% if @secret %> --secret <%= @secret %><% end -%>'
+  $listen_tpl = '<% if @listen_addr %> --listen_addr <%= @listen_addr %><% end -%>'
+  $secret_tpl = '<% if @secret %> --secret <%= @secret %><% end -%>'
 
   if $ensure == 'server' {
-    $accept_policy_template = '<% if @accept_policy %> --auto-accept <%= @accept_policy %><% end -%>'
-    $force_new_template = '<% if @force_new_cluster %> --force-new-cluster <% end -%>'
+    $accept_policy_tpl = '<% if @accept_policy %> --auto-accept <%= @accept_policy %><% end -%>'
+    $force_new_tpl = '<% if @force_new_cluster %> --force-new-cluster <% end -%>'
 
-    $auth_cmd = inline_template('<%= @docker_command %> init', $listen_template, $secret_template, $accept_policy_template, $force_new_template)
+    $auth_cmd = inline_template('<%= @docker_cmd %> init', $listen_tpl, $secret_tpl, $accept_policy_tpl, $force_new_tpl)
 
   } elsif $ensure == 'absent' or $ensure == 'leave' {
-    $auth_cmd = "${docker_command} leave"
+    $auth_cmd = "${docker_cmd} leave"
   } else {
-    $manager_template = '<% if @ensure == "manager" %> --manager <% end -%>'
-    $auth_cmd = inline_template('<%= @docker_command %> join', $listen_template, $secret_template, $manager_template, '<%= @join_manager %>')
+    $manager_tpl = '<% if @ensure == "manager" %> --manager <% end -%>'
+    
+    $auth_cmd = inline_template('<%= @docker_cmd %> join', $listen_tpl, $secret_tpl, $manager_tpl, '<%= @join_manager %>')
   }
 
   if $ensure == 'absent' or $ensure == 'leave' {
