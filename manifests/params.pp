@@ -90,7 +90,9 @@ class docker::params {
             $service_provider        = 'upstart'
             $service_hasstatus       = true
             $service_hasrestart      = false
+            $storage_config          = undef
           }
+          $service_overrides_template = undef
         }
         default: {
           $package_release = "debian-${::lsbdistcodename}"
@@ -117,6 +119,7 @@ class docker::params {
       $use_upstream_package_source = true
       $repo_opt = undef
       $nowarn_kernel = false
+      $service_config = undef
 
       $package_cs_source_location = 'http://packages.docker.com/1.9/apt/repo'
       $package_cs_key_source = 'http://packages.docker.com/1.9/apt/gpg'
