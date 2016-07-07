@@ -71,7 +71,7 @@ class docker::swarm(
   } else {
     $manager_tpl = '<% if @ensure == "manager" %> --manager <% end -%>'
 
-    $auth_cmd = inline_template('<%= @docker_cmd %> join', $listen_tpl, $secret_tpl, $manager_tpl, '<%= @join_manager %>')
+    $auth_cmd = inline_template('<%= @docker_cmd %> join', $listen_tpl, $secret_tpl, $manager_tpl, ' <%= @join_manager %>')
   }
 
   if $ensure == 'absent' or $ensure == 'leave' {
