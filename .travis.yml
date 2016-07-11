@@ -14,6 +14,7 @@ env:
   - PUPPET_GIT_URL="https://github.com/puppetlabs/puppet.git"
 matrix:
   fast_finish: true
+  exclude:
     - rvm: 2.2
       env: PUPPET_GEM_VERSION="~> 3.0" STRICT_VARIABLES=yes
   allow_failures:
