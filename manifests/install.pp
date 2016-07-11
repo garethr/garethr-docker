@@ -7,7 +7,8 @@
 class docker::install {
   $docker_command = $docker::docker_command
   validate_string($docker::version)
-  validate_re($::osfamily, '^(Debian|RedHat|Archlinux|Gentoo)$', 'This module only works on Debian or Red Hat based systems or on Archlinux as on Gentoo.')
+  validate_re($::osfamily, '^(Debian|RedHat|Archlinux|Gentoo)$',
+              'This module only works on Debian or Red Hat based systems or on Archlinux as on Gentoo.')
   validate_string($::kernelrelease)
   validate_bool($docker::use_upstream_package_source)
 

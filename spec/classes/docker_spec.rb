@@ -372,9 +372,9 @@ describe 'docker', :type => :class do
       end
 
       it { should compile.with_all_deps }
-      it { should contain_class('docker::repos').that_comes_before('docker::install') }
-      it { should contain_class('docker::install').that_comes_before('docker::config') }
-      it { should contain_class('docker::service').that_subscribes_to('docker::config') }
+      it { should contain_class('docker::repos').that_comes_before('Class[docker::install]') }
+      it { should contain_class('docker::install').that_comes_before('Class[docker::config]') }
+      it { should contain_class('docker::service').that_subscribes_to('Class[docker::config]') }
       it { should contain_class('docker::config') }
 
       context 'with a specific docker command' do
