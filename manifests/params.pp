@@ -91,6 +91,7 @@ class docker::params {
             $service_provider        = 'upstart'
             $service_hasstatus       = true
             $service_hasrestart      = false
+            $storage_config          = undef
           }
           $service_overrides_template = undef
         }
