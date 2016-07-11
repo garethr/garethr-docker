@@ -88,12 +88,12 @@ class docker::params {
             include docker::systemd_reload
           } else {
             $service_config_template = 'docker/etc/default/docker.erb'
+            $service_overrides_template = undef
             $service_provider        = 'upstart'
             $service_hasstatus       = true
             $service_hasrestart      = false
             $storage_config          = undef
           }
-          $service_overrides_template = undef
         }
         default: {
           $package_release = "debian-${::lsbdistcodename}"

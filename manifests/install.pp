@@ -60,6 +60,7 @@ class docker::install {
     'Gentoo': {
       $manage_kernel = false
     }
+    default: {}
   }
 
   if $manage_kernel {
