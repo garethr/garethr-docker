@@ -82,6 +82,7 @@ class docker::params {
             $service_provider        = 'systemd'
             $storage_config          = '/etc/default/docker-storage'
             $service_config_template = 'docker/etc/sysconfig/docker.systemd.erb'
+            $service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-debian.conf.erb'
             $service_hasstatus       = true
             $service_hasrestart      = true
             include docker::systemd_reload
