@@ -204,8 +204,13 @@ define docker::run(
 
     $cidfile = "/var/run/${service_prefix}${sanitised_title}.cid"
 
+    $run_with_docker_command = [
+      "${docker_command} run -d ${docker_run_flags}",
+      "--name ${sanitised_title} --cidfile=${cidfile}",
+      "--restart=\"${restart}\" ${image} ${command}",
+    ]
     exec { "run ${title} with docker":
-      command     => "${docker_command} run -d ${docker_run_flags} --name ${sanitised_title} --cidfile=${cidfile} --restart=\"${restart}\" ${image} ${command}",
+      command     => join($run_with_docker_command, ' '),
       unless      => "${docker_command} ps --no-trunc -a | grep `cat ${cidfile}`",
       environment => 'HOME=/root',
       path        => ['/bin', '/usr/bin'],
@@ -217,7 +222,8 @@ define docker::run(
       'Debian': {
         $deprecated_initscript = "/etc/init/${service_prefix}${sanitised_title}.conf"
         $hasstatus  = true
-        if ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemmajrelease, '8') >= 0) or ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '15.04') >= 0) {
+        if ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemmajrelease, '8') >= 0) or
+          ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '15.04') >= 0) {
           $initscript = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
           $init_template = 'docker/etc/systemd/system/docker-run.erb'
           $uses_systemd = true
@@ -306,8 +312,12 @@ define docker::run(
           if $initscript == "/etc/init.d/${service_prefix}${sanitised_title}" {
             # This exec sequence will ensure the old-style CID container is stopped
             # before we replace the init script with the new-style.
+            $transition_onlyif = [
+              "/usr/bin/test -f /var/run/docker-${sanitised_title}.cid &&",
+              "/usr/bin/test -f /etc/init.d/${service_prefix}${sanitised_title}",
+            ]
             exec { "/bin/sh /etc/init.d/${service_prefix}${sanitised_title} stop":
-              onlyif  => "/usr/bin/test -f /var/run/docker-${sanitised_title}.cid && /usr/bin/test -f /etc/init.d/${service_prefix}${sanitised_title}",
+              onlyif  => join($transition_onlyif, ' '),
               require => [],
             } ->
             file { "/var/run/${service_prefix}${sanitised_title}.cid":

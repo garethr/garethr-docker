@@ -250,7 +250,9 @@
 #   Defaults to false
 #
 # [*dm_override_udev_sync_check*]
-#   By default, the devicemapper backend attempts to synchronize with the udev device manager for the Linux kernel. This option allows disabling that synchronization, to continue even though the configuration may be buggy.
+#   By default, the devicemapper backend attempts to synchronize with the udev
+#   device manager for the Linux kernel. This option allows disabling that
+#   synchronization, to continue even though the configuration may be buggy.
 #   Defaults to true
 #
 # [*manage_package*]
@@ -401,7 +403,8 @@ class docker(
 ) inherits docker::params {
 
   validate_string($version)
-  validate_re($::osfamily, '^(Debian|RedHat|Archlinux|Gentoo)$', 'This module only works on Debian or Red Hat based systems or on Archlinux as on Gentoo.')
+  validate_re($::osfamily, '^(Debian|RedHat|Archlinux|Gentoo)$',
+              'This module only works on Debian or Red Hat based systems or on Archlinux as on Gentoo.')
   validate_bool($manage_kernel)
   validate_bool($manage_package)
   validate_bool($docker_cs)
@@ -426,7 +429,8 @@ class docker(
   }
 
   if $log_driver {
-    validate_re($log_driver, '^(none|json-file|syslog|journald|gelf|fluentd)$', 'log_driver must be one of none, json-file, syslog, journald, gelf or fluentd')
+    validate_re($log_driver, '^(none|json-file|syslog|journald|gelf|fluentd)$',
+                'log_driver must be one of none, json-file, syslog, journald, gelf or fluentd')
   }
 
   if $selinux_enabled {
@@ -434,7 +438,8 @@ class docker(
   }
 
   if $storage_driver {
-    validate_re($storage_driver, '^(aufs|devicemapper|btrfs|overlay|vfs|zfs)$', 'Valid values for storage_driver are aufs, devicemapper, btrfs, overlay, vfs, zfs.' )
+    validate_re($storage_driver, '^(aufs|devicemapper|btrfs|overlay|vfs|zfs)$',
+                'Valid values for storage_driver are aufs, devicemapper, btrfs, overlay, vfs, zfs.' )
   }
 
   if $dm_fs {
@@ -457,7 +462,8 @@ class docker(
     fail('You need to provide both $dm_datadev and $dm_metadatadev parameters for direct lvm.')
   }
 
-  if ($dm_basesize or $dm_fs or $dm_mkfsarg or $dm_mountopt or $dm_blocksize or $dm_loopdatasize or $dm_loopmetadatasize or $dm_datadev or $dm_metadatadev) and ($storage_driver != 'devicemapper') {
+  if ($dm_basesize or $dm_fs or $dm_mkfsarg or $dm_mountopt or $dm_blocksize or $dm_loopdatasize or
+      $dm_loopmetadatasize or $dm_datadev or $dm_metadatadev) and ($storage_driver != 'devicemapper') {
     fail('Values for dm_ variables will be ignored unless storage_driver is set to devicemapper.')
   }
 
