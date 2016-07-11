@@ -7,9 +7,9 @@
 #
 DOCKER_IMAGE=$1
 
-BEFORE=$(docker inspect --format='{{.Config.Image}}' ${DOCKER_IMAGE} 2>/dev/null)
+BEFORE=$(docker inspect --format='{{.Id}}' ${DOCKER_IMAGE} 2>/dev/null)
 <%= @docker_command -%> pull ${DOCKER_IMAGE}
-AFTER=$(docker inspect --format='{{.Config.Image}}' ${DOCKER_IMAGE} 2>/dev/null)
+AFTER=$(docker inspect --format='{{.Id}}' ${DOCKER_IMAGE} 2>/dev/null)
 
 if [[ -z $AFTER ]]; then
   echo "Docker image ${DOCKER_IMAGE} failed to pull!"
