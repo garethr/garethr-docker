@@ -415,6 +415,14 @@ using Puppet to run Compose. This means you can have Puppet remediate
 any issues and make sure reality matches the model in your Compose
 file.
 
+Before using the docker_compose type make sure the docker-compose utility is installed:
+
+```puppet
+class {'docker::compose': 
+  ensure => present,
+}
+```
+
 Here's an example. Given the following Compose file:
 
 ```yaml
