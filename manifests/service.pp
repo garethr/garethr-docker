@@ -171,6 +171,7 @@ class docker::service (
         notify => $_manage_service,
       }
     }
+    default: {}
   }
 
   if $storage_config {

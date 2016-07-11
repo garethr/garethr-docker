@@ -64,5 +64,6 @@ class docker::repos {
         }
       }
     }
+    default: {}
   }
 }
