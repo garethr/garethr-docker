@@ -67,7 +67,7 @@ fi
 start() {
     [ -x $docker ] || exit 5
 
-    if [ "true" = "$($docker inspect --format='{{.State.Running}}' <%= @sanitised_title %>)" ]; then
+    if [ "true" = "$($docker inspect --format='{{.State.Running}}' <%= @sanitised_title %> 2>/dev/null)" ]; then
        failure
        printf "Container <%= @sanitised_title %> is still running.\n"
        exit 7
@@ -142,7 +142,7 @@ case "$1" in
     stop
     ;;
     status)
-    if [ "true" = "$($docker inspect --format='{{.State.Running}}' <%= @sanitised_title %>)" ]; then
+    if [ "true" = "$($docker inspect --format='{{.State.Running}}' <%= @sanitised_title %> 2>/dev/null)" ]; then
         echo $prog is running
         exit 0
     else
