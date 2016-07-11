@@ -10,6 +10,7 @@ describe compose do
       :provider,
       :scale,
       :options,
+      :up_args,
     ]
   end
 
@@ -33,6 +34,10 @@ describe compose do
 
 	it 'should require options to be a string' do
 		expect(compose).to require_string_for('options')
+  end
+
+	it 'should require up_args to be a string' do
+		expect(compose).to require_string_for('up_args')
   end
 
 	it 'should require scale to be a hash' do

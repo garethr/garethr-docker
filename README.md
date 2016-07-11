@@ -447,7 +447,7 @@ docker_compose { '/tmp/docker-compose.yml':
 Now when Puppet runs it will automatically run Compose is required,
 for example because the relevant Compose services aren't running.
 
-You can also pass addition options (for example to enable experimental
+You can also pass additional options (for example to enable experimental
 features) as well as provide scaling rules. The following example
 requests 2 containers be running for example. Puppet will now run
 Compose if the number of containers for a given service don't match the
@@ -462,6 +462,9 @@ docker_compose { '/tmp/docker-compose.yml':
   options => '--x-networking'
 }
 ```
+
+It is also possible to give options to the ```docker-compose up``` command
+such as ```--remove-orphans``` using the ```up_args``` option.
 
 ### Private registries
 By default images will be pushed and pulled from [index.docker.io](http://index.docker.io) unless you've specified a server. If you have your own private registry without authentication, you can fully qualify your image name. If your private registry requires authentication you may configure a registry:
