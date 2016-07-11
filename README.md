@@ -298,6 +298,7 @@ docker::run { 'helloworld':
   ports           => ['4444', '4555'],
   expose          => ['4666', '4777'],
   links           => ['mysql:db'],
+  net             => 'my-user-def-net',
   volumes         => ['/var/lib/couchdb', '/var/log'],
   volumes_from    => '6446ea52fbc9',
   memory_limit    => '10m', # (format: '<number><unit>', where unit = b, k, m or g)
@@ -313,7 +314,7 @@ docker::run { 'helloworld':
   before_stop     => 'echo "So Long, and Thanks for All the Fish"',
   after           => [ 'container_b', 'mysql' ],
   depends         => [ 'container_a', 'postgres' ],
-  extra_parameters => [ '--net=my-user-def-net' ],
+  extra_parameters => [ '--restart=always' ],
 }
 ```
 
@@ -405,7 +406,7 @@ docker::networks::networks:
     subnet: '192.168.1.0/24'
     gateway: '192.168.1.1'
 ```
-
+The network defined can then be used on a `docker::run` resource with the `net` parameter.
 ### Compose
 
 Docker Compose allows for describing a set of containers in a simple
