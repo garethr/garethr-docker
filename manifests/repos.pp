@@ -7,21 +7,16 @@ class docker::repos {
 
   case $::osfamily {
     'Debian': {
-      include apt
-      if $::operatingsystem == 'Debian' and $::lsbdistcodename == 'wheezy' {
-        include apt::backports
-      }
-      if ($docker::docker_cs) {
-        $location = $docker::package_cs_source_location
-        $key_source = $docker::package_cs_key_source
-        $package_key = $docker::package_cs_key
-      } else {
-        $location = $docker::package_source_location
-        $key_source = $docker::package_key_source
-        $package_key = $docker::package_key
-      }
-      Exec['apt_update'] -> Package[$docker::prerequired_packages]
       if ($docker::use_upstream_package_source) {
+        if ($docker::docker_cs) {
+          $location = $docker::package_cs_source_location
+          $key_source = $docker::package_cs_key_source
+          $package_key = $docker::package_cs_key
+        } else {
+          $location = $docker::package_source_location
+          $key_source = $docker::package_key_source
+          $package_key = $docker::package_key
+        }
         apt::source { 'docker':
           location          => $location,
           release           => $docker::package_release,
@@ -33,6 +28,11 @@ class docker::repos {
           include_src       => false,
         }
         if $docker::manage_package {
+          include apt
+          if $::operatingsystem == 'Debian' and $::lsbdistcodename == 'wheezy' {
+            include apt::backports
+          }
+          Exec['apt_update'] -> Package[$docker::prerequired_packages]
           Apt::Source['docker'] -> Package['docker']
         }
       }
