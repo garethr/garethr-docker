@@ -52,6 +52,8 @@ describe 'docker', :type => :class do
         it { should contain_apt__source('docker').with_location('http://apt.dockerproject.org/repo') }
         it { should contain_package('docker').with_install_options(nil) }
 
+        it { should contain_file('/etc/default/docker').without_content(/icc=/) }
+
         context 'with a custom version' do
           let(:params) { {'version' => '0.5.5' } }
           it { should contain_package('docker').with_ensure('0.5.5').with_name('docker-engine') }
@@ -88,6 +90,11 @@ describe 'docker', :type => :class do
         context 'with iptables param set to false' do
           let(:params) {{ 'iptables' => false }}
           it { should contain_file('/etc/default/docker').with_content(/iptables=false/) }
+        end
+
+        context 'with icc param set to false' do
+          let(:params) {{ 'icc' => false }}
+          it { should contain_file('/etc/default/docker').with_content(/icc=false/) }
         end
 
         context 'with tcp_bind array param' do
@@ -176,6 +183,8 @@ describe 'docker', :type => :class do
         service_config_file = '/etc/sysconfig/docker'
         storage_config_file = '/etc/sysconfig/docker-storage'
 
+        it { should contain_file('/etc/sysconfig/docker').without_content(/icc=/) }
+
         context 'with proxy param' do
           let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
           it { should contain_file(service_config_file).with_content(/export http_proxy='http:\/\/127.0.0.1:3128'/) }
@@ -205,6 +214,11 @@ describe 'docker', :type => :class do
         context 'with iptables param set to false' do
           let(:params) {{ 'iptables' => false }}
           it { should contain_file('/etc/sysconfig/docker').with_content(/iptables=false/) }
+        end
+
+        context 'with icc param set to false' do
+          let(:params) {{ 'icc' => false }}
+          it { should contain_file('/etc/sysconfig/docker').with_content(/icc=false/) }
         end
 
         context 'with tcp_bind array param' do
@@ -377,6 +391,8 @@ describe 'docker', :type => :class do
       it { should contain_class('docker::install').that_comes_before('Class[docker::config]') }
       it { should contain_class('docker::service').that_subscribes_to('Class[docker::config]') }
       it { should contain_class('docker::config') }
+
+      it { should contain_file(service_config_file).without_content(/icc=/) }
 
       context 'with a specific docker command' do
         let(:params) {{ 'docker_command' => 'docker.io' }}
