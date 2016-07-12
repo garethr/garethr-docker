@@ -2,6 +2,14 @@ require 'spec_helper'
 
 describe 'docker::system_user', :type => :define do
   let(:title) { 'testuser' }
+	let(:facts) { {
+		:osfamily                  => 'Debian',
+		:operatingsystem           => 'Debian',
+		:lsbdistid                 => 'Debian',
+		:lsbdistcodename           => 'jessie',
+		:kernelrelease             => '3.2.0-4-amd64',
+		:operatingsystemmajrelease => '8',
+	} }
 
   context 'with default' do
     let(:params) { {'create_user' => true} }

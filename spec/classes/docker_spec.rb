@@ -171,6 +171,7 @@ describe 'docker', :type => :class do
           :operatingsystem => 'RedHat',
           :operatingsystemrelease => '6.5',
           :operatingsystemmajrelease => '7',
+          :kernelversion => '2.6.32',
         } }
         service_config_file = '/etc/sysconfig/docker'
         storage_config_file = '/etc/sysconfig/docker-storage'
@@ -396,14 +397,18 @@ describe 'docker', :type => :class do
       end
 
       context 'when not managing the package' do
-        let(:params) { {'manage_package' => false } }
-        it { should_not contain_package('docker') }
+        let(:params) { { 'manage_package' => false } }
+        skip 'the APT module at v2.1 does not support STRICT_VARIABLES' do
+          it { should_not contain_package('docker') }
+        end
       end
 
       context 'It should accept custom prerequired_packages' do
         let(:params) { {'prerequired_packages' => [ 'test_package' ],
                         'manage_package'       => false,  } }
-        it { should contain_package('test_package').with_ensure('present') }
+        skip 'the APT module at v2.1 does not support STRICT_VARIABLES' do
+          it { should contain_package('test_package').with_ensure('present') }
+        end
       end
 
       context 'with proxy param' do
@@ -726,6 +731,7 @@ describe 'docker', :type => :class do
       :operatingsystem => 'RedHat',
       :operatingsystemrelease => '6.5',
       :operatingsystemmajrelease => '6',
+      :kernelversion => '2.6.32',
     } }
 
     it { should contain_class('epel') }
@@ -770,6 +776,7 @@ describe 'docker', :type => :class do
       :operatingsystem => 'Family',
       :operatingsystemrelease => '21.0',
       :operatingsystemmajrelease => '21',
+      :kernelversion => '2.6.31'
     } }
 
     it { should contain_package('docker').with_name('docker-engine') }
@@ -784,6 +791,7 @@ describe 'docker', :type => :class do
         :operatingsystem => operatingsystem,
         :operatingsystemrelease => '7.0',
         :operatingsystemmajrelease => '7',
+        :kernelversion => '2.6.32',
       } }
 
       storage_setup_file = '/etc/sysconfig/docker-storage-setup'
@@ -857,6 +865,7 @@ describe 'docker', :type => :class do
       :operatingsystem => 'RedHat',
       :operatingsystemrelease => '7.0',
       :operatingsystemmajrelease => '7',
+      :kernelversion => '2.6.32',
     } }
 
     it { should contain_package('docker').with_name('docker-engine') }
@@ -877,6 +886,7 @@ describe 'docker', :type => :class do
       :operatingsystem => 'OracleLinux',
       :operatingsystemrelease => '7.0',
       :operatingsystemmajrelease => '7',
+      :kernelversion => '2.6.32',
     } }
 
     it { should contain_package('docker').with_name('docker-engine') }
@@ -890,6 +900,7 @@ describe 'docker', :type => :class do
       :operatingsystem => 'Scientific',
       :operatingsystemrelease => '7.0',
       :operatingsystemmajrelease => '7',
+      :kernelversion => '2.6.32',
     } }
 
     it { should contain_package('docker').with_name('docker-engine') }
@@ -960,6 +971,7 @@ describe 'docker', :type => :class do
       :operatingsystem => 'RedHat',
       :operatingsystemrelease => '6.4',
       :operatingsystemmajrelease => '6',
+      :kernelversion => '2.6.32',
     } }
     it do
       expect {
@@ -974,6 +986,7 @@ describe 'docker', :type => :class do
       :operatingsystem => 'Amazon',
       :operatingsystemrelease => '2015.09',
       :operatingsystemmajrelease => '2015',
+      :kernelversion => '2.6.32',
     } }
     it {should contain_service('docker').without_provider }
   end

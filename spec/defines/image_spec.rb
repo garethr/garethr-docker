@@ -2,6 +2,14 @@ require 'spec_helper'
 
 describe 'docker::image', :type => :define do
   let(:title) { 'base' }
+	let(:facts) { {
+		:osfamily                  => 'Debian',
+		:operatingsystem           => 'Debian',
+		:lsbdistid                 => 'Debian',
+		:lsbdistcodename           => 'jessie',
+		:kernelrelease             => '3.2.0-4-amd64',
+		:operatingsystemmajrelease => '8',
+	} }
 
   context 'with ensure => absent' do
     let(:params) { { 'ensure' => 'absent' } }

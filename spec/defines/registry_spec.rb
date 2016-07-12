@@ -2,6 +2,14 @@ require 'spec_helper'
 
 describe 'docker::registry', :type => :define do
   let(:title) { 'localhost:5000' }
+	let(:facts) { {
+		:osfamily                  => 'Debian',
+		:operatingsystem           => 'Debian',
+		:lsbdistid                 => 'Debian',
+		:lsbdistcodename           => 'jessie',
+		:kernelrelease             => '3.2.0-4-amd64',
+		:operatingsystemmajrelease => '8',
+	} }
   it { should contain_exec('localhost:5000 auth') }
 
   context 'with ensure => present' do

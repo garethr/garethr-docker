@@ -48,10 +48,12 @@ define docker::registry(
     }
     else {
       $auth_cmd = "${docker_command} login ${server}"
+      $auth_environment = undef
     }
   }
   else {
-      $auth_cmd = "${docker_command} logout ${server}"
+    $auth_cmd = "${docker_command} logout ${server}"
+    $auth_environment = undef
   }
 
   exec { "${title} auth":

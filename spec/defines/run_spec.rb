@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 ['Debian', 'RedHat', 'Archlinux', 'Amazon', 'Gentoo'].each do |osfamily|
-
   describe 'docker::run', :type => :define do
     let(:title) { 'sample' }
 
@@ -35,6 +34,7 @@ require 'spec_helper'
         :operatingsystem => 'RedHat',
         :operatingsystemrelease => '6.6',
         :operatingsystemmajrelease => '6',
+        :kernelversion => '2.6.32',
       } }
       initscript = '/etc/init.d/docker-sample'
       command = 'docker'
@@ -45,6 +45,7 @@ require 'spec_helper'
         :operatingsystem => 'Amazon',
         :operatingsystemrelease => '2015.09',
         :operatingsystemmajrelease => '2015',
+        :kernelversion => '2.6.32',
       } }
       initscript = '/etc/init.d/docker-sample'
       command = 'docker'

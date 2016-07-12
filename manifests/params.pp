@@ -107,8 +107,12 @@ class docker::params {
             $service_hasrestart         = true
             include docker::systemd_reload
           } else {
+            $service_provider           = undef
+            $storage_config             = undef
             $service_config_template    = 'docker/etc/default/docker.erb'
             $service_overrides_template = undef
+            $service_hasstatus          = undef
+            $service_hasrestart         = undef
           }
         }
       }
@@ -249,6 +253,8 @@ class docker::params {
       $service_hasrestart = true
       $service_config = '/etc/conf.d/docker'
       $service_config_template = 'docker/etc/conf.d/docker.erb'
+      $storage_config = undef
+      $storage_setup_file = undef
     }
     'Gentoo' : {
       $manage_epel = false
@@ -271,6 +277,8 @@ class docker::params {
       $service_hasrestart = true
       $service_config = '/etc/conf.d/docker'
       $service_config_template = 'docker/etc/conf.d/docker.gentoo.erb'
+      $storage_config = undef
+      $storage_setup_file = undef
     }
     default: {
       $manage_epel = false
@@ -284,6 +292,7 @@ class docker::params {
       $service_overrides_template = undef
       $service_hasstatus  = undef
       $service_hasrestart = undef
+      $service_provider = undef
       $package_name = $package_name_default
       $service_name = $service_name_default
       $docker_command = $docker_command_default
@@ -291,6 +300,9 @@ class docker::params {
       $repo_opt = undef
       $nowarn_kernel = false
       $service_config = undef
+      $storage_config = undef
+      $storage_setup_file = undef
+      $service_config_template = undef
     }
   }
 
