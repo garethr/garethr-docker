@@ -123,6 +123,7 @@ class docker::params {
       $repo_opt = undef
       $nowarn_kernel = false
       $service_config = undef
+      $storage_setup_file = undef
 
       $package_cs_source_location = 'http://packages.docker.com/1.9/apt/repo'
       $package_cs_key_source = 'http://packages.docker.com/1.9/apt/gpg'
@@ -142,6 +143,7 @@ class docker::params {
     'RedHat' : {
       $service_config = '/etc/sysconfig/docker'
       $storage_config = '/etc/sysconfig/docker-storage'
+      $storage_setup_file = '/etc/sysconfig/docker-storage-setup'
       $service_hasstatus  = true
       $service_hasrestart = true
 

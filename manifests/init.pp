@@ -399,6 +399,7 @@ class docker(
   $storage_pool_autoextend_percent   = $docker::params::storage_pool_autoextend_percent,
   $storage_config                    = $docker::params::storage_config,
   $storage_config_template           = $docker::params::storage_config_template,
+  $storage_setup_file                = $docker::params::storage_setup_file,
   $service_provider                  = $docker::params::service_provider,
   $service_config                    = $docker::params::service_config,
   $service_config_template           = $docker::params::service_config_template,
