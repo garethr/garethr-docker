@@ -3,6 +3,10 @@ Puppet::Type.newtype(:docker_compose) do
 
   ensurable
 
+  def refresh
+      provider.restart
+  end
+
   newparam(:name) do
     desc 'Docker compose file path.'
   end
