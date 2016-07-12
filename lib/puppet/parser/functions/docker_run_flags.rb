@@ -48,6 +48,14 @@ module Puppet::Parser::Functions
       flags << '-t'
     end
 
+    if opts['rm']
+      flags << '--rm'
+    end
+
+    if opts['interactive']
+      flags << '--interactive'
+    end
+
     multi_flags = lambda { |values, format|
       filtered = [values].flatten.compact
       filtered.map { |val| sprintf(format, val) }

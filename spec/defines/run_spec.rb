@@ -343,7 +343,7 @@ require 'spec_helper'
       it { should contain_file(initscript).with_content(/--expose=4666/).with_content(/--expose=4777/) }
     end
 
-    context 'when passing serveral environment variables' do
+    context 'when passing several environment variables' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'env' => ['FOO=BAR', 'FOO2=BAR2']} }
       it { should contain_file(initscript).with_content(/-e FOO=BAR/).with_content(/-e FOO2=BAR2/) }
     end
@@ -353,7 +353,7 @@ require 'spec_helper'
       it { should contain_file(initscript).with_content(/-e FOO=BAR/) }
     end
 
-    context 'when passing serveral environment files' do
+    context 'when passing several environment files' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'env_file' => ['/etc/foo.env', '/etc/bar.env']} }
       it { should contain_file(initscript).with_content(/--env-file \/etc\/foo.env/).with_content(/--env-file \/etc\/bar.env/) }
     end
@@ -363,7 +363,7 @@ require 'spec_helper'
       it { should contain_file(initscript).with_content(/--env-file \/etc\/foo.env/) }
     end
 
-    context 'when passing serveral dns addresses' do
+    context 'when passing several dns addresses' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'dns' => ['8.8.8.8', '8.8.4.4']} }
       it { should contain_file(initscript).with_content(/--dns 8.8.8.8/).with_content(/--dns 8.8.4.4/) }
     end
@@ -373,7 +373,7 @@ require 'spec_helper'
       it { should contain_file(initscript).with_content(/--dns 8.8.8.8/) }
     end
 
-    context 'when passing serveral sockets to connect to' do
+    context 'when passing several sockets to connect to' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'socket_connect' => ['tcp://127.0.0.1:4567', 'tcp://127.0.0.2:4567']} }
       it { should contain_file(initscript).with_content(/-H tcp:\/\/127.0.0.1:4567/) }
     end
@@ -383,7 +383,7 @@ require 'spec_helper'
       it { should contain_file(initscript).with_content(/-H tcp:\/\/127.0.0.1:4567/) }
     end
 
-    context 'when passing serveral dns search domains' do
+    context 'when passing several dns search domains' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'dns_search' => ['my.domain.local', 'other-domain.de']} }
       it { should contain_file(initscript).with_content(/--dns-search my.domain.local/).with_content(/--dns-search other-domain.de/) }
     end
@@ -422,7 +422,7 @@ require 'spec_helper'
       it { should contain_file(initscript).with_content(/-t/) }
     end
 
-    context 'when passing serveral extra parameters' do
+    context 'when passing several extra parameters' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'extra_parameters' => ['--rm', '-w /tmp']} }
       it { should contain_file(initscript).with_content(/--rm/).with_content(/-w \/tmp/) }
     end
@@ -437,7 +437,7 @@ require 'spec_helper'
       it { should contain_file(initscript).with_content(/-v \/var\/log/) }
     end
 
-    context 'when passing serveral data volume' do
+    context 'when passing several data volume' do
       let(:params) { {'command' => 'command', 'image' => 'base', 'volumes' => ['/var/lib/couchdb', '/var/log']} }
       it { should contain_file(initscript).with_content(/-v \/var\/lib\/couchdb/) }
       it { should contain_file(initscript).with_content(/-v \/var\/log/) }
