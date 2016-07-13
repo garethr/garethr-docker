@@ -61,6 +61,17 @@ Puppet::Type.type(:docker_compose).provide(:ruby) do
     dockercompose(rm_args)
   end
 
+  def restart
+    if exists?
+      Puppet.info("Rebuilding and Restarting all containers for compose project #{project}")
+      kill_args = ['-f', name, 'kill'].insert(2, resource[:options]).compact
+      dockercompose(kill_args)
+      build_args = ['-f', name, 'build'].insert(2, resource[:options]).compact
+      dockercompose(build_args)
+      create
+    end
+  end
+
   private
   def project
     File.basename(File.dirname(name)).downcase.gsub(/[^0-9a-z ]/i, '')
