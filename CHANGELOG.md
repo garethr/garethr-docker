@@ -1,3 +1,31 @@
+##2016-07-13 - Version 5.3
+
+Several minor improvements to the Docker Compose support including:
+
+* Support for v2 of the Compose file syntax
+* Support refreshing the docker_compose resource
+* The ability to pass an install_path for custom installations
+* Passing arguments to docker-compose up
+* Ensuring curl is available when using it to install Compose
+
+New parameters for docker::run including stop_wait_time to allow
+containers time to stop when killed
+
+New parameters for the docker class, including icc, storage_setup_file
+
+Support for the overlay2 storage driver and the splunk log driver.
+
+Improvements to management when not using the upstream repository,
+including doing less to manage potentially unneeded dependencies.
+
+Support multiple registry authentications on the same host.
+
+Fix an issue with using docker::run on Swarm.
+
+Fix a number of issues if running the module with strict variables
+enabled, and add this to the tested conbinations.
+
+
 ##2016-03-30 - Version 5.2
 
 This release includes some minor features and several bug fixes,
