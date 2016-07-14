@@ -1,11 +1,11 @@
 Puppet module for installing, configuring and managing
-[Docker](https://github.com/docker/docker) from the [official repository](http://docs.docker.com/installation/) or alternatively from [EPEL on RedHat](http://docs.docker.io/en/latest/installation/rhel/) based distributions.
+[Docker](https://github.com/docker/docker) from the [official repository](https://docs.docker.com/installation/) or alternatively from [EPEL on RedHat](https://docs.docker.io/en/latest/installation/rhel/) based distributions.
 
 [![Puppet
-Forge](http://img.shields.io/puppetforge/v/garethr/docker.svg)](https://forge.puppetlabs.com/garethr/docker) [![Build
-Status](https://secure.travis-ci.org/garethr/garethr-docker.png)](http://travis-ci.org/garethr/garethr-docker) [![Documentation
-Status](http://img.shields.io/badge/docs-puppet--strings-lightgrey.svg)](https://garethr.github.io/garethr-docker) [![Puppet Forge
-Downloads](http://img.shields.io/puppetforge/dt/garethr/docker.svg)](https://forge.puppetlabs.com/garethr/docker) [![Puppet Forge
+Forge](https://img.shields.io/puppetforge/v/garethr/docker.svg)](https://forge.puppetlabs.com/garethr/docker) [![Build
+Status](https://secure.travis-ci.org/garethr/garethr-docker.png)](https://travis-ci.org/garethr/garethr-docker) [![Documentation
+Status](https://img.shields.io/badge/docs-puppet--strings-lightgrey.svg)](https://garethr.github.io/garethr-docker) [![Puppet Forge
+Downloads](https://img.shields.io/puppetforge/dt/garethr/docker.svg)](https://forge.puppetlabs.com/garethr/docker) [![Puppet Forge
 Endorsement](https://img.shields.io/puppetforge/e/garethr/docker.svg)](https://forge.puppetlabs.com/garethr/docker)
 
 
@@ -75,7 +75,7 @@ class { 'docker':
 ```
 
 Docker recently [launched new official
-repositories](http://blog.docker.com/2015/07/new-apt-and-yum-repos/#comment-247448)
+repositories](https://blog.docker.com/2015/07/new-apt-and-yum-repos/#comment-247448)
 which are now the default for the module from version 5. If you want to
 stick with the old respoitories you can do so with the following:
 
@@ -467,7 +467,7 @@ It is also possible to give options to the ```docker-compose up``` command
 such as ```--remove-orphans``` using the ```up_args``` option.
 
 ### Private registries
-By default images will be pushed and pulled from [index.docker.io](http://index.docker.io) unless you've specified a server. If you have your own private registry without authentication, you can fully qualify your image name. If your private registry requires authentication you may configure a registry:
+By default images will be pushed and pulled from [index.docker.io](https://index.docker.io) unless you've specified a server. If you have your own private registry without authentication, you can fully qualify your image name. If your private registry requires authentication you may configure a registry:
 
 ```puppet
 docker::registry { 'example.docker.io:5000':
