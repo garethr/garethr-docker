@@ -672,6 +672,20 @@ require 'spec_helper'
       it { should contain_exec("remove container docker-sample").with_command('docker rm -v sample') }
     end
 
+    context 'with stop_timeout set to some value' do
+      let(:title) { 'my-container' }
+      let(:params) { {'image' => 'base', 'stop_timeout' => '1234567890',} }
+
+      if initscript =~ /^\/etc\/init.d\/docker-sample$/
+        new_initscript = '/etc/init.d/docker-my-container'
+        it { should contain_file(new_initscript).with_content(/\$docker stop -t 1234567890 my-container$/) }
+
+      elsif initscript =~ /^\/etc\/systemd\/system\/docker-sample\.service$/
+        new_initscript = '/etc/systemd/system/docker-my-container.service'
+        it { should contain_file(new_initscript).with_content(/^ExecStop=-\/usr\/bin\/docker stop -t 1234567890 my-container$/) }
+      end
+    end
+
   end
   end
 
