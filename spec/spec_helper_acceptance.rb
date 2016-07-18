@@ -1,8 +1,12 @@
 require 'beaker-rspec/spec_helper'
 require 'beaker-rspec/helpers/serverspec'
-require 'pry'
 require 'beaker/puppet_install_helper'
 require 'rspec/retry'
+
+begin
+  require 'pry'
+rescue LoadError # rubocop:disable Lint/HandleExceptions for optional loading
+end
 
 run_puppet_install_helper unless ENV['BEAKER_provision'] == 'no'
 
