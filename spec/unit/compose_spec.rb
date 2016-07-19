@@ -9,7 +9,7 @@ describe 'docker::compose', :type => :class do
   context 'when no proxy is provided' do
     let(:params) { {:version => '1.7.0'} }
     it { is_expected.to contain_exec('Install Docker Compose 1.7.0').with_command(
-           'curl -s -L https://github.com/docker/compose/releases/download/1.7.0/docker-compose-Linux-x86_64 > /usr/local/bin/docker-compose-1.7.0')
+           'curl -s -L  https://github.com/docker/compose/releases/download/1.7.0/docker-compose-Linux-x86_64 > /usr/local/bin/docker-compose-1.7.0')
     }
   end
 
