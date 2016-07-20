@@ -11,6 +11,7 @@ describe compose do
       :scale,
       :options,
       :up_args,
+      :restart,
     ]
   end
 
@@ -38,6 +39,10 @@ describe compose do
 
 	it 'should require up_args to be a string' do
 		expect(compose).to require_string_for('up_args')
+  end
+
+	it 'should require restart to be a boolean' do
+		expect(compose).to require_boolean_for('restart')
   end
 
 	it 'should require scale to be a hash' do

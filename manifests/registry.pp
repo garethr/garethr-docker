@@ -46,6 +46,10 @@ define docker::registry(
       $auth_cmd = "${docker_command} login -u '${username}' -p \"\${password}\" -e '${email}' ${server}"
       $auth_environment = "password=${password}"
     }
+    elsif $username != undef and $password != undef {
+      $auth_cmd = "${docker_command} login -u '${username}' -p \"\${password}\" ${server}"
+      $auth_environment = "password=${password}"
+    }
     else {
       $auth_cmd = "${docker_command} login ${server}"
       $auth_environment = undef

@@ -63,9 +63,12 @@ Puppet::Type.type(:docker_compose).provide(:ruby) do
 
   def restart
     if exists?
-      Puppet.info("Rebuilding and Restarting all containers for compose project #{project}")
-      kill_args = ['-f', name, 'kill'].insert(2, resource[:options]).compact
-      dockercompose(kill_args)
+      if resource[:restart] != false
+        Puppet.info("Restarting all containers for compose project #{project}")
+        kill_args = ['-f', name, 'kill'].insert(2, resource[:options]).compact
+        dockercompose(kill_args)
+      end
+      Puppet.info("Rebuilding all containers for compose project #{project}")
       build_args = ['-f', name, 'build'].insert(2, resource[:options]).compact
       dockercompose(build_args)
       create
