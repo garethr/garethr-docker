@@ -7,8 +7,8 @@
 class docker::install {
   $docker_command = $docker::docker_command
   validate_string($docker::version)
-  validate_re($::osfamily, '^(Debian|RedHat|Archlinux|Gentoo)$',
-              'This module only works on Debian or Red Hat based systems or on Archlinux as on Gentoo.')
+  validate_re($::osfamily, '^(Debian|RedHat|Archlinux|Gentoo|Suse)$',
+              'This module only works on Debian or Red Hat based systems or on Archlinux on Gentoo and Suse.')
   validate_bool($docker::use_upstream_package_source)
 
   if $docker::version and $docker::ensure != 'absent' {
@@ -59,6 +59,12 @@ class docker::install {
     'Gentoo': {
       $manage_kernel = false
     }
+    'Suse': {
+      if versioncmp($::operatingsystemrelease, '12.0') < 0 {
+        fail('Docker needs Suse version to be at least 12.0.')
+      }
+      $manage_kernel = false
+    }
     default: {}
   }
 
@@ -89,6 +95,9 @@ class docker::install {
         }
         'Gentoo' : {
           $pk_provider = 'portage'
+        }
+        'Suse': {
+          $pk_provider = 'zypper'
         }
         default : {
           $pk_provider = undef

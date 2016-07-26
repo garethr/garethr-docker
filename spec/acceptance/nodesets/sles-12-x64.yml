@@ -1,0 +1,10 @@
+HOSTS:
+  sles-12-x64:
+    roles:
+      - default
+    platform: sles-12-x86_64
+    template: sles-12-x86_64
+    hypervisor : virtualbox
+CONFIG:
+  log_level: verbose
+  type: foss

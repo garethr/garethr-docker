@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'docker', :type => :class do
 
-  ['Debian', 'Ubuntu', 'RedHat', 'Archlinux', 'Gentoo'].each do |osfamily|
+  ['Debian', 'Ubuntu', 'RedHat', 'Archlinux', 'Gentoo', 'Suse'].each do |osfamily|
     context "on #{osfamily}" do
 
       if osfamily == 'Debian'
@@ -20,6 +20,19 @@ describe 'docker', :type => :class do
 
         context 'It should include default prerequired_packages' do
           it { should contain_package('cgroupfs-mount').with_ensure('present') }
+        end
+
+        context 'with a specific docker command' do
+          let(:params) {{ 'docker_command' => 'docker.io' }}
+          it { should contain_file(service_config_file).with_content(/docker.io/) }
+        end
+        context 'with proxy param' do
+          let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
+          it { should contain_file(service_config_file).with_content(/export http_proxy='http:\/\/127.0.0.1:3128'\nexport https_proxy='http:\/\/127.0.0.1:3128'/) }
+        end
+        context 'with no_proxy param' do
+          let(:params) { {'no_proxy' => '.github.com' } }
+          it { should contain_file(service_config_file).with_content(/export no_proxy='.github.com'/) }
         end
       end
 
@@ -42,6 +55,21 @@ describe 'docker', :type => :class do
         context 'It should include default prerequired_packages' do
           it { should contain_package('cgroup-lite').with_ensure('present') }
           it { should contain_package('apparmor').with_ensure('present') }
+        end
+
+        context 'with a specific docker command' do
+          let(:params) {{ 'docker_command' => 'docker.io' }}
+          it { should contain_file(service_config_file).with_content(/docker.io/) }
+        end
+
+        context 'with proxy param' do
+          let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
+          it { should contain_file(service_config_file).with_content(/export http_proxy='http:\/\/127.0.0.1:3128'\nexport https_proxy='http:\/\/127.0.0.1:3128'/) }
+        end
+
+        context 'with no_proxy param' do
+          let(:params) { {'no_proxy' => '.github.com' } }
+          it { should contain_file(service_config_file).with_content(/export no_proxy='.github.com'/) }
         end
       end
 
@@ -186,6 +214,20 @@ describe 'docker', :type => :class do
           it { should contain_file('/etc/default/docker.io') }
         end
 
+        context 'with a specific docker command' do
+          let(:params) {{ 'docker_command' => 'docker.io' }}
+          it { should contain_file(service_config_file).with_content(/docker.io/) }
+        end
+
+        context 'with proxy param' do
+          let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
+          it { should contain_file(service_config_file).with_content(/export http_proxy='http:\/\/127.0.0.1:3128'\nexport https_proxy='http:\/\/127.0.0.1:3128'/) }
+        end
+
+        context 'with no_proxy param' do
+          let(:params) { {'no_proxy' => '.github.com' } }
+          it { should contain_file(service_config_file).with_content(/export no_proxy='.github.com'/) }
+        end
       end
 
       if osfamily == 'RedHat'
@@ -384,6 +426,167 @@ describe 'docker', :type => :class do
           end
         end
 
+        context 'with a specific docker command' do
+          let(:params) {{ 'docker_command' => 'docker.io' }}
+          it { should contain_file(service_config_file).with_content(/docker.io/) }
+        end
+
+        context 'with proxy param' do
+          let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
+          it { should contain_file(service_config_file).with_content(/export http_proxy='http:\/\/127.0.0.1:3128'\nexport https_proxy='http:\/\/127.0.0.1:3128'/) }
+        end
+
+        context 'with no_proxy param' do
+          let(:params) { {'no_proxy' => '.github.com' } }
+          it { should contain_file(service_config_file).with_content(/export no_proxy='.github.com'/) }
+        end
+      end
+
+      if osfamily == 'Suse'
+        let(:facts) { {
+          :osfamily => osfamily,
+          :operatingsystem => 'SLES',
+          :operatingsystemrelease => '12.2',
+          :operatingsystemmajrelease => '12',
+          :kernelversion => '4.4.21',
+        } }
+        service_config_file = '/etc/sysconfig/docker'
+        storage_config_file = '/etc/sysconfig/docker-storage'
+
+        it { should contain_file('/etc/sysconfig/docker').without_content(/icc=/) }
+
+        context 'with a specific docker command' do
+          let(:params) {{ 'docker_command' => 'docker.io' }}
+          it { should contain_file('/etc/systemd/system/docker.service.d/service-overrides.conf').with_content(/docker.io/) }
+        end
+
+        context 'with proxy param' do
+          let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
+          it { should contain_file(service_config_file).with_content(/http_proxy='http:\/\/127.0.0.1:3128'/) }
+          it { should contain_file(service_config_file).with_content(/https_proxy='http:\/\/127.0.0.1:3128'/) }
+        end
+
+        context 'with no_proxy param' do
+          let(:params) { {'no_proxy' => '.github.com' } }
+          it { should contain_file(service_config_file).with_content(/no_proxy='.github.com'/) }
+        end
+
+        context 'when given a specific tmp_dir' do
+          let(:params) {{ 'tmp_dir' => '/bigtmp' }}
+          it { should contain_file('/etc/sysconfig/docker').with_content(/TMPDIR="\/bigtmp"/) }
+        end
+
+        context 'with ip_forwaring param set to false' do
+          let(:params) {{ 'ip_forward' => false }}
+          it { should contain_file('/etc/sysconfig/docker').with_content(/ip-forward=false/) }
+        end
+
+        context 'with ip_masq param set to false' do
+          let(:params) {{ 'ip_masq' => false }}
+          it { should contain_file('/etc/sysconfig/docker').with_content(/ip-masq=false/) }
+        end
+
+        context 'with iptables param set to false' do
+          let(:params) {{ 'iptables' => false }}
+          it { should contain_file('/etc/sysconfig/docker').with_content(/iptables=false/) }
+        end
+
+        context 'with icc param set to false' do
+          let(:params) {{ 'icc' => false }}
+          it { should contain_file('/etc/sysconfig/docker').with_content(/icc=false/) }
+        end
+
+        context 'with tcp_bind array param' do
+          let(:params) {{ 'tcp_bind' => ['tcp://127.0.0.1:2375', 'tcp://10.0.0.1:2375'] }}
+          it do
+            should contain_file('/etc/sysconfig/docker').with_content(
+              /tcp:\/\/127.0.0.1:2375 -H tcp:\/\/10.0.0.1:2375/)
+          end
+        end
+        context 'with tcp_bind string param' do
+          let(:params) {{ 'tcp_bind' => 'tcp://127.0.0.1:2375' }}
+          it do
+            should contain_file('/etc/sysconfig/docker').with_content(
+              /tcp:\/\/127.0.0.1:2375/)
+          end
+        end
+        context 'with tls param' do
+          let(:params) {{
+              'tcp_bind' => 'tcp://127.0.0.1:2375',
+              'tls_enable' => true,
+          }}
+          it do
+            should contain_file('/etc/sysconfig/docker').with_content(
+              /tcp:\/\/127.0.0.1:2375/
+            )
+            should contain_file('/etc/sysconfig/docker').with_content(
+              /--tls --tlsverify --tlscacert=\/etc\/docker\/tls\/ca.pem --tlscert=\/etc\/docker\/tls\/cert.pem --tlskey=\/etc\/docker\/tls\/key.pem/
+            )
+          end
+        end
+        context 'with tls param and without tlsverify' do
+          let(:params) {{
+              'tcp_bind' => 'tcp://127.0.0.1:2375',
+              'tls_enable' => true,
+              'tls_verify' => false,
+          }}
+          it do
+            should contain_file('/etc/sysconfig/docker').with_content(
+              /tcp:\/\/127.0.0.1:2375/
+            )
+            should contain_file('/etc/sysconfig/docker').with_content(
+              /--tls --tlscacert=\/etc\/docker\/tls\/ca.pem --tlscert=\/etc\/docker\/tls\/cert.pem --tlskey=\/etc\/docker\/tls\/key.pem/
+            )
+          end
+        end
+
+        context 'with fixed_cidr and bridge params' do
+          let(:params) {{ 'fixed_cidr' => '10.0.0.0/24' }}
+          let(:params) {{
+            'fixed_cidr'      => '10.0.0.0/24',
+            'bridge'          => 'br0',
+          }}
+          it { should contain_file('/etc/sysconfig/docker').with_content(/fixed-cidr 10.0.0.0\/24/) }
+        end
+
+        context 'with default_gateway and bridge params' do
+          let(:params) {{
+            'default_gateway' => '10.0.0.1',
+            'bridge'            => 'br0',
+          }}
+          it { should contain_file('/etc/sysconfig/docker').with_content(/default-gateway 10.0.0.1/) }
+        end
+
+        context 'with bridge param' do
+          let(:params) {{ 'bridge' => 'br0' }}
+          it { should contain_file('/etc/sysconfig/docker').with_content(/bridge br0/) }
+        end
+
+        context 'when given specific storage options' do
+          let(:params) {{
+            'storage_driver' => 'devicemapper',
+            'dm_basesize'  => '3G'
+          }}
+          it { should contain_file(storage_config_file).with_content(/^(DOCKER_STORAGE_OPTIONS=" --storage-driver=devicemapper --storage-opt dm.basesize=3G)/) }
+        end
+
+        context 'It should include default prerequired_packages' do
+          it { should contain_package('device-mapper').with_ensure('present') }
+        end
+
+        context 'It should install from rpm package' do
+          let(:params) { {
+            'manage_package'              => true,
+            'use_upstream_package_source' => false,
+            'package_name'                => 'docker',
+          } }
+          it do
+            should contain_package('docker').with(
+              'name'   => 'docker'
+            )
+          end
+        end
+
       end
 
       if osfamily == 'Archlinux'
@@ -392,6 +595,19 @@ describe 'docker', :type => :class do
         } }
         service_config_file = '/etc/conf.d/docker'
         storage_config_file = '/etc/conf.d/docker'
+
+        context 'with a specific docker command' do
+          let(:params) {{ 'docker_command' => 'docker.io' }}
+          it { should contain_file(service_config_file).with_content(/docker.io/) }
+        end
+        context 'with proxy param' do
+          let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
+          it { should contain_file(service_config_file).with_content(/export http_proxy='http:\/\/127.0.0.1:3128'\nexport https_proxy='http:\/\/127.0.0.1:3128'/) }
+        end
+        context 'with no_proxy param' do
+          let(:params) { {'no_proxy' => '.github.com' } }
+          it { should contain_file(service_config_file).with_content(/export no_proxy='.github.com'/) }
+        end
       end
 
       if osfamily == 'Gentoo'
@@ -400,6 +616,19 @@ describe 'docker', :type => :class do
         } }
         service_config_file = '/etc/conf.d/docker'
         storage_config_file = '/etc/conf.d/docker'
+
+        context 'with a specific docker command' do
+          let(:params) {{ 'docker_command' => 'docker.io' }}
+          it { should contain_file(service_config_file).with_content(/docker.io/) }
+        end
+        context 'with proxy param' do
+          let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
+          it { should contain_file(service_config_file).with_content(/export http_proxy='http:\/\/127.0.0.1:3128'\nexport https_proxy='http:\/\/127.0.0.1:3128'/) }
+        end
+        context 'with no_proxy param' do
+          let(:params) { {'no_proxy' => '.github.com' } }
+          it { should contain_file(service_config_file).with_content(/export no_proxy='.github.com'/) }
+        end
       end
 
       it { should compile.with_all_deps }
@@ -409,11 +638,6 @@ describe 'docker', :type => :class do
       it { should contain_class('docker::config') }
 
       it { should contain_file(service_config_file).without_content(/icc=/) }
-
-      context 'with a specific docker command' do
-        let(:params) {{ 'docker_command' => 'docker.io' }}
-        it { should contain_file(service_config_file).with_content(/docker.io/) }
-      end
 
       context 'with a custom package name' do
         let(:params) { {'package_name' => 'docker-custom-pkg-name' } }
@@ -441,16 +665,6 @@ describe 'docker', :type => :class do
         skip 'the APT module at v2.1 does not support STRICT_VARIABLES' do
           it { should contain_package('test_package').with_ensure('present') }
         end
-      end
-
-      context 'with proxy param' do
-        let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
-        it { should contain_file(service_config_file).with_content(/export http_proxy='http:\/\/127.0.0.1:3128'\nexport https_proxy='http:\/\/127.0.0.1:3128'/) }
-      end
-
-      context 'with no_proxy param' do
-        let(:params) { {'no_proxy' => '.github.com' } }
-        it { should contain_file(service_config_file).with_content(/export no_proxy='.github.com'/) }
       end
 
       context 'with execdriver param lxc' do
@@ -969,6 +1183,20 @@ describe 'docker', :type => :class do
     it { should contain_package('apparmor') }
   end
 
+  context 'specific to SLES or above' do
+    let(:facts) { {
+      :osfamily => 'Suse',
+      :operatingsystem => 'SLES',
+      :operatingsystemrelease => '12.2',
+      :operatingsystemmajrelease => '12',
+      :kernelversion => '4.4.21',
+    } }
+
+    it { should contain_package('docker').with_name('docker') }
+    it { should contain_service('docker').with_provider('systemd').with_hasstatus(true).with_hasrestart(true) }
+  end
+
+
   context 'newer versions of Debian and Ubuntu' do
     context 'Ubuntu >= 15.04' do
       let(:facts) { {
@@ -1029,7 +1257,7 @@ describe 'docker', :type => :class do
     it do
       expect {
         should contain_package('docker')
-      }.to raise_error(Puppet::Error, /This module only works on Debian or Red Hat based systems or on Archlinux as on Gentoo./)
+      }.to raise_error(Puppet::Error, /This module only works on Debian or Red Hat based systems or on Archlinux on Gentoo and Suse./)
     end
   end
 

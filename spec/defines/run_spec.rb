@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-['Debian', 'RedHat', 'Archlinux', 'Amazon', 'Gentoo'].each do |osfamily|
+['Debian', 'RedHat', 'Archlinux', 'Amazon', 'Gentoo', 'Suse'].each do |osfamily|
   describe 'docker::run', :type => :define do
     let(:title) { 'sample' }
     context "on #{osfamily}" do
@@ -38,6 +38,17 @@ require 'spec_helper'
         initscript = '/etc/init.d/docker-sample'
         command = 'docker'
         systemd = false
+      elsif osfamily == 'Suse'
+        let(:facts) { {
+          :osfamily => 'Suse',
+          :operatingsystem => 'SLES',
+          :operatingsystemrelease => '12.2',
+          :operatingsystemmajrelease => '12',
+          :kernelversion => '4.4.21',
+        } }
+        initscript = '/etc/systemd/system/docker-sample.service'
+        command = 'docker'
+        systemd = true
       else
         let(:facts) { {
           :osfamily => 'RedHat',
@@ -90,7 +101,7 @@ require 'spec_helper'
           else
             it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-foo/) }
             it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-bar/) }
-            it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-foo_bar-baz/) }            
+            it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-foo_bar-baz/) }
           end
         end
       end
@@ -499,6 +510,8 @@ require 'spec_helper'
           new_initscript = '/etc/init.d/docker-this-that'
         elsif osfamily == 'Archlinux'
           new_initscript = '/etc/systemd/system/docker-this-that.service'
+        elsif osfamily == 'Suse'
+          new_initscript = '/etc/systemd/system/docker-this-that.service'
         else
           new_initscript = '/etc/init.d/docker-this-that'
         end
@@ -515,6 +528,8 @@ require 'spec_helper'
           new_initscript = '/etc/init.d/docker-this-that'
         elsif osfamily == 'Archlinux'
           new_initscript = '/etc/systemd/system/docker-this-that.service'
+        elsif osfamily == 'Suse'
+          new_initscript = '/etc/systemd/system/docker-this-that.service'
         else
           new_initscript = '/etc/init.d/docker-this-that'
         end
@@ -530,6 +545,8 @@ require 'spec_helper'
         if osfamily == 'Debian'
           new_initscript = '/etc/init.d/this-that'
         elsif osfamily == 'Archlinux'
+          new_initscript = '/etc/systemd/system/this-that.service'
+        elsif osfamily == 'Suse'
           new_initscript = '/etc/systemd/system/this-that.service'
         else
           new_initscript = '/etc/init.d/this-that'
@@ -555,6 +572,8 @@ require 'spec_helper'
         if osfamily == 'Debian'
           new_initscript = '/etc/init.d/docker-this-that_other'
         elsif osfamily == 'Archlinux'
+          new_initscript = '/etc/systemd/system/docker-this-that_other.service'
+        elsif osfamily == 'Suse'
           new_initscript = '/etc/systemd/system/docker-this-that_other.service'
         else
           new_initscript = '/etc/init.d/docker-this-that_other'

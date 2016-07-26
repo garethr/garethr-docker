@@ -288,8 +288,16 @@ define docker::run(
         $mode           = '0775'
         $uses_systemd   = false
       }
+      'Suse':{
+          $initscript     = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
+          $init_template  = 'docker/etc/systemd/system/docker-run.erb'
+          $hasstatus      = true
+          $mode           = '0644'
+          $uses_systemd   = true
+
+        }
       default: {
-        fail('Docker needs a Debian, RedHat, Archlinux or Gentoo based system.')
+        fail('Docker needs a Debian, RedHat, Archlinux, Gentoo or Suse based system.')
       }
     }
 
