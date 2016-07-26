@@ -415,8 +415,8 @@ class docker(
 ) inherits docker::params {
 
   validate_string($version)
-  validate_re($::osfamily, '^(Debian|RedHat|Archlinux|Gentoo)$',
-              'This module only works on Debian or Red Hat based systems or on Archlinux as on Gentoo.')
+  validate_re($::osfamily, '^(Debian|RedHat|Archlinux|Gentoo|Suse)$',
+              'This module only works on Debian or Red Hat based systems or on Archlinux, on Gentoo and Suse.')
   validate_bool($manage_kernel)
   validate_bool($manage_package)
   validate_bool($docker_cs)
