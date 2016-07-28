@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# This file is managed by Puppet and local changes
+# may be overwritten
+#
+#    Wrapper command for <%= @title %>
+#
+
+export HOME=/root/
+docker="/usr/bin/<%= @docker_command %>"
+
+[ -x $docker ] || exit 5
+
+<% if @pull_on_start -%>
+    $docker pull <%= @image %>
+<% end -%>
+exec $docker run \
+    <%= @docker_run_flags %> \
+<% if @extra_parameters %><% @extra_parameters_array.each do |param| %>  \
+    <%= param %> <% end %> \
+<% end -%> \
+    <%= @image %> \
+    <%= @command %> "$@"
