@@ -28,6 +28,7 @@ define docker::image(
   $docker_file = undef,
   $docker_dir = undef,
   $docker_tar = undef,
+  $build_args = undef,
 ) {
   include docker::params
   $docker_command = $docker::params::docker_command
@@ -74,10 +75,15 @@ define docker::image(
     $image_find    = "${docker_command} images | cut -d ' ' -f 1 | egrep '^(docker\\.io/)?${image}$'"
   }
 
+  if !empty($build_args) {
+    $build_args_array = any2array($build_args)
+    $build_args_string = join ( regsubst ($build_args_array, '^(.*)$', '--build-arg \1 '), '')
+  }
+
   if $docker_dir {
-    $image_install = "${docker_command} build -t ${image_arg} ${docker_dir}"
+    $image_install = "${docker_command} build ${build_args_string}-t ${image_arg} ${docker_dir}"
   } elsif $docker_file {
-    $image_install = "${docker_command} build -t ${image_arg} - < ${docker_file}"
+    $image_install = "${docker_command} build ${build_args_string}-t ${image_arg} - < ${docker_file}"
   } elsif $docker_tar {
     $image_install = "${docker_command} load -i ${docker_tar}"
   } else {
