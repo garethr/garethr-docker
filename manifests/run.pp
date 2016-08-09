@@ -193,19 +193,19 @@ define docker::run(
     volumes_from    => any2array($volumes_from),
   })
 
-  $sanitised_title = regsubst($title, '[^0-9A-Za-z.\-]', '-', 'G')
+  $sanitised_title = regsubst($title, '[^0-9A-Za-z.\-_]', '-', 'G')
   if empty($depends_array) {
     $sanitised_depends_array = []
   }
   else {
-    $sanitised_depends_array = regsubst($depends_array, '[^0-9A-Za-z.\-]', '-', 'G')
+    $sanitised_depends_array = regsubst($depends_array, '[^0-9A-Za-z.\-_]', '-', 'G')
   }
 
   if empty($after_array) {
     $sanitised_after_array = []
   }
   else {
-    $sanitised_after_array = regsubst($after_array, '[^0-9A-Za-z.\-]', '-', 'G')
+    $sanitised_after_array = regsubst($after_array, '[^0-9A-Za-z.\-_]', '-', 'G')
   }
 
   if $restart {
