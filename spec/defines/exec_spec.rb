@@ -35,4 +35,9 @@ describe 'docker::exec', :type => :define do
 		let(:params) { {'command' => 'command', 'container' => 'container', 'interactive' => true,} }
 		it { should contain_exec('docker exec --interactive=true container command').with_unless (nil) }
   end
+
+  context 'with title that need sanitisation' do
+		let(:params) { {'command' => 'command', 'container' => 'container_sample/1', 'detach' => true, 'sanitise_name' => true} }
+		it { should contain_exec('docker exec --detach=true container_sample-1 command') }
+  end
 end
