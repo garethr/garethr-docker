@@ -19,8 +19,8 @@
 #   auth is not required.
 #
 # [*email*]
-#   Email for registration to private Docker registry. Leave undef if
-#   auth is not required.
+#   Email for registration to private Docker registry. Optional
+# 
 #
 # [*local_user*]
 #   The local user to log in as. Docker will store credentials in this
@@ -42,8 +42,13 @@ define docker::registry(
   $docker_command = $docker::params::docker_command
 
   if $ensure == 'present' {
-    if $username != undef and $password != undef and $email != undef {
-      $auth_cmd = "${docker_command} login -u '${username}' -p \"\${password}\" -e '${email}' ${server}"
+    if $username != undef and $password != undef {
+      if $email != undef {
+        $auth_cmd = "${docker_command} login -u '${username}' -p \"\${password}\" -e '${email}' ${server}"
+      }
+      else {
+        $auth_cmd = "${docker_command} login -u '${username}' -p \"\${password}\" ${server}"
+      }
       $auth_environment = "password=${password}"
     }
     else {
