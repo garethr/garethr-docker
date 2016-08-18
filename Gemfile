@@ -1,5 +1,22 @@
 source "https://rubygems.org"
 
+if Gem::Platform.local.os == 'mingw32'
+
+  # pin to known good versions
+  gem 'win32-service', '<= 0.8.8',    :require => false
+  gem "win32-dir", "<= 0.4.9",        :require => false
+  gem "win32-eventlog", "<= 0.6.6",   :require => false
+  gem "win32-process", "<= 0.7.5",    :require => false
+  gem "win32-security", "<= 0.2.5",   :require => false
+
+  gem 'ruby_dep', '<= 1.3.1'
+end  
+
+# https://github.com/puppetlabs/puppet/pull/5152
+# Hiera has an unbound dependency on json_pure
+# json_pure 2.0.2+ officially requires Ruby >= 2.0, but should have specified that in 2.0
+gem 'json_pure', '<= 2.0.1', :require => false
+
 group :test do
   gem "rake", "~> 10.0"
   if puppet_gem_version = ENV['PUPPET_GEM_VERSION']
@@ -9,6 +26,7 @@ group :test do
   else
     gem "puppet", ENV['PUPPET_GEM_VERSION']
   end
+  
   gem "puppet-lint"
   gem "puppet-lint-unquoted_string-check"
   gem "rspec-puppet"
