@@ -208,20 +208,44 @@ define docker::run(
     $sanitised_after_array = regsubst($after_array, '[^0-9A-Za-z.\-]', '-', 'G')
   }
 
+
+  if $::osfamily == 'windows' {
+    $all_users_profile = $docker::params::all_users_profile
+    $run_path = [$::docker_binpath]
+    $run_provider = 'powershell'
+    $run_environment = 'HOME=C:\\'
+    $run_logoutput = true
+  } else {
+    $run_path = ['/bin', '/usr/bin']
+    $run_provider = undef
+    $run_environment = 'HOME=/root'
+    $run_logoutput = undef
+  }
+
   if $restart {
 
-    $cidfile = "/var/run/${service_prefix}${sanitised_title}.cid"
+    if $::osfamily == 'windows' {
+      $cidfile = "\"${all_users_profile}\\Docker\\${service_prefix}${sanitised_title}.cid\""
+      $cidfile_gone = "(!(Test-Path ${cidfile}))"
+      $cid_find = "(${docker_command} ps --no-trunc -a | Select-String -Quiet -Pattern (type ${cidfile}))"
+      $restart_conditional = "if (${cidfile_gone}) { exit 1 } else { if (${cid_find}) { exit 0 } else { exit 1 } } "
+    } else {
+      $cidfile = "/var/run/${service_prefix}${sanitised_title}.cid"
+      $restart_conditional = "${docker_command} ps --no-trunc -a | grep `cat ${cidfile}`"
+    }
 
     $run_with_docker_command = [
       "${docker_command} run -d ${docker_run_flags}",
       "--name ${sanitised_title} --cidfile=${cidfile}",
       "--restart=\"${restart}\" ${image} ${command}",
     ]
+
     exec { "run ${title} with docker":
       command     => join($run_with_docker_command, ' '),
-      unless      => "${docker_command} ps --no-trunc -a | grep `cat ${cidfile}`",
-      environment => 'HOME=/root',
-      path        => ['/bin', '/usr/bin'],
+      unless      => $restart_conditional,
+      provider    => $run_provider,
+      environment => $run_environment,
+      path        => $run_path,
       timeout     => 0
     }
   } else {
@@ -272,29 +296,46 @@ define docker::run(
         $mode           = '0775'
         $uses_systemd   = false
       }
+      'windows': {
+        $hasstatus      = undef
+        $uses_systemd   = false
+      }
       default: {
-        fail('Docker needs a Debian, RedHat, Archlinux or Gentoo based system.')
+        fail('Docker::run needs a Debian, RedHat, Archlinux, Gentoo, or Windows based system.')
       }
     }
 
-
     if $ensure == 'absent' {
-        service { "${service_prefix}${sanitised_title}":
-          ensure    => false,
-          enable    => false,
-          hasstatus => $hasstatus,
+        # TODO: currently containers not running as service
+        # remove this guard when they are
+        if $::osfamily != 'windows' {
+          #stop the container here
+          service { "${service_prefix}${sanitised_title}":
+            ensure    => false,
+            enable    => false,
+            hasstatus => $hasstatus,
+          }
+        }
+
+        if $::osfamily == 'windows' {
+          $container_exists = "${docker_command} ps --no-trunc -a --format=\"table {{.Names}}\" | 
+                            Select-String -Quiet -Pattern \"^${sanitised_title}\$\""
+          $absent_conditional = "if (${container_exists}) {exit 0} else {exit 1}"
+        } else {
+          $absent_conditional = "${docker_command} ps --no-trunc -a --format='table {{.Names}}' | grep '^${sanitised_title}$'"
         }
 
         exec {
           "remove container ${service_prefix}${sanitised_title}":
             command     => "${docker_command} rm -v ${sanitised_title}",
-            refreshonly => true,
-            onlyif      => "${docker_command} ps --no-trunc -a --format='table {{.Names}}' | grep '^${sanitised_title}$'",
-            path        => ['/bin', '/usr/bin'],
-            environment => 'HOME=/root',
+            refreshonly => true, #remove for testing
+            onlyif      => $absent_conditional,
+            logoutput   => $run_logoutput,
+            provider    => $run_provider,
+            environment => $run_environment,
+            path        => $run_path,
             timeout     => 0
         }
-
     }
     else {
       file { $initscript:
