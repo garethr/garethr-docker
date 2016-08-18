@@ -1,9 +1,15 @@
+require 'pathname'
+
 Puppet::Type.type(:docker_compose).provide(:ruby) do
   desc 'Support for Puppet running Docker Compose'
 
+  require Pathname.new(__FILE__).dirname + '../../../' + 'puppet_x/docker/docker_common'
+  include PuppetX::Docker::DockerCommon
+
   mk_resource_methods
-  commands :dockercompose => 'docker-compose'
-  commands :docker => 'docker'
+
+  commands :dockercompose => PuppetX::Docker::DockerCommon.docker_compose_cmd
+  commands :docker => PuppetX::Docker::DockerCommon.docker_cmd
 
   def exists?
     Puppet.info("Checking for compose project #{project}")
