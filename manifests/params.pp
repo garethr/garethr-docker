@@ -281,6 +281,38 @@ class docker::params {
       $storage_config = undef
       $storage_setup_file = undef
     }
+    'windows' : {
+      $manage_epel = false
+      $docker_group = $docker_group_default
+      $package_key_source = undef
+      $package_source_location = undef
+      $package_key = undef
+      $package_repos = undef
+      $package_release = undef
+      $use_upstream_package_source = true
+      $service_overrides_template = undef
+      $service_hasstatus  = undef
+      $service_hasrestart = undef
+      $package_name = $package_name_default
+      $docker_command = $docker_command_default
+      $detach_service_in_init = true
+      $repo_opt = undef
+      $nowarn_kernel = false
+      $service_config = undef
+      $storage_config = undef
+      $storage_setup_file = undef
+      $service_config_template = undef
+
+      # binpath can probably be lifted out of here, but it's not used on non-Windows plats yet
+      $docker_binpath                    = $::docker_binpath
+
+      $docker_expanded_command           = "${::docker_binpath}\\docker"
+      $all_users_profile                 = $::all_users_profile
+      $service_provider = 'windows'
+      $service_name = 'com.docker.service'
+      $msi_download_url = 'https://download.docker.com/win/stable/InstallDocker.msi'
+      $docker_install_timeout_seconds = 120
+    }
     default: {
       $manage_epel = false
       $docker_group = $docker_group_default
