@@ -27,7 +27,7 @@ group :test do
     gem "puppet", ENV['PUPPET_GEM_VERSION']
   end
   
-  gem "puppet-lint"
+  gem "puppet-lint", '<= 2.0.0'
   gem "puppet-lint-unquoted_string-check"
   gem "rspec-puppet"
   gem "puppet-syntax"
