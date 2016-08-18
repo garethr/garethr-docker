@@ -1,0 +1,39 @@
+try {
+  $docker_app_exe = "C:\\Program Files\\Docker\\Docker\\Docker for Windows.exe"
+
+  # TODO: handle docker-engine start failures?  Spin loop will just time out in this case.
+
+  if (((Get-Process -Name "<%= @docker_app %>" 2>$null) -eq $null)) {
+    Write-Output "Starting Docker for Windows app"
+    & "$docker_app_exe"
+  }
+
+  # The Docker for Windows app is used to start docker-engine inside of
+  # Moby Linux VM.  However, there is a delay between the time the app is executed
+  # and the time that docker-engine starts.  Docker-engine may also fail to start.
+  # During that time, any attempt to execute Puppet code that relies on
+  # docker-engine being started will fail as a result.
+  #
+  # So, we spin until 'docker images' returns the expected output or we hit the
+  # timeout.
+  #
+  # Get-Process isn't used here because Task Manager does not distinguish
+  # between the startup of the Docker for Windows app and the startup of
+  # docker-engine.
+
+  do {
+    Write-Output "Waiting for Docker to start..."
+    if( (& "<%= @docker_expanded_command -%>" images | Select-String -Quiet -Pattern "Repository") ) {
+      break
+    }
+
+    Start-Sleep -s 3
+
+  } while(1)
+
+  Write-Output "Docker app started successfully"
+
+} catch {
+  Write-Host "$($_.Exception.Message)"
+  exit 1
+}

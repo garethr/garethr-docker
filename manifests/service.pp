@@ -111,9 +111,8 @@ class docker::service (
   $tls_key                           = $docker::tls_key,
 ) {
 
-  unless $::osfamily =~ /(Debian|RedHat|Archlinux|Gentoo)/ {
-    fail('The docker::service class needs a Debian, RedHat, Archlinux or Gentoo based system.')
-  }
+  validate_re($::osfamily, '^(Debian|RedHat|Archlinux|Gentoo|windows)$',
+              'This module only works on Debian or Red Hat based systems, Archlinux as on Gentoo, or Windows.')
 
   $dns_array = any2array($dns)
   $dns_search_array = any2array($dns_search)
@@ -202,6 +201,19 @@ class docker::service (
       hasstatus  => $service_hasstatus,
       hasrestart => $service_hasrestart,
       provider   => $service_provider,
+    }
+  }
+
+  if $::osfamily == 'windows' {
+    $docker_expanded_command = $docker::params::docker_expanded_command
+
+    # May want to add to lib/puppet_x/docker_env?
+    $docker_app = 'Docker for Windows'
+
+    exec { 'start_docker_app':
+      command   => template('docker/start_docker_app.ps1.erb'),
+      provider  => 'powershell',
+      logoutput => true,
     }
   }
 }

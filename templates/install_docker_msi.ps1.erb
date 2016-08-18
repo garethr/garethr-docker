@@ -1,0 +1,62 @@
+try {
+  # hyper-v prereq satisfied?
+  $hv_installstatus = Get-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V-All -Online
+  if (! ($hv_installstatus.State -eq "Enabled")) {
+    Write-Output "Error: Hyper-V must be enabled"
+    exit 1
+  }
+  
+  # variables
+  $url = '<%= @download_url %>'
+  $csurl = 'https://download.docker.com/win/stable/InstallDocker.msi.sha256sum'
+
+  if ($env:TEMP -eq $null) {
+    $env:TEMP = Join-Path $env:SystemDrive 'temp'
+  }
+  
+  $dockerTempDir = Join-Path $env:TEMP "docker"
+  $tempDir = Join-Path $dockerTempDir "dockerInstall"
+  if (![System.IO.Directory]::Exists($tempDir)) {[System.IO.Directory]::CreateDirectory($tempDir)}
+  
+  $file = Join-Path $tempDir "InstallDocker.msi"
+  $csfile = Join-Path $tempDir "InstallDocker.msi.sha256sum"
+
+  function Download-File {
+  param (
+    [string]$url,
+    [string]$file
+   )
+    Write-Output "Downloading $url to $file"
+    $downloader = new-object System.Net.WebClient
+    $downloader.Proxy.Credentials=[System.Net.CredentialCache]::DefaultNetworkCredentials;
+    $downloader.DownloadFile($url, $file)
+  }
+  
+  # download the msi
+  Download-File $url $file
+
+  # checksum
+  Download-File $csurl $csfile
+  $checksum = (Get-FileHash $file).Hash
+  $filehash = "$checksum  InstallDocker.msi"
+  $goodhash = Get-Content $csfile
+  
+  if (! ($filehash -eq $goodhash)) {
+    Write-Output "Error: checksum $filehash does not match $goodhash"
+    Remove-Item $file
+    Remove-Item $csfile
+    exit 1
+  }
+
+  Write-Output "$File downloaded successfully"
+  
+  # copy good msi to expected location
+  $msi = Join-Path '<%= @all_users_profile %>' 'InstallDocker.msi'
+  Copy-Item "$file" "$msi" -Force -ErrorAction SilentlyContinue
+
+}
+catch
+{
+  Write-Host "$($_.Exception.Message)"
+  exit 1
+}

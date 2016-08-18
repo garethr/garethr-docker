@@ -7,8 +7,8 @@
 class docker::install {
   $docker_command = $docker::docker_command
   validate_string($docker::version)
-  validate_re($::osfamily, '^(Debian|RedHat|Archlinux|Gentoo)$',
-              'This module only works on Debian or Red Hat based systems or on Archlinux as on Gentoo.')
+  validate_re($::osfamily, '^(Debian|RedHat|Archlinux|Gentoo|windows)$',
+              'This module only works on Debian or Red Hat based systems, Archlinux as on Gentoo, or Windows.')
   validate_bool($docker::use_upstream_package_source)
 
   if $docker::version and $docker::ensure != 'absent' {
@@ -18,6 +18,12 @@ class docker::install {
   }
 
   case $::osfamily {
+    'windows': {
+      if versioncmp($::operatingsystemrelease, '10') < 0 {
+        fail('Docker needs Windows version to be 10')
+      }
+      $manage_kernel = false
+    }
     'Debian': {
       if $::operatingsystem == 'Ubuntu' {
         case $::operatingsystemrelease {
@@ -72,14 +78,28 @@ class docker::install {
   }
 
   if $docker::manage_package {
-
     if empty($docker::repo_opt) {
       $docker_hash = {}
     } else {
       $docker_hash = { 'install_options' => $docker::repo_opt }
     }
 
+    if $::osfamily == 'windows' {
+      $download_url = $docker::msi_download_url
+
+      exec { 'install_docker_msi_windows':
+        command     => template('docker/install_docker_msi.ps1.erb'),
+        environment => 'HOME=C:\\',
+        creates     => "${docker::params::all_users_profile}\\InstallDocker.msi",
+        provider    => 'powershell',
+        logoutput   => true,
+        timeout     => $docker::params::docker_install_timeout_seconds,
+      }
+    }
+
     if $docker::package_source {
+      $install_package_source = $docker::package_source
+
       case $::osfamily {
         'Debian' : {
           $pk_provider = 'dpkg'
@@ -90,6 +110,10 @@ class docker::install {
         'Gentoo' : {
           $pk_provider = 'portage'
         }
+        'windows' : {
+          $pk_provider = undef
+          $install_package_source = "${docker::params::all_users_profile}\\InstallDocker.msi"
+        }
         default : {
           $pk_provider = undef
         }
@@ -98,13 +122,20 @@ class docker::install {
       ensure_resource('package', 'docker', merge($docker_hash, {
         ensure   => $ensure,
         provider => $pk_provider,
-        source   => $docker::package_source,
+        source   => $install_package_source,
         name     => $docker::package_name,
       }))
 
     } else {
+      if $::osfamily == 'windows' {
+        $install_package_source = "${docker::params::all_users_profile}\\InstallDocker.msi"
+      } else {
+        $install_package_source = undef
+      }
+
       ensure_resource('package', 'docker', merge($docker_hash, {
         ensure => $ensure,
+        source => $install_package_source,
         name   => $docker::package_name,
       }))
     }
