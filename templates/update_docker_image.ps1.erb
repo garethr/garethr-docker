@@ -1,0 +1,24 @@
+#
+# Pulls a docker image.
+# Returns 0 if there a change.
+# Returns 1 if there is no change.
+# Returns 3 if something when wrong.
+#
+
+param ( [string]$DOCKER_IMAGE = $null )
+
+$BEFORE = (& "<%= @docker_expanded_command -%>" inspect --format="{{.Id}}" $DOCKER_IMAGE 2> $null) | Out-String
+& "<%= @docker_expanded_command -%>" pull ${DOCKER_IMAGE}
+$AFTER = (& "<%= @docker_expanded_command -%>" inspect --format="{{.Id}}" $DOCKER_IMAGE 2> $null) | Out-String
+
+If ([string]::IsNullOrWhitespace($AFTER)) {
+  Write-Output "Docker image ${DOCKER_IMAGE} failed to pull!"
+  exit 3
+}
+ElseIf ($BEFORE -eq $AFTER) {
+  exit 1
+}
+Else {
+  Write-Output "${DOCKER_IMAGE} updated. Changed from ${BEFORE} to ${AFTER}."
+  exit 0
+}
