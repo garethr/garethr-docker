@@ -111,7 +111,7 @@ define docker::run(
   validate_re($memory_limit, '^[\d]*(b|k|m|g)$')
   validate_re($ensure, '^(present|absent)')
   if $restart {
-    validate_re($restart, '^(no|always|on-failure)|^on-failure:[\d]+$')
+    validate_re($restart, '^(no|always|unless-stopped|on-failure)|^on-failure:[\d]+$')
   }
   validate_string($docker_command)
   validate_string($service_name)
