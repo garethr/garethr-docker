@@ -36,6 +36,7 @@ class docker::install {
         # Debian does not need extra kernel packages
         $manage_kernel = false
       }
+      $mange_memory_cgroup = $docker::manage_memory_cgroup
     }
     'RedHat': {
       if $::operatingsystem == 'Amazon' {
@@ -108,5 +109,8 @@ class docker::install {
         name   => $docker::package_name,
       }))
     }
+  }
+  if $docker::manage_memory_cgroup {
+    class {'::docker::grub': }
   }
 }

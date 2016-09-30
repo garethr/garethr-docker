@@ -359,6 +359,7 @@ class docker(
   $root_dir                          = $docker::params::root_dir,
   $tmp_dir                           = $docker::params::tmp_dir,
   $manage_kernel                     = $docker::params::manage_kernel,
+  $manage_memory_cgroup              = $docker::params::manage_memory_cgroup,
   $dns                               = $docker::params::dns,
   $dns_search                        = $docker::params::dns_search,
   $socket_group                      = $docker::params::socket_group,
