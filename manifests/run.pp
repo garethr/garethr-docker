@@ -15,6 +15,11 @@
 #
 #    extra_parameters => ['--restart=always']
 #
+# However, if your system is using sytemd this restart policy will be
+# ineffective because the ExecStop commands will run which will cause
+# docker to stop restarting it.  In this case you should use the
+# systemd_restart option to specify the policy you want.
+#
 # This will allow the docker container to be restarted if it dies, without
 # puppet help.
 #
@@ -47,6 +52,12 @@
 # An array of additional command line arguments to pass to the `docker run`
 # command. Useful for adding additional new or experimental options that the
 # module does not yet support.
+#
+# [*systemd_restart*]
+# (optional) If the container is to be managed by a systemd unit file set the
+# Restart option on the unit file.  Can be any valid value for this systemd
+# configuration.  Most commonly used are on-failure or always.
+# Default: on-failure
 #
 define docker::run(
   $image,
