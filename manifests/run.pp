@@ -79,6 +79,7 @@ define docker::run(
   $privileged = false,
   $detach = undef,
   $extra_parameters = undef,
+  $systemd_restart = 'on-failure',
   $extra_systemd_parameters = {},
   $pull_on_start = false,
   $after = [],
@@ -154,6 +155,9 @@ define docker::run(
   }
 
   validate_hash($extra_systemd_parameters)
+  if $systemd_restart {
+    validate_re($systemd_restart, '^(no|always|on-success|on-failure|on-abnormal|on-abort|on-watchdog)$')
+  }
 
   if $detach == undef {
     $valid_detach = $docker::params::detach_service_in_init
