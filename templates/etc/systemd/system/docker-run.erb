@@ -48,7 +48,11 @@ ExecStart=/usr/bin/<%= @docker_command %> start -a <%= @sanitised_title %>
 <% end -%>
 <%- if @before_stop %>ExecStop=-<%= @before_stop %>
 <% end -%>
+<<<<<<< HEAD
 ExecStop=-/usr/bin/<%= @docker_command %> stop --time=<%= @stop_wait_time %> <%= @sanitised_title %>
+=======
+ExecStop=-/usr/bin/<%= @docker_command %> stop <% if @stop_timeout != false %>-t <%= @stop_timeout %> <% end %><%= @sanitised_title %>
+>>>>>>> fe4c6e7... Added docker stop timeout possibility
 <%- if @remove_container_on_stop %>ExecStop=-/usr/bin/<%= @docker_command %> rm <% if @remove_volume_on_stop %>-v<% end %> <%= @sanitised_title %>
 <% end -%>
 

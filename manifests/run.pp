@@ -48,6 +48,10 @@
 # command. Useful for adding additional new or experimental options that the
 # module does not yet support.
 #
+# [*stop_timeout*]
+# (optional) - string
+# Add optional parameter -t <timeout> to docker stop
+#
 define docker::run(
   $image,
   $ensure = 'present',
@@ -91,6 +95,7 @@ define docker::run(
   $restart = undef,
   $before_start = false,
   $before_stop = false,
+  $stop_timeout = false,
   $remove_container_on_start = true,
   $remove_container_on_stop = true,
   $remove_volume_on_start = false,
@@ -136,7 +141,13 @@ define docker::run(
   validate_bool($remove_volume_on_stop)
   validate_bool($use_name)
 
+<<<<<<< HEAD
   validate_integer($stop_wait_time)
+=======
+  if $stop_timeout != false {
+    validate_re($stop_timeout, '^[0-9]+$')
+  }
+>>>>>>> fe4c6e7... Added docker stop timeout possibility
 
   if ($remove_volume_on_start and !$remove_container_on_start) {
     fail("In order to remove the volume on start for ${title} you need to also remove the container")
