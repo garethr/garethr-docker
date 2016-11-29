@@ -364,6 +364,7 @@ class docker(
   $socket_group                      = $docker::params::socket_group,
   $labels                            = $docker::params::labels,
   $extra_parameters                  = undef,
+  $extra_systemd_parameters          = {},
   $shell_values                      = undef,
   $proxy                             = $docker::params::proxy,
   $no_proxy                          = $docker::params::no_proxy,

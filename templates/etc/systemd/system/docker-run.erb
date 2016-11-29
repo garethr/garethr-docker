@@ -33,7 +33,7 @@ ExecStartPre=-/usr/bin/<%= @docker_command %> kill <%= @sanitised_title %>
     <%= @image %> \
     <% if @command %> <%= @command %><% end %>
 <% end -%>
-<% @extra_systemd_parameters.each do |key, value| -%><%= key %>=<%= value %>
+<% @valid_extra_systemd_parameters.each do |key, value| -%><%= key %>=<%= value %>
 <% end -%>
 <%- if @pull_on_start %>ExecStartPre=-/usr/bin/<%= @docker_command %> pull <%= @image %>
 <% end -%>

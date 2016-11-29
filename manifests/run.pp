@@ -153,7 +153,7 @@ define docker::run(
     }
   }
 
-  validate_hash($extra_systemd_parameters)
+  $valid_extra_systemd_parameters = merge($docker::extra_systemd_parameters, $extra_systemd_parameters)
 
   if $detach == undef {
     $valid_detach = $docker::params::detach_service_in_init
