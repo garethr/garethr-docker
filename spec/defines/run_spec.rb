@@ -65,6 +65,10 @@ require 'spec_helper'
         it { should contain_file(initscript).with_content(/#{command} run/).with_content(/command/) }
       end
 
+      if systemd
+        it { should contain_file(initscript).with_content(/^SyslogIdentifier=docker-sample$/) }
+      end
+
       ['p', 'dns', 'H', 'dns-search', 'u', 'v', 'e', 'n', 't', 'volumes-from', 'name'].each do |search|
         it { should_not contain_file(initscript).with_content(/-${search}/) }
       end
@@ -656,6 +660,13 @@ require 'spec_helper'
 			let(:pre_condition) { "service{ 'my-docker': }" }
       it { should compile.with_all_deps }
 			it { should contain_service('my-docker').that_comes_before('Service[docker-sample]') }
+    end
+
+    context 'with syslog_identifier' do
+      let(:params) { {'syslog_identifier' => 'docker-universe' } }
+      if systemd
+        it { should contain_file(initscript).with_content(/^SyslogIdentifier=docker-universe$/) }
+      end
     end
 
     context 'with extra_systemd_parameters' do

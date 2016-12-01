@@ -96,6 +96,7 @@ define docker::run(
   $remove_volume_on_start = false,
   $remove_volume_on_stop = false,
   $stop_wait_time = 0,
+  $syslog_identifier = undef,
 ) {
   include docker::params
   if ($socket_connect != []) {
@@ -275,6 +276,12 @@ define docker::run(
       default: {
         fail('Docker needs a Debian, RedHat, Archlinux or Gentoo based system.')
       }
+    }
+
+    if $syslog_identifier {
+      $_syslog_identifier = $syslog_identifier
+    } else {
+      $_syslog_identifier = "${service_prefix}${sanitised_title}"
     }
 
 
