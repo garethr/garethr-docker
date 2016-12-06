@@ -287,7 +287,7 @@ require 'spec_helper'
 
       context 'when passing a links option' do
         let(:params) { {'command' => 'command', 'image' => 'base', 'links' => ['example:one', 'example:two']} }
-        it { should contain_file(initscript).with_content(/ --link example:one --link example:two /) }
+        it { should contain_file(initscript).with_content(/--link example:one/).with_content(/--link example:two/) }
       end
 
       context 'when passing a hostname' do
