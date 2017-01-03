@@ -27,7 +27,9 @@ class docker::compose(
   validate_absolute_path($install_path)
 
   if $ensure == 'present' {
-    ensure_packages(['curl'])
+    if !defined (Package['curl']) {
+      ensure_packages(['curl'])
+    }
 
     exec { "Install Docker Compose ${version}":
       path    => '/usr/bin/',
