@@ -189,6 +189,8 @@ class docker::params {
       $package_cs_ke = undef
       $package_repos = undef
       $package_release = undef
+      $pin_upstream_package_source = undef
+      $apt_source_pin_level = undef
       $service_name = $service_name_default
       $docker_command = $docker_command_default
       if (versioncmp($::operatingsystemrelease, '7.0') < 0) or ($::operatingsystem == 'Amazon') {
@@ -258,6 +260,8 @@ class docker::params {
       $service_config_template = 'docker/etc/conf.d/docker.erb'
       $storage_config = undef
       $storage_setup_file = undef
+      $pin_upstream_package_source = undef
+      $apt_source_pin_level = undef
     }
     'Gentoo' : {
       $manage_epel = false
@@ -282,6 +286,8 @@ class docker::params {
       $service_config_template = 'docker/etc/conf.d/docker.gentoo.erb'
       $storage_config = undef
       $storage_setup_file = undef
+      $pin_upstream_package_source = undef
+      $apt_source_pin_level = undef
     }
     default: {
       $manage_epel = false
@@ -306,6 +312,8 @@ class docker::params {
       $storage_config = undef
       $storage_setup_file = undef
       $service_config_template = undef
+      $pin_upstream_package_source = undef
+      $apt_source_pin_level = undef
     }
   }
 
