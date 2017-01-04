@@ -23,6 +23,9 @@ StartLimitInterval=20
 StartLimitBurst=5
 TimeoutStartSec=0
 Environment="HOME=/root"
+<%- if @_syslog_identifier -%>
+SyslogIdentifier=<%= @_syslog_identifier %>
+<%- end -%>
 <%- if @before_start %>ExecStartPre=-<%= @before_start %>
 <% end -%>
 ExecStartPre=-/usr/bin/<%= @docker_command %> kill <%= @sanitised_title %>
