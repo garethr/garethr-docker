@@ -8,6 +8,7 @@
   "project_page": "https://github.com/garethr/garethr-docker",
   "issues_url": "https://github.com/garethr/garethr-docker/issues",
   "dependencies": [
+    {"name":"puppetlabs/powershell","version_requirement":">= 1.0.1 < 3.0.0"},
     {"name":"puppetlabs/stdlib","version_requirement":">= 4.1.0"},
     {"name":"puppetlabs/apt","version_requirement":">= 1.8.0 <= 3.0.0"},
     {"name":"stahnma/epel","version_requirement":">= 0.0.6"}
@@ -51,6 +52,12 @@
       "operatingsystem": "Fedora",
       "operatingsystemrelease": [
         "21"
+      ]
+    },
+    {
+      "operatingsystem": "Windows",
+      "operatingsystemrelease": [
+        "10"
       ]
     }
   ],

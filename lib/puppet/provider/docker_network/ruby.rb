@@ -1,10 +1,14 @@
 require 'json'
+require 'pathname'
 
 Puppet::Type.type(:docker_network).provide(:ruby) do
   desc "Support for Docker Networking"
 
+  require Pathname.new(__FILE__).dirname + '../../../' + 'puppet_x/docker/docker_common'
+  include PuppetX::Docker::DockerCommon
+
   mk_resource_methods
-  commands :docker => 'docker'
+  commands :docker => PuppetX::Docker::DockerCommon.docker_cmd
 
 	def network_conf
 		flags = ['network', 'create']
@@ -72,10 +76,10 @@ Puppet::Type.type(:docker_network).provide(:ruby) do
 		@property_hash[:ensure] == :present
   end
 
-	def create
+  def create
   	Puppet.info("Creating docker network #{name}")
 		docker(network_conf)
- 	end
+  end
 
   def destroy
   	Puppet.info("Removing docker network #{name}")

@@ -22,6 +22,10 @@ class docker::compose(
   $version = $docker::params::compose_version,
   $install_path = $docker::params::compose_install_path
 ) inherits docker::params {
+
+  validate_re($::osfamily, '^(Debian|RedHat|Archlinux|Gentoo)$',
+              'Compose is installed / uninstalled as part of the entire Docker package on Windows and OS X systems.')
+
   validate_string($version)
   validate_re($ensure, '^(present|absent)$')
   validate_absolute_path($install_path)

@@ -4,7 +4,7 @@ describe 'docker', :type => :class do
 
   ['Debian', 'Ubuntu', 'RedHat', 'Archlinux', 'Gentoo'].each do |osfamily|
     context "on #{osfamily}" do
-
+            
       if osfamily == 'Debian'
         let(:facts) { {
           :osfamily               => 'Debian',
@@ -1012,7 +1012,7 @@ describe 'docker', :type => :class do
     it do
       expect {
         should contain_package('docker')
-      }.to raise_error(Puppet::Error, /This module only works on Debian or Red Hat based systems or on Archlinux as on Gentoo./)
+      }.to raise_error(Puppet::Error, /This module only works on Debian or Red Hat based systems, Archlinux as on Gentoo, or Windows./)
     end
   end
 

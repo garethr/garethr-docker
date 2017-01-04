@@ -35,6 +35,16 @@ define docker::exec(
   } else {
     $sanitised_container = $container
   }
+
+  if $::osfamily == 'windows' {
+    $exec_path = [$::docker_binpath]
+    $exec_environment = 'HOME=C:\\'
+  } else {
+    $exec_path = ['/bin', '/usr/bin']
+    $exec_environment = 'HOME=/root'
+  }
+
+
   $exec = "${docker_command} exec ${docker_exec_flags} ${sanitised_container} ${command}"
   $unless_command = $unless ? {
       undef              => undef,
@@ -43,8 +53,8 @@ define docker::exec(
   }
 
   exec { $exec:
-    environment => 'HOME=/root',
-    path        => ['/bin', '/usr/bin'],
+    environment => $exec_environment,
+    path        => $exec_path,
     timeout     => 0,
     unless      => $unless_command,
   }

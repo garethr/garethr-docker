@@ -56,12 +56,25 @@ define docker::registry(
     $auth_environment = undef
   }
 
+  if $::osfamily == 'windows' {
+    $registry_path = [$::docker_binpath]
+    $registry_user = undef
+    $registry_cwd = 'C:\\'
+    $registry_logoutput = true
+  } else {
+    $registry_path = ['/bin', '/usr/bin']
+    $registry_user = $local_user
+    $registry_cwd = '/root'
+    $registry_logoutput = undef
+  }
+
   exec { "${title} auth":
     environment => $auth_environment,
     command     => $auth_cmd,
-    user        => $local_user,
-    cwd         => '/root',
-    path        => ['/bin', '/usr/bin'],
+    logoutput   => $registry_logoutput,
+    user        => $registry_user,
+    cwd         => $registry_cwd,
+    path        => $registry_path,
     timeout     => 0,
   }
 
