@@ -57,6 +57,11 @@ describe 'docker::image', :type => :define do
     it { should contain_exec('/usr/local/bin/update_docker_image.sh base:precise') }
   end
 
+  context 'with ensure => present and image_digest => sha256:deadbeef' do
+    let(:params) { { 'ensure' => 'present', 'image_digest' => 'sha256:deadbeef' } }
+    it { should contain_exec('/usr/local/bin/update_docker_image.sh base@sha256:deadbeef') }
+  end
+
   context 'with ensure => present and image_tag => precise and docker_file => Dockerfile' do
     let(:params) { { 'ensure' => 'present', 'image_tag' => 'precise', 'docker_file' => 'Dockerfile' } }
     it { should contain_exec('docker build -t base:precise - < Dockerfile') }
@@ -104,6 +109,33 @@ describe 'docker::image', :type => :define do
     end
   end
 
+  context 'with image_digest => sha256:deadbeef and docker_file => Dockerfile' do
+    let(:params) { { 'image_digest' => 'sha256:deadbeef', 'docker_file' => 'Dockerfile' }}
+    it do
+      expect {
+        should have_exec_resource_count(1)
+      }.to raise_error(Puppet::Error)
+    end
+  end
+
+  context 'with image_digest => sha256:deadbeef and docker_dir => /tmp/docker_images/test1' do
+    let(:params) { { 'image_digest' => 'sha256:deadbeef', 'docker_dir' => '/tmp/docker_images/test1' }}
+    it do
+      expect {
+        should have_exec_resource_count(1)
+      }.to raise_error(Puppet::Error)
+    end
+  end
+
+  context 'with image_digest => sha256:deadbeef and docker_tar => /tmp/docker_tars/test1.tar' do
+    let(:params) { { 'image_digest' => 'sha256:deadbeef', 'docker_tar' => '/tmp/docker_tars/test1.tar' }}
+    it do
+      expect {
+        should have_exec_resource_count(1)
+      }.to raise_error(Puppet::Error)
+    end
+  end
+
   context 'with ensure => latest' do
     let(:params) { { 'ensure' => 'latest' } }
     it { should contain_exec("echo 'Update of base complete'").with_onlyif('/usr/local/bin/update_docker_image.sh base') }
@@ -112,6 +144,11 @@ describe 'docker::image', :type => :define do
   context 'with ensure => latest and image_tag => precise' do
     let(:params) { { 'ensure' => 'latest', 'image_tag' => 'precise' } }
     it { should contain_exec("echo 'Update of base:precise complete'") }
+  end
+
+  context 'with ensure => latest and image_digest => sha256:deadbeef' do
+    let(:params) { { 'ensure' => 'latest', 'image_digest' => 'sha256:deadbeef' } }
+    it { should contain_exec("echo 'Update of base@sha256:deadbeef complete'") }
   end
 
   context 'with an invalid image name' do
