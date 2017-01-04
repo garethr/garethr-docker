@@ -307,6 +307,10 @@
 #   Specify a string for the docker group
 #   Default is OS and package specific
 #
+# [*daemon_environment_files*]
+#   Specify additional environment files to add to the
+#   service-overrides.conf
+#
 # [*repo_opt*]
 #   Specify a string to pass as repository options (RedHat only)
 #
@@ -412,6 +416,7 @@ class docker(
   $daemon_subcommand                 = $docker::params::daemon_subcommand,
   $docker_users                      = [],
   $docker_group                      = $docker::params::docker_group,
+  $daemon_environment_files          = [],
   $repo_opt                          = $docker::params::repo_opt,
   $nowarn_kernel                     = $docker::params::nowarn_kernel,
   $storage_devs                      = $docker::params::storage_devs,
@@ -443,6 +448,7 @@ class docker(
   validate_bool($docker_cs)
   validate_bool($manage_service)
   validate_array($docker_users)
+  validate_array($daemon_environment_files)
   validate_array($log_opt)
   validate_bool($tls_enable)
   validate_bool($ip_forward)
