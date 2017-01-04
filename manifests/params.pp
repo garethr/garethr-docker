@@ -125,6 +125,8 @@ class docker::params {
       $docker_group = $docker_group_default
       $package_repos = 'main'
       $use_upstream_package_source = true
+      $pin_upstream_package_source = true
+      $apt_source_pin_level = 10
       $repo_opt = undef
       $nowarn_kernel = false
       $service_config = undef
