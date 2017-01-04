@@ -289,6 +289,10 @@
 #   Specify an array of users to add to the docker group
 #   Default is empty
 #
+# [*docker_group*]
+#   Specify a string for the docker group
+#   Default is OS and package specific
+#
 # [*repo_opt*]
 #   Specify a string to pass as repository options (RedHat only)
 #
@@ -391,6 +395,7 @@ class docker(
   $docker_command                    = $docker::params::docker_command,
   $daemon_subcommand                 = $docker::params::daemon_subcommand,
   $docker_users                      = [],
+  $docker_group                      = $docker::params::docker_group,
   $repo_opt                          = $docker::params::repo_opt,
   $nowarn_kernel                     = $docker::params::nowarn_kernel,
   $storage_devs                      = $docker::params::storage_devs,
