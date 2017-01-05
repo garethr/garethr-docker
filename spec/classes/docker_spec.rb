@@ -50,6 +50,7 @@ describe 'docker', :type => :class do
         it { should contain_class('apt') }
         it { should contain_package('docker').with_name('docker-engine').with_ensure('present') }
         it { should contain_apt__source('docker').with_location('http://apt.dockerproject.org/repo') }
+        it { should contain_apt__pin('docker').with_origin('apt.dockerproject.org') }
         it { should contain_package('docker').with_install_options(nil) }
 
         it { should contain_file('/etc/default/docker').without_content(/icc=/) }
@@ -62,14 +63,29 @@ describe 'docker', :type => :class do
         context 'with no upstream package source' do
           let(:params) { {'use_upstream_package_source' => false } }
           it { should_not contain_apt__source('docker') }
+          it { should_not contain_apt__pin('docker') }
           it { should contain_package('docker').with_name('docker-engine') }
         end
 
         context 'with no upstream package source' do
           let(:params) { {'use_upstream_package_source' => false } }
           it { should_not contain_apt__source('docker') }
+          it { should_not contain_apt__pin('docker') }
           it { should_not contain_class('epel') }
           it { should contain_package('docker') }
+        end
+
+        context 'with no package pinning' do
+          let(:params) { {'pin_upstream_package_source' => false } }
+          it { should contain_apt__pin('docker').with_ensure('absent') }
+        end
+
+        context 'with different package pinning priority' do
+          let(:params) { {
+            'pin_upstream_package_source' => true,
+            'apt_source_pin_level'        => 900,
+          } }
+          it { should contain_apt__pin('docker').with_priority(900) }
         end
 
         context 'when given a specific tmp_dir' do
@@ -737,6 +753,7 @@ describe 'docker', :type => :class do
     context 'with no upstream package source' do
       let(:params) { {'use_upstream_package_source' => false } }
       it { should_not contain_apt__source('docker') }
+      it { should_not contain_apt__pin('docker') }
       it { should contain_package('docker').with_name('docker-engine') }
     end
   end
