@@ -74,7 +74,6 @@ require 'spec_helper'
       end
 
       context 'when passing `after` containers' do
-        let(:params) { {'command' => 'command', 'image' => 'base', 'after' => ['foo', 'bar']} }
         let(:params) { {'command' => 'command', 'image' => 'base', 'after' => ['foo', 'bar', 'foo_bar/baz']} }
         if (systemd)
           it { should contain_file(initscript).with_content(/After=(.*\s+)?docker-foo.service/) }
