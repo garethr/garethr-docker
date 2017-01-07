@@ -74,41 +74,51 @@ require 'spec_helper'
       end
 
       context 'when passing `after` containers' do
-        let(:params) { {'command' => 'command', 'image' => 'base', 'after' => ['foo', 'bar']} }
+        let(:params) { {'command' => 'command', 'image' => 'base', 'after' => ['foo', 'bar', 'foo_bar/baz']} }
         if (systemd)
           it { should contain_file(initscript).with_content(/After=(.*\s+)?docker-foo.service/) }
           it { should contain_file(initscript).with_content(/After=(.*\s+)?docker-bar.service/) }
+          it { should contain_file(initscript).with_content(/After=(.*\s+)?docker-foo_bar-baz.service/) }
           it { should contain_file(initscript).with_content(/Wants=(.*\s+)?docker-foo.service/) }
           it { should contain_file(initscript).with_content(/Wants=(.*\s+)?docker-bar.service/) }
+          it { should contain_file(initscript).with_content(/Wants=(.*\s+)?docker-foo_bar-baz.service/) }
         else
           if (osfamily == 'Gentoo')
             it { should contain_file(initscript).with_content(/after.*\s+docker-foo/) }
             it { should contain_file(initscript).with_content(/after.*\s+docker-bar/) }
+            it { should contain_file(initscript).with_content(/after.*\s+docker-foo_bar-baz/) }
           else
             it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-foo/) }
             it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-bar/) }
+            it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-foo_bar-baz/) }            
           end
         end
       end
 
       context 'when passing `depends` containers' do
-        let(:params) { {'command' => 'command', 'image' => 'base', 'depends' => ['foo', 'bar']} }
+        let(:params) { {'command' => 'command', 'image' => 'base', 'depends' => ['foo', 'bar', 'foo_bar/baz']} }
         if (systemd)
           it { should contain_file(initscript).with_content(/After=(.*\s+)?docker-foo.service/) }
           it { should contain_file(initscript).with_content(/After=(.*\s+)?docker-bar.service/) }
+          it { should contain_file(initscript).with_content(/After=(.*\s+)?docker-foo_bar-baz.service/) }
           it { should contain_file(initscript).with_content(/Requires=(.*\s+)?docker-foo.service/) }
           it { should contain_file(initscript).with_content(/Requires=(.*\s+)?docker-bar.service/) }
+          it { should contain_file(initscript).with_content(/Requires=(.*\s+)?docker-foo_bar-baz.service/) }
         else
           if (osfamily == 'Gentoo')
             it { should contain_file(initscript).with_content(/after.*\s+docker-foo/) }
             it { should contain_file(initscript).with_content(/after.*\s+docker-bar/) }
+            it { should contain_file(initscript).with_content(/after.*\s+docker-foo_bar-baz/) }
             it { should contain_file(initscript).with_content(/need.*\s+docker-foo/) }
             it { should contain_file(initscript).with_content(/need.*\s+docker-bar/) }
+            it { should contain_file(initscript).with_content(/need.*\s+docker-foo_bar-baz/) }
           else
             it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-foo/) }
             it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-bar/) }
+            it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-foo_bar-baz/) }
             it { should contain_file(initscript).with_content(/Required-Stop:.*\s+docker-foo/) }
             it { should contain_file(initscript).with_content(/Required-Stop:.*\s+docker-bar/) }
+            it { should contain_file(initscript).with_content(/Required-Stop:.*\s+docker-foo_bar-baz/) }
           end
         end
       end
@@ -536,6 +546,22 @@ require 'spec_helper'
             should contain_service('docker-sample')
           }.to raise_error(Puppet::Error)
         end
+      end
+
+      context 'with title that need sanitisation' do
+        let(:title) { 'this/that_other' }
+        let(:params) { {'image' => 'base' } }
+
+        if osfamily == 'Debian'
+          new_initscript = '/etc/init.d/docker-this-that_other'
+        elsif osfamily == 'Archlinux'
+          new_initscript = '/etc/systemd/system/docker-this-that_other.service'
+        else
+          new_initscript = '/etc/init.d/docker-this-that_other'
+        end
+
+        it { should contain_service('docker-this-that_other') }
+        it { should contain_file(new_initscript) }
       end
 
       context 'with an invalid image name' do
