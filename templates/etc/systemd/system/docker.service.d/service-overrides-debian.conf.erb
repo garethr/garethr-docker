@@ -1,3 +1,6 @@
+[Unit]
+<% if @service_unit_after %>After=<%= @service_unit_after %>
+
 [Service]
 EnvironmentFile=-/etc/default/docker
 EnvironmentFile=-/etc/default/docker-storage

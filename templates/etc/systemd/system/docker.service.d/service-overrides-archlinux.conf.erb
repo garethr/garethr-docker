@@ -1,2 +1,5 @@
+[Unit]
+<% if @service_unit_after %>After=<%= @service_unit_after %>
+
 [Service]
 EnvironmentFile=-/etc/conf.d/docker

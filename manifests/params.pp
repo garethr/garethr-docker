@@ -30,6 +30,7 @@ class docker::params {
   $labels                            = []
   $service_state                     = running
   $service_enable                    = true
+  $service_unit_after                = undef
   $manage_service                    = true
   $root_dir                          = undef
   $tmp_dir                           = '/tmp/'
