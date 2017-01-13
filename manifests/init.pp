@@ -345,7 +345,8 @@
 #   Extend the pool by specified percentage when threshold is hit.
 #
 # [*service_unit_after*]
-#   Systemd service After element for Docker service (will be added to override file)
+#   Systemd service After option for Docker service (will be added to service 
+#   override file)
 class docker(
   $version                           = $docker::params::version,
   $ensure                            = $docker::params::ensure,
