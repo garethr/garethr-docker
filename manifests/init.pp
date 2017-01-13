@@ -438,6 +438,7 @@ class docker(
   $service_overrides_template        = $docker::params::service_overrides_template,
   $service_hasstatus                 = $docker::params::service_hasstatus,
   $service_hasrestart                = $docker::params::service_hasrestart,
+  $service_unit_after                = $docker::params::service_unit_after,
 ) inherits docker::params {
 
   validate_string($version)
