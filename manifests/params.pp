@@ -186,7 +186,7 @@ class docker::params {
       $package_cs_source_location = "https://packages.docker.com/1.9/yum/repo/main/centos/${::operatingsystemmajrelease}"
       $package_cs_key_source = 'https://packages.docker.com/1.9/yum/gpg'
       $package_source_check = true
-      $package_cs_key_source = true
+      $package_cs_source_check = true
       $package_key = undef
       $package_cs_ke = undef
       $package_repos = undef

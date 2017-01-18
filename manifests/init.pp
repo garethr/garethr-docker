@@ -377,7 +377,7 @@ class docker(
   $package_repos                     = $docker::params::package_repos,
   $package_key                       = $docker::params::package_key,
   $package_key_source                = $docker::params::package_key_source,
-  $package_source_check              = $docker::params::package_source_check
+  $package_source_check              = $docker::params::package_source_check,
   $service_state                     = $docker::params::service_state,
   $service_enable                    = $docker::params::service_enable,
   $manage_service                    = $docker::params::manage_service,
