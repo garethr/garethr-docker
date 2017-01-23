@@ -4,6 +4,7 @@ describe 'docker::compose', :type => :class do
   it { is_expected.to compile }
 
   let(:facts) { {
+    :kernel                    => 'Linux',
     :osfamily                  => 'Debian',
     :operatingsystem           => 'Ubuntu',
     :lsbdistid                 => 'Ubuntu',
