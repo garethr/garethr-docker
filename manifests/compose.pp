@@ -17,22 +17,35 @@
 #   The path where to install Docker Compose.
 #   Defaults to the value set in $docker::params::compose_install_path
 #
+# [*proxy*]
+#   Proxy to use for downloading Docker Compose.
+#
 class docker::compose(
   $ensure = 'present',
   $version = $docker::params::compose_version,
-  $install_path = $docker::params::compose_install_path
+  $install_path = $docker::params::compose_install_path,
+  $proxy = undef
 ) inherits docker::params {
   validate_string($version)
   validate_re($ensure, '^(present|absent)$')
   validate_absolute_path($install_path)
+  if $proxy != undef {
+      validate_re($proxy, '^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})(:[\d])?([\/\w \.-]*)*\/?$')
+  }
 
   if $ensure == 'present' {
     ensure_packages(['curl'])
 
+    if $proxy != undef {
+        $proxy_opt = "--proxy ${proxy}"
+    } else {
+        $proxy_opt = ''
+    }
+
     exec { "Install Docker Compose ${version}":
       path    => '/usr/bin/',
       cwd     => '/tmp',
-      command => "curl -s -L https://github.com/docker/compose/releases/download/${version}/docker-compose-${::kernel}-x86_64 > ${install_path}/docker-compose-${version}",
+      command => "curl -s -L ${proxy_opt} https://github.com/docker/compose/releases/download/${version}/docker-compose-${::kernel}-x86_64 > ${install_path}/docker-compose-${version}",
       creates => "${install_path}/docker-compose-${version}",
       require => Package['curl'],
     } ->
