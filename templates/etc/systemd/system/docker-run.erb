@@ -22,6 +22,7 @@ Restart=<%= @systemd_restart %>
 StartLimitInterval=20
 StartLimitBurst=5
 TimeoutStartSec=0
+RestartSec=5
 Environment="HOME=/root"
 <%- if @_syslog_identifier -%>
 SyslogIdentifier=<%= @_syslog_identifier %>
