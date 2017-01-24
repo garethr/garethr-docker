@@ -77,7 +77,7 @@ class { 'docker':
 Docker recently [launched new official
 repositories](https://blog.docker.com/2015/07/new-apt-and-yum-repos/#comment-247448)
 which are now the default for the module from version 5. If you want to
-stick with the old respoitories you can do so with the following:
+stick with the old repositories you can do so with the following:
 
 ```puppet
 class { 'docker':
