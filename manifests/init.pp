@@ -156,6 +156,20 @@
 #   If you run your own package mirror, you may set this
 #   to false.
 #
+# [*pin_upstream_package_source*]
+#   Pin upstream package source; this option currently only has any effect on
+#   apt-based distributions.  Set to false to remove pinning on the upstream
+#   package repository.  See also "apt_source_pin_level".
+#   Defaults to true
+#
+# [*apt_source_pin_level*]
+#   What level to pin our source package repository to; this only is relevent
+#   if you're on an apt-based system (Debian, Ubuntu, etc) and
+#   $use_upstream_package_source is set to true.  Set this to false to disable
+#   pinning, and undef to ensure the apt preferences file apt::source uses to
+#   define pins is removed.
+#   Defaults to 10
+#
 # [*package_source_location*]
 #   If you're using an upstream package source, what is it's
 #   location. Defaults to http://get.docker.com/ubuntu on Debian
@@ -289,6 +303,14 @@
 #   Specify an array of users to add to the docker group
 #   Default is empty
 #
+# [*docker_group*]
+#   Specify a string for the docker group
+#   Default is OS and package specific
+#
+# [*daemon_environment_files*]
+#   Specify additional environment files to add to the
+#   service-overrides.conf
+#
 # [*repo_opt*]
 #   Specify a string to pass as repository options (RedHat only)
 #
@@ -348,6 +370,8 @@ class docker(
   $log_opt                           = $docker::params::log_opt,
   $selinux_enabled                   = $docker::params::selinux_enabled,
   $use_upstream_package_source       = $docker::params::use_upstream_package_source,
+  $pin_upstream_package_source       = $docker::params::pin_upstream_package_source,
+  $apt_source_pin_level              = $docker::params::apt_source_pin_level,
   $package_source_location           = $docker::params::package_source_location,
   $package_release                   = $docker::params::package_release,
   $package_repos                     = $docker::params::package_repos,
@@ -391,6 +415,8 @@ class docker(
   $docker_command                    = $docker::params::docker_command,
   $daemon_subcommand                 = $docker::params::daemon_subcommand,
   $docker_users                      = [],
+  $docker_group                      = $docker::params::docker_group,
+  $daemon_environment_files          = [],
   $repo_opt                          = $docker::params::repo_opt,
   $nowarn_kernel                     = $docker::params::nowarn_kernel,
   $storage_devs                      = $docker::params::storage_devs,
@@ -422,6 +448,7 @@ class docker(
   validate_bool($docker_cs)
   validate_bool($manage_service)
   validate_array($docker_users)
+  validate_array($daemon_environment_files)
   validate_array($log_opt)
   validate_bool($tls_enable)
   validate_bool($ip_forward)

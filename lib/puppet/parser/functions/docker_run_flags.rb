@@ -50,7 +50,7 @@ module Puppet::Parser::Functions
 
     multi_flags = lambda { |values, format|
       filtered = [values].flatten.compact
-      filtered.map { |val| sprintf(format, val) }
+      filtered.map { |val| sprintf(format + " \\\n", val) }
     }
 
     [

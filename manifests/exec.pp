@@ -31,7 +31,7 @@ define docker::exec(
 
 
   if $sanitise_name {
-    $sanitised_container = regsubst($container, '[^0-9A-Za-z.\-]', '-', 'G')
+    $sanitised_container = regsubst($container, '[^0-9A-Za-z.\-_]', '-', 'G')
   } else {
     $sanitised_container = $container
   }

@@ -17,5 +17,9 @@ matrix:
   exclude:
     - rvm: 2.2
       env: PUPPET_GEM_VERSION="~> 3.0" STRICT_VARIABLES=yes
+    - rvm: 1.9.3
+      env: PUPPET_GIT_URL="https://github.com/puppetlabs/puppet.git"
+    - rvm: 2.1.0
+      env: PUPPET_GIT_URL="https://github.com/puppetlabs/puppet.git"
   allow_failures:
     - env: PUPPET_GIT_URL="https://github.com/puppetlabs/puppet.git"

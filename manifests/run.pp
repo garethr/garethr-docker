@@ -15,6 +15,11 @@
 #
 #    extra_parameters => ['--restart=always']
 #
+# However, if your system is using sytemd this restart policy will be
+# ineffective because the ExecStop commands will run which will cause
+# docker to stop restarting it.  In this case you should use the
+# systemd_restart option to specify the policy you want.
+#
 # This will allow the docker container to be restarted if it dies, without
 # puppet help.
 #
@@ -48,6 +53,12 @@
 # command. Useful for adding additional new or experimental options that the
 # module does not yet support.
 #
+# [*systemd_restart*]
+# (optional) If the container is to be managed by a systemd unit file set the
+# Restart option on the unit file.  Can be any valid value for this systemd
+# configuration.  Most commonly used are on-failure or always.
+# Default: on-failure
+#
 define docker::run(
   $image,
   $ensure = 'present',
@@ -79,6 +90,7 @@ define docker::run(
   $privileged = false,
   $detach = undef,
   $extra_parameters = undef,
+  $systemd_restart = 'on-failure',
   $extra_systemd_parameters = {},
   $pull_on_start = false,
   $after = [],
@@ -96,6 +108,7 @@ define docker::run(
   $remove_volume_on_start = false,
   $remove_volume_on_stop = false,
   $stop_wait_time = 0,
+  $syslog_identifier = undef,
 ) {
   include docker::params
   if ($socket_connect != []) {
@@ -111,7 +124,7 @@ define docker::run(
   validate_re($memory_limit, '^[\d]*(b|k|m|g)$')
   validate_re($ensure, '^(present|absent)')
   if $restart {
-    validate_re($restart, '^(no|always|on-failure)|^on-failure:[\d]+$')
+    validate_re($restart, '^(no|always|unless-stopped|on-failure)|^on-failure:[\d]+$')
   }
   validate_string($docker_command)
   validate_string($service_name)
@@ -154,6 +167,9 @@ define docker::run(
   }
 
   validate_hash($extra_systemd_parameters)
+  if $systemd_restart {
+    validate_re($systemd_restart, '^(no|always|on-success|on-failure|on-abnormal|on-abort|on-watchdog)$')
+  }
 
   if $detach == undef {
     $valid_detach = $docker::params::detach_service_in_init
@@ -193,19 +209,19 @@ define docker::run(
     volumes_from    => any2array($volumes_from),
   })
 
-  $sanitised_title = regsubst($title, '[^0-9A-Za-z.\-]', '-', 'G')
+  $sanitised_title = regsubst($title, '[^0-9A-Za-z.\-_]', '-', 'G')
   if empty($depends_array) {
     $sanitised_depends_array = []
   }
   else {
-    $sanitised_depends_array = regsubst($depends_array, '[^0-9A-Za-z.\-]', '-', 'G')
+    $sanitised_depends_array = regsubst($depends_array, '[^0-9A-Za-z.\-_]', '-', 'G')
   }
 
   if empty($after_array) {
     $sanitised_after_array = []
   }
   else {
-    $sanitised_after_array = regsubst($after_array, '[^0-9A-Za-z.\-]', '-', 'G')
+    $sanitised_after_array = regsubst($after_array, '[^0-9A-Za-z.\-_]', '-', 'G')
   }
 
   if $restart {
@@ -275,6 +291,12 @@ define docker::run(
       default: {
         fail('Docker needs a Debian, RedHat, Archlinux or Gentoo based system.')
       }
+    }
+
+    if $syslog_identifier {
+      $_syslog_identifier = $syslog_identifier
+    } else {
+      $_syslog_identifier = "${service_prefix}${sanitised_title}"
     }
 
 

@@ -9,7 +9,8 @@
 define docker::system_user (
   $create_user = true) {
 
-  include docker::params
+  include docker
+  $docker_group = $docker::docker_group
 
   if $create_user {
     ensure_resource('user', $name, {'ensure' => 'present' })
@@ -17,7 +18,7 @@ define docker::system_user (
   }
 
   exec { "docker-system-user-${name}":
-    command => "/usr/sbin/usermod -aG ${docker::params::docker_group} ${name}",
-    unless  => "/bin/cat /etc/group | grep '^${docker::params::docker_group}:' | grep -qw ${name}",
+    command => "/usr/sbin/usermod -aG ${docker_group} ${name}",
+    unless  => "/bin/cat /etc/group | grep '^${docker_group}:' | grep -qw ${name}",
   }
 }

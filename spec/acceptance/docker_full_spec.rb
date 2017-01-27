@@ -92,7 +92,7 @@ describe 'the Puppet Docker module' do
     end
 
     describe 'docker::image' do
-      
+
       it 'should successfully download an image from the Docker Hub' do
         pp=<<-EOS
           class { 'docker':}
@@ -129,6 +129,26 @@ describe 'the Puppet Docker module' do
 
         shell('docker images') do |r|
           expect(r.stdout).to match(/ubuntu\s+precise/)
+        end
+      end
+
+      it 'should successfully download an image based on a digest from the Docker Hub' do
+        pp=<<-EOS
+          class { 'docker':}
+          docker::image { 'alpine':
+            ensure       => present,
+            image_digest => 'sha256:3dcdb92d7432d56604d4545cbd324b14e647b313626d99b889d0626de158f73a',
+            require      => Class['docker'],
+          }
+        EOS
+        apply_manifest(pp, :catch_failures => true)
+        apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
+
+        # A sleep to give docker time to execute properly
+        sleep 4
+
+        shell('docker images --digests') do |r|
+          expect(r.stdout).to match(/alpine.*sha256:3dcdb92d7432d56604d4545cbd324b14e647b313626d99b889d0626de158f73a/)
         end
       end
 
@@ -569,4 +589,3 @@ describe 'the Puppet Docker module' do
     end
   end
 end
-
