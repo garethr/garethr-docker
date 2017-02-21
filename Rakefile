@@ -39,6 +39,7 @@ exclude_paths = [
   "spec/**/*",
 ]
 PuppetLint.configuration.ignore_paths = exclude_paths
+PuppetSyntax.fail_on_deprecation_notices = false
 PuppetSyntax.exclude_paths = exclude_paths
 
 begin
