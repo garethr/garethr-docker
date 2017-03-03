@@ -1,0 +1,14 @@
+# This file is managed by Puppet and local changes
+# may be overwritten
+
+[Unit]
+Description=Timer for <%= @title %>
+After=docker.service
+Wants=docker.service
+
+[Timer]
+OnActiveSec=15seconds
+OnUnitActiveSec=<%= @timer_interval %>
+
+[Install]
+WantedBy=multi-user.target

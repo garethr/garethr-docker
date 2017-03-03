@@ -109,6 +109,8 @@ define docker::run(
   $remove_volume_on_stop = false,
   $stop_wait_time = 0,
   $syslog_identifier = undef,
+  $include_timer = false,
+  $timer_interval = undef,
 ) {
   include docker::params
   if ($socket_connect != []) {
@@ -118,6 +120,7 @@ define docker::run(
     $docker_command = $docker::params::docker_command
   }
   $service_name = $docker::params::service_name
+
 
   validate_re($image, '^[\S]*$')
   validate_re($title, '^[\S]*$')
@@ -148,8 +151,13 @@ define docker::run(
   validate_bool($remove_volume_on_start)
   validate_bool($remove_volume_on_stop)
   validate_bool($use_name)
+  validate_bool($include_timer)
 
   validate_integer($stop_wait_time)
+
+  if $include_timer {
+    validate_re($timer_interval, '^\d+\s?((?!onds?)[mu]?sec(onds?)?|(minute|hour|day|week|month|year)s?)$')
+  }
 
   if ($remove_volume_on_start and !$remove_container_on_start) {
     fail("In order to remove the volume on start for ${title} you need to also remove the container")
@@ -249,7 +257,9 @@ define docker::run(
         if ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemmajrelease, '8') >= 0) or
           ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '15.04') >= 0) {
           $initscript = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
+          $timescript = "/etc/systemd/system/${service_prefix}${sanitised_title}.timer"
           $init_template = 'docker/etc/systemd/system/docker-run.erb'
+          $time_template  = 'docker/etc/systemd/system/docker-timer.erb'
           $uses_systemd = true
           $mode = '0644'
         } else {
@@ -268,7 +278,9 @@ define docker::run(
           $uses_systemd   = false
         } else {
           $initscript     = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
+          $timescript = "/etc/systemd/system/${service_prefix}${sanitised_title}.timer"
           $init_template  = 'docker/etc/systemd/system/docker-run.erb'
+          $time_template  = 'docker/etc/systemd/system/docker-timer.erb'
           $hasstatus      = true
           $mode           = '0644'
           $uses_systemd   = true
@@ -276,13 +288,16 @@ define docker::run(
       }
       'Archlinux': {
         $initscript     = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
+        $timescript = "/etc/systemd/system/${service_prefix}${sanitised_title}.timer"
         $init_template  = 'docker/etc/systemd/system/docker-run.erb'
+        $time_template  = 'docker/etc/systemd/system/docker-timer.erb'
         $hasstatus      = true
         $mode           = '0644'
         $uses_systemd   = true
       }
       'Gentoo': {
         $initscript     = "/etc/init.d/${service_prefix}${sanitised_title}"
+        $timescript = "/etc/systemd/system/${service_prefix}${sanitised_title}.timer"
         $init_template  = 'docker/etc/init.d/docker-run.gentoo.erb'
         $hasstatus      = true
         $mode           = '0775'
@@ -291,6 +306,10 @@ define docker::run(
       default: {
         fail('Docker needs a Debian, RedHat, Archlinux or Gentoo based system.')
       }
+    }
+
+    if (!$uses_systemd and $include_timer) {
+      fail('include_timer can only be used on systemd devices')
     }
 
     if $syslog_identifier {
@@ -323,6 +342,15 @@ define docker::run(
         ensure  => present,
         content => template($init_template),
         mode    => $mode,
+      }
+      
+      if $include_timer {
+        file { $timescript:
+          ensure  => present,
+          content => template($time_template),
+          mode    => $mode,
+          notify  => Exec["docker-${sanitised_title}-systemd-reload"],
+        }
       }
 
       if $manage_service {
