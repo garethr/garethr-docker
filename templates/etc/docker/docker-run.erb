@@ -1,0 +1,9 @@
+<%- if @remove_container_on_start %>
+/usr/bin/<%= @docker_command %> run \
+        <%= @docker_run_flags %> \
+        --name <%= @sanitised_title %> \
+        <%= @image %> \
+        <% if @command %> <%= @command %><% end %>
+<% else %>
+/usr/bin/<%= @docker_command %> start -a <%= @sanitised_title %>
+<% end -%>
