@@ -329,7 +329,7 @@ define docker::run(
       file { $runscript:
         ensure  => present,
         content => template($runscript_template),
-        mode    => $mode,
+        mode    => '0550',
       } ->
       file { $initscript:
         ensure  => present,
