@@ -317,6 +317,10 @@ define docker::run(
             timeout     => 0
         }
 
+        file { $initscript:
+          ensure  => absent,
+        }
+
     }
     else {
       file { $initscript:
