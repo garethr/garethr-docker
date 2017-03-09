@@ -250,8 +250,8 @@ define docker::run(
           ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '15.04') >= 0) {
           $initscript = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
           $init_template = 'docker/etc/systemd/system/docker-run.erb'
-          $runscript      = "/etc/docker/${service_prefix}${sanitised_title}.sh"
-          $runscript_template = 'docker/etc/docker/docker-run.erb'
+          $runscript      = "/usr/local/bin/${service_prefix}${sanitised_title}"
+          $runscript_template = 'docker/usr/local/bin/docker-run.erb'
           $uses_systemd = true
           $mode = '0644'
         } else {
@@ -271,8 +271,8 @@ define docker::run(
         } else {
           $initscript     = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
           $init_template  = 'docker/etc/systemd/system/docker-run.erb'
-          $runscript      = "/etc/docker/${service_prefix}${sanitised_title}.sh"
-          $runscript_template = 'docker/etc/docker/docker-run.erb'
+          $runscript      = "/usr/local/bin/${service_prefix}${sanitised_title}"
+          $runscript_template = 'docker/usr/local/bin/docker-run.erb'
           $hasstatus      = true
           $mode           = '0644'
           $uses_systemd   = true
@@ -281,8 +281,8 @@ define docker::run(
       'Archlinux': {
         $initscript     = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
         $init_template  = 'docker/etc/systemd/system/docker-run.erb'
-        $runscript      = "/etc/docker/${service_prefix}${sanitised_title}.sh"
-        $runscript_template = 'docker/etc/docker/docker-run.erb'
+        $runscript      = "/usr/local/bin/${service_prefix}${sanitised_title}"
+        $runscript_template = 'docker/usr/local/bin/docker-run.erb'
         $hasstatus      = true
         $mode           = '0644'
         $uses_systemd   = true
