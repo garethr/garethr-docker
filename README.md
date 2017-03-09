@@ -466,6 +466,40 @@ docker_compose { '/tmp/docker-compose.yml':
 It is also possible to give options to the ```docker-compose up``` command
 such as ```--remove-orphans``` using the ```up_args``` option.
 
+### Swarm mode
+Docker Engine 1.12 includes swarm mode for natively managing a cluster of Docker Engines called a swarm. You can now cluster your Docker engines with the one of the following Puppet resources.
+For a swarm manager:
+
+```puppet
+docker::swarm {'cluster_manager':
+  init           => true,
+  advertise_addr => '192.168.1.1',
+  listen_addr    => '192.168.1.1,  
+} 
+```
+In the above example we have configured a swarm manager with ```init => true``` then set the ```advertise_addr``` and ```listen_addr```. Both the ```advertise_addr``` and ```listen_addr``` are set for the cluster communications between nodes. Please note the ```advertise_addr``` and ```listen_addr``` must be set for a multihomed server. For more advance flags to configure raft snapshots etc please read the readme at the top of the ```docker::swarm``` class.  
+
+For a swarm worker:
+```puppet
+docker::swarm {'cluster_worker':
+join           => true,
+advertise_addr => '192.168.1.2',
+listen_addr    => '192.168.1.2,
+manager_ip     => '192.168.1.1',
+token          => 'SWMTKN-1-2lw8bnr57qsu74d6iq2q1wr2wq2i334g7425dfr3zucimvh4bl-2vwn6gysbdj605l37c61iixie'
+} 
+```
+
+In this example we have joined a node to the cluster using ```join => true```. For a worker node or second manager you need to pass a current managers ip address ```manager_ip => '192.168.1.1'```
+The other important configuration is the token you pass to the manager. The token will define the nodes role in the cluster, as there will be a token to create another manager and a different token for the worker nodes.
+
+To remove a node from a cluster use the following:
+```puppet
+docker::swarm {'cluster_worker':
+ensure => absent
+}
+```
+
 ### Private registries
 By default images will be pushed and pulled from [index.docker.io](https://index.docker.io) unless you've specified a server. If you have your own private registry without authentication, you can fully qualify your image name. If your private registry requires authentication you may configure a registry:
 
