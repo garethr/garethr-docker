@@ -42,7 +42,6 @@ ExecStartPre=-/usr/bin/<%= @docker_command %> kill <%= @sanitised_title %>
 <%- if @pull_on_start %>ExecStartPre=-/usr/bin/<%= @docker_command %> pull <%= @image %>
 <% end -%>
 ExecStart=/bin/bash /etc/docker/<%= @service_prefix %><%= @sanitised_title %>.sh
-<% end -%>
 <%- if @before_stop %>ExecStop=-<%= @before_stop %>
 <% end -%>
 ExecStop=-/usr/bin/<%= @docker_command %> stop --time=<%= @stop_wait_time %> <%= @sanitised_title %>
