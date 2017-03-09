@@ -41,14 +41,7 @@ ExecStartPre=-/usr/bin/<%= @docker_command %> kill <%= @sanitised_title %>
 <% end -%>
 <%- if @pull_on_start %>ExecStartPre=-/usr/bin/<%= @docker_command %> pull <%= @image %>
 <% end -%>
-<%- if @remove_container_on_start %>
-ExecStart=/usr/bin/<%= @docker_command %> run \
-        <%= @docker_run_flags %> \
-        --name <%= @sanitised_title %> \
-        <%= @image %> \
-        <% if @command %> <%= @command %><% end %>
-<% else %>
-ExecStart=/usr/bin/<%= @docker_command %> start -a <%= @sanitised_title %>
+ExecStart=/bin/bash /etc/docker/<%= @service_prefix %><%= @sanitised_title %>.sh
 <% end -%>
 <%- if @before_stop %>ExecStop=-<%= @before_stop %>
 <% end -%>

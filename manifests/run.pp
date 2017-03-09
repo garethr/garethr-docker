@@ -325,15 +325,15 @@ define docker::run(
 
     }
     else {
-      file { $initscript:
-        ensure  => present,
-        content => template($init_template),
-        mode    => $mode,
-      }
 
       file { $runscript:
         ensure  => present,
         content => template($runscript_template),
+        mode    => $mode,
+      } ->
+      file { $initscript:
+        ensure  => present,
+        content => template($init_template),
         mode    => $mode,
       }
 
