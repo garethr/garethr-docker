@@ -109,6 +109,7 @@ define docker::run(
   $remove_volume_on_stop = false,
   $stop_wait_time = 0,
   $syslog_identifier = undef,
+  $entrypoint = false,
 ) {
   include docker::params
   if ($socket_connect != []) {
@@ -178,6 +179,10 @@ define docker::run(
     $valid_detach = $detach
   }
 
+  if $entrypoint {
+    validate_string($entrypoint)
+  }
+
   $extra_parameters_array = any2array($extra_parameters)
   $after_array = any2array($after)
   $depends_array = any2array($depends)
@@ -189,6 +194,7 @@ define docker::run(
     disable_network => $disable_network,
     dns             => any2array($dns),
     dns_search      => any2array($dns_search),
+    entrypoint      => $entrypoint,
     env             => any2array($env),
     env_file        => any2array($env_file),
     expose          => any2array($expose),
