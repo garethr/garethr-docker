@@ -541,6 +541,33 @@ describe 'the Puppet Docker module' do
 
         shell('docker inspect container-3-6', :acceptable_exit_codes => [1])
       end
+
+      it 'should start a container with the entrypoint set' do
+        pp=<<-EOS
+          class { 'docker':}
+
+          docker::image { 'ubuntu':
+            require => Class['docker'],
+          }
+
+          docker::run { 'container_3_7':
+            image      => 'ubuntu',
+            command    => 'init',
+            entrypoint => '/bin/bash',
+            require    => Docker::Image['ubuntu'],
+          }
+        EOS
+
+        apply_manifest(pp, :catch_failures => true)
+        apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
+
+        # A sleep to give docker time to execute properly
+        sleep 4
+
+        shell('docker ps') do |r|
+          expect(r.stdout).to match(/"\/bin\/bash"/)
+        end
+      end
     end
 
     describe "docker::exec" do
