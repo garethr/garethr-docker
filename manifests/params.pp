@@ -87,6 +87,7 @@ class docker::params {
             $service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-debian.conf.erb'
             $service_hasstatus       = true
             $service_hasrestart      = true
+            $package_repos           = 'main'
             include docker::systemd_reload
           } else {
             $service_config_template = 'docker/etc/default/docker.erb'
@@ -95,10 +96,18 @@ class docker::params {
             $service_hasstatus       = true
             $service_hasrestart      = false
             $storage_config          = undef
+            $package_source_location = "deb [arch=amd64] https://download.docker.com/linux/ubuntu ${::lsbdistcodename}"
+            $package_key_source      = 'https://download.docker.com/linux/ubuntu/gpg'
+            $package_key             = '9DC858229FC7DD38854AE2D88D81803C0EBFCD88'
+            $package_repos           = 'stable'
           }
         }
         default: {
           $package_release = "debian-${::lsbdistcodename}"
+          $package_source_location = "deb [arch=amd64] https://download.docker.com/linux/debian ${::lsbdistcodename}"
+          $package_key_source      = 'https://download.docker.com/linux/debian/gpg'
+          $package_key             = '9DC858229FC7DD38854AE2D88D81803C0EBFCD88'
+          $package_repos           = 'stable'
           if (versioncmp($::operatingsystemmajrelease, '8') >= 0) {
             $service_provider           = 'systemd'
             $storage_config             = '/etc/default/docker-storage'
@@ -123,7 +132,7 @@ class docker::params {
       $service_name = $service_name_default
       $docker_command = $docker_command_default
       $docker_group = $docker_group_default
-      $package_repos = 'main'
+      #$package_repos = 'main'
       $use_upstream_package_source = true
       $pin_upstream_package_source = true
       $apt_source_pin_level = 10
@@ -135,9 +144,9 @@ class docker::params {
       $package_cs_source_location = 'http://packages.docker.com/1.9/apt/repo'
       $package_cs_key_source = 'http://packages.docker.com/1.9/apt/gpg'
       $package_cs_key = '0xee6d536cf7dc86e2d7d56f59a178ac6c6238f52e'
-      $package_source_location = 'http://apt.dockerproject.org/repo'
-      $package_key_source = 'http://apt.dockerproject.org/gpg'
-      $package_key = '58118E89F3A912897C070ADBF76221572C52609D'
+      #$package_source_location = 'http://apt.dockerproject.org/repo'
+      #$package_key_source = 'http://apt.dockerproject.org/gpg'
+      #$package_key = '58118E89F3A912897C070ADBF76221572C52609D'
 
       if ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemmajrelease, '8') >= 0) or
         ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '15.04') >= 0) {
