@@ -79,8 +79,8 @@ class docker::params {
     'Debian' : {
       case $::operatingsystem {
         'Ubuntu' : {
-          $package_release = "ubuntu-${::lsbdistcodename}"
           if (versioncmp($::operatingsystemrelease, '15.04') >= 0) {
+            $package_release = "ubuntu-${::lsbdistcodename}"
             $service_provider        = 'systemd'
             $storage_config          = '/etc/default/docker-storage'
             $service_config_template = 'docker/etc/sysconfig/docker.systemd.erb'
@@ -91,13 +91,14 @@ class docker::params {
             $package_name            = 'docker-engine'
             include docker::systemd_reload
           } else {
+            $package_release = "${::lsbdistcodename}"
             $service_config_template = 'docker/etc/default/docker.erb'
             $service_overrides_template = undef
             $service_provider        = 'upstart'
             $service_hasstatus       = true
             $service_hasrestart      = false
             $storage_config          = undef
-            $package_source_location = "[arch=amd64] https://download.docker.com/linux/ubuntu ${::lsbdistcodename}"
+            $package_source_location = "[arch=amd64] https://download.docker.com/linux/ubuntu"
             $package_key_source      = 'https://download.docker.com/linux/ubuntu/gpg'
             $package_key             = '9DC858229FC7DD38854AE2D88D81803C0EBFCD88'
             $package_repos           = 'stable'
@@ -105,8 +106,8 @@ class docker::params {
           }
         }
         default: {
-          $package_release = "debian-${::lsbdistcodename}"
-          $package_source_location = "[arch=amd64] https://download.docker.com/linux/debian ${::lsbdistcodename}"
+          $package_release = "${::lsbdistcodename}"
+          $package_source_location = "[arch=amd64] https://download.docker.com/linux/debian"
           $package_key_source      = 'https://download.docker.com/linux/debian/gpg'
           $package_key             = '9DC858229FC7DD38854AE2D88D81803C0EBFCD88'
           $package_repos           = 'stable'
