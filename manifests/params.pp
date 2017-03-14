@@ -88,6 +88,7 @@ class docker::params {
             $service_hasstatus       = true
             $service_hasrestart      = true
             $package_repos           = 'main'
+            $package_name            = 'docker-engine'
             include docker::systemd_reload
           } else {
             $service_config_template = 'docker/etc/default/docker.erb'
@@ -100,6 +101,7 @@ class docker::params {
             $package_key_source      = 'https://download.docker.com/linux/ubuntu/gpg'
             $package_key             = '9DC858229FC7DD38854AE2D88D81803C0EBFCD88'
             $package_repos           = 'stable'
+            $package_name            = 'docker-ce'
           }
         }
         default: {
@@ -108,6 +110,7 @@ class docker::params {
           $package_key_source      = 'https://download.docker.com/linux/debian/gpg'
           $package_key             = '9DC858229FC7DD38854AE2D88D81803C0EBFCD88'
           $package_repos           = 'stable'
+          $package_name            = 'docker-ce'
           if (versioncmp($::operatingsystemmajrelease, '8') >= 0) {
             $service_provider           = 'systemd'
             $storage_config             = '/etc/default/docker-storage'
@@ -128,7 +131,7 @@ class docker::params {
       }
 
       $manage_epel = false
-      $package_name = $package_name_default
+      #$package_name = $package_name_default
       $service_name = $service_name_default
       $docker_command = $docker_command_default
       $docker_group = $docker_group_default
