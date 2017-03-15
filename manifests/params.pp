@@ -81,8 +81,8 @@ class docker::params {
         'Ubuntu' : {
           $package_source_location = '[arch=amd64] https://download.docker.com/linux/ubuntu'
           $package_key_source      = 'https://download.docker.com/linux/ubuntu/gpg'
+          $package_release = "${::lsbdistcodename}"
           if (versioncmp($::operatingsystemrelease, '15.04') >= 0) {
-            $package_release = "ubuntu-${::lsbdistcodename}"
             $service_provider        = 'systemd'
             $storage_config          = '/etc/default/docker-storage'
             $service_config_template = 'docker/etc/sysconfig/docker.systemd.erb'
@@ -91,7 +91,6 @@ class docker::params {
             $service_hasrestart      = true
             include docker::systemd_reload
           } else {
-            $package_release = "${::lsbdistcodename}"
             $service_config_template = 'docker/etc/default/docker.erb'
             $service_overrides_template = undef
             $service_provider        = 'upstart'
