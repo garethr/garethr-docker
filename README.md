@@ -587,6 +587,7 @@ docker::exec { 'cron_allow_root':
   detach       => true,
   container    => 'mycontainer',
   command      => '/bin/echo root >> /usr/lib/cron/cron.allow',
+  onlyif       => 'running',
   tty          => true,
   unless       => 'grep root /usr/lib/cron/cron.allow 2>/dev/null',
 }

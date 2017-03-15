@@ -26,6 +26,21 @@ describe 'docker::exec', :type => :define do
 		it { should contain_exec('docker exec --interactive=true container command') }
   end
 
+  context 'when running with onlyif "running"' do
+		let(:params) { {'command' => 'command', 'container' => 'container', 'interactive' => true, 'onlyif' => 'running'} }
+		it { should contain_exec('docker exec --interactive=true container command').with_onlyif ('docker ps --no-trunc --format=\'table {{.Names}}\' | grep \'^container$\'') }
+  end
+
+  context 'when running without onlyif custom command' do
+		let(:params) { {'command' => 'command', 'container' => 'container', 'interactive' => true, 'onlyif' => 'custom'} }
+		it { should contain_exec('docker exec --interactive=true container command').with_onlyif ('custom') }
+  end
+
+  context 'when running without onlyif' do
+		let(:params) { {'command' => 'command', 'container' => 'container', 'interactive' => true} }
+		it { should contain_exec('docker exec --interactive=true container command').with_onlyif (nil) }
+  end
+
   context 'when running with unless' do
 		let(:params) { {'command' => 'command', 'container' => 'container', 'interactive' => true, 'unless' => 'some_command arg1'} }
 		it { should contain_exec('docker exec --interactive=true container command').with_unless ('docker exec --interactive=true container some_command arg1') }
