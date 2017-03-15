@@ -970,7 +970,7 @@ describe 'docker', :type => :class do
       :kernelrelease          => '3.8.0-29-generic'
     } }
     it { should contain_service('docker').with_provider('upstart') }
-    it { should contain_package('docker').with_name('docker-engine').with_ensure('present')  }
+    it { should contain_package('docker').with_name('docker-ce').with_ensure('present')  }
     it { should contain_package('apparmor') }
   end
 
