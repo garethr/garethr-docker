@@ -8,6 +8,7 @@ define docker::exec(
   $tty = false,
   $container = undef,
   $command = undef,
+  $refreshonly = false,
   $unless = undef,
   $sanitise_name = true,
 ) {
@@ -21,6 +22,7 @@ define docker::exec(
   validate_string($unless)
   validate_bool($detach)
   validate_bool($interactive)
+  validate_bool($refreshonly)
   validate_bool($tty)
 
   $docker_exec_flags = docker_exec_flags({
@@ -45,6 +47,7 @@ define docker::exec(
   exec { $exec:
     environment => 'HOME=/root',
     path        => ['/bin', '/usr/bin'],
+    refreshonly => $refreshonly,
     timeout     => 0,
     unless      => $unless_command,
   }
