@@ -81,7 +81,7 @@ class docker::params {
         'Ubuntu' : {
           $package_source_location = '[arch=amd64] https://download.docker.com/linux/ubuntu'
           $package_key_source      = 'https://download.docker.com/linux/ubuntu/gpg'
-          $package_release = $::lsbdistcodename
+          $package_release = "${::lsbdistcodename}"
           if (versioncmp($::operatingsystemrelease, '15.04') >= 0) {
             $service_provider        = 'systemd'
             $storage_config          = '/etc/default/docker-storage'
@@ -100,7 +100,7 @@ class docker::params {
           }
         }
         default: {
-          $package_release = $::lsbdistcodename
+          $package_release = "${::lsbdistcodename}"
           $package_source_location = '[arch=amd64] https://download.docker.com/linux/debian'
           $package_key_source      = 'https://download.docker.com/linux/debian/gpg'
           if (versioncmp($::operatingsystemmajrelease, '8') >= 0) {
