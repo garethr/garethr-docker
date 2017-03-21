@@ -74,6 +74,7 @@ class docker::params {
   $storage_config_template           = 'docker/etc/sysconfig/docker-storage.erb'
   $compose_version                   = '1.9.0'
   $compose_install_path              = '/usr/local/bin'
+  $compose_baseurl                   = 'https://github.com/docker/compose/releases/download'
 
   case $::osfamily {
     'Debian' : {
