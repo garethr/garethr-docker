@@ -474,7 +474,7 @@ For a swarm manager:
 docker::swarm {'cluster_manager':
   init           => true,
   advertise_addr => '192.168.1.1',
-  listen_addr    => '192.168.1.1,  
+  listen_addr    => '192.168.1.1',  
 } 
 ```
 In the above example we have configured a swarm manager with ```init => true``` then set the ```advertise_addr``` and ```listen_addr```. Both the ```advertise_addr``` and ```listen_addr``` are set for the cluster communications between nodes. Please note the ```advertise_addr``` and ```listen_addr``` must be set for a multihomed server. For more advance flags to configure raft snapshots etc please read the readme at the top of the ```docker::swarm``` class.  
