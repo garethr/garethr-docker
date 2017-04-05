@@ -59,6 +59,7 @@ class docker::service (
   $dns_search                        = $docker::dns_search,
   $service_state                     = $docker::service_state,
   $service_enable                    = $docker::service_enable,
+  $service_autorestart               = $docker::service_autorestart,
   $manage_service                    = $docker::manage_service,
   $root_dir                          = $docker::root_dir,
   $extra_parameters                  = $docker::extra_parameters,
@@ -135,13 +136,21 @@ class docker::service (
     default => [],
   }
 
+  $_manage_service_autorestart = $service_autorestart ? {
+    true    => $manage_service ? {
+      true => Service['docker'],
+      default => undef,
+    },
+    default => undef,
+  }
+
   if $::osfamily == 'RedHat' {
     file { $storage_setup_file:
       ensure  => present,
       force   => true,
       content => template('docker/etc/sysconfig/docker-storage-setup.erb'),
       before  => $_manage_service,
-      notify  => $_manage_service,
+      notify  => $_manage_service_autorestart,
     }
   }
 
@@ -171,7 +180,7 @@ class docker::service (
         ensure => 'link',
         target => '/lib/init/upstart-job',
         force  => true,
-        notify => $_manage_service,
+        notify => $_manage_service_autorestart,
       }
     }
     default: {}
@@ -182,7 +191,7 @@ class docker::service (
       ensure  => present,
       force   => true,
       content => template($storage_config_template),
-      notify  => $_manage_service,
+      notify  => $_manage_service_autorestart,
     }
   }
 
@@ -191,7 +200,7 @@ class docker::service (
       ensure  => present,
       force   => true,
       content => template($service_config_template),
-      notify  => $_manage_service,
+      notify  => $_manage_service_autorestart,
     }
   }
 

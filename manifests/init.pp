@@ -182,6 +182,11 @@
 #   Whether you want to docker daemon to start up at boot
 #   Defaults to true
 #
+# [*service_autorestart*]
+#   Automatically restarts the docker service when there is a change in
+#   configuration files. Default: true, Set to false if you don't want
+#   to automatically restart the service.
+#
 # [*manage_service*]
 #   Specify whether the service should be managed.
 #   Valid values are 'true', 'false'.
@@ -379,6 +384,7 @@ class docker(
   $package_key_source                = $docker::params::package_key_source,
   $service_state                     = $docker::params::service_state,
   $service_enable                    = $docker::params::service_enable,
+  $service_autorestart               = $docker::params::service_autorestart,
   $manage_service                    = $docker::params::manage_service,
   $root_dir                          = $docker::params::root_dir,
   $tmp_dir                           = $docker::params::tmp_dir,
@@ -446,6 +452,7 @@ class docker(
   validate_bool($manage_kernel)
   validate_bool($manage_package)
   validate_bool($docker_cs)
+  validate_bool($service_autorestart)
   validate_bool($manage_service)
   validate_array($docker_users)
   validate_array($daemon_environment_files)
