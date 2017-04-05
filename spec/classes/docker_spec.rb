@@ -598,6 +598,22 @@ describe 'docker', :type => :class do
         it { should_not contain_service('docker') }
       end
 
+      context 'with service_autorestart set to true and manage_service true' do
+        let(:params) { {'service_autorestart' => true, 'manage_service' => true} }
+        it { should contain_service('docker') }
+        it { should contain_file(service_config_file).that_notifies('Service[docker]') }
+      end
+
+      context 'with service_autorestart set to true and manage_service false' do
+        let(:params) { {'service_autorestart' => true, 'manage_service' => false} }
+        it { should contain_file(service_config_file).without_notify }
+      end
+
+      context 'with service_autorestart set to false' do
+        let(:params) { {'service_autorestart' => false} }
+        it { should contain_file(service_config_file).without_notify }
+      end
+
       context 'with specific log_level' do
         let(:params) { { 'log_level' => 'debug' } }
         it { should contain_file(service_config_file).with_content(/-l debug/) }
