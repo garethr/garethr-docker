@@ -1,4 +1,5 @@
-spec/fixtures
+spec/fixtures/manifests/
+spec/fixtures/modules/
 pkg
 .bundle/
 .vagrant
