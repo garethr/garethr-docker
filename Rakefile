@@ -55,7 +55,7 @@ begin
     :syntax,
     :lint,
     :parallel_spec,
-    :metadata,
+    :metadata_lint,
   ]
 rescue LoadError # rubocop:disable Lint/HandleExceptions
 end
@@ -70,5 +70,5 @@ task :test => [
   :syntax,
   :lint,
   :spec,
-  :metadata,
+  :metadata_lint,
 ]
