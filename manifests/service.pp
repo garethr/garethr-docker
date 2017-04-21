@@ -147,12 +147,12 @@ class docker::service (
 
   case $service_provider {
     'systemd': {
-      file { '/etc/systemd/system/docker.service.d':
+      file { "/etc/systemd/system/${service_name}.service.d":
         ensure => directory
       }
 
       if $service_overrides_template {
-        file { '/etc/systemd/system/docker.service.d/service-overrides.conf':
+        file { "/etc/systemd/system/${service_name}.service.d/service-overrides.conf":
           ensure  => present,
           content => template($service_overrides_template),
           notify  => Exec['docker-systemd-reload-before-service'],
