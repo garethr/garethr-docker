@@ -1,10 +1,11 @@
 <%-
-	@after = ["docker.service"] +
+  docker_service_name = scope.lookupvar('docker::service_name')
+  @after = ["#{docker_service_name}.service"] +
 		@sanitised_after_array.map{ |s| "#{@service_prefix}#{s}.service"} +
 		@sanitised_depends_array.map{ |s| "#{@service_prefix}#{s}.service"} +
 		@depend_services_array.map{|s| "#{s}.service"}
 	@wants = @sanitised_after_array.map{ |a| "#{@service_prefix}#{a}.service"}
-	@requires = ["docker.service"] +
+  @requires = ["#{docker_service_name}.service"] +
 		@sanitised_depends_array.map{ |d| "#{@service_prefix}#{d}.service"} +
 		@depend_services_array.map{|s| "#{s}.service"}
 -%>
