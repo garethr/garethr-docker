@@ -1,10 +1,10 @@
 <%-
-	@required_start = ["$network", "docker"] +
+	@required_start = ["$network", @service_name] +
 		@sanitised_after_array.map{ |s| "#{@service_prefix}#{s}"} +
 		@sanitised_depends_array.map{ |s| "#{@service_prefix}#{s}"} +
 		@depend_services_array
 
-	@required_stop = ["$network", "docker"] +
+	@required_stop = ["$network", @service_name] +
 		@sanitised_depends_array.map{ |d| "#{@service_prefix}#{d}"} +
 		@depend_services_array
 -%>
