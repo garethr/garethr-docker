@@ -117,7 +117,7 @@ define docker::run(
   }else {
     $docker_command = $docker::params::docker_command
   }
-  $service_name = $docker::params::service_name
+  $service_name = $docker::service_name
 
   validate_re($image, '^[\S]*$')
   validate_re($title, '^[\S]*$')
