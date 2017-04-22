@@ -518,10 +518,10 @@ class docker(
     validate_string($tls_key)
   }
 
-  class { 'docker::repos': } ->
-  class { 'docker::install': } ->
-  class { 'docker::config': } ~>
-  class { 'docker::service': }
+  class { 'docker::repos': }
+  -> class { 'docker::install': }
+  -> class { 'docker::config': }
+  ~> class { 'docker::service': }
   contain 'docker::repos'
   contain 'docker::install'
   contain 'docker::config'

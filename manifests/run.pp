@@ -349,11 +349,11 @@ define docker::run(
             exec { "/bin/sh /etc/init.d/${service_prefix}${sanitised_title} stop":
               onlyif  => join($transition_onlyif, ' '),
               require => [],
-            } ->
-            file { "/var/run/${service_prefix}${sanitised_title}.cid":
+            }
+            -> file { "/var/run/${service_prefix}${sanitised_title}.cid":
               ensure => absent,
-            } ->
-            File[$initscript]
+            }
+            -> File[$initscript]
           }
 
           if $uses_systemd {
