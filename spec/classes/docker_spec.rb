@@ -48,23 +48,28 @@ describe 'docker', :type => :class do
       if osfamily == 'Ubuntu' or osfamily == 'Debian'
 
         it { should contain_class('apt') }
-        it { should contain_package('docker').with_name('docker-engine').with_ensure('present') }
-        it { should contain_apt__source('docker').with_location('http://apt.dockerproject.org/repo') }
-        it { should contain_apt__pin('docker').with_origin('apt.dockerproject.org') }
+        it { should contain_package('docker').with_name('docker-ce').with_ensure('present') }
+      if osfamily == 'Ubuntu'
+        it { should contain_apt__source('docker').with_location('[arch=amd64] https://download.docker.com/linux/ubuntu') }
+      end
+      if osfamily == 'Debian'
+        it { should contain_apt__source('docker').with_location('[arch=amd64] https://download.docker.com/linux/debian') }
+      end
+        it { should contain_apt__pin('docker').with_origin('download.docker.com') }
         it { should contain_package('docker').with_install_options(nil) }
 
         it { should contain_file('/etc/default/docker').without_content(/icc=/) }
 
         context 'with a custom version' do
-          let(:params) { {'version' => '0.5.5' } }
-          it { should contain_package('docker').with_ensure('0.5.5').with_name('docker-engine') }
+          let(:params) { {'version' => '17.03.0-ce' } }
+          it { should contain_package('docker').with_ensure('17.03.0-ce').with_name('docker-ce') }
         end
 
         context 'with no upstream package source' do
           let(:params) { {'use_upstream_package_source' => false } }
           it { should_not contain_apt__source('docker') }
           it { should_not contain_apt__pin('docker') }
-          it { should contain_package('docker').with_name('docker-engine') }
+          it { should contain_package('docker').with_name('docker-ce') }
         end
 
         context 'with no upstream package source' do
@@ -754,7 +759,7 @@ describe 'docker', :type => :class do
       let(:params) { {'use_upstream_package_source' => false } }
       it { should_not contain_apt__source('docker') }
       it { should_not contain_apt__pin('docker') }
-      it { should contain_package('docker').with_name('docker-engine') }
+      it { should contain_package('docker').with_name('docker-ce') }
     end
   end
 
@@ -965,7 +970,7 @@ describe 'docker', :type => :class do
       :kernelrelease          => '3.8.0-29-generic'
     } }
     it { should contain_service('docker').with_provider('upstart') }
-    it { should contain_package('docker').with_name('docker-engine').with_ensure('present')  }
+    it { should contain_package('docker').with_name('docker-ce').with_ensure('present')  }
     it { should contain_package('apparmor') }
   end
 
