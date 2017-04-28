@@ -2,6 +2,12 @@
 #
 # THIS FILE IS MANAGED BY PUPPET. Changes will be overwritten.
 
+
+# this is a workaround for https://github.com/docker/docker/issues/5684 , making
+# sure that old mounts are gone when the daemon comes back after a restart.
+cat /proc/mounts | grep "mapper/docker" | awk '{print $2}' | xargs -r umount
+
+
 # # Customize location of Docker binary (especially for development testing).
 DOCKER="/usr/bin/<%= @docker_command %>"
 
