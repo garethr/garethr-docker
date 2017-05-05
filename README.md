@@ -499,6 +499,53 @@ docker::swarm {'cluster_worker':
 ensure => absent
 }
 ```
+### Docker services
+Docker services allow to create distributed applications across multiple swarm nodes. A service is a set of containers that are replicated across your swarm.
+To configure a service with Puppet code please see the following examples
+
+To create a service
+```puppet
+docker::services {'redis':
+    create => true,   
+    service_name => 'redis',
+    image => 'redis:latest',
+    publish => '6379:639',
+    replicas => '5', 
+    extra_params => ['--update-delay 1m', '--restart-window 30s']
+  }
+```
+In this example we are creating a service called `redis`, as it is a new service we have set `create => true`. The `service_name` resource is the name which Docker knows the service as. The `image` resource is the image you want to base the service off, `publish` is the ports that want exposed to the outside world for the service to be consumed, `replicas` sets the amount of tasks (containers) that you want running in the service, `extra_params` allows you to configure any of the other flags that Docker gives you when you create a service for more info see `docker service create --help`
+
+To update the service
+```puppet 
+docker::services {'redis_update':
+  create => false,
+  update => true,
+  service_name => 'redis',
+  replicas => '3',
+}
+
+In this example we have taken the service that we created earlier `redis` set the `create => false` and this time added `update => true`. We then decleared the service name `redis` we have then updated the servce to have only 3 replicas, not 5. The `extra_params` resource is also available in the update class.
+
+To scale a service
+```puppet
+docker::services {'redis_scale':
+  create => false,
+  scale => true,
+  service_name => 'redis',
+  replicas => '10', 
+}
+```
+In this example we have used the command `docker service scale` with Puppet code. We have taken our service `redis` set the `create => false` and `scale => true` When using scale you have to declare your `service_name` then the number of replicas that you want. In this example we are going to scale to `10`
+
+To remove a service
+```puppet
+docker::services {'redis':
+  ensure => 'absent',
+  service_name => 'redis',
+}
+```
+To remove a a service from your swarm just set `ensure => absent` and the service_name of your service.
 
 ### Private registries
 By default images will be pushed and pulled from [index.docker.io](https://index.docker.io) unless you've specified a server. If you have your own private registry without authentication, you can fully qualify your image name. If your private registry requires authentication you may configure a registry:

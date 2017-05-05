@@ -148,7 +148,7 @@ class docker::service (
   case $service_provider {
     'systemd': {
       file { '/etc/systemd/system/docker.service.d':
-        ensure => directory
+        ensure => directory,
       }
 
       if $service_overrides_template {
