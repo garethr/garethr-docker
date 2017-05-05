@@ -45,7 +45,7 @@ module Puppet::Parser::Functions
     if opts['snapshot_interval'].to_s != 'undef'
       flags << "--snapshot-interval '#{opts['snapshot_interval']}'"
     end 
-
+    
     flags.flatten.join(" ")
   end
 end
