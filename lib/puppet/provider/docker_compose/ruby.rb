@@ -16,7 +16,7 @@ Puppet::Type.type(:docker_compose).provide(:ruby) do
       "label=com.docker.compose.project=#{project}"
     ]).split("\n")
     counts = case compose_file["version"]
-    when /^2(\.0)?$/
+    when /^2(\.0)?$/, /^3(\.[0-2])?$/
       Hash[*compose_file["services"].each_key.collect { |key|
         Puppet.info("Checking for compose service #{key}")
         [key, containers.count(key)]
