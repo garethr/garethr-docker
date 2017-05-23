@@ -18,14 +18,21 @@ class docker::repos {
           $package_key = $docker::package_key
         }
         apt::source { 'docker':
-          location          => $location,
-          release           => $docker::package_release,
-          repos             => $docker::package_repos,
-          key               => $package_key,
-          key_source        => $key_source,
-          required_packages => 'debian-keyring debian-archive-keyring',
-          include_src       => false,
+          location => $location,
+          release  => $docker::package_release,
+          repos    => $docker::package_repos,
+          key      => {
+            id     => $package_key,
+            source => $key_source,
+          },
+          include  => {
+            src => false,
+            deb => true,
+          }
         }
+        package { ['debian-keyring', 'debian-archive-keyring']:
+          ensure => present,
+        } -> Apt::Source['docker']
         $url_split = split($location, '/')
         $repo_host = $url_split[2]
         $pin_ensure = $docker::pin_upstream_package_source ? {
