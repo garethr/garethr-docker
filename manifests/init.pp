@@ -299,6 +299,10 @@
 #  Specify a subcommand/flag for running docker as daemon
 #  Default is set on a per system basis in docker::params
 #
+# [*manage_users*]
+#   Specify whether to manage the docker users
+#   Default is true
+#
 # [*docker_users*]
 #   Specify an array of users to add to the docker group
 #   Default is empty
@@ -414,6 +418,7 @@ class docker(
   $service_name                      = $docker::params::service_name,
   $docker_command                    = $docker::params::docker_command,
   $daemon_subcommand                 = $docker::params::daemon_subcommand,
+  $manage_users                      = true,
   $docker_users                      = [],
   $docker_group                      = $docker::params::docker_group,
   $daemon_environment_files          = [],
@@ -447,6 +452,7 @@ class docker(
   validate_bool($manage_package)
   validate_bool($docker_cs)
   validate_bool($manage_service)
+  validate_bool($manage_users)
   validate_array($docker_users)
   validate_array($daemon_environment_files)
   validate_array($log_opt)
