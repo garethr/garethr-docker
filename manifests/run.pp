@@ -253,6 +253,8 @@ define docker::run(
           ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '15.04') >= 0) {
           $initscript = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
           $init_template = 'docker/etc/systemd/system/docker-run.erb'
+          $runscript      = "/usr/local/bin/${service_prefix}${sanitised_title}"
+          $runscript_template = 'docker/usr/local/bin/docker-run.erb'
           $uses_systemd = true
           $mode = '0640'
         } else {
@@ -272,6 +274,8 @@ define docker::run(
         } else {
           $initscript     = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
           $init_template  = 'docker/etc/systemd/system/docker-run.erb'
+          $runscript      = "/usr/local/bin/${service_prefix}${sanitised_title}"
+          $runscript_template = 'docker/usr/local/bin/docker-run.erb'
           $hasstatus      = true
           $mode           = '0640'
           $uses_systemd   = true
@@ -280,6 +284,8 @@ define docker::run(
       'Archlinux': {
         $initscript     = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
         $init_template  = 'docker/etc/systemd/system/docker-run.erb'
+        $runscript      = "/usr/local/bin/${service_prefix}${sanitised_title}"
+        $runscript_template = 'docker/usr/local/bin/docker-run.erb'
         $hasstatus      = true
         $mode           = '0640'
         $uses_systemd   = true
@@ -322,6 +328,12 @@ define docker::run(
 
     }
     else {
+
+      file { $runscript:
+        ensure  => present,
+        content => template($runscript_template),
+        mode    => '0550',
+      } ->
       file { $initscript:
         ensure  => present,
         content => template($init_template),
