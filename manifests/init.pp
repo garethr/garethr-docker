@@ -475,9 +475,7 @@ class docker(
                 'log_driver must be one of none, json-file, syslog, journald, gelf, fluentd or splunk')
   }
 
-  if $selinux_enabled {
-    validate_re($selinux_enabled, '^(true|false)$', 'selinux_enabled must be true or false')
-  }
+  validate_bool($selinux_enabled)
 
   if $storage_driver {
     validate_re($storage_driver, '^(aufs|devicemapper|btrfs|overlay|overlay2|vfs|zfs)$',

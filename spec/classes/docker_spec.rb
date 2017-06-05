@@ -667,7 +667,7 @@ describe 'docker', :type => :class do
       end
 
       context 'with specific selinux_enabled parameter' do
-        let(:params) { { 'selinux_enabled' => 'true' } }
+        let(:params) { { 'selinux_enabled' => true } }
         it { should contain_file(service_config_file).with_content(/--selinux-enabled=true/) }
       end
 
