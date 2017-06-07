@@ -312,6 +312,7 @@ docker::run { 'helloworld':
   privileged      => false,
   pull_on_start   => false,
   before_stop     => 'echo "So Long, and Thanks for All the Fish"',
+  before_start    => 'echo "Run this on the host before starting the Docker container"',
   after           => [ 'container_b', 'mysql' ],
   depends         => [ 'container_a', 'postgres' ],
   extra_parameters => [ '--restart=always' ],
