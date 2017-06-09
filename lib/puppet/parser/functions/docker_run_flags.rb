@@ -76,6 +76,8 @@ module Puppet::Parser::Functions
       flags << param
     end
 
-    flags.flatten.join(" ")
+    # Some software (systemd) will truncate very long lines using glibc's max
+    # line length. Wrap options across multiple lines with '\' to avoid
+    flags.flatten.join(" \\\n        ")
   end
 end
