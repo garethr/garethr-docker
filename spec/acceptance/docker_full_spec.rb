@@ -541,6 +541,32 @@ describe 'the Puppet Docker module' do
 
         shell('docker inspect container-3-6', :acceptable_exit_codes => [1])
       end
+
+      it 'should allow dependency for ordering of independent run and image' do
+        pp=<<-EOS
+          class { 'docker':}
+
+          docker::image { 'ubuntu': }
+
+          docker::run { 'container_3_7_1':
+            image   => 'ubuntu',
+            command => 'init',
+          }
+
+          docker::image { 'busybox':
+            require => Docker::Run['container_3_7_1'],
+          }
+
+          docker::run { 'container_3_7_2':
+            image   => 'busybox',
+            command => 'init',
+          }
+        EOS
+
+        apply_manifest(pp, :catch_failures => true)
+        apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
+
+      end
     end
 
     describe "docker::exec" do
