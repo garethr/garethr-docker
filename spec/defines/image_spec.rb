@@ -13,12 +13,12 @@ describe 'docker::image', :type => :define do
 
   context 'with ensure => absent' do
     let(:params) { { 'ensure' => 'absent' } }
-    it { should contain_exec('docker rmi base') }
+    it { should contain_exec('docker rmi $(docker images | egrep '^(docker.io/)?base ' | awk '{ print $3 }')') }
   end
 
   context 'with ensure => absent and force => true' do
     let(:params) { { 'ensure' => 'absent', 'force' => true } }
-    it { should contain_exec('docker rmi -f base') }
+    it { should contain_exec('docker rmi -f $(docker images | egrep '^(docker.io/)?base ' | awk '{ print $3 }')') }
   end
 
   context 'with ensure => absent and image_tag => precise' do

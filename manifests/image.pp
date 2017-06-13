@@ -90,7 +90,7 @@ define docker::image(
     $image_find    = "${docker_command} images --digests | egrep '^(docker.io/)?${image} ' | awk '{ print \$3 }' | grep ^${image_digest}$"
   } else {
     $image_arg     = $image
-    $image_remove  = "${docker_command} rmi ${image_force}${image}"
+    $image_remove  = "${docker_command} rmi ${image_force}(${docker_command} images | egrep '^(docker.io/)?${image} ' | awk '{ print \$3 }')"
     $image_find    = "${docker_command} images | cut -d ' ' -f 1 | egrep '^(docker\\.io/)?${image}$'"
   }
 
