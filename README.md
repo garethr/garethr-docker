@@ -216,6 +216,15 @@ docker::image { 'ubuntu':
 
 Note: images will only install if an image of that name does not already exist.
 
+You can also remove all the images versions except the single tag you need. This is useful for keeping the disk space usage low.   
+
+```puppet
+docker::image { 'ubuntu':
+  image_tag   => 'precise',
+  image_prune => true,
+}
+```
+
 A images can also be added/build from a dockerfile with the `docker_file` property, this equivalent to running `docker build -t ubuntu - < /tmp/Dockerfile`
 
 ```puppet
@@ -236,7 +245,7 @@ You can trigger a rebuild of the image by subscribing to external events like Do
 
 ```puppet
 docker::image { 'ubuntu':
-  docker_file => '/tmp/Dockerfile'
+  docker_file => '/tmp/Dockerfile',
   subscribe => File['/tmp/Dockerfile'],
 }
 
