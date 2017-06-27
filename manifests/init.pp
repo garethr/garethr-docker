@@ -279,6 +279,10 @@
 #   synchronization, to continue even though the configuration may be buggy.
 #   Defaults to true
 #
+# [*overlay2_override_kernel_check*]
+#   Overrides the Linux kernel version check allowing overlay2
+#   Default value is false
+#
 # [*manage_package*]
 #   Won't install or define the docker package, useful if you want to use your own package
 #   Defaults to true
@@ -408,6 +412,7 @@ class docker(
   $dm_use_deferred_deletion          = $docker::params::dm_use_deferred_deletion,
   $dm_blkdiscard                     = $docker::params::dm_blkdiscard,
   $dm_override_udev_sync_check       = $docker::params::dm_override_udev_sync_check,
+  $overlay2_override_kernel_check    = $docker::params::overlay2_override_kernel_check,
   $execdriver                        = $docker::params::execdriver,
   $manage_package                    = $docker::params::manage_package,
   $package_source                    = $docker::params::package_source,
