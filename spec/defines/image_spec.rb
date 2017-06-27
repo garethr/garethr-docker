@@ -168,4 +168,19 @@ describe 'docker::image', :type => :define do
       }.to raise_error(Puppet::Error)
     end
   end
+
+  context 'with image_prune => true' do
+    let(:params) { { 'image_prune' => true } }
+    it do
+      expect {
+        should have_exec_resource_count(1)
+      }.to raise_error(Puppet::Error)
+    end
+  end
+
+  context 'with image_prune => true and image_tag => precise' do
+    let(:params) { { 'image_prune' => true , 'image_tag' => 'precise'} }
+    it { should contain_exec('docker rmi -f $(docker images | egrep '^(docker.io/)?base ' | grep -v -P 'base\s+precise' | awk '{ print \$3 }')') }
+  end
+
 end
