@@ -586,6 +586,55 @@ describe 'the Puppet Docker module' do
           expect(r.stdout).to match(/test_command_file.txt/)
         end
       end
+
+      it 'should only run if notified when refreshonly is true' do
+        container_name = 'container_4_2'
+        pp=<<-EOS
+          class { 'docker': }
+
+          docker::image { 'ubuntu': }
+
+          docker::run { '#{container_name}':
+            image   => 'ubuntu',
+            command => 'init',
+          }
+
+          docker::exec { 'test_command':
+            container   => '#{container_name}',
+            command     => 'touch /root/test_command_file.txt',
+            refreshonly => true,
+          }
+        EOS
+
+        apply_manifest(pp, :catch_failures => true)
+        apply_manifest(pp, :catch_changes => true) unless fact('selinux') == 'true'
+
+        # A sleep to give docker time to execute properly
+        sleep 4
+
+        shell("docker exec #{container_name} ls /root") do |r|
+          expect(r.stdout).to_not match(/test_command_file.txt/)
+        end
+
+        pp_extra=<<-EOS
+          file { '/tmp/dummy_file':
+            ensure => 'present',
+            notify => Docker::Exec['test_command'],
+          }
+        EOS
+
+        pp2 = pp + pp_extra
+
+        apply_manifest(pp2, :catch_failures => true)
+        apply_manifest(pp2, :catch_changes => true) unless fact('selinux') == 'true'
+
+        # A sleep to give docker time to execute properly
+        sleep 4
+
+        shell("docker exec #{container_name} ls /root") do |r|
+          expect(r.stdout).to match(/test_command_file.txt/)
+        end
+      end
     end
   end
 end
