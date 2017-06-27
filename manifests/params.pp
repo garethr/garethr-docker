@@ -246,6 +246,8 @@ class docker::params {
       $package_repos = undef
       $package_release = undef
       $use_upstream_package_source = false
+      $package_cs_source_location = undef
+      $package_cs_key_source = undef
       $package_name = 'docker'
       $service_name = $service_name_default
       $docker_command = $docker_command_default
@@ -272,6 +274,8 @@ class docker::params {
       $package_repos = undef
       $package_release = undef
       $use_upstream_package_source = false
+      $package_cs_source_location = undef
+      $package_cs_key_source = undef
       $package_name = 'app-emulation/docker'
       $service_name = $service_name_default
       $docker_command = $docker_command_default
@@ -295,6 +299,8 @@ class docker::params {
       $package_key_source = undef
       $package_source_location = undef
       $package_key = undef
+      $package_cs_source_location = undef
+      $package_cs_key_source = undef
       $package_repos = undef
       $package_release = undef
       $use_upstream_package_source = true
