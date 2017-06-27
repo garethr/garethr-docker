@@ -1,4 +1,4 @@
-# == Class: docker
+# == Class: docker::registry
 #
 # Module to configure private docker registries from which to pull Docker images
 # If the registry does not require authentication, this module is not required.
@@ -7,66 +7,84 @@
 # [*server*]
 #   The hostname and port of the private Docker registry. Ex: dockerreg:5000
 #
+# [*homedir*]
+#   Home directory of the use to configure the docker registry credentials for.
+#   Default: '/root'
+#
 # [*ensure*]
 #   Whether or not you want to login or logout of a repository
+#   Default: 'present'
 #
 # [*username*]
-#   Username for authentication to private Docker registry.
-#   auth is not required.
+#   Username for authentication to private Docker registry.  Required if ensure
+#   is set to present.
 #
 # [*password*]
-#   Password for authentication to private Docker registry. Leave undef if
-#   auth is not required.
+#   Password for authentication to private Docker registry. Required if ensure
+#   is set to present.
 #
 # [*email*]
-#   Email for registration to private Docker registry. Leave undef if
-#   auth is not required.
+#   Email for registration to private Docker registry. Required if ensure is
+#   set to present.
 #
-# [*local_user*]
-#   The local user to log in as. Docker will store credentials in this
-#   users home directory
-#
+# [*show_diff*]
+#   Whether or not to show diff when applying augeas resources.  Setting this
+#   to true may expose sensitive information.
+#   Default: false
 #
 define docker::registry(
   $server      = $title,
+  $homedir     = '/root',
   $ensure      = 'present',
   $username    = undef,
   $password    = undef,
   $email       = undef,
-  $local_user  = 'root',
+  $show_diff   = false,
 ) {
   include docker::params
 
   validate_re($ensure, '^(present|absent)$')
 
-  $docker_command = $docker::params::docker_command
-
   if $ensure == 'present' {
-    if $username != undef and $password != undef and $email != undef {
-      $auth_cmd = "${docker_command} login -u '${username}' -p \"\${password}\" -e '${email}' ${server}"
-      $auth_environment = "password=${password}"
-    }
-    elsif $username != undef and $password != undef {
-      $auth_cmd = "${docker_command} login -u '${username}' -p \"\${password}\" ${server}"
-      $auth_environment = "password=${password}"
-    }
-    else {
-      $auth_cmd = "${docker_command} login ${server}"
-      $auth_environment = undef
-    }
-  }
-  else {
-    $auth_cmd = "${docker_command} logout ${server}"
-    $auth_environment = undef
-  }
+    validate_string($username)
+    validate_string($password)
+    validate_string($email)
 
-  exec { "${title} auth":
-    environment => $auth_environment,
-    command     => $auth_cmd,
-    user        => $local_user,
-    cwd         => '/root',
-    path        => ['/bin', '/usr/bin'],
-    timeout     => 0,
-  }
+    $auth_string = base64('encode', "${username}:${password}")
 
+    # We can't manage the directory and config file directly here since we'd
+    # end up with multiple resources managing the same files, and there isn't
+    # another great place to put this.
+    exec { "Create ${homedir}/.docker for ${title}":
+      command => "mkdir -m 0700 -p ${homedir}/.docker",
+      creates => "${homedir}/.docker",
+    }
+
+    -> exec { "Create ${homedir}/.docker/config.json for ${title}":
+      command => "echo '{}' > ${homedir}/.docker/config.json; chmod 0600 ${homedir}/.docker/config.json",
+      creates => "${homedir}/.docker/config.json",
+    }
+
+    -> augeas { "Create config in ${homedir} for ${title}":
+      incl      => "${homedir}/.docker/config.json",
+      lens      => 'Json.lns',
+      show_diff => $show_diff,
+      changes   => [
+        "set dict/entry[. = 'auths'] 'auths'",
+        "set dict/entry[. = 'auths']/dict/entry[. = '${server}'] '${server}'",
+        "set dict/entry[. = 'auths']/dict/entry[. = '${server}']/dict/entry[. = 'email'] email",
+        "set dict/entry[. = 'auths']/dict/entry[. = '${server}']/dict/entry[. = 'email']/string ${email}",
+        "set dict/entry[. = 'auths']/dict/entry[. = '${server}']/dict/entry[. = 'auth'] auth",
+        "set dict/entry[. = 'auths']/dict/entry[. = '${server}']/dict/entry[. = 'auth']/string ${auth_string}",
+      ],
+    }
+  } else {
+    augeas { "Remove auth entry in ${homedir} for ${title}":
+      incl    => "${homedir}/.docker/config.json",
+      lens    => 'Json.lns',
+      changes => [
+        "rm dict/entry[. = 'auths']/dict/entry[. = '${server}']",
+      ],
+    }
+  }
 }
