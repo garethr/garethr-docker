@@ -26,6 +26,10 @@ module Puppet::Parser::Functions
       flags << "-m #{opts['memory_limit']}"
     end
 
+    if opts['entrypoint']
+      flags << "--entrypoint '#{opts['entrypoint'].shellescape}'"
+    end
+
     cpusets = [opts['cpuset']].flatten.compact
     unless cpusets.empty?
       value = cpusets.join(',')

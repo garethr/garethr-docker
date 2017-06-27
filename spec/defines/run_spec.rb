@@ -708,6 +708,16 @@ require 'spec_helper'
         it { should contain_exec("remove container docker-sample").with_command('docker rm -v sample') }
       end
 
+      context 'when passing an entrypoint' do
+        let(:params) { {'entrypoint' => '/bin/bash', 'image' => 'base'} }
+        it { should contain_file(initscript).with_content(/--entrypoint '\/bin\/bash'/) }
+      end
+
+      context 'when not passing an entrypoint' do
+        let(:params) { {'command' => 'command', 'image' => 'base'} }
+        it { should contain_file(initscript).without_content(/--entrypoint/) }
+      end
+
     end
   end
 
