@@ -293,6 +293,30 @@ class docker::params {
       $pin_upstream_package_source = undef
       $apt_source_pin_level = undef
     }
+    'Suse':{
+      $manage_epel = false
+      $docker_group = $docker_group_default
+      $package_key_source = undef
+      $package_source_location = undef
+      $package_key = undef
+      $package_repos = undef
+      $package_release = undef
+      $use_upstream_package_source = false
+      $package_name = 'docker'
+      $service_name = $service_name_default
+      $docker_command = $docker_command_default
+      $detach_service_in_init = false
+      $repo_opt = undef
+      $nowarn_kernel = false
+      $service_provider   = 'systemd'
+      $service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-suse.conf.erb'
+      $service_hasstatus  = true
+      $service_hasrestart = true
+      $service_config_template = 'docker/etc/sysconfig/docker.systemd.erb'
+      $service_config = '/etc/sysconfig/docker'
+      $storage_config = '/etc/sysconfig/docker-storage'
+      $storage_setup_file = '/etc/sysconfig/docker-storage-setup'
+    }
     default: {
       $manage_epel = false
       $docker_group = $docker_group_default

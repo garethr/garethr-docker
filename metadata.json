@@ -52,6 +52,12 @@
       "operatingsystemrelease": [
         "21"
       ]
+    },
+    {
+      "operatingsystem": "Suse",
+      "operatingsystemrelease": [
+        "12"
+      ]
     }
   ],
   "requirements": [
