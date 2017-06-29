@@ -269,6 +269,47 @@ describe 'the Puppet Docker module' do
           expect(r.stdout).to_not match(/busybox/)
         end
       end
+
+      it 'should rebuild when refreshed' do
+        pp1=<<-EOS
+          class { 'docker':}
+
+          docker::image { 'ubuntu_with_file':
+            docker_file => "/root/Dockerfile",
+            require     => Class['docker'],
+            subscribe => File["/root/Dockerfile"],
+          }
+
+          file { '/root/Dockerfile':
+            ensure  => present,
+            content => "FROM busybox\nRUN echo 1 > /root/test_file_from_dockerfile.txt",
+            before  => Docker::Image['ubuntu_with_file'],
+          }
+        EOS
+        apply_manifest(pp1, :catch_failures => true)
+        pp2=<<-EOS
+          class { 'docker':}
+
+          docker::image { 'ubuntu_with_file':
+            docker_file => "/root/Dockerfile",
+            require     => Class['docker'],
+            subscribe => File["/root/Dockerfile"],
+          }
+
+          file { '/root/Dockerfile':
+            ensure  => present,
+            content => "FROM busybox\nRUN echo 2 > /root/test_file_from_dockerfile.txt",
+            before  => Docker::Image['ubuntu_with_file'],
+          }
+        EOS
+
+        apply_manifest(pp2, :catch_failures => true)
+        apply_manifest(pp2, :catch_changes => true) unless fact('selinux') == 'true'
+
+        shell("docker run ubuntu_with_file cat /root/test_file_from_dockerfile.txt") do |r|
+          expect(r.stdout).to match(/2/)
+        end
+      end
     end
 
     describe "docker::run" do
