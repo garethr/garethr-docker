@@ -756,6 +756,7 @@ describe 'docker', :type => :class do
       it { should_not contain_apt__pin('docker') }
       it { should contain_package('docker').with_name('docker-engine') }
     end
+    it { should contain_file('/etc/default/grub').with_content(/cgroup_enable=memory/)}
   end
 
   context 'specific to RedHat' do

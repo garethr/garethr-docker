@@ -145,6 +145,7 @@ class docker::params {
       } else {
         $detach_service_in_init = true
       }
+      $manage_memory_cgroup = true
 
     }
     'RedHat' : {
