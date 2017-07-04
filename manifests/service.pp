@@ -203,6 +203,18 @@ class docker::service (
       hasstatus  => $service_hasstatus,
       hasrestart => $service_hasrestart,
       provider   => $service_provider,
+    } ->
+    # a workaround for https://github.com/docker/docker/issues/9665
+    file { '/usr/local/bin/clean_up_dead_containers.sh':
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0555',
+      source => 'puppet:///modules/docker/clean_up_dead_containers.sh',
+    } ->
+    exec { 'clean_up_dead_containers.sh':
+      command     => '/usr/local/bin/clean_up_dead_containers.sh',
+      subscribe   => Service['docker'],
+      refreshonly => true,
     }
   }
 }
