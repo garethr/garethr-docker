@@ -238,6 +238,8 @@ You can trigger a rebuild of the image by subscribing to external events like Do
 docker::image { 'ubuntu':
   docker_file => '/tmp/Dockerfile'
   subscribe => File['/tmp/Dockerfile'],
+  ensure => 'latest',
+  refreshonly => 'true'
 }
 
 file { '/tmp/Dockerfile':

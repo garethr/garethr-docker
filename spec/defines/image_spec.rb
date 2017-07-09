@@ -32,6 +32,7 @@ describe 'docker::image', :type => :define do
     it { should contain_exec('/usr/local/bin/update_docker_image.sh base') }
   end
 
+
   context 'with docker_file => Dockerfile' do
     let(:params) { { 'docker_file' => 'Dockerfile' }}
     it { should contain_exec('docker build -t base - < Dockerfile') }
@@ -138,7 +139,16 @@ describe 'docker::image', :type => :define do
 
   context 'with ensure => latest' do
     let(:params) { { 'ensure' => 'latest' } }
-    it { should contain_exec("echo 'Update of base complete'").with_onlyif('/usr/local/bin/update_docker_image.sh base') }
+    it { should contain_exec("echo 'Update of base complete'").with_onlyif('/usr/local/bin/update_docker_image.sh base').with(
+      'refreshonly' => 'false'
+    ) } 
+  end
+
+  context 'with ensure => latest and refreshonly = true' do
+    let(:params) { { 'ensure' => 'latest', 'refreshonly' => 'true' } }
+    it { should contain_exec("echo 'Update of base complete'").with_onlyif('/usr/local/bin/update_docker_image.sh base').with(
+      'refreshonly' => 'true'
+    ) }
   end
 
   context 'with ensure => latest and image_tag => precise' do
