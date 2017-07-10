@@ -5,7 +5,14 @@ EnvironmentFile=-/etc/sysconfig/docker-network
 <% if @daemon_environment_files %><% @daemon_environment_files.each do |param| %>EnvironmentFile=-<%= param %>
 <% end %><% end -%>
 ExecStart=
+<% unless @dockerd_binary -%>
 ExecStart=/usr/bin/<%= @docker_command %> <%= @daemon_subcommand %> $OPTIONS \
+      $DOCKER_STORAGE_OPTIONS \
+      $DOCKER_NETWORK_OPTIONS \
+      $BLOCK_REGISTRY \
+      $INSECURE_REGISTRY
+<% end -%>
+ExecStart=<%= @dockerd_binary %> $OPTIONS \
       $DOCKER_STORAGE_OPTIONS \
       $DOCKER_NETWORK_OPTIONS \
       $BLOCK_REGISTRY \

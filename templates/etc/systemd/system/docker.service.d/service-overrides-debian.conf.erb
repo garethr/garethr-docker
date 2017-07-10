@@ -2,5 +2,9 @@
 EnvironmentFile=-/etc/default/docker
 EnvironmentFile=-/etc/default/docker-storage
 ExecStart=
+<% unless @dockerd_binary -%>
 ExecStart=/usr/bin/<%= @docker_command %> <%= @daemon_subcommand %> $OPTIONS \
+        $DOCKER_STORAGE_OPTIONS
+<% end -%>
+ExecStart=<%= @dockerd_binary %> $OPTIONS \
         $DOCKER_STORAGE_OPTIONS
