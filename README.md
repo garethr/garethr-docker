@@ -312,6 +312,7 @@ docker::run { 'helloworld':
   privileged      => false,
   pull_on_start   => false,
   before_stop     => 'echo "So Long, and Thanks for All the Fish"',
+  before_start    => 'echo "Run this on the host before starting the Docker container"',
   after           => [ 'container_b', 'mysql' ],
   depends         => [ 'container_a', 'postgres' ],
   extra_parameters => [ '--restart=always' ],
@@ -465,6 +466,87 @@ docker_compose { '/tmp/docker-compose.yml':
 
 It is also possible to give options to the ```docker-compose up``` command
 such as ```--remove-orphans``` using the ```up_args``` option.
+
+### Swarm mode
+Docker Engine 1.12 includes swarm mode for natively managing a cluster of Docker Engines called a swarm. You can now cluster your Docker engines with the one of the following Puppet resources.
+For a swarm manager:
+
+```puppet
+docker::swarm {'cluster_manager':
+  init           => true,
+  advertise_addr => '192.168.1.1',
+  listen_addr    => '192.168.1.1',  
+} 
+```
+In the above example we have configured a swarm manager with ```init => true``` then set the ```advertise_addr``` and ```listen_addr```. Both the ```advertise_addr``` and ```listen_addr``` are set for the cluster communications between nodes. Please note the ```advertise_addr``` and ```listen_addr``` must be set for a multihomed server. For more advance flags to configure raft snapshots etc please read the readme at the top of the ```docker::swarm``` class.  
+
+For a swarm worker:
+```puppet
+docker::swarm {'cluster_worker':
+join           => true,
+advertise_addr => '192.168.1.2',
+listen_addr    => '192.168.1.2,
+manager_ip     => '192.168.1.1',
+token          => 'SWMTKN-1-2lw8bnr57qsu74d6iq2q1wr2wq2i334g7425dfr3zucimvh4bl-2vwn6gysbdj605l37c61iixie'
+} 
+```
+
+In this example we have joined a node to the cluster using ```join => true```. For a worker node or second manager you need to pass a current managers ip address ```manager_ip => '192.168.1.1'```
+The other important configuration is the token you pass to the manager. The token will define the nodes role in the cluster, as there will be a token to create another manager and a different token for the worker nodes.
+
+To remove a node from a cluster use the following:
+```puppet
+docker::swarm {'cluster_worker':
+ensure => absent
+}
+```
+### Docker services
+Docker services allow to create distributed applications across multiple swarm nodes. A service is a set of containers that are replicated across your swarm.
+To configure a service with Puppet code please see the following examples
+
+To create a service
+```puppet
+docker::services {'redis':
+    create => true,   
+    service_name => 'redis',
+    image => 'redis:latest',
+    publish => '6379:639',
+    replicas => '5', 
+    extra_params => ['--update-delay 1m', '--restart-window 30s']
+  }
+```
+In this example we are creating a service called `redis`, as it is a new service we have set `create => true`. The `service_name` resource is the name which Docker knows the service as. The `image` resource is the image you want to base the service off, `publish` is the ports that want exposed to the outside world for the service to be consumed, `replicas` sets the amount of tasks (containers) that you want running in the service, `extra_params` allows you to configure any of the other flags that Docker gives you when you create a service for more info see `docker service create --help`
+
+To update the service
+```puppet 
+docker::services {'redis_update':
+  create => false,
+  update => true,
+  service_name => 'redis',
+  replicas => '3',
+}
+
+In this example we have taken the service that we created earlier `redis` set the `create => false` and this time added `update => true`. We then decleared the service name `redis` we have then updated the servce to have only 3 replicas, not 5. The `extra_params` resource is also available in the update class.
+
+To scale a service
+```puppet
+docker::services {'redis_scale':
+  create => false,
+  scale => true,
+  service_name => 'redis',
+  replicas => '10', 
+}
+```
+In this example we have used the command `docker service scale` with Puppet code. We have taken our service `redis` set the `create => false` and `scale => true` When using scale you have to declare your `service_name` then the number of replicas that you want. In this example we are going to scale to `10`
+
+To remove a service
+```puppet
+docker::services {'redis':
+  ensure => 'absent',
+  service_name => 'redis',
+}
+```
+To remove a a service from your swarm just set `ensure => absent` and the service_name of your service.
 
 ### Private registries
 By default images will be pushed and pulled from [index.docker.io](https://index.docker.io) unless you've specified a server. If you have your own private registry without authentication, you can fully qualify your image name. If your private registry requires authentication you may configure a registry:

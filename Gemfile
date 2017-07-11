@@ -14,7 +14,7 @@ group :test do
   gem "rspec-puppet"
   gem "puppet-syntax"
   gem "puppetlabs_spec_helper"
-  gem "metadata-json-lint"
+  gem "metadata-json-lint", "1.1.0"
   gem "rspec"
   gem "rspec-retry"
   gem "simplecov", ">= 0.11.0"
