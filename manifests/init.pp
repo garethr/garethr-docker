@@ -349,6 +349,8 @@ class docker(
   $ensure                            = $docker::params::ensure,
   $prerequired_packages              = $docker::params::prerequired_packages,
   $docker_cs                         = $docker::params::docker_cs,
+  $package_cs_source_location        = $docker::params::package_cs_source_location,
+  $package_cs_key_source             = $docker::params::package_cs_key_source,
   $tcp_bind                          = $docker::params::tcp_bind,
   $tls_enable                        = $docker::params::tls_enable,
   $tls_verify                        = $docker::params::tls_verify,
@@ -518,10 +520,10 @@ class docker(
     validate_string($tls_key)
   }
 
-  class { 'docker::repos': } ->
-  class { 'docker::install': } ->
-  class { 'docker::config': } ~>
-  class { 'docker::service': }
+  class { 'docker::repos': }
+  -> class { 'docker::install': }
+  -> class { 'docker::config': }
+  ~> class { 'docker::service': }
   contain 'docker::repos'
   contain 'docker::install'
   contain 'docker::config'
