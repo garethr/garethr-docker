@@ -90,7 +90,7 @@ require 'spec_helper'
           else
             it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-foo/) }
             it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-bar/) }
-            it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-foo_bar-baz/) }            
+            it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-foo_bar-baz/) }
           end
         end
       end
@@ -272,17 +272,17 @@ require 'spec_helper'
 
       context 'when passing a cpuset' do
         let(:params) { {'command' => 'command', 'image' => 'base', 'cpuset' => '3'} }
-        it { should contain_file(initscript).with_content(/--cpuset=3/) }
+        it { should contain_file(initscript).with_content(/--cpuset-cpus=3/) }
       end
 
       context 'when passing a multiple cpu cpuset' do
         let(:params) { {'command' => 'command', 'image' => 'base', 'cpuset' => ['0', '3']} }
-        it { should contain_file(initscript).with_content(/--cpuset=0,3/) }
+        it { should contain_file(initscript).with_content(/--cpuset-cpus=0,3/) }
       end
 
       context 'when not passing a cpuset' do
         let(:params) { {'command' => 'command', 'image' => 'base'} }
-        it { should contain_file(initscript).without_content(/--cpuset=/) }
+        it { should contain_file(initscript).without_content(/--cpuset-cpus=/) }
       end
 
       context 'when passing a links option' do
