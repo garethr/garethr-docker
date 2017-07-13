@@ -32,6 +32,7 @@ define docker::image(
   $docker_file  = undef,
   $docker_dir   = undef,
   $docker_tar   = undef,
+  $refreshonly = false
 ) {
   include docker::params
   $docker_command = $docker::params::docker_command
@@ -117,6 +118,7 @@ define docker::image(
       timeout     => 0,
       onlyif      => $image_install,
       require     => File['/usr/local/bin/update_docker_image.sh'],
+      refreshonly => $refreshonly
     }
   } elsif $ensure == 'present' {
     exec { $image_install:
@@ -125,7 +127,7 @@ define docker::image(
       path        => ['/bin', '/usr/bin'],
       timeout     => 0,
       returns     => ['0', '2'],
-      require     => File['/usr/local/bin/update_docker_image.sh'],
+      require     => File['/usr/local/bin/update_docker_image.sh']
     }
   }
 
