@@ -133,10 +133,10 @@ class docker::params {
       $storage_setup_file = undef
 
       $package_cs_source_location = 'http://packages.docker.com/1.9/apt/repo'
-      $package_cs_key_source = 'http://packages.docker.com/1.9/apt/gpg'
+      $package_cs_key_source = 'https://packages.docker.com/1.9/apt/gpg'
       $package_cs_key = '0xee6d536cf7dc86e2d7d56f59a178ac6c6238f52e'
       $package_source_location = 'http://apt.dockerproject.org/repo'
-      $package_key_source = 'http://apt.dockerproject.org/gpg'
+      $package_key_source = 'https://apt.dockerproject.org/gpg'
       $package_key = '58118E89F3A912897C070ADBF76221572C52609D'
 
       if ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemmajrelease, '8') >= 0) or
@@ -246,6 +246,8 @@ class docker::params {
       $package_repos = undef
       $package_release = undef
       $use_upstream_package_source = false
+      $package_cs_source_location = undef
+      $package_cs_key_source = undef
       $package_name = 'docker'
       $service_name = $service_name_default
       $docker_command = $docker_command_default
@@ -272,6 +274,8 @@ class docker::params {
       $package_repos = undef
       $package_release = undef
       $use_upstream_package_source = false
+      $package_cs_source_location = undef
+      $package_cs_key_source = undef
       $package_name = 'app-emulation/docker'
       $service_name = $service_name_default
       $docker_command = $docker_command_default
@@ -295,6 +299,8 @@ class docker::params {
       $package_key_source = undef
       $package_source_location = undef
       $package_key = undef
+      $package_cs_source_location = undef
+      $package_cs_key_source = undef
       $package_repos = undef
       $package_release = undef
       $use_upstream_package_source = true
