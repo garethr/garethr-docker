@@ -34,7 +34,10 @@ class docker::compose(
   }
 
   if $ensure == 'present' {
-    ensure_packages(['curl'])
+
+    if ! defined(Package['curl']) {
+      ensure_packages(['curl'])
+    }
 
     if $proxy != undef {
         $proxy_opt = "--proxy ${proxy}"
