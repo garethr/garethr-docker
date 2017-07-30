@@ -56,7 +56,7 @@ class docker::params {
   $manage_package                    = true
   $package_source                    = undef
   $manage_kernel                     = true
-  $package_name_default              = 'docker-engine'
+  $package_name_default              = 'docker-ce'
   $service_name_default              = 'docker'
   $docker_command_default            = 'docker'
   $docker_group_default              = 'docker'
