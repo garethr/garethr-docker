@@ -75,7 +75,7 @@ class docker::params {
   $compose_version                   = '1.9.0'
   $compose_install_path              = '/usr/local/bin'
 
-  if $daemon_subcommand == `undef` {
+  if $daemon_subcommand == 'undef' {
     $daemon_command = 'dockerd'
   } else {
     $daemon_command = "${docker_command} ${daemon_subcommand}"
