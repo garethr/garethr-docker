@@ -1,7 +1,7 @@
 # This file is managed by Puppet and local changes
 # may be overwritten
 
-DOCKER="/usr/bin/<%= @docker_command %>"
+DOCKER="/usr/bin/<%= @daemon_command %>"
 
 other_args="<% -%>
 <% if @root_dir %> -g <%= @root_dir %><% end -%>
