@@ -37,7 +37,6 @@
 #   Defaults to 'true'.
 #
 class docker::service (
-  $docker_command                    = $docker::docker_command,
   $service_name                      = $docker::service_name,
   $daemon_subcommand                 = $docker::daemon_subcommand,
   $tcp_bind                          = $docker::tcp_bind,
