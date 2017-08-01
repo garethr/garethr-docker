@@ -21,7 +21,6 @@ class docker::repos {
           location          => $location,
           release           => $docker::package_release,
           repos             => $docker::package_repos,
-          required_packages => 'debian-keyring debian-archive-keyring',
           key               => {
             'id'     => $package_key,
             'server' => $key_source,
