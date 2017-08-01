@@ -18,14 +18,14 @@ class docker::repos {
           $package_key = $docker::package_key
         }
         apt::source { 'docker':
-          location          => $location,
-          release           => $docker::package_release,
-          repos             => $docker::package_repos,
-          key               => {
+          location =>  $location,
+          release  => $docker::package_release,
+          repos    => $docker::package_repos,
+          key      => {
             'id'     => $package_key,
             'server' => $key_source,
           },
-          include           =>  {
+          include  => {
             'src' => false,
           },
         }
