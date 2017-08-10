@@ -56,11 +56,11 @@ class docker::params {
   $manage_package                    = true
   $package_source                    = undef
   $manage_kernel                     = true
-  $package_name_default              = 'docker-engine'
+  $package_name_default              = 'docker-ce'
   $service_name_default              = 'docker'
   $docker_command_default            = 'docker'
   $docker_group_default              = 'docker'
-  $daemon_subcommand                 = 'daemon'
+  $daemon_subcommand                 = undef
   $storage_devs                      = undef
   $storage_vg                        = undef
   $storage_root_size                 = undef
@@ -75,6 +75,12 @@ class docker::params {
   $compose_version                   = '1.9.0'
   $compose_install_path              = '/usr/local/bin'
 
+  if $daemon_subcommand {
+    $daemon_command = "${docker_command} ${daemon_subcommand}"
+    notify {"The 'daemon_subcommand' parameter is deprecated. As of docker 17.06, 'daemon' is no longer a valid docker subcommand":}
+  } else {
+    $daemon_command = 'dockerd'
+  }
   case $::osfamily {
     'Debian' : {
       case $::operatingsystem {
