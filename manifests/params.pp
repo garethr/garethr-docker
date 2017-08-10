@@ -75,11 +75,11 @@ class docker::params {
   $compose_version                   = '1.9.0'
   $compose_install_path              = '/usr/local/bin'
 
-  if $daemon_subcommand == 'undef' {
-    $daemon_command = 'dockerd'
-  } else {
+  if $daemon_subcommand {
     $daemon_command = "${docker_command} ${daemon_subcommand}"
     notify {"The 'daemon_subcommand' parameter is deprecated. As of docker 17.06, 'daemon' is no longer a valid docker subcommand":}
+  } else {
+    $daemon_command = 'dockerd'
   }
   case $::osfamily {
     'Debian' : {
