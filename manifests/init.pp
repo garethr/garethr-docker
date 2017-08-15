@@ -187,6 +187,15 @@
 #   Valid values are 'true', 'false'.
 #   Defaults to 'true'.
 #
+# [*service_limits*]
+#   Hash of limits to be applied for the systemd service
+#   Example:
+#   class {'docker':
+#      service_limits => {
+#        nofile => 4096
+#      }
+#   }
+#
 # [*root_dir*]
 #   Custom root directory for containers
 #   Defaults to undefined
@@ -440,6 +449,7 @@ class docker(
   $service_overrides_template        = $docker::params::service_overrides_template,
   $service_hasstatus                 = $docker::params::service_hasstatus,
   $service_hasrestart                = $docker::params::service_hasrestart,
+  $service_limits                    = $docker::params::service_limits,
 ) inherits docker::params {
 
   validate_string($version)
@@ -463,6 +473,9 @@ class docker(
   validate_string($fixed_cidr)
   validate_string($default_gateway)
   validate_string($bip)
+  if $service_limits != undef {
+    validate_hash($service_limits)
+  }
 
   if ($default_gateway) and (!$bridge) {
     fail('You must provide the $bridge parameter.')

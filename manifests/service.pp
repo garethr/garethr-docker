@@ -31,6 +31,15 @@
 # [*shell_values*]
 #   Array of shell values to pass into init script config files
 #
+# [*service_limits*]
+#   Hash of limits to be applied for the systemd service
+#   Example:
+#   class {'docker':
+#      service_limits => {
+#        nofile => 4096
+#      }
+#   }
+#
 # [*manage_service*]
 #   Specify whether the service should be managed.
 #   Valid values are 'true', 'false'.
@@ -104,6 +113,7 @@ class docker::service (
   $service_overrides_template        = $docker::service_overrides_template,
   $service_hasstatus                 = $docker::service_hasstatus,
   $service_hasrestart                = $docker::service_hasrestart,
+  $service_limits                    = $docker::service_limits,
   $daemon_environment_files          = $docker::daemon_environment_files,
   $tls_enable                        = $docker::tls_enable,
   $tls_verify                        = $docker::tls_verify,
