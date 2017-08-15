@@ -905,12 +905,23 @@ describe 'docker', :type => :class do
     it { should contain_yumrepo('docker') }
     it { should_not contain_class('epel') }
     it { should contain_package('docker').with_install_options('--enablerepo=rhel7-extras') }
-
-    let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
-    service_config_file = '/etc/sysconfig/docker'
-    it { should contain_file(service_config_file).with_content(/^http_proxy='http:\/\/127.0.0.1:3128'/) }
-    it { should contain_file(service_config_file).with_content(/^  https_proxy='http:\/\/127.0.0.1:3128'/) }
     it { should contain_service('docker').with_provider('systemd').with_hasstatus(true).with_hasrestart(true) }
+
+
+    context 'with proxy param' do
+      let(:params) { {'proxy' => 'http://127.0.0.1:3128' } }
+      service_config_file = '/etc/sysconfig/docker'
+      it { should contain_file(service_config_file).with_content(/^http_proxy='http:\/\/127.0.0.1:3128'/) }
+      it { should contain_file(service_config_file).with_content(/^  https_proxy='http:\/\/127.0.0.1:3128'/) }
+    end
+
+    context 'with service_limits specified' do
+      let(:params) { { 'service_limits' => { 'nofile' => 1024, 'nproc' => 2048 } } }
+      systemd_service_file = '/etc/systemd/system/docker.service.d/service-overrides.conf'
+      it { should contain_file(systemd_service_file).with_content(/^LimitNOFILE=1024/)}
+      it { should contain_file(systemd_service_file).with_content(/^LimitNPROC=2048/)}
+    end
+
   end
 
   context 'specific to Oracle Linux 7 or above' do
@@ -981,6 +992,14 @@ describe 'docker', :type => :class do
       } }
 
       it { should contain_service('docker').with_provider('systemd').with_hasstatus(true).with_hasrestart(true) }
+
+      context 'with service_limits specified' do
+        let(:params) { { 'service_limits' => { 'nofile' => 1024, 'nproc' => 2048 } } }
+        systemd_service_file = '/etc/systemd/system/docker.service.d/service-overrides.conf'
+        it { should contain_file(systemd_service_file).with_content(/^LimitNOFILE=1024/)}
+        it { should contain_file(systemd_service_file).with_content(/^LimitNPROC=2048/)}
+      end
+
     end
 
     context 'Debian >= 8' do
@@ -994,6 +1013,14 @@ describe 'docker', :type => :class do
       } }
 
       it { should contain_service('docker').with_provider('systemd').with_hasstatus(true).with_hasrestart(true) }
+
+      context 'with service_limits specified' do
+        let(:params) { { 'service_limits' => { 'nofile' => 1024, 'nproc' => 2048 } } }
+        systemd_service_file = '/etc/systemd/system/docker.service.d/service-overrides.conf'
+        it { should contain_file(systemd_service_file).with_content(/^LimitNOFILE=1024/)}
+        it { should contain_file(systemd_service_file).with_content(/^LimitNPROC=2048/)}
+      end
+
     end
   end
 

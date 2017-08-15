@@ -195,6 +195,17 @@ class { 'docker':
 }
 ```
 
+To increase/decrese docker process limits (open files limit or proc limit), you can use the service_limits option.
+This could be necessary to set higher limits than the ones inherited from systemd.
+```puppet
+class {'docker':
+  service_limits => {
+    nofile => 4096,
+    nproc => 4096
+  }
+}
+```
+
 The class contains lots of other options, please see the inline code
 documentation for the full options.
 

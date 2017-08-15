@@ -1,2 +1,12 @@
 [Service]
 EnvironmentFile=-/etc/conf.d/docker
+<%- if @service_limits -%>
+  <%- @service_limits.each do |lim,value| -%>
+    <%- case lim -%>
+      <%- when "nofile" -%>
+LimitNOFILE=<%= value %>
+      <%- when "nproc" -%>
+LimitNPROC=<%= value %>
+    <%- end -%>
+  <%- end -%>
+<%- end -%>
