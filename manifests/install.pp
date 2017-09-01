@@ -103,9 +103,14 @@ class docker::install {
       }))
 
     } else {
+      $pkg_name = $docker::docker_ce ? {
+        true    => $docker::package_ce_name,
+        default => $docker::package_name,
+      }
+
       ensure_resource('package', 'docker', merge($docker_hash, {
         ensure => $ensure,
-        name   => $docker::package_name,
+        name   => $pkg_name,
       }))
     }
   }

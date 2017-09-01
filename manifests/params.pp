@@ -6,6 +6,7 @@ class docker::params {
   $version                           = undef
   $ensure                            = present
   $docker_cs                         = false
+  $docker_ce                         = false
   $tcp_bind                          = undef
   $tls_enable                        = false
   $tls_verify                        = true
@@ -57,8 +58,10 @@ class docker::params {
   $package_source                    = undef
   $manage_kernel                     = true
   $package_name_default              = 'docker-engine'
+  $package_name_ce_default           = 'docker-ce'
   $service_name_default              = 'docker'
   $docker_command_default            = 'docker'
+  $docker_ce_command_default         = 'dockerd'
   $docker_group_default              = 'docker'
   $daemon_subcommand                 = 'daemon'
   $storage_devs                      = undef
@@ -80,6 +83,7 @@ class docker::params {
       case $::operatingsystem {
         'Ubuntu' : {
           $package_release = "ubuntu-${::lsbdistcodename}"
+          $package_ce_release = $facts['os']['distro']['codename']
           if (versioncmp($::operatingsystemrelease, '15.04') >= 0) {
             $service_provider        = 'systemd'
             $storage_config          = '/etc/default/docker-storage'
@@ -96,9 +100,12 @@ class docker::params {
             $service_hasrestart      = false
             $storage_config          = undef
           }
+          $package_ce_source_location = 'https://download.docker.com/linux/ubuntu'
+          $package_ce_key_source = 'https://download.docker.com/linux/ubuntu/gpg'
         }
         default: {
           $package_release = "debian-${::lsbdistcodename}"
+          $package_ce_release = $facts['os']['distro']['codename']
           if (versioncmp($::operatingsystemmajrelease, '8') >= 0) {
             $service_provider           = 'systemd'
             $storage_config             = '/etc/default/docker-storage'
@@ -115,15 +122,20 @@ class docker::params {
             $service_hasstatus          = undef
             $service_hasrestart         = undef
           }
+          $package_ce_source_location = 'https://download.docker.com/linux/debian'
+          $package_ce_key_source = 'https://download.docker.com/linux/debian/gpg'
         }
       }
 
       $manage_epel = false
       $package_name = $package_name_default
+      $package_ce_name = $package_name_ce_default
       $service_name = $service_name_default
       $docker_command = $docker_command_default
+      $docker_ce_command = $docker_ce_command_default
       $docker_group = $docker_group_default
       $package_repos = 'main'
+      $package_ce_repos = 'stable'
       $use_upstream_package_source = true
       $pin_upstream_package_source = true
       $apt_source_pin_level = 10
@@ -135,6 +147,7 @@ class docker::params {
       $package_cs_source_location = 'http://packages.docker.com/1.9/apt/repo'
       $package_cs_key_source = 'https://packages.docker.com/1.9/apt/gpg'
       $package_cs_key = '0xee6d536cf7dc86e2d7d56f59a178ac6c6238f52e'
+      $package_ce_key = '9DC858229FC7DD38854AE2D88D81803C0EBFCD88'
       $package_source_location = 'http://apt.dockerproject.org/repo'
       $package_key_source = 'https://apt.dockerproject.org/gpg'
       $package_key = '58118E89F3A912897C070ADBF76221572C52609D'
@@ -185,6 +198,7 @@ class docker::params {
       }
       $package_cs_source_location = "https://packages.docker.com/1.9/yum/repo/main/centos/${::operatingsystemmajrelease}"
       $package_cs_key_source = 'https://packages.docker.com/1.9/yum/gpg'
+      $package_ce_source_location = 'https://download.docker.com/linux/centos/docker-ce.repo'
       $package_key = undef
       $package_cs_ke = undef
       $package_repos = undef
