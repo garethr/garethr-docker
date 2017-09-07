@@ -313,7 +313,6 @@ define docker::run(
         exec {
           "remove container ${service_prefix}${sanitised_title}":
             command     => "${docker_command} rm -v ${sanitised_title}",
-            refreshonly => true,
             onlyif      => "${docker_command} ps --no-trunc -a --format='table {{.Names}}' | grep '^${sanitised_title}$'",
             path        => ['/bin', '/usr/bin'],
             environment => 'HOME=/root',
