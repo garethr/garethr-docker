@@ -425,6 +425,17 @@ class {'docker::compose':
 }
 ```
 
+When installing docker-compose, few additional options can be configured:
+
+```puppet
+class {'docker::compose': 
+  ensure       => present,
+  version      => '1.16.1',               # Optional. An exact version of docker-compose to install.
+  install_path => '/usr/local/bin',       # Optional. The directory to store docker-compose.
+  proxy        => 'exampleproxy.com:9999' # A proxy server to use during installation. <[protocol://][user:password@]proxyhost[:port]> 
+}
+```
+
 Here's an example. Given the following Compose file:
 
 ```yaml
