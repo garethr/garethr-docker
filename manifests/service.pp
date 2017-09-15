@@ -38,6 +38,8 @@
 #
 class docker::service (
   $docker_command                    = $docker::docker_command,
+  $docker_ce_command                 = $docker::docker_ce_command,
+  $docker_ce                         = $docker::docker_ce,
   $service_name                      = $docker::service_name,
   $daemon_subcommand                 = $docker::daemon_subcommand,
   $tcp_bind                          = $docker::tcp_bind,

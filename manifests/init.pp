@@ -20,6 +20,10 @@
 #   Whether or not to use the CS (Commercial Support) Docker packages.
 #   Defaults to false.
 #
+# [*docker_ce*]
+#   Whether or not to use the CE (Community Edition) Docker packages.
+#   Defaults to false.
+#
 # [*tcp_bind*]
 #   The tcp socket to bind to in the format
 #   tcp://127.0.0.1:4243
@@ -287,6 +291,10 @@
 #   Specify custom package name
 #   Default is set on a per system basis in docker::params
 #
+# [*package_ce_name*]
+#   Specify custom package name for docker CE
+#   Default is set on a per system basis in docker::params
+#
 # [*service_name*]
 #   Specify custom service name
 #   Default is set on a per system basis in docker::params
@@ -351,6 +359,10 @@ class docker(
   $docker_cs                         = $docker::params::docker_cs,
   $package_cs_source_location        = $docker::params::package_cs_source_location,
   $package_cs_key_source             = $docker::params::package_cs_key_source,
+  $docker_ce                         = $docker::params::docker_ce,
+  $package_ce_source_location        = $docker::params::package_ce_source_location,
+  $package_ce_key_source             = $docker::params::package_ce_key_source,
+  $package_ce_key                    = $docker::params::package_ce_key,
   $tcp_bind                          = $docker::params::tcp_bind,
   $tls_enable                        = $docker::params::tls_enable,
   $tls_verify                        = $docker::params::tls_verify,
@@ -376,7 +388,9 @@ class docker(
   $apt_source_pin_level              = $docker::params::apt_source_pin_level,
   $package_source_location           = $docker::params::package_source_location,
   $package_release                   = $docker::params::package_release,
+  $package_ce_release                = $docker::params::package_ce_release,
   $package_repos                     = $docker::params::package_repos,
+  $package_ce_repos                  = $docker::params::package_ce_repos,
   $package_key                       = $docker::params::package_key,
   $package_key_source                = $docker::params::package_key_source,
   $service_state                     = $docker::params::service_state,
@@ -415,6 +429,7 @@ class docker(
   $package_name                      = $docker::params::package_name,
   $service_name                      = $docker::params::service_name,
   $docker_command                    = $docker::params::docker_command,
+  $docker_ce_command                 = $docker::params::docker_ce_command,
   $daemon_subcommand                 = $docker::params::daemon_subcommand,
   $docker_users                      = [],
   $docker_group                      = $docker::params::docker_group,
@@ -448,6 +463,7 @@ class docker(
   validate_bool($manage_kernel)
   validate_bool($manage_package)
   validate_bool($docker_cs)
+  validate_bool($docker_ce)
   validate_bool($manage_service)
   validate_array($docker_users)
   validate_array($daemon_environment_files)
@@ -463,6 +479,10 @@ class docker(
   validate_string($fixed_cidr)
   validate_string($default_gateway)
   validate_string($bip)
+
+  if ($docker_cs) and ($docker_ce) {
+    fail('You could enable just one of Commercial or Community packages')
+  }
 
   if ($default_gateway) and (!$bridge) {
     fail('You must provide the $bridge parameter.')
