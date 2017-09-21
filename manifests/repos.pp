@@ -12,15 +12,29 @@ class docker::repos {
           $location = $docker::package_cs_source_location
           $key_source = $docker::package_cs_key_source
           $package_key = $docker::package_cs_key
+        } elsif ($docker::docker_ce) {
+          $location = $docker::package_ce_source_location
+          $key_source = $docker::package_ce_key_source
+          $package_key = $docker::package_ce_key
         } else {
           $location = $docker::package_source_location
           $key_source = $docker::package_key_source
           $package_key = $docker::package_key
         }
+        case $docker::docker_ce {
+          true: {
+            $release = $docker::package_ce_release
+            $repos = $docker::package_ce_repos
+          }
+          default: {
+            $release = $docker::package_release
+            $repos = $docker::package_repos
+          }
+        }
         apt::source { 'docker':
           location          => $location,
-          release           => $docker::package_release,
-          repos             => $docker::package_repos,
+          release           => $release,
+          repos             => $repos,
           key               => $package_key,
           key_source        => $key_source,
           required_packages => 'debian-keyring debian-archive-keyring',
@@ -53,6 +67,9 @@ class docker::repos {
         if ($docker::docker_cs) {
           $baseurl = $docker::package_cs_source_location
           $gpgkey = $docker::package_cs_key_source
+        } elsif ($docker::docker_ce) {
+          $baseurl = $docker::package_ce_source_location
+          $gpgkey = undef
         } else {
           $baseurl = $docker::package_source_location
           $gpgkey = $docker::package_key_source
