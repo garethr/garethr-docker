@@ -110,7 +110,10 @@ define docker::run(
   $stop_wait_time = 0,
   $syslog_identifier = undef,
 ) {
+
   include docker::params
+  include docker
+
   if ($socket_connect != []) {
     $sockopts = join(any2array($socket_connect), ',')
     $docker_command = "${docker::params::docker_command} -H ${sockopts}"
@@ -118,7 +121,7 @@ define docker::run(
     $docker_command = $docker::params::docker_command
   }
   $service_name = $docker::params::service_name
-  $docker_group = $docker::params::docker_group
+  $docker_group = $docker::docker_group
 
   validate_re($image, '^[\S]*$')
   validate_re($title, '^[\S]*$')
