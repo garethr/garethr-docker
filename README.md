@@ -559,6 +559,20 @@ docker::registry { 'example.docker.io:5000':
 }
 ```
 
+By default the exec to add registries will run on every Puppet run.  To prevent this you can enable the use of a receipt.
+Caveat: If the values in config.json for this registry are modified outside of Puppet, puppet will not correct them unless the receipt file is removed from /root/.docker/
+
+Default: receipt => false
+
+```puppet
+docker::registry { 'example.docker.io:5000':
+  username => 'user',
+  password => 'secret',
+  email    => 'user@example.com',
+  receipt  => true,
+}
+```
+
 You can logout of a registry if it is no longer required.
 
 ```puppet
