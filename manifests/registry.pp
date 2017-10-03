@@ -34,6 +34,7 @@ define docker::registry(
   $password    = undef,
   $email       = undef,
   $local_user  = 'root',
+  $unless      = undef,
 ) {
   include docker::params
 
@@ -67,6 +68,7 @@ define docker::registry(
     cwd         => '/root',
     path        => ['/bin', '/usr/bin'],
     timeout     => 0,
+    unless      => $unless,
   }
 
 }
