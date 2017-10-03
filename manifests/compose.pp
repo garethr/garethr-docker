@@ -9,16 +9,14 @@
 #   Valid values are absent present
 #   Defaults to present
 #
-# [*version*]
-#   The version of Docker Compose to install.
-#   Defaults to the value set in $docker::params::compose_version
+# [*compose_image*]
+#   The docker image to pull and execute as the docker-compose command
+#   Defaults to the value set in $docker::params::compose_iage
 #
-# [*install_path*]
-#   The path where to install Docker Compose.
-#   Defaults to the value set in $docker::params::compose_install_path
 #
-# [*proxy*]
-#   Proxy to use for downloading Docker Compose.
+# [*compose_path*]
+#   The absolute path to the compose executable
+#   Defaults to the value set in $docker::params::compose_path
 #
 class docker::compose(
   $ensure = 'present',

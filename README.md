@@ -420,8 +420,18 @@ file.
 Before using the docker_compose type make sure the docker-compose utility is installed:
 
 ```puppet
-class {'docker::compose': 
+class {'docker::compose':
   ensure => present,
+}
+```
+
+The current method of installing compose is the "install as container" method. This allows you to pull compose from a private repository if you wish, and it will automatically use your docker daemon's proxy settings if that is something you require. The default installation path for compose is `/usr/local/bin/docker-compose`, but that can be changed using `compose_path` parameter. Here's an example of installing compose from a private registry to a custom path:
+
+```puppet
+class {'docker::compose':
+  ensure => 'present',
+  compose_image => 'privateregistry.io:5000/docker/compose:1.16.1',
+  compose_path => '/usr/bin/docker-compose'
 }
 ```
 
@@ -475,10 +485,10 @@ For a swarm manager:
 docker::swarm {'cluster_manager':
   init           => true,
   advertise_addr => '192.168.1.1',
-  listen_addr    => '192.168.1.1',  
-} 
+  listen_addr    => '192.168.1.1',
+}
 ```
-In the above example we have configured a swarm manager with ```init => true``` then set the ```advertise_addr``` and ```listen_addr```. Both the ```advertise_addr``` and ```listen_addr``` are set for the cluster communications between nodes. Please note the ```advertise_addr``` and ```listen_addr``` must be set for a multihomed server. For more advance flags to configure raft snapshots etc please read the readme at the top of the ```docker::swarm``` class.  
+In the above example we have configured a swarm manager with ```init => true``` then set the ```advertise_addr``` and ```listen_addr```. Both the ```advertise_addr``` and ```listen_addr``` are set for the cluster communications between nodes. Please note the ```advertise_addr``` and ```listen_addr``` must be set for a multihomed server. For more advance flags to configure raft snapshots etc please read the readme at the top of the ```docker::swarm``` class.
 
 For a swarm worker:
 ```puppet
@@ -488,7 +498,7 @@ advertise_addr => '192.168.1.2',
 listen_addr    => '192.168.1.2,
 manager_ip     => '192.168.1.1',
 token          => 'SWMTKN-1-2lw8bnr57qsu74d6iq2q1wr2wq2i334g7425dfr3zucimvh4bl-2vwn6gysbdj605l37c61iixie'
-} 
+}
 ```
 
 In this example we have joined a node to the cluster using ```join => true```. For a worker node or second manager you need to pass a current managers ip address ```manager_ip => '192.168.1.1'```
@@ -507,18 +517,18 @@ To configure a service with Puppet code please see the following examples
 To create a service
 ```puppet
 docker::services {'redis':
-    create => true,   
+    create => true,
     service_name => 'redis',
     image => 'redis:latest',
     publish => '6379:639',
-    replicas => '5', 
+    replicas => '5',
     extra_params => ['--update-delay 1m', '--restart-window 30s']
   }
 ```
 In this example we are creating a service called `redis`, as it is a new service we have set `create => true`. The `service_name` resource is the name which Docker knows the service as. The `image` resource is the image you want to base the service off, `publish` is the ports that want exposed to the outside world for the service to be consumed, `replicas` sets the amount of tasks (containers) that you want running in the service, `extra_params` allows you to configure any of the other flags that Docker gives you when you create a service for more info see `docker service create --help`
 
 To update the service
-```puppet 
+```puppet
 docker::services {'redis_update':
   create => false,
   update => true,
@@ -534,7 +544,7 @@ docker::services {'redis_scale':
   create => false,
   scale => true,
   service_name => 'redis',
-  replicas => '10', 
+  replicas => '10',
 }
 ```
 In this example we have used the command `docker service scale` with Puppet code. We have taken our service `redis` set the `create => false` and `scale => true` When using scale you have to declare your `service_name` then the number of replicas that you want. In this example we are going to scale to `10`
