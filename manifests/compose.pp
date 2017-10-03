@@ -26,7 +26,7 @@ class docker::compose(
   $compose_image = $docker::params::compose_image,
 ) inherits docker::params {
   validate_re($ensure, '^(present|absent)$')
-  validate_absolute_path($install_path)
+  validate_absolute_path($compose_path)
 
   if $ensure == 'present' {
 
@@ -38,10 +38,7 @@ class docker::compose(
     }
 
   } else {
-    file { [
-      "${install_path}/docker-compose-${version}",
-      "${install_path}/docker-compose"
-    ]:
+    file {$compose_path:
       ensure => absent,
     }
   }
