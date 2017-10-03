@@ -22,15 +22,15 @@
 #
 class docker::compose(
   $ensure = 'present',
-  $install_path = $docker::params::compose_install_path,
-  $compose_iamge = $docker::params::compose_image,
+  $compose_path = $docker::params::compose_path,
+  $compose_image = $docker::params::compose_image,
 ) inherits docker::params {
   validate_re($ensure, '^(present|absent)$')
   validate_absolute_path($install_path)
 
   if $ensure == 'present' {
 
-    file { $install_path:
+    file { $compose_path:
       ensure  => 'file',
       owner   => 'root',
       mode    => '0755',

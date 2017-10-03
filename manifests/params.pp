@@ -73,7 +73,7 @@ class docker::params {
   $storage_pool_autoextend_percent   = undef
   $storage_config_template           = 'docker/etc/sysconfig/docker-storage.erb'
   $compose_image                     = 'docker/compose:1.16.1'
-  $compose_install_path              = '/usr/local/bin'
+  $compose_path              = '/usr/local/bin/docker-compose'
 
   if $daemon_subcommand {
     $daemon_command = "${docker_command} ${daemon_subcommand}"
