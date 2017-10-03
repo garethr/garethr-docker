@@ -3,7 +3,7 @@
 # THIS FILE IS MANAGED BY PUPPET. Changes will be overwritten.
 
 # # Customize location of Docker binary (especially for development testing).
-DOCKER="/usr/bin/<%= @docker_command %>"
+DOCKER="/usr/bin/<%= @daemon_command %>"
 
 # # If you need Docker to use an HTTP proxy, it can also be specified here.
 <% if @proxy -%>

@@ -9,63 +9,34 @@
 #   Valid values are absent present
 #   Defaults to present
 #
-# [*version*]
-#   The version of Docker Compose to install.
-#   Defaults to the value set in $docker::params::compose_version
+# [*compose_image*]
+#   The docker image to pull and execute as the docker-compose command
+#   Defaults to the value set in $docker::params::compose_iage
 #
-# [*install_path*]
-#   The path where to install Docker Compose.
-#   Defaults to the value set in $docker::params::compose_install_path
 #
-# [*proxy*]
-#   Proxy to use for downloading Docker Compose.
+# [*compose_path*]
+#   The absolute path to the compose executable
+#   Defaults to the value set in $docker::params::compose_path
 #
 class docker::compose(
   $ensure = 'present',
-  $version = $docker::params::compose_version,
-  $install_path = $docker::params::compose_install_path,
-  $proxy = undef
+  $compose_path = $docker::params::compose_path,
+  $compose_image = $docker::params::compose_image,
 ) inherits docker::params {
-  validate_string($version)
   validate_re($ensure, '^(present|absent)$')
-  validate_absolute_path($install_path)
-  if $proxy != undef {
-      validate_re($proxy, '^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})(:[\d])?([\/\w \.-]*)*\/?$')
-  }
+  validate_absolute_path($compose_path)
 
   if $ensure == 'present' {
-    ensure_packages(['curl'])
 
-    if $proxy != undef {
-        $proxy_opt = "--proxy ${proxy}"
-    } else {
-        $proxy_opt = ''
-    }
-
-    exec { "Install Docker Compose ${version}":
-      path    => '/usr/bin/',
-      cwd     => '/tmp',
-      command => "curl -s -L ${proxy_opt} https://github.com/docker/compose/releases/download/${version}/docker-compose-${::kernel}-x86_64 > ${install_path}/docker-compose-${version}",
-      creates => "${install_path}/docker-compose-${version}",
-      require => Package['curl'],
-    }
-
-    file { "${install_path}/docker-compose-${version}":
+    file { $compose_path:
+      ensure  => 'file',
       owner   => 'root',
       mode    => '0755',
-      require => Exec["Install Docker Compose ${version}"]
+      content => template('docker/run.sh.erb')
     }
 
-    file { "${install_path}/docker-compose":
-      ensure  => 'link',
-      target  => "${install_path}/docker-compose-${version}",
-      require => File["${install_path}/docker-compose-${version}"]
-    }
   } else {
-    file { [
-      "${install_path}/docker-compose-${version}",
-      "${install_path}/docker-compose"
-    ]:
+    file {$compose_path:
       ensure => absent,
     }
   }
