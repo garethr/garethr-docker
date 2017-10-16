@@ -526,10 +526,12 @@ class docker(
   }
 
   class { 'docker::repos': } ->
+  class { 'docker::sysconfig': } ->
   class { 'docker::install': } ->
   class { 'docker::config': } ~>
   class { 'docker::service': }
   contain 'docker::repos'
+  contain 'docker::sysconfig'
   contain 'docker::install'
   contain 'docker::config'
   contain 'docker::service'
