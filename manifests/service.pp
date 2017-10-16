@@ -192,6 +192,7 @@ class docker::service (
       force   => true,
       content => template($storage_config_template),
       notify  => $_manage_service_autorestart,
+      before  => Package['docker'],
     }
   }
 
@@ -201,6 +202,7 @@ class docker::service (
       force   => true,
       content => template($service_config_template),
       notify  => $_manage_service_autorestart,
+      before  => Package['docker'],
     }
   }
 
