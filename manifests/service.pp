@@ -188,8 +188,8 @@ class docker::service (
 
   $_manage_service_overrides_dependencies = $service_provider ? {
     'systemd' => $service_overrides_template ? {
-      true  => File['/etc/systemd/system/docker.service.d/service-overrides.conf'],
-      false => undef,
+      undef   => undef,
+      default => File['/etc/systemd/system/docker.service.d/service-overrides.conf'],
     },
     default   => undef,
   }
