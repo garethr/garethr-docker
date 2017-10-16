@@ -186,13 +186,21 @@ class docker::service (
     default: {}
   }
 
+  $_manage_service_overrides_dependencies = $service_provider ? {
+    'systemd' => $service_overrides_template ? {
+      true  => File['/etc/systemd/system/docker.service.d/service-overrides.conf'],
+      false => undef,
+    },
+    default   => undef,
+  }
+
   if $storage_config {
     file { $storage_config:
       ensure  => present,
       force   => true,
       content => template($storage_config_template),
       notify  => $_manage_service_autorestart,
-      before  => Package['docker'],
+      before  => $_manage_service_overrides_dependencies,
     }
   }
 
@@ -202,7 +210,7 @@ class docker::service (
       force   => true,
       content => template($service_config_template),
       notify  => $_manage_service_autorestart,
-      before  => Package['docker'],
+      before  => $_manage_service_overrides_dependencies,
     }
   }
 
