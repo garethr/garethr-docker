@@ -112,8 +112,8 @@ class docker::service (
   $tls_key                           = $docker::tls_key,
 ) {
 
-  unless $::osfamily =~ /(Debian|RedHat|Archlinux|Gentoo)/ {
-    fail('The docker::service class needs a Debian, RedHat, Archlinux or Gentoo based system.')
+  unless $::osfamily =~ /(Debian|RedHat|Archlinux|Gentoo|Suse)/ {
+    fail('The docker::service class needs a Debian, RedHat, Archlinux or Gentoo based system or SLES.')
   }
 
   $dns_array = any2array($dns)

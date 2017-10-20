@@ -293,6 +293,42 @@ class docker::params {
       $pin_upstream_package_source = undef
       $apt_source_pin_level = undef
     }
+    'Suse' : {
+      case $::operatingsystem {
+        'SLES': {
+          case $::operatingsystemmajrelease {
+            '12': {
+              $manage_epel = false
+              $docker_group = $docker_group_default
+              $package_key_source = undef
+              $package_source_location = undef
+              $package_key = undef
+              $package_repos = undef
+              $package_release = undef
+              $use_upstream_package_source = false
+              $package_cs_source_location = undef
+              $package_cs_key_source = undef
+              $package_name = 'docker'
+              $service_name = $service_name_default
+              $docker_command = $docker_command_default
+              $detach_service_in_init = true
+              $repo_opt = undef
+              $nowarn_kernel = false
+              $service_provider   = 'systemd'
+              $service_overrides_template = undef
+              $service_hasstatus  = true
+              $service_hasrestart = true
+              $service_config = '/etc/sysconfig/docker'
+              $service_config_template = 'docker/etc/sysconfig/docker.systemd.sles.erb'
+              $storage_config = undef
+              $storage_setup_file = undef
+              $pin_upstream_package_source = undef
+              $apt_source_pin_level = undef
+            }
+          }
+        }
+      }
+    }
     default: {
       $manage_epel = false
       $docker_group = $docker_group_default
