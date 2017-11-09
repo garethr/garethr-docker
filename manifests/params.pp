@@ -247,6 +247,7 @@ class docker::params {
       $docker_group = $docker_group_default
       $package_key_source = undef
       $package_source_location = undef
+      $package_source_check = undef
       $package_key = undef
       $package_repos = undef
       $package_release = undef
@@ -273,6 +274,7 @@ class docker::params {
       $docker_group = $docker_group_default
       $package_key_source = undef
       $package_source_location = undef
+      $package_source_check = undef
       $package_key = undef
       $package_repos = undef
       $package_release = undef
@@ -299,6 +301,7 @@ class docker::params {
       $docker_group = $docker_group_default
       $package_key_source = undef
       $package_source_location = undef
+      $package_source_check = undef
       $package_key = undef
       $package_repos = undef
       $package_release = undef
