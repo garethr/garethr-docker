@@ -191,7 +191,7 @@ class docker::params {
       $package_source_check = true
       $package_cs_source_check = true
       $package_key = undef
-      $package_cs_ke = undef
+      $package_cs_key = undef
       $package_repos = undef
       $package_release = undef
       $pin_upstream_package_source = undef
