@@ -55,6 +55,7 @@ class docker::params {
   $dm_override_udev_sync_check       = undef
   $manage_package                    = true
   $package_source                    = undef
+  $package_source_check              = undef
   $manage_kernel                     = true
   $package_name_default              = 'docker-engine'
   $service_name_default              = 'docker'
@@ -138,6 +139,8 @@ class docker::params {
       $package_source_location = 'http://apt.dockerproject.org/repo'
       $package_key_source = 'https://apt.dockerproject.org/gpg'
       $package_key = '58118E89F3A912897C070ADBF76221572C52609D'
+      $package_source_check = undef
+      $package_cs_source_check = undef
 
       if ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemmajrelease, '8') >= 0) or
         ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '15.04') >= 0) {
@@ -185,8 +188,10 @@ class docker::params {
       }
       $package_cs_source_location = "https://packages.docker.com/1.9/yum/repo/main/centos/${::operatingsystemmajrelease}"
       $package_cs_key_source = 'https://packages.docker.com/1.9/yum/gpg'
+      $package_source_check = true
+      $package_cs_source_check = true
       $package_key = undef
-      $package_cs_ke = undef
+      $package_cs_key = undef
       $package_repos = undef
       $package_release = undef
       $pin_upstream_package_source = undef
@@ -242,6 +247,7 @@ class docker::params {
       $docker_group = $docker_group_default
       $package_key_source = undef
       $package_source_location = undef
+      $package_source_check = undef
       $package_key = undef
       $package_repos = undef
       $package_release = undef
@@ -270,6 +276,7 @@ class docker::params {
       $docker_group = $docker_group_default
       $package_key_source = undef
       $package_source_location = undef
+      $package_source_check = undef
       $package_key = undef
       $package_repos = undef
       $package_release = undef
@@ -298,6 +305,7 @@ class docker::params {
       $docker_group = $docker_group_default
       $package_key_source = undef
       $package_source_location = undef
+      $package_source_check = undef
       $package_key = undef
       $package_cs_source_location = undef
       $package_cs_key_source = undef
