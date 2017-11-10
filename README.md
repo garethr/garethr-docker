@@ -1,5 +1,5 @@
 Puppet module for installing, configuring and managing
-[Docker](https://github.com/docker/docker) from the [official repository](https://docs.docker.com/installation/) or alternatively from [EPEL on RedHat](https://docs.docker.io/en/latest/installation/rhel/) based distributions.
+[Docker](https://github.com/docker/docker) from the [official repository](https://docs.docker.com/engine/installation/)
 
 [![Puppet
 Forge](https://img.shields.io/puppetforge/v/garethr/docker.svg)](https://forge.puppetlabs.com/garethr/docker) [![Build
@@ -19,6 +19,7 @@ This module is currently tested on:
 * Ubuntu 14.04
 * Centos 7.0
 * Centos 6.6
+
 
 It may work on other distros and additional operating systems will be
 supported in the future. It's definitely been used with the following
@@ -53,7 +54,7 @@ include 'docker'
 ```
 
 By default this sets up the docker hosted repository if necessary for your OS
-and installs the docker package and on Ubuntu, any required Kernel extensions.
+and installs the docker-ce package and on Ubuntu, any required Kernel extensions.
 
 If you don't want this module to mess about with your Kernel then you can disable
 this feature like so. It is only enabled (and supported) by default on Ubuntu:
@@ -74,29 +75,21 @@ class { 'docker':
 }
 ```
 
-Docker recently [launched new official
-repositories](https://blog.docker.com/2015/07/new-apt-and-yum-repos/#comment-247448)
-which are now the default for the module from version 5. If you want to
-stick with the old repositories you can do so with the following:
-
-```puppet
-class { 'docker':
-  package_name => 'lxc-docker',
-  package_source_location => 'https://get.docker.com/ubuntu',
-  package_key_source => 'https://get.docker.com/gpg',
-  package_key => '36A1D7869245C8950F966E92D8576A8BA88D21E',
-  package_release => 'docker',
-}
-```
-
-Docker also provide a [commercially
-supported](https://docs.docker.com/docker-trusted-registry/install/install-csengine/)
-version of the Docker Engine, called Docker CS, available from a separate repository.
-This can be installed with the module using the following:
+Docker recently split docker into a Community Edition (docker-ce) and
+a commercially supported Enterprise Edition (docker-ee). This module
+supports installing the CE version out of the box. You can also use
+the commercial version by setting the docker_cs flag to true. However
+you also need to set package_source_location, package_release,
+package_repos, package_key and package_key_source must be set
+accordingly to the OS requirements.
 
 ```puppet
 class { 'docker':
   docker_cs => true,
+  package_source_location => '<DOCKER-EE-URL>',
+  package_key_source => '<DOCKER-EE-URL>/gpg',
+  package_key => '<DOCKER-EE-GPG-KEY-FINGERPRINT-FOR-THE-OS>
+  package_release => 'stable-<YY.MM>
 }
 ```
 
@@ -420,7 +413,7 @@ file.
 Before using the docker_compose type make sure the docker-compose utility is installed:
 
 ```puppet
-class {'docker::compose': 
+class {'docker::compose':
   ensure => present,
 }
 ```
@@ -475,10 +468,10 @@ For a swarm manager:
 docker::swarm {'cluster_manager':
   init           => true,
   advertise_addr => '192.168.1.1',
-  listen_addr    => '192.168.1.1',  
-} 
+  listen_addr    => '192.168.1.1',
+}
 ```
-In the above example we have configured a swarm manager with ```init => true``` then set the ```advertise_addr``` and ```listen_addr```. Both the ```advertise_addr``` and ```listen_addr``` are set for the cluster communications between nodes. Please note the ```advertise_addr``` and ```listen_addr``` must be set for a multihomed server. For more advance flags to configure raft snapshots etc please read the readme at the top of the ```docker::swarm``` class.  
+In the above example we have configured a swarm manager with ```init => true``` then set the ```advertise_addr``` and ```listen_addr```. Both the ```advertise_addr``` and ```listen_addr``` are set for the cluster communications between nodes. Please note the ```advertise_addr``` and ```listen_addr``` must be set for a multihomed server. For more advance flags to configure raft snapshots etc please read the readme at the top of the ```docker::swarm``` class.
 
 For a swarm worker:
 ```puppet
@@ -488,7 +481,7 @@ advertise_addr => '192.168.1.2',
 listen_addr    => '192.168.1.2,
 manager_ip     => '192.168.1.1',
 token          => 'SWMTKN-1-2lw8bnr57qsu74d6iq2q1wr2wq2i334g7425dfr3zucimvh4bl-2vwn6gysbdj605l37c61iixie'
-} 
+}
 ```
 
 In this example we have joined a node to the cluster using ```join => true```. For a worker node or second manager you need to pass a current managers ip address ```manager_ip => '192.168.1.1'```
@@ -507,18 +500,18 @@ To configure a service with Puppet code please see the following examples
 To create a service
 ```puppet
 docker::services {'redis':
-    create => true,   
+    create => true,
     service_name => 'redis',
     image => 'redis:latest',
     publish => '6379:639',
-    replicas => '5', 
+    replicas => '5',
     extra_params => ['--update-delay 1m', '--restart-window 30s']
   }
 ```
 In this example we are creating a service called `redis`, as it is a new service we have set `create => true`. The `service_name` resource is the name which Docker knows the service as. The `image` resource is the image you want to base the service off, `publish` is the ports that want exposed to the outside world for the service to be consumed, `replicas` sets the amount of tasks (containers) that you want running in the service, `extra_params` allows you to configure any of the other flags that Docker gives you when you create a service for more info see `docker service create --help`
 
 To update the service
-```puppet 
+```puppet
 docker::services {'redis_update':
   create => false,
   update => true,
@@ -534,7 +527,7 @@ docker::services {'redis_scale':
   create => false,
   scale => true,
   service_name => 'redis',
-  replicas => '10', 
+  replicas => '10',
 }
 ```
 In this example we have used the command `docker service scale` with Puppet code. We have taken our service `redis` set the `create => false` and `scale => true` When using scale you have to declare your `service_name` then the number of replicas that you want. In this example we are going to scale to `10`

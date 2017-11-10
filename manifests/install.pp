@@ -17,6 +17,12 @@ class docker::install {
     $ensure = $docker::ensure
   }
 
+  if ($docker::purge_packages) {
+    ensure_resource('package', $docker::purge_packages, {
+      ensure => absent,
+      before => Package['docker'],
+      })
+  }
   case $::osfamily {
     'Debian': {
       if $::operatingsystem == 'Ubuntu' {
