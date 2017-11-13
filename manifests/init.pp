@@ -311,8 +311,8 @@
 #   Specify a custom docker command name
 #   Default is set on a per system basis in docker::params
 #
-# [*daemon_subcommand*]
-#  Specify a subcommand/flag for running docker as daemon
+# [*docker_daemon_command*]
+#  Specify a command for running docker as daemon
 #  Default is set on a per system basis in docker::params
 #
 # [*docker_users*]
@@ -430,7 +430,7 @@ class docker(
   $manage_epel                       = $docker::params::manage_epel,
   $service_name                      = $docker::params::service_name,
   $docker_command                    = $docker::params::docker_command,
-  $daemon_subcommand                 = $docker::params::daemon_subcommand,
+  $docker_daemon_command             = $docker::params::docker_daemon_command,
   $docker_users                      = [],
   $docker_group                      = $docker::params::docker_group,
   $daemon_environment_files          = [],
