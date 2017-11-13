@@ -1049,4 +1049,100 @@ describe 'docker', :type => :class do
     end
   end
 
+  context 'with options to install docker-ee on Ubuntu' do
+    let (:facts) {{
+          :osfamily               => 'Debian',
+          :operatingsystem        => 'Ubuntu',
+          :lsbdistid              => 'Ubuntu',
+          :lsbdistcodename        => 'trusty',
+          :kernelrelease          => '3.13.0-129-generic',
+          :operatingsystemrelease => '14.04',
+          :operatingsystemmajrelease => '14',
+    }}
+
+    let(:params) {{
+      'docker_cs'                => true,
+      'package_source_location'  => 'https://download.docker-ee.com/linux/ubuntu',
+      'package_release'          => 'trusty',
+      'package_repos'            => 'stable-17.09',
+      'package_key'              => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88',
+      'package_key_source'       => 'https://download.docker-ee.com/linux/ubuntu/gpg',
+      'package_name'             => 'docker-ee',
+    }}
+      it { should contain_apt__source('docker').with_location("https://download.docker-ee.com/linux/ubuntu") }
+      it { should contain_package('docker').with_name('docker-ee').with_ensure('present') }
+      it { should contain_apt__pin('docker').with_origin('download.docker-ee.com') }
+      it { should contain_package('docker').with_install_options(nil) }
+  end
+
+  context 'with options to install docker-ee on Debian' do
+    let (:facts) {{
+          :osfamily               => 'Debian',
+          :operatingsystem        => 'Debian',
+          :lsbdistid              => 'Debian',
+          :lsbdistcodename        => 'wheezy',
+          :kernelrelease          => '3.13.0-129-generic',
+          :operatingsystemrelease => '8.0',
+          :operatingsystemmajrelease => '8',
+    }}
+
+    let(:params) {{
+      'docker_cs'                => true,
+      'package_source_location'  => 'https://download.docker-ee.com/linux/debian',
+      'package_release'          => 'wheezy',
+      'package_repos'            => 'stable-17.09',
+      'package_key'              => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88',
+      'package_key_source'       => 'https://download.docker-ee.com/linux/debian/gpg',
+      'package_name'             => 'docker-ee',
+    }}
+      it { should contain_apt__source('docker').with_location("https://download.docker-ee.com/linux/debian") }
+      it { should contain_package('docker').with_name('docker-ee').with_ensure('present') }
+      it { should contain_apt__pin('docker').with_origin('download.docker-ee.com') }
+      it { should contain_package('docker').with_install_options(nil) }
+  end
+
+  context 'with options to install docker-ee on CentOS' do
+    let (:facts) {{
+          :osfamily               => 'RedHat',
+          :operatingsystem        => 'CentOS',
+          :kernelversion          => '3.10.0',
+          :operatingsystemrelease => '7.4',
+          :operatingsystemmajrelease => '7',
+          :architecture           => 'x64_64',
+    }}
+
+    let(:params) {{
+      'docker_cs'                => true,
+      'package_source_location'  => 'https://download.docker-ee.com/linux/centos/7/x86_64/stable',
+      'package_repos'            => 'stable-17.09',
+      'package_key'              => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88',
+      'package_key_source'       => 'https://download.docker-ee.com/linux/debian/gpg',
+      'package_name'             => 'docker-ee',
+    }}
+      it { should contain_yumrepo('docker').with_baseurl("https://download.docker-ee.com/linux/centos/7/x86_64/stable") }
+      it { should contain_package('docker').with_name('docker-ee').with_ensure('present') }
+  end
+
+  context 'with options to install docker-ee on Fedora' do
+    let (:facts) {{
+          :osfamily               => 'RedHat',
+          :operatingsystem        => 'Fedora',
+          :kernelversion          => '3.10.0',
+          :operatingsystemrelease => '26',
+          :operatingsystemmajrelease => '26',
+          :architecture           => 'x64_64',
+    }}
+
+    let(:params) {{
+      'docker_cs'                => true,
+      'package_source_location'  => 'https://download.docker-ee.com/linux/fedora/26/x86_64/stable',
+      'package_repos'            => 'stable-17.09',
+      'package_key'              => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88',
+      'package_key_source'       => 'https://download.docker-ee.com/linux/debian/gpg',
+      'package_name'             => 'docker-ee',
+    }}
+      it { should contain_yumrepo('docker').with_baseurl("https://download.docker-ee.com/linux/fedora/26/x86_64/stable") }
+      it { should contain_package('docker').with_name('docker-ee').with_ensure('present') }
+  end
+
 end
