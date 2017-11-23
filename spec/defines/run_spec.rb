@@ -90,7 +90,7 @@ require 'spec_helper'
           else
             it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-foo/) }
             it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-bar/) }
-            it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-foo_bar-baz/) }            
+            it { should contain_file(initscript).with_content(/Required-Start:.*\s+docker-foo_bar-baz/) }
           end
         end
       end
@@ -706,6 +706,7 @@ require 'spec_helper'
         it { should compile.with_all_deps }
         it { should contain_service('docker-sample').with_ensure(false) }
         it { should contain_exec("remove container docker-sample").with_command('docker rm -v sample') }
+        it { should contain_file(initscript).with_ensure('absent') }
       end
 
     end

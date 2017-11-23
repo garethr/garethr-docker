@@ -56,11 +56,12 @@ class docker::params {
   $manage_package                    = true
   $package_source                    = undef
   $manage_kernel                     = true
-  $package_name_default              = 'docker-engine'
+  $package_name_default              = 'docker-ce'
+  $package_name_cs_default           = 'docker-ee'
   $service_name_default              = 'docker'
   $docker_command_default            = 'docker'
   $docker_group_default              = 'docker'
-  $daemon_subcommand                 = 'daemon'
+  $docker_daemon_command             = 'dockerd'
   $storage_devs                      = undef
   $storage_vg                        = undef
   $storage_root_size                 = undef
@@ -75,11 +76,11 @@ class docker::params {
   $compose_version                   = '1.9.0'
   $compose_install_path              = '/usr/local/bin'
 
+
   case $::osfamily {
     'Debian' : {
       case $::operatingsystem {
         'Ubuntu' : {
-          $package_release = "ubuntu-${::lsbdistcodename}"
           if (versioncmp($::operatingsystemrelease, '15.04') >= 0) {
             $service_provider        = 'systemd'
             $storage_config          = '/etc/default/docker-storage'
@@ -98,7 +99,6 @@ class docker::params {
           }
         }
         default: {
-          $package_release = "debian-${::lsbdistcodename}"
           if (versioncmp($::operatingsystemmajrelease, '8') >= 0) {
             $service_provider           = 'systemd'
             $storage_config             = '/etc/default/docker-storage'
@@ -119,11 +119,9 @@ class docker::params {
       }
 
       $manage_epel = false
-      $package_name = $package_name_default
       $service_name = $service_name_default
       $docker_command = $docker_command_default
       $docker_group = $docker_group_default
-      $package_repos = 'main'
       $use_upstream_package_source = true
       $pin_upstream_package_source = true
       $apt_source_pin_level = 10
@@ -132,12 +130,38 @@ class docker::params {
       $service_config = undef
       $storage_setup_file = undef
 
-      $package_cs_source_location = 'http://packages.docker.com/1.9/apt/repo'
-      $package_cs_key_source = 'https://packages.docker.com/1.9/apt/gpg'
-      $package_cs_key = '0xee6d536cf7dc86e2d7d56f59a178ac6c6238f52e'
-      $package_source_location = 'http://apt.dockerproject.org/repo'
-      $package_key_source = 'https://apt.dockerproject.org/gpg'
-      $package_key = '58118E89F3A912897C070ADBF76221572C52609D'
+      $package_release = $::lsbdistcodename
+      $package_os = downcase($::operatingsystem)
+
+      $package_name = $docker_cs ? {
+        true    => $package_name_cs_default,
+        default => $package_name_default
+      }
+
+      # package_repos:
+      # For CE: edge, stable, test.
+      # For EE, fx stable-17.09. Must be set explicitly.
+      $package_repos = $docker_cs ? {
+        true    => undef,
+        default => 'stable'
+      }
+
+      $package_source_location =  $docker_cs ? {
+        true    => undef,
+        default => "https://download.docker.com/linux/${package_os}"
+      }
+
+      $package_key_source = $docker_cs ? {
+        true    => undef,
+        default => "${package_source_location}/gpg"
+      }
+
+      $package_key =  $docker_cs ? {
+        true => 'DD911E995A64A202E85907D6BC14F10B6D085F96',
+        default => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88'
+      }
+
+      $purge_packages = ['docker-engine', 'docker.io']
 
       if ($::operatingsystem == 'Debian' and versioncmp($::operatingsystemmajrelease, '8') >= 0) or
         ($::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease, '15.04') >= 0) {
@@ -165,29 +189,52 @@ class docker::params {
       }
 
       if (versioncmp($::operatingsystemrelease, '7.0') < 0) and $::operatingsystem != 'Amazon' {
-        $package_name = 'docker-io'
         $use_upstream_package_source = false
         $manage_epel = true
       } elsif $::operatingsystem == 'Amazon' {
-        $package_name = 'docker'
         $use_upstream_package_source = false
         $manage_epel = false
       } else {
-        $package_name = $package_name_default
         $use_upstream_package_source = true
         $manage_epel = false
       }
-      $package_key_source = 'https://yum.dockerproject.org/gpg'
-      if $::operatingsystem == 'Fedora' {
-        $package_source_location = "https://yum.dockerproject.org/repo/main/fedora/${::operatingsystemmajrelease}"
-      } else {
-        $package_source_location = "https://yum.dockerproject.org/repo/main/centos/${::operatingsystemmajrelease}"
+
+      $package_os = downcase($::operatingsystem)
+      case $docker_cs {
+        true : {
+          $package_repos = undef
+          $package_source_location = undef
+          $package_key = undef
+          $package_key_source = undef
+          $purge_packages = ['docker-common', 'docker-selinux', 'docker-engine-selinux', 'docker-engine','docker-ce']
+        }
+        default : {
+          $package_repos = 'stable'
+          $package_source_location = $::operatingsystem ? {
+            /(CentOS|Fedora)/ => "https://download.docker.com/linux/${package_os}/${::operatingsystemmajrelease}/${::architecture}/${package_repos}",
+            default           => undef
+          }
+          $package_key =  $::operatingsystem ? {
+            /(CentOS|Fedora)/ => '060A61C51B558A7F742B77AAC52FEB6B621E9F35',
+            default           => undef,
+          }
+          $package_key_source = $::operatingsystem ? {
+            /(CentOS|Fedora)/ => "https://download.docker.com/linux/${package_os}/gpg",
+            default => undef
+          }
+          $purge_packages = $::operatingsystem ? {
+            'CentOS' => ['docker-common', 'docker-selinux', 'docker-engine'],
+            'Fedora' => ['docker-common', 'docker-selinux', 'docker-engine', 'docker-engine-selinux'],
+            default  => ['docker-common', 'docker-selinux', 'docker-engine', 'docker-engine-selinux'],
+          }
+        }
       }
-      $package_cs_source_location = "https://packages.docker.com/1.9/yum/repo/main/centos/${::operatingsystemmajrelease}"
-      $package_cs_key_source = 'https://packages.docker.com/1.9/yum/gpg'
-      $package_key = undef
-      $package_cs_ke = undef
-      $package_repos = undef
+
+      $package_name = $docker_cs ? {
+        true    => $package_name_cs_default,
+        default => $package_name_default,
+      }
+
       $package_release = undef
       $pin_upstream_package_source = undef
       $apt_source_pin_level = undef
@@ -240,15 +287,14 @@ class docker::params {
 
       $manage_epel = false
       $docker_group = $docker_group_default
+      $package_name = undef
       $package_key_source = undef
       $package_source_location = undef
       $package_key = undef
       $package_repos = undef
       $package_release = undef
+      $purge_packages = undef
       $use_upstream_package_source = false
-      $package_cs_source_location = undef
-      $package_cs_key_source = undef
-      $package_name = 'docker'
       $service_name = $service_name_default
       $docker_command = $docker_command_default
       $detach_service_in_init = false
@@ -273,9 +319,8 @@ class docker::params {
       $package_key = undef
       $package_repos = undef
       $package_release = undef
+      $purge_packages = undef
       $use_upstream_package_source = false
-      $package_cs_source_location = undef
-      $package_cs_key_source = undef
       $package_name = 'app-emulation/docker'
       $service_name = $service_name_default
       $docker_command = $docker_command_default
@@ -299,10 +344,9 @@ class docker::params {
       $package_key_source = undef
       $package_source_location = undef
       $package_key = undef
-      $package_cs_source_location = undef
-      $package_cs_key_source = undef
       $package_repos = undef
       $package_release = undef
+      $purge_packages = undef
       $use_upstream_package_source = true
       $service_overrides_template = undef
       $service_hasstatus  = undef

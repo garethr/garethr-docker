@@ -21,6 +21,9 @@ describe 'docker', :type => :class do
         context 'It should include default prerequired_packages' do
           it { should contain_package('cgroupfs-mount').with_ensure('present') }
         end
+
+        it { should contain_apt__source('docker').with_location("https://download.docker.com/linux/debian") }
+
       end
 
       if osfamily == 'Ubuntu'
@@ -43,28 +46,30 @@ describe 'docker', :type => :class do
           it { should contain_package('cgroup-lite').with_ensure('present') }
           it { should contain_package('apparmor').with_ensure('present') }
         end
+
+        it { should contain_apt__source('docker').with_location("https://download.docker.com/linux/ubuntu") }
+
       end
 
       if osfamily == 'Ubuntu' or osfamily == 'Debian'
 
         it { should contain_class('apt') }
-        it { should contain_package('docker').with_name('docker-engine').with_ensure('present') }
-        it { should contain_apt__source('docker').with_location('http://apt.dockerproject.org/repo') }
-        it { should contain_apt__pin('docker').with_origin('apt.dockerproject.org') }
+        it { should contain_package('docker').with_name('docker-ce').with_ensure('present') }
+        it { should contain_apt__pin('docker').with_origin('download.docker.com') }
         it { should contain_package('docker').with_install_options(nil) }
 
         it { should contain_file('/etc/default/docker').without_content(/icc=/) }
 
         context 'with a custom version' do
           let(:params) { {'version' => '0.5.5' } }
-          it { should contain_package('docker').with_ensure('0.5.5').with_name('docker-engine') }
+          it { should contain_package('docker').with_ensure('0.5.5').with_name('docker-ce') }
         end
 
         context 'with no upstream package source' do
           let(:params) { {'use_upstream_package_source' => false } }
           it { should_not contain_apt__source('docker') }
           it { should_not contain_apt__pin('docker') }
-          it { should contain_package('docker').with_name('docker-engine') }
+          it { should contain_package('docker').with_name('docker-ce') }
         end
 
         context 'with no upstream package source' do
@@ -195,6 +200,7 @@ describe 'docker', :type => :class do
           :operatingsystemrelease => '6.5',
           :operatingsystemmajrelease => '7',
           :kernelversion => '2.6.32',
+          :architecture  => 'x86_64',
         } }
         service_config_file = '/etc/sysconfig/docker'
         storage_config_file = '/etc/sysconfig/docker-storage'
@@ -319,14 +325,14 @@ describe 'docker', :type => :class do
           let(:params) { {
             'manage_package'              => true,
             'use_upstream_package_source' => false,
-            'package_name'                => 'docker-engine',
-            'package_source'              => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm'
+            'package_name'                => 'docker-ce',
+            'package_source'              => 'https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-17.09.0.ce-1.el7.centos.x86_64.rpm',
           } }
           it do
             should contain_package('docker').with(
               'ensure' => 'present',
-              'source' => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm',
-              'name'   => 'docker-engine'
+              'source' => 'https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-17.09.0.ce-1.el7.centos.x86_64.rpm',
+              'name'   => 'docker-ce'
             )
           end
         end
@@ -335,15 +341,15 @@ describe 'docker', :type => :class do
           let(:params) { {
             'manage_package'              => true,
             'use_upstream_package_source' => false,
-            'package_name'                => 'docker-engine',
-            'package_source'              => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm',
+            'package_name'                => 'docker-ce',
+            'package_source'              => 'https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-17.09.0.ce-1.el7.centos.x86_64.rpm',
             'repo_opt'                    => '--enablerepo=rhel7-extras'
           } }
           it do
             should contain_package('docker').with(
               'ensure'          => 'present',
-              'source'          => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm',
-              'name'            => 'docker-engine',
+              'source'          => 'https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-17.09.0.ce-1.el7.centos.x86_64.rpm',
+              'name'            => 'docker-ce',
               'install_options' => '--enablerepo=rhel7-extras'
             )
           end
@@ -353,14 +359,14 @@ describe 'docker', :type => :class do
           let(:params) { {
             'manage_package'              => true,
             'use_upstream_package_source' => false,
-            'package_name'                => 'docker-engine',
-            'package_source'              => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm'
+            'package_name'                => 'docker-ce',
+            'package_source'              => 'https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-17.09.0.ce-1.el7.centos.x86_64.rpm',
           } }
           it do
             should contain_package('docker').with(
               'ensure'          => 'present',
-              'source'          => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm',
-              'name'            => 'docker-engine',
+              'source'          => 'https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-17.09.0.ce-1.el7.centos.x86_64.rpm',
+              'name'            => 'docker-ce',
               'install_options' => /--enablerepo/
             )
           end
@@ -370,15 +376,15 @@ describe 'docker', :type => :class do
           let(:params) { {
             'manage_package'              => true,
             'use_upstream_package_source' => false,
-            'package_name'                => 'docker-engine',
-            'package_source'              => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm',
+            'package_name'                => 'docker-ce',
+            'package_source'              => 'https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-17.09.0.ce-1.el7.centos.x86_64.rpm',
             'repo_opt'                    => ''
           } }
           it do
             should contain_package('docker').with(
               'ensure'          => 'present',
-              'source'          => 'https://get.docker.com/rpm/1.7.0/centos-6/RPMS/x86_64/docker-engine-1.7.0-1.el6.x86_64.rpm',
-              'name'            => 'docker-engine',
+              'source'          => 'https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-17.09.0.ce-1.el7.centos.x86_64.rpm',
+              'name'            => 'docker-ce',
               'install_options' => nil
             )
           end
@@ -754,7 +760,7 @@ describe 'docker', :type => :class do
       let(:params) { {'use_upstream_package_source' => false } }
       it { should_not contain_apt__source('docker') }
       it { should_not contain_apt__pin('docker') }
-      it { should contain_package('docker').with_name('docker-engine') }
+      it { should contain_package('docker').with_name('docker-ce') }
     end
   end
 
@@ -765,6 +771,7 @@ describe 'docker', :type => :class do
       :operatingsystemrelease => '6.5',
       :operatingsystemmajrelease => '6',
       :kernelversion => '2.6.32',
+      :architecture  => 'x86_64',
     } }
 
     it { should contain_class('epel') }
@@ -775,7 +782,7 @@ describe 'docker', :type => :class do
       it { should_not contain_class('epel') }
     end
 
-    it { should contain_package('docker').with_name('docker-io').with_ensure('present') }
+    it { should contain_package('docker').with_name('docker-ce').with_ensure('present') }
     it { should_not contain_apt__source('docker') }
     it { should_not contain_package('linux-image-extra-3.8.0-29-generic') }
 
@@ -787,7 +794,8 @@ describe 'docker', :type => :class do
       :operatingsystem => 'RedHat',
       :operatingsystemrelease => '6.5',
       :operatingsystemmajrelease => '6',
-      :kernelversion => '2.6.32'
+      :kernelversion => '2.6.32',
+      :architecture  => 'x86_64',
     } }
     it { should contain_file('/etc/sysconfig/docker').with_content(/DOCKER_NOWARN_KERNEL_VERSION=1/) }
   end
@@ -798,7 +806,8 @@ describe 'docker', :type => :class do
       :operatingsystem => 'RedHat',
       :operatingsystemrelease => '6.5',
       :operatingsystemmajrelease => '6',
-      :kernelversion => '2.6.31'
+      :kernelversion => '2.6.31',
+      :architecture  => 'x86_64',
     } }
     it { should_not contain_file('/etc/sysconfig/docker').with_content(/DOCKER_NOWARN_KERNEL_VERSION=1/) }
   end
@@ -809,10 +818,11 @@ describe 'docker', :type => :class do
       :operatingsystem => 'Family',
       :operatingsystemrelease => '21.0',
       :operatingsystemmajrelease => '21',
-      :kernelversion => '2.6.31'
+      :kernelversion => '2.6.31',
+      :architecture  => 'x86_64',
     } }
 
-    it { should contain_package('docker').with_name('docker-engine') }
+    it { should contain_package('docker').with_name('docker-ce') }
     it { should contain_yumrepo('docker').with_descr('Docker') }
     it { should_not contain_class('epel') }
   end
@@ -825,6 +835,7 @@ describe 'docker', :type => :class do
         :operatingsystemrelease => '7.0',
         :operatingsystemmajrelease => '7',
         :kernelversion => '2.6.32',
+        :architecture  => 'x86_64',
       } }
 
       storage_setup_file = '/etc/sysconfig/docker-storage-setup'
@@ -899,9 +910,10 @@ describe 'docker', :type => :class do
       :operatingsystemrelease => '7.0',
       :operatingsystemmajrelease => '7',
       :kernelversion => '2.6.32',
+      :architecture  => 'x86_64',
     } }
 
-    it { should contain_package('docker').with_name('docker-engine') }
+    it { should contain_package('docker').with_name('docker-ce') }
     it { should contain_yumrepo('docker') }
     it { should_not contain_class('epel') }
     it { should contain_package('docker').with_install_options('--enablerepo=rhel7-extras') }
@@ -920,9 +932,10 @@ describe 'docker', :type => :class do
       :operatingsystemrelease => '7.0',
       :operatingsystemmajrelease => '7',
       :kernelversion => '2.6.32',
+      :architecture  => 'x86_64',
     } }
 
-    it { should contain_package('docker').with_name('docker-engine') }
+    it { should contain_package('docker').with_name('docker-ce') }
     it { should_not contain_class('epel') }
     it { should contain_package('docker').with_install_options('--enablerepo=ol7_addons') }
   end
@@ -934,9 +947,10 @@ describe 'docker', :type => :class do
       :operatingsystemrelease => '7.0',
       :operatingsystemmajrelease => '7',
       :kernelversion => '2.6.32',
+      :architecture  => 'x86_64',
     } }
 
-    it { should contain_package('docker').with_name('docker-engine') }
+    it { should contain_package('docker').with_name('docker-ce') }
     it { should_not contain_class('epel') }
   end
 
@@ -965,7 +979,7 @@ describe 'docker', :type => :class do
       :kernelrelease          => '3.8.0-29-generic'
     } }
     it { should contain_service('docker').with_provider('upstart') }
-    it { should contain_package('docker').with_name('docker-engine').with_ensure('present')  }
+    it { should contain_package('docker').with_name('docker-ce').with_ensure('present')  }
     it { should contain_package('apparmor') }
   end
 
@@ -1005,6 +1019,7 @@ describe 'docker', :type => :class do
       :operatingsystemrelease => '6.4',
       :operatingsystemmajrelease => '6',
       :kernelversion => '2.6.32',
+      :architecture  => 'x86_64',
     } }
     it do
       expect {
@@ -1020,6 +1035,7 @@ describe 'docker', :type => :class do
       :operatingsystemrelease => '2015.09',
       :operatingsystemmajrelease => '2015',
       :kernelversion => '2.6.32',
+      :architecture  => 'x86_64',
     } }
     it {should contain_service('docker').without_provider }
   end
@@ -1031,6 +1047,102 @@ describe 'docker', :type => :class do
         should contain_package('docker')
       }.to raise_error(Puppet::Error, /This module only works on Debian or Red Hat based systems or on Archlinux as on Gentoo./)
     end
+  end
+
+  context 'with options to install docker-ee on Ubuntu' do
+    let (:facts) {{
+          :osfamily               => 'Debian',
+          :operatingsystem        => 'Ubuntu',
+          :lsbdistid              => 'Ubuntu',
+          :lsbdistcodename        => 'trusty',
+          :kernelrelease          => '3.13.0-129-generic',
+          :operatingsystemrelease => '14.04',
+          :operatingsystemmajrelease => '14',
+    }}
+
+    let(:params) {{
+      'docker_cs'                => true,
+      'package_source_location'  => 'https://download.docker-ee.com/linux/ubuntu',
+      'package_release'          => 'trusty',
+      'package_repos'            => 'stable-17.09',
+      'package_key'              => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88',
+      'package_key_source'       => 'https://download.docker-ee.com/linux/ubuntu/gpg',
+      'package_name'             => 'docker-ee',
+    }}
+      it { should contain_apt__source('docker').with_location("https://download.docker-ee.com/linux/ubuntu") }
+      it { should contain_package('docker').with_name('docker-ee').with_ensure('present') }
+      it { should contain_apt__pin('docker').with_origin('download.docker-ee.com') }
+      it { should contain_package('docker').with_install_options(nil) }
+  end
+
+  context 'with options to install docker-ee on Debian' do
+    let (:facts) {{
+          :osfamily               => 'Debian',
+          :operatingsystem        => 'Debian',
+          :lsbdistid              => 'Debian',
+          :lsbdistcodename        => 'wheezy',
+          :kernelrelease          => '3.13.0-129-generic',
+          :operatingsystemrelease => '8.0',
+          :operatingsystemmajrelease => '8',
+    }}
+
+    let(:params) {{
+      'docker_cs'                => true,
+      'package_source_location'  => 'https://download.docker-ee.com/linux/debian',
+      'package_release'          => 'wheezy',
+      'package_repos'            => 'stable-17.09',
+      'package_key'              => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88',
+      'package_key_source'       => 'https://download.docker-ee.com/linux/debian/gpg',
+      'package_name'             => 'docker-ee',
+    }}
+      it { should contain_apt__source('docker').with_location("https://download.docker-ee.com/linux/debian") }
+      it { should contain_package('docker').with_name('docker-ee').with_ensure('present') }
+      it { should contain_apt__pin('docker').with_origin('download.docker-ee.com') }
+      it { should contain_package('docker').with_install_options(nil) }
+  end
+
+  context 'with options to install docker-ee on CentOS' do
+    let (:facts) {{
+          :osfamily               => 'RedHat',
+          :operatingsystem        => 'CentOS',
+          :kernelversion          => '3.10.0',
+          :operatingsystemrelease => '7.4',
+          :operatingsystemmajrelease => '7',
+          :architecture           => 'x64_64',
+    }}
+
+    let(:params) {{
+      'docker_cs'                => true,
+      'package_source_location'  => 'https://download.docker-ee.com/linux/centos/7/x86_64/stable',
+      'package_repos'            => 'stable-17.09',
+      'package_key'              => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88',
+      'package_key_source'       => 'https://download.docker-ee.com/linux/debian/gpg',
+      'package_name'             => 'docker-ee',
+    }}
+      it { should contain_yumrepo('docker').with_baseurl("https://download.docker-ee.com/linux/centos/7/x86_64/stable") }
+      it { should contain_package('docker').with_name('docker-ee').with_ensure('present') }
+  end
+
+  context 'with options to install docker-ee on Fedora' do
+    let (:facts) {{
+          :osfamily               => 'RedHat',
+          :operatingsystem        => 'Fedora',
+          :kernelversion          => '3.10.0',
+          :operatingsystemrelease => '26',
+          :operatingsystemmajrelease => '26',
+          :architecture           => 'x64_64',
+    }}
+
+    let(:params) {{
+      'docker_cs'                => true,
+      'package_source_location'  => 'https://download.docker-ee.com/linux/fedora/26/x86_64/stable',
+      'package_repos'            => 'stable-17.09',
+      'package_key'              => '9DC858229FC7DD38854AE2D88D81803C0EBFCD88',
+      'package_key_source'       => 'https://download.docker-ee.com/linux/debian/gpg',
+      'package_name'             => 'docker-ee',
+    }}
+      it { should contain_yumrepo('docker').with_baseurl("https://download.docker-ee.com/linux/fedora/26/x86_64/stable") }
+      it { should contain_package('docker').with_name('docker-ee').with_ensure('present') }
   end
 
 end

@@ -16,8 +16,16 @@
 #   An array of additional packages that need to be installed to support
 #   docker. Defaults change depending on the operating system.
 #
+# [*purge_packages*]
+#   An array of packages that need to be removed not to conflict with
+#   docker. Set to undef to avoud purging packages.
+#   Defaults to old docker packages, fx. docker.io and docker-engine
+#
 # [*docker_cs*]
 #   Whether or not to use the CS (Commercial Support) Docker packages.
+#   If commercial support packages are used the parameters
+#   package_source_location, package_release, package_repos, package_key
+#   and package_key_source must be set accordingly to the OS requirements.
 #   Defaults to false.
 #
 # [*tcp_bind*]
@@ -174,6 +182,14 @@
 #   If you're using an upstream package source, what is it's
 #   location. Defaults to http://get.docker.com/ubuntu on Debian
 #
+# [*package_repos*]
+#   Which package repository to use.
+#   For CE: edge, stable, test
+#           Defaults to stable
+#   For EE: fx. stable-17.09
+#           Defaults to undefined. This parameter must be set explictly if
+#           using commercially suported Docker (ie docker_cs flag is true)
+#
 # [*service_state*]
 #   Whether you want to docker daemon to start up
 #   Defaults to running
@@ -295,8 +311,8 @@
 #   Specify a custom docker command name
 #   Default is set on a per system basis in docker::params
 #
-# [*daemon_subcommand*]
-#  Specify a subcommand/flag for running docker as daemon
+# [*docker_daemon_command*]
+#  Specify a command for running docker as daemon
 #  Default is set on a per system basis in docker::params
 #
 # [*docker_users*]
@@ -348,9 +364,8 @@ class docker(
   $version                           = $docker::params::version,
   $ensure                            = $docker::params::ensure,
   $prerequired_packages              = $docker::params::prerequired_packages,
+  $purge_packages                    = $docker::params::purge_packages,
   $docker_cs                         = $docker::params::docker_cs,
-  $package_cs_source_location        = $docker::params::package_cs_source_location,
-  $package_cs_key_source             = $docker::params::package_cs_key_source,
   $tcp_bind                          = $docker::params::tcp_bind,
   $tls_enable                        = $docker::params::tls_enable,
   $tls_verify                        = $docker::params::tls_verify,
@@ -379,6 +394,7 @@ class docker(
   $package_repos                     = $docker::params::package_repos,
   $package_key                       = $docker::params::package_key,
   $package_key_source                = $docker::params::package_key_source,
+  $package_name                      = $docker::params::package_name,
   $service_state                     = $docker::params::service_state,
   $service_enable                    = $docker::params::service_enable,
   $manage_service                    = $docker::params::manage_service,
@@ -412,10 +428,9 @@ class docker(
   $manage_package                    = $docker::params::manage_package,
   $package_source                    = $docker::params::package_source,
   $manage_epel                       = $docker::params::manage_epel,
-  $package_name                      = $docker::params::package_name,
   $service_name                      = $docker::params::service_name,
   $docker_command                    = $docker::params::docker_command,
-  $daemon_subcommand                 = $docker::params::daemon_subcommand,
+  $docker_daemon_command             = $docker::params::docker_daemon_command,
   $docker_users                      = [],
   $docker_group                      = $docker::params::docker_group,
   $daemon_environment_files          = [],
@@ -448,6 +463,13 @@ class docker(
   validate_bool($manage_kernel)
   validate_bool($manage_package)
   validate_bool($docker_cs)
+  if ($package_repos and $use_upstream_package_source) {
+    if ($docker_cs) {
+      validate_re($package_repos, '^stable-\d{2}\.\d{2}$')
+    } else {
+      validate_re($package_repos, '^(stable|edge|test)$')
+    }
+  }
   validate_bool($manage_service)
   validate_array($docker_users)
   validate_array($daemon_environment_files)

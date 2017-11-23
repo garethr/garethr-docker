@@ -8,15 +8,10 @@ class docker::repos {
   case $::osfamily {
     'Debian': {
       if ($docker::use_upstream_package_source) {
-        if ($docker::docker_cs) {
-          $location = $docker::package_cs_source_location
-          $key_source = $docker::package_cs_key_source
-          $package_key = $docker::package_cs_key
-        } else {
-          $location = $docker::package_source_location
-          $key_source = $docker::package_key_source
-          $package_key = $docker::package_key
-        }
+        $location = $docker::package_source_location
+        $key_source = $docker::package_key_source
+        $package_key = $docker::package_key
+
         apt::source { 'docker':
           location          => $location,
           release           => $docker::package_release,
@@ -50,13 +45,9 @@ class docker::repos {
     }
     'RedHat': {
       if $docker::manage_package {
-        if ($docker::docker_cs) {
-          $baseurl = $docker::package_cs_source_location
-          $gpgkey = $docker::package_cs_key_source
-        } else {
-          $baseurl = $docker::package_source_location
-          $gpgkey = $docker::package_key_source
-        }
+        $baseurl = $docker::package_source_location
+        $gpgkey = $docker::package_key_source
+
         if ($docker::use_upstream_package_source) {
           yumrepo { 'docker':
             descr    => 'Docker',
