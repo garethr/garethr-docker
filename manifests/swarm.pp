@@ -1,6 +1,6 @@
 # == Define: docker::swarm
 # 
-# A define that managers a Docker Swarm Mode cluster
+# A define that manages a Docker Swarm Mode cluster
 #
 # == Paramaters
 #
