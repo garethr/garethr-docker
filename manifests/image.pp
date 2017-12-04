@@ -110,7 +110,7 @@ define docker::image(
       onlyif  => $image_find,
       timeout => 0,
     }
-  } elsif $ensure == 'latest' {
+  } elsif $ensure == 'latest' or $image_tag == 'latest' {
     exec { "echo 'Update of ${image_arg} complete'":
       environment => 'HOME=/root',
       path        => ['/bin', '/usr/bin'],
