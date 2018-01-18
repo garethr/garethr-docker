@@ -10,6 +10,7 @@ define docker::exec(
   $command = undef,
   $unless = undef,
   $sanitise_name = true,
+  $refreshonly = false,
 ) {
   include docker::params
 
@@ -22,6 +23,7 @@ define docker::exec(
   validate_bool($detach)
   validate_bool($interactive)
   validate_bool($tty)
+  validate_bool($refreshonly)
 
   $docker_exec_flags = docker_exec_flags({
     detach => $detach,
@@ -47,5 +49,6 @@ define docker::exec(
     path        => ['/bin', '/usr/bin'],
     timeout     => 0,
     unless      => $unless_command,
+    refreshonly => $refreshonly,
   }
 }
