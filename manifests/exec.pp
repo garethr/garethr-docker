@@ -5,6 +5,7 @@
 define docker::exec(
   $detach = false,
   $interactive = false,
+  $env = [],
   $tty = false,
   $container = undef,
   $command = undef,
@@ -27,6 +28,7 @@ define docker::exec(
     detach => $detach,
     interactive => $interactive,
     tty => $tty,
+    env => any2array($env),
   })
 
 

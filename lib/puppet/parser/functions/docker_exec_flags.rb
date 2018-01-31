@@ -18,6 +18,12 @@ module Puppet::Parser::Functions
       flags << '--tty=true'
     end
 
+    if opts['env']
+      opts['env'].each do |namevaluepair|
+        flags << "--env #{namevaluepair}"
+      end
+    end
+
     flags.flatten.join(" ")
   end
 end

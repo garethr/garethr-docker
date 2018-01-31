@@ -588,6 +588,7 @@ docker::exec { 'cron_allow_root':
   container    => 'mycontainer',
   command      => '/bin/echo root >> /usr/lib/cron/cron.allow',
   tty          => true,
+  env          => ['FOO=BAR', 'FOO2=BAR2'],
   unless       => 'grep root /usr/lib/cron/cron.allow 2>/dev/null',
 }
 ```
