@@ -31,7 +31,13 @@ class docker::install {
           # on the $::kernelrelease fact
           default: { $kernelpackage = "linux-image-extra-${::kernelrelease}" }
         }
-        $manage_kernel = $docker::manage_kernel
+
+        # The AWS-tuned Ubuntu kernel doesn't need extra kernel packages
+        if $::kernelrelease =~ /aws$/ {
+          $manage_kernel = false
+        } else {
+          $manage_kernel = $docker::manage_kernel
+        }
       } else {
         # Debian does not need extra kernel packages
         $manage_kernel = false
