@@ -85,6 +85,7 @@ class docker::service (
   $dm_use_deferred_deletion          = $docker::dm_use_deferred_deletion,
   $dm_blkdiscard                     = $docker::dm_blkdiscard,
   $dm_override_udev_sync_check       = $docker::dm_override_udev_sync_check,
+  $overlay2_override_kernel_check    = $docker::overlay2_override_kernel_check,
   $storage_devs                      = $docker::storage_devs,
   $storage_vg                        = $docker::storage_vg,
   $storage_root_size                 = $docker::storage_root_size,

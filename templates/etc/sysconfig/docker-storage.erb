@@ -34,4 +34,7 @@ DOCKER_STORAGE_OPTIONS="<% -%>
 <% if @dm_blkdiscard %> --storage-opt dm.blkdiscard=<%= @dm_blkdiscard %><% end -%>
 <% if @dm_override_udev_sync_check %> --storage-opt dm.override_udev_sync_check=<%= @dm_override_udev_sync_check %><% end -%>
 <% end -%>
+<% if @storage_driver == 'overlay2' -%>
+<% if @overlay2_override_kernel_check %> --storage-opt overlay2.override_kernel_check=<%= @overlay2_override_kernel_check %><% end -%>
+<% end -%>
 "

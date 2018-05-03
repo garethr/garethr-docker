@@ -515,6 +515,15 @@ describe 'docker', :type => :class do
         it { should contain_file(storage_config_file).with_content(/--storage-opt dm\.override_udev_sync_check=true/) }
       end
 
+      context 'with overlay2 override kernel check param' do
+        let(:params) {
+          { 'storage_driver' => 'overlay2',
+            'overlay2_override_kernel_check' => 'true'
+          }
+        }
+        it { should contain_file(storage_config_file).with_content(/--storage-opt overlay2\.override_kernel_check=true/) }
+      end
+
       context 'without execdriver param' do
         it { should_not contain_file(service_config_file).with_content(/-e lxc/) }
         it { should_not contain_file(service_config_file).with_content(/-e native/) }
