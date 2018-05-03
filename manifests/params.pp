@@ -53,6 +53,7 @@ class docker::params {
   $dm_use_deferred_deletion          = undef
   $dm_blkdiscard                     = undef
   $dm_override_udev_sync_check       = undef
+  $overlay2_override_kernel_check    = undef
   $manage_package                    = true
   $package_source                    = undef
   $manage_kernel                     = true
