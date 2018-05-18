@@ -19,16 +19,16 @@ class docker::repos {
         }
         ensure_packages(['debian-keyring', 'debian-archive-keyring'])
         apt::source { 'docker':
-          location          => $location,
-          release           => $docker::package_release,
-          repos             => $docker::package_repos,
-          key               => {
-            id              => $package_key,
-            source          => $key_source 
+          location => $location,
+          release  => $docker::package_release,
+          repos    => $docker::package_repos,
+          key      => {
+            id     => $package_key,
+            source => $key_source,
           },
-          require           => [ Package['debian-keyring'], Package['debian-archive-keyring'] ],
-          include           => {
-            src             => false
+          require  => [ Package['debian-keyring'], Package['debian-archive-keyring'] ],
+          include  => {
+            src => false,
           },
         }
         $url_split = split($location, '/')
