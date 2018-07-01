@@ -145,6 +145,13 @@ require 'spec_helper'
         end
       end
 
+      context 'when passing `service_provider`' do
+        context 'when forcing use of systemd' do
+          let(:params) { {'command' => 'command', 'image' => 'base', 'service_provider' => 'systemd'} }
+          it { should contain_file('/etc/systemd/system/docker-sample.service') }
+        end
+      end
+
       context 'removing containers and volumes' do
         context 'when trying to remove the volume and not the container on stop' do
           let(:params) {{
