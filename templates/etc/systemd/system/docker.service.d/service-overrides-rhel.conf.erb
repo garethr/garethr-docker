@@ -1,7 +1,7 @@
 [Service]
-EnvironmentFile=-/etc/sysconfig/docker
-EnvironmentFile=-/etc/sysconfig/docker-storage
-EnvironmentFile=-/etc/sysconfig/docker-network
+EnvironmentFile=-<%= @_service_config %>
+EnvironmentFile=-<%= @network_config %>
+EnvironmentFile=-<%= @storage_config %>
 <% if @daemon_environment_files %><% @daemon_environment_files.each do |param| %>EnvironmentFile=-<%= param %>
 <% end %><% end -%>
 ExecStart=

@@ -148,9 +148,6 @@ class docker::params {
 
     }
     'RedHat' : {
-      $service_config = '/etc/sysconfig/docker'
-      $storage_config = '/etc/sysconfig/docker-storage'
-      $storage_setup_file = '/etc/sysconfig/docker-storage-setup'
       $service_hasstatus  = true
       $service_hasrestart = true
 
@@ -192,6 +189,10 @@ class docker::params {
       $pin_upstream_package_source = undef
       $apt_source_pin_level = undef
       $service_name = $service_name_default
+      $service_config = "/etc/sysconfig/${service_name}"
+      $storage_config = "/etc/sysconfig/${service_name}-storage"
+      $network_config = "/etc/sysconfig/${service_name}-network"
+      $storage_setup_file = "/etc/sysconfig/${service_name}-storage-setup"
       $docker_command = $docker_command_default
       if (versioncmp($::operatingsystemrelease, '7.0') < 0) or ($::operatingsystem == 'Amazon') {
         $detach_service_in_init = true

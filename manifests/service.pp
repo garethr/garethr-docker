@@ -98,6 +98,7 @@ class docker::service (
   $storage_config                    = $docker::storage_config,
   $storage_config_template           = $docker::storage_config_template,
   $storage_setup_file                = $docker::storage_setup_file,
+  $network_config                    = $docker::network_config,
   $service_provider                  = $docker::service_provider,
   $service_config                    = $docker::service_config,
   $service_config_template           = $docker::service_config_template,
@@ -124,10 +125,10 @@ class docker::service (
 
   if $service_config {
     $_service_config = $service_config
+  } elsif $::osfamily == 'Debian' {
+    $_service_config = "/etc/default/${service_name}"
   } else {
-    if $::osfamily == 'Debian' {
-      $_service_config = "/etc/default/${service_name}"
-    }
+    $_service_config = undef
   }
 
   $_manage_service = $manage_service ? {
@@ -147,12 +148,12 @@ class docker::service (
 
   case $service_provider {
     'systemd': {
-      file { '/etc/systemd/system/docker.service.d':
-        ensure => directory,
+      file { "/etc/systemd/system/${service_name}.service.d":
+        ensure => directory
       }
 
       if $service_overrides_template {
-        file { '/etc/systemd/system/docker.service.d/service-overrides.conf':
+        file { "/etc/systemd/system/${service_name}.service.d/service-overrides.conf":
           ensure  => present,
           content => template($service_overrides_template),
           notify  => Exec['docker-systemd-reload-before-service'],
