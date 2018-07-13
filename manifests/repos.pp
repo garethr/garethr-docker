@@ -17,7 +17,7 @@ class docker::repos {
           $key_source = $docker::package_key_source
           $package_key = $docker::package_key
         }
-       if $::lsbmajdistrelease <= '8' {
+      if $::lsbmajdistrelease <= '8' {
         apt::source { 'docker':
           location          => $location,
           release           => $docker::package_release,
@@ -25,9 +25,10 @@ class docker::repos {
           key               => $package_key,
           key_source        => $key_source,
           required_packages => 'debian-keyring debian-archive-keyring',
+          pin               => '10',
           include_src       => false,
         }
-       } else {
+      } else {
         apt::source { 'docker':
           location => $location,
           release  => $docker::package_release,
