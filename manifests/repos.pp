@@ -29,12 +29,12 @@ class docker::repos {
         }
        } else {
         apt::source { 'docker':
-          location          => $location,
-          release           => $docker::package_release,
-          repos             => $docker::package_repos,
-          key               => { 'id' => $package_key, 'source' => $key_source },
-          pin               => '10',
-          include           => { 'src' => false }
+          location => $location,
+          release  => $docker::package_release,
+          repos    => $docker::package_repos,
+          key      => { 'id' => $package_key, 'source' => $key_source },
+          pin      => '10',
+          include  => { 'src' => false }
         }
       }
         $url_split = split($location, '/')
