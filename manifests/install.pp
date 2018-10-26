@@ -1,10 +1,10 @@
-# == Class: docker
+# == Class: docker_old	
 #
 # Module to install an up-to-date version of Docker from a package repository.
 # This module currently works only on Debian, Red Hat
 # and Archlinux based distributions.
 #
-class docker::install {
+class docker_old::install {
   $docker_command = $docker::docker_command
   validate_string($docker::version)
   validate_re($::osfamily, '^(Debian|RedHat|Archlinux|Gentoo)$',

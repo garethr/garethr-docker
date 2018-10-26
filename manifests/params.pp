@@ -1,8 +1,8 @@
-# == Class: docker::params
+# == Class: docker_old::params
 #
 # Default parameter values for the docker module
 #
-class docker::params {
+class docker_old::params {
   $version                           = undef
   $ensure                            = present
   $docker_cs                         = false
@@ -87,7 +87,7 @@ class docker::params {
             $service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-debian.conf.erb'
             $service_hasstatus       = true
             $service_hasrestart      = true
-            include docker::systemd_reload
+            include docker_old::systemd_reload
           } else {
             $service_config_template = 'docker/etc/default/docker.erb'
             $service_overrides_template = undef
@@ -106,7 +106,7 @@ class docker::params {
             $service_overrides_template = 'docker/etc/systemd/system/docker.service.d/service-overrides-debian.conf.erb'
             $service_hasstatus          = true
             $service_hasrestart         = true
-            include docker::systemd_reload
+            include docker_old::systemd_reload
           } else {
             $service_provider           = undef
             $storage_config             = undef
@@ -207,7 +207,7 @@ class docker::params {
         } else {
           $docker_group = 'dockerroot'
         }
-        include docker::systemd_reload
+        include docker_old::systemd_reload
       }
 
       # repo_opt to specify install_options for docker package
@@ -236,7 +236,7 @@ class docker::params {
       }
     }
     'Archlinux' : {
-      include docker::systemd_reload
+      include docker_old::systemd_reload
 
       $manage_epel = false
       $docker_group = $docker_group_default

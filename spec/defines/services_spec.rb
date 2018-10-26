@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'docker::services', :type => :define do
+describe 'docker_old::services', :type => :define do
   let(:title) { 'create services' }
 	let(:facts) { {
 		:osfamily                  => 'Debian',

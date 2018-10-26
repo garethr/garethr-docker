@@ -1,5 +1,5 @@
-# == Class: docker::config
+# == Class: docker_old::config
 #
-class docker::config {
-  docker::system_user { $docker::docker_users: }
+class docker_old::config {
+  docker_old::system_user { $docker::docker_users: }
 }

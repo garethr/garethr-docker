@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'docker::exec', :type => :define do
+describe 'docker_old::exec', :type => :define do
   let(:title) { 'sample' }
 	let(:facts) { {
 		:osfamily                  => 'Debian',

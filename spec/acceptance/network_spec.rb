@@ -4,7 +4,7 @@ describe 'docker network' do
   command = 'docker'
 
   before(:all) do
-    install_code = "class { 'docker': }"
+    install_code = "class { 'docker_old': }"
     apply_manifest(install_code, :catch_failures=>true)
   end
 

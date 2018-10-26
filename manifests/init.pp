@@ -1,4 +1,4 @@
-# == Class: docker
+# == Class: docker_old
 #
 # Module to install an up-to-date version of Docker from package.
 #
@@ -344,7 +344,7 @@
 # [*storage_pool_autoextend_percent*]
 #   Extend the pool by specified percentage when threshold is hit.
 #
-class docker(
+class docker_old(
   $version                           = $docker::params::version,
   $ensure                            = $docker::params::ensure,
   $prerequired_packages              = $docker::params::prerequired_packages,
@@ -440,7 +440,7 @@ class docker(
   $service_overrides_template        = $docker::params::service_overrides_template,
   $service_hasstatus                 = $docker::params::service_hasstatus,
   $service_hasrestart                = $docker::params::service_hasrestart,
-) inherits docker::params {
+) inherits docker_old::params {
 
   validate_string($version)
   validate_re($::osfamily, '^(Debian|RedHat|Archlinux|Gentoo)$',
@@ -520,16 +520,16 @@ class docker(
     validate_string($tls_key)
   }
 
-  class { 'docker::repos': }
-  -> class { 'docker::install': }
-  -> class { 'docker::config': }
-  ~> class { 'docker::service': }
-  contain 'docker::repos'
-  contain 'docker::install'
-  contain 'docker::config'
-  contain 'docker::service'
+  class { 'docker_old::repos': }
+  -> class { 'docker_old::install': }
+  -> class { 'docker_old::config': }
+  ~> class { 'docker_old::service': }
+  contain 'docker_old::repos'
+  contain 'docker_old::install'
+  contain 'docker_old::config'
+  contain 'docker_old::service'
 
-  Class['docker'] -> Docker::Registry <||> -> Docker::Image <||> -> Docker::Run <||>
-  Class['docker'] -> Docker::Image <||> -> Docker::Run <||>
-  Class['docker'] -> Docker::Run <||>
+  Class['docker_old'] -> Docker_old::Registry <||> -> Docker_old::Image <||> -> Docker_old::Run <||>
+  Class['docker_old'] -> Docker_old::Image <||> -> Docker_old::Run <||>
+  Class['docker_old'] -> Docker_old::Run <||>
 }

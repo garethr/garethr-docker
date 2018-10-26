@@ -1,4 +1,4 @@
-# == Class: docker::compose
+# == Class: docker_old::compose
 #
 # Class to install Docker Compose using the recommended curl command.
 #
@@ -20,12 +20,12 @@
 # [*proxy*]
 #   Proxy to use for downloading Docker Compose.
 #
-class docker::compose(
+class docker_old::compose(
   $ensure = 'present',
   $version = $docker::params::compose_version,
   $install_path = $docker::params::compose_install_path,
   $proxy = undef
-) inherits docker::params {
+) inherits docker_old::params {
   validate_string($version)
   validate_re($ensure, '^(present|absent)$')
   validate_absolute_path($install_path)

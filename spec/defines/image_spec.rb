@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'docker::image', :type => :define do
+describe 'docker_old::image', :type => :define do
   let(:title) { 'base' }
 	let(:facts) { {
 		:osfamily                  => 'Debian',

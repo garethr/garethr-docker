@@ -1,4 +1,4 @@
-# == Define: docker::services
+# == Define: docker_old::services
 # 
 # A define that managers a Docker services 
 #
@@ -60,7 +60,7 @@
 #  replicas
 #  
 
-define docker::services(
+define docker_old::services(
 
   $ensure = 'present',
   $image = undef,
@@ -79,7 +79,7 @@ define docker::services(
   $scale = false,
   ){
 
-  include docker::params
+  include docker_old::params
 
   $docker_command = "${docker::params::docker_command} service"
   validate_re($ensure, '^(present|absent)$')

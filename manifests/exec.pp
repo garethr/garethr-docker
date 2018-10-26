@@ -2,7 +2,7 @@
 #
 # A define which executes a command inside a container.
 #
-define docker::exec(
+define docker_old::exec(
   $detach = false,
   $interactive = false,
   $tty = false,
@@ -11,7 +11,7 @@ define docker::exec(
   $unless = undef,
   $sanitise_name = true,
 ) {
-  include docker::params
+  include docker_old::params
 
   $docker_command = $docker::params::docker_command
   validate_string($docker_command)

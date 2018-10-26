@@ -1,4 +1,4 @@
-# == Define: docker:run
+# == Define: docker_old:run
 #
 # A define which manages a running docker container.
 #
@@ -59,7 +59,7 @@
 # configuration.  Most commonly used are on-failure or always.
 # Default: on-failure
 #
-define docker::run(
+define docker_old::run(
   $image,
   $ensure = 'present',
   $command = undef,
@@ -110,7 +110,7 @@ define docker::run(
   $stop_wait_time = 0,
   $syslog_identifier = undef,
 ) {
-  include docker::params
+  include docker_old::params
   if ($socket_connect != []) {
     $sockopts = join(any2array($socket_connect), ',')
     $docker_command = "${docker::params::docker_command} -H ${sockopts}"

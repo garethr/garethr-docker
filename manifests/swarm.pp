@@ -1,4 +1,4 @@
-# == Define: docker::swarm
+# == Define: docker_old::swarm
 # 
 # A define that managers a Docker Swarm Mode cluster
 #
@@ -70,7 +70,7 @@
 #
 
 
-define docker::swarm(
+define docker_old::swarm(
 
   $ensure = 'present',
   $init = false,
@@ -88,7 +88,7 @@ define docker::swarm(
   $manager_ip = undef,
   ){
 
-  include docker::params
+  include docker_old::params
 
   $docker_command = "${docker::params::docker_command} swarm"
   validate_re($ensure, '^(present|absent)$')

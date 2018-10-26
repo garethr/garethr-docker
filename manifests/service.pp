@@ -1,4 +1,4 @@
-# == Class: docker::service
+# == Class: docker_old::service
 #
 # Class to manage the docker service daemon
 #
@@ -36,7 +36,7 @@
 #   Valid values are 'true', 'false'.
 #   Defaults to 'true'.
 #
-class docker::service (
+class docker_old::service (
   $docker_command                    = $docker::docker_command,
   $service_name                      = $docker::service_name,
   $daemon_subcommand                 = $docker::daemon_subcommand,

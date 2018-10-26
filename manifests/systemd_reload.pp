@@ -1,8 +1,8 @@
-# == Class: docker::systemd_reload
+# == Class: docker_old::systemd_reload
 #
 # For systems that have systemd
 #
-class docker::systemd_reload {
+class docker_old::systemd_reload {
   exec { 'docker-systemd-reload':
     path        => ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/'],
     command     => 'systemctl daemon-reload',

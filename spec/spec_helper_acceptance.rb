@@ -26,7 +26,7 @@ RSpec.configure do |c|
   c.before :suite do
     # Install module and dependencies
     hosts.each do |host|
-      copy_module_to(host, :source => proj_root, :module_name => 'docker')
+      copy_module_to(host, :source => proj_root, :module_name => 'docker_old')
       # Due to RE-6764, running yum update renders the machine unable to install
       # other software. Thus this workaround.
       if fact_on(host, 'operatingsystem') == 'RedHat'

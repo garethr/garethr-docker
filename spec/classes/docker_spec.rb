@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'docker', :type => :class do
+describe 'docker_old', :type => :class do
 
   ['Debian', 'Ubuntu', 'RedHat', 'Archlinux', 'Gentoo'].each do |osfamily|
     context "on #{osfamily}" do
@@ -331,7 +331,7 @@ describe 'docker', :type => :class do
           end
         end
 
-        context 'It should install from rpm package with docker::repo_opt set' do
+        context 'It should install from rpm package with docker_old::repo_opt set' do
           let(:params) { {
             'manage_package'              => true,
             'use_upstream_package_source' => false,
@@ -349,7 +349,7 @@ describe 'docker', :type => :class do
           end
         end
 
-        context 'It uses default docker::repo_opt' do
+        context 'It uses default docker_old::repo_opt' do
           let(:params) { {
             'manage_package'              => true,
             'use_upstream_package_source' => false,
@@ -366,7 +366,7 @@ describe 'docker', :type => :class do
           end
         end
 
-        context 'It allows overwriting docker::repo_opt with empty string' do
+        context 'It allows overwriting docker_old::repo_opt with empty string' do
           let(:params) { {
             'manage_package'              => true,
             'use_upstream_package_source' => false,
@@ -403,10 +403,10 @@ describe 'docker', :type => :class do
       end
 
       it { should compile.with_all_deps }
-      it { should contain_class('docker::repos').that_comes_before('Class[docker::install]') }
-      it { should contain_class('docker::install').that_comes_before('Class[docker::config]') }
-      it { should contain_class('docker::service').that_subscribes_to('Class[docker::config]') }
-      it { should contain_class('docker::config') }
+      it { should contain_class('docker_old::repos').that_comes_before('Class[docker_old::install]') }
+      it { should contain_class('docker_old::install').that_comes_before('Class[docker_old::config]') }
+      it { should contain_class('docker_old::service').that_subscribes_to('Class[docker_old::config]') }
+      it { should contain_class('docker_old::config') }
 
       it { should contain_file(service_config_file).without_content(/icc=/) }
 

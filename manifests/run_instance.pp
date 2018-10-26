@@ -1,4 +1,4 @@
-# docker::run_instance
-class docker::run_instance($instance) {
-  create_resources(docker::run, $instance)
+# docker_old::run_instance
+class docker_old::run_instance($instance) {
+  create_resources(docker_old::run, $instance)
 }

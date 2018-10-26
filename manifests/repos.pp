@@ -1,7 +1,7 @@
-# == Class: docker::repos
+# == Class: docker_old::repos
 #
 #
-class docker::repos {
+class docker_old::repos {
 
   ensure_packages($docker::prerequired_packages)
 

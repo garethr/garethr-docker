@@ -1,25 +1,25 @@
 require 'spec_helper_acceptance'
 
-describe 'docker' do
+describe 'docker_old' do
   package_name = 'docker-engine'
   service_name = 'docker'
   command = 'docker'
 
   context 'with default parameters' do
     let(:pp) {"
-			class { 'docker':
+			class { 'docker_old':
 				docker_users => [ 'testuser' ],
 			}
-			docker::image { 'nginx': }
-			docker::run { 'nginx':
+			docker_old::image { 'nginx': }
+			docker_old::run { 'nginx':
 				image   => 'nginx',
 				net     => 'host',
-				require => Docker::Image['nginx'],
+				require => Docker_old::Image['nginx'],
 			}
-			docker::run { 'nginx2':
+			docker_old::run { 'nginx2':
 				image   => 'nginx',
 				restart => 'always',
-				require => Docker::Image['nginx'],
+				require => Docker_old::Image['nginx'],
 			}
     "}
 
@@ -75,10 +75,10 @@ describe 'docker' do
 
   context "When asked to have the latest image of something" do
     let(:pp) {"
-        class { 'docker':
+        class { 'docker_old':
           docker_users => [ 'testuser' ]
         }
-	docker::image { 'busybox': ensure => latest }
+	docker_old::image { 'busybox': ensure => latest }
     "}
     it 'should apply with no errors' do
       apply_manifest(pp, :catch_failures=>true)
@@ -96,8 +96,8 @@ describe 'docker' do
       @registry_email = 'user@example.com'
       @config_file = '/root/.docker/config.json'
       @manifest = <<-EOS
-        class { 'docker': }
-        docker::run { 'registry':
+        class { 'docker_old': }
+        docker_old::run { 'registry':
           image         => 'registry',
           pull_on_start => true,
           ports         => '#{registry_port}:#{registry_port}',
@@ -113,7 +113,7 @@ describe 'docker' do
 
     it 'should be able to login to the registry', :retry => 3, :retry_wait => 10 do
       manifest = <<-EOS
-        docker::registry { '#{@registry_address}':
+        docker_old::registry { '#{@registry_address}':
           username => 'username',
           password => 'password',
           email    => '#{@registry_email}',
@@ -125,7 +125,7 @@ describe 'docker' do
 
     it 'should be able to logout from the registry' do
       manifest = <<-EOS
-        docker::registry { '#{@registry_address}':
+        docker_old::registry { '#{@registry_address}':
           ensure=> absent,
         }
       EOS

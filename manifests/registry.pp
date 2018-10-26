@@ -1,4 +1,4 @@
-# == Class: docker
+# == Class: docker_old
 #
 # Module to configure private docker registries from which to pull Docker images
 # If the registry does not require authentication, this module is not required.
@@ -27,7 +27,7 @@
 #   users home directory
 #
 #
-define docker::registry(
+define docker_old::registry(
   $server      = $title,
   $ensure      = 'present',
   $username    = undef,
@@ -35,7 +35,7 @@ define docker::registry(
   $email       = undef,
   $local_user  = 'root',
 ) {
-  include docker::params
+  include docker_old::params
 
   validate_re($ensure, '^(present|absent)$')
 

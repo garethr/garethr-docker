@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'docker::compose', :type => :class do
+describe 'docker_old::compose', :type => :class do
   it { is_expected.to compile }
 
   let(:facts) { {

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'docker::system_user', :type => :define do
+describe 'docker_old::system_user', :type => :define do
   let(:title) { 'testuser' }
 	let(:facts) { {
 		:osfamily                  => 'Debian',

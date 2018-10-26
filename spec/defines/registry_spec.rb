@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'docker::registry', :type => :define do
+describe 'docker_old::registry', :type => :define do
   let(:title) { 'localhost:5000' }
 	let(:facts) { {
 		:osfamily                  => 'Debian',

@@ -1,4 +1,4 @@
-# == Class: docker
+# == Class: docker_old
 #
 # Module to install an up-to-date version of a Docker image
 # from the registry
@@ -23,7 +23,7 @@
 # [*docker_tar*]
 #   If you want to load a docker image from specific docker tar
 #
-define docker::image(
+define docker_old::image(
   $ensure       = 'present',
   $image        = $title,
   $image_tag    = undef,
@@ -33,7 +33,7 @@ define docker::image(
   $docker_dir   = undef,
   $docker_tar   = undef,
 ) {
-  include docker::params
+  include docker_old::params
   $docker_command = $docker::params::docker_command
   validate_re($ensure, '^(present|absent|latest)$')
   validate_re($image, '^[\S]*$')

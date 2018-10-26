@@ -1,4 +1,4 @@
-# == Define: docker::system_user
+# == Define: docker_old::system_user
 #
 # Define to manage docker group users
 #
@@ -6,10 +6,10 @@
 # [*create_user*]
 #   Boolean to cotrol whether the user should be created
 #
-define docker::system_user (
+define docker_old::system_user (
   $create_user = true) {
 
-  include docker
+  include docker_old
   $docker_group = $docker::docker_group
 
   if $create_user {

@@ -3,8 +3,8 @@ require 'spec_helper_acceptance'
 describe 'docker compose' do
   before(:all) do
     install_code = <<-code
-      class { 'docker': }
-      class { 'docker::compose': }
+      class { 'docker_old': }
+      class { 'docker_old::compose': }
     code
     apply_manifest(install_code, :catch_failures=>true)
   end
@@ -61,7 +61,7 @@ docker_compose { '/tmp/docker-compose.yml':
     before(:all) do
       @version = '1.5.1'
       @pp = <<-code
-        class { 'docker::compose':
+        class { 'docker_old::compose':
           version => '#{@version}',
         }
       code
@@ -83,7 +83,7 @@ docker_compose { '/tmp/docker-compose.yml':
     before(:all) do
       @version = '1.7.0'
       @pp = <<-code
-        class { 'docker::compose':
+        class { 'docker_old::compose':
           ensure  => absent,
           version => '#{@version}',
         }
@@ -102,8 +102,8 @@ docker_compose { '/tmp/docker-compose.yml':
 
     after(:all) do
       install_code = <<-code
-        class { 'docker': }
-        class { 'docker::compose': }
+        class { 'docker_old': }
+        class { 'docker_old::compose': }
       code
       apply_manifest(install_code, :catch_failures=>true)
     end

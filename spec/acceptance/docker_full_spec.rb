@@ -19,10 +19,10 @@ describe 'the Puppet Docker module' do
       end
     end
 
-    describe 'docker class' do
+    describe 'docker_old class' do
       context 'without any parameters' do
         let(:pp) {"
-          class { 'docker': }
+          class { 'docker_old': }
         "}
 
         it 'should run successfully' do
@@ -47,7 +47,7 @@ describe 'the Puppet Docker module' do
       context 'passing a TCP address to bind to' do
         before(:all) do
           @pp =<<-EOS
-            class { 'docker':
+            class { 'docker_old':
               tcp_bind => 'tcp://127.0.0.1:4444',
             }
           EOS
@@ -70,7 +70,7 @@ describe 'the Puppet Docker module' do
       context 'bound to a particular unix socket' do
         before(:each) do
           @pp =<<-EOS
-            class { 'docker':
+            class { 'docker_old':
               socket_bind => 'unix:///var/run/docker.sock',
             }
           EOS
@@ -91,14 +91,14 @@ describe 'the Puppet Docker module' do
       end
     end
 
-    describe 'docker::image' do
+    describe 'docker_old::image' do
 
       it 'should successfully download an image from the Docker Hub' do
         pp=<<-EOS
-          class { 'docker':}
-          docker::image { 'ubuntu':
+          class { 'docker_old':}
+          docker_old::image { 'ubuntu':
             ensure  => present,
-            require => Class['docker'],
+            require => Class['docker_old'],
           }
         EOS
         apply_manifest(pp, :catch_failures => true)
@@ -114,11 +114,11 @@ describe 'the Puppet Docker module' do
 
       it 'should successfully download an image based on a tag from the Docker Hub' do
         pp=<<-EOS
-          class { 'docker':}
-          docker::image { 'ubuntu':
+          class { 'docker_old':}
+          docker_old::image { 'ubuntu':
             ensure    => present,
             image_tag => 'precise',
-            require   => Class['docker'],
+            require   => Class['docker_old'],
           }
         EOS
         apply_manifest(pp, :catch_failures => true)
@@ -134,11 +134,11 @@ describe 'the Puppet Docker module' do
 
       it 'should successfully download an image based on a digest from the Docker Hub' do
         pp=<<-EOS
-          class { 'docker':}
-          docker::image { 'alpine':
+          class { 'docker_old':}
+          docker_old::image { 'alpine':
             ensure       => present,
             image_digest => 'sha256:3dcdb92d7432d56604d4545cbd324b14e647b313626d99b889d0626de158f73a',
-            require      => Class['docker'],
+            require      => Class['docker_old'],
           }
         EOS
         apply_manifest(pp, :catch_failures => true)
@@ -154,11 +154,11 @@ describe 'the Puppet Docker module' do
 
       it 'should create a new image based on a Dockerfile' do
         pp=<<-EOS
-          class { 'docker':}
+          class { 'docker_old':}
 
-          docker::image { 'ubuntu_with_file':
+          docker_old::image { 'ubuntu_with_file':
             docker_file => "/root/Dockerfile",
-            require     => Class['docker'],
+            require     => Class['docker_old'],
           }
 
           file { '/root/Dockerfile':
@@ -181,22 +181,22 @@ describe 'the Puppet Docker module' do
 
       it 'should create a new image based on a tar' do
         pp=<<-EOS
-          class { 'docker': }
-          docker::image { 'ubuntu':
-            require => Class['docker'],
+          class { 'docker_old': }
+          docker_old::image { 'ubuntu':
+            require => Class['docker_old'],
             ensure  => present,
           }
 
-          docker::run { 'container_2_4':
+          docker_old::run { 'container_2_4':
             image   => 'ubuntu',
             command => '/bin/sh -c "touch /root/test_file_for_tar_test.txt; while true; do echo hello world; sleep 1; done"',
-            require => Docker::Image['ubuntu'],
+            require => Docker_old::Image['ubuntu'],
           }
         EOS
 
         pp2=<<-EOS
-          class { 'docker': }
-          docker::image { 'ubuntu_from_commit':
+          class { 'docker_old': }
+          docker_old::image { 'ubuntu_from_commit':
             docker_tar => "/root/rootfs.tar"
           }
         EOS
@@ -246,16 +246,16 @@ describe 'the Puppet Docker module' do
 
       it 'should successfully delete the image' do
         pp1=<<-EOS
-          class { 'docker':}
-          docker::image { 'busybox':
+          class { 'docker_old':}
+          docker_old::image { 'busybox':
             ensure  => present,
-            require => Class['docker'],
+            require => Class['docker_old'],
           }
         EOS
         apply_manifest(pp1, :catch_failures => true)
         pp2=<<-EOS
-          class { 'docker':}
-          docker::image { 'busybox':
+          class { 'docker_old':}
+          docker_old::image { 'busybox':
             ensure => absent,
           }
         EOS
@@ -271,20 +271,20 @@ describe 'the Puppet Docker module' do
       end
     end
 
-    describe "docker::run" do
+    describe "docker_old::run" do
       it 'should start a container with a configurable command' do
         pp=<<-EOS
-          class { 'docker':
+          class { 'docker_old':
           }
 
-          docker::image { 'ubuntu':
-            require => Class['docker'],
+          docker_old::image { 'ubuntu':
+            require => Class['docker_old'],
           }
 
-          docker::run { 'container_3_1':
+          docker_old::run { 'container_3_1':
             image   => 'ubuntu',
             command => '/bin/sh -c "touch /root/test_file.txt; while true; do echo hello world; sleep 1; done"',
-            require => Docker::Image['ubuntu'],
+            require => Docker_old::Image['ubuntu'],
           }
         EOS
 
@@ -305,18 +305,18 @@ describe 'the Puppet Docker module' do
 
       it 'should start a container with port configuration' do
         pp=<<-EOS
-          class { 'docker':}
+          class { 'docker_old':}
 
-          docker::image { 'ubuntu':
-            require => Class['docker'],
+          docker_old::image { 'ubuntu':
+            require => Class['docker_old'],
           }
 
-          docker::run { 'container_3_2':
+          docker_old::run { 'container_3_2':
             image   => 'ubuntu',
             command => 'init',
             ports   => ['4444'],
             expose  => ['5555'],
-            require => Docker::Image['ubuntu'],
+            require => Docker_old::Image['ubuntu'],
           }
         EOS
 
@@ -333,17 +333,17 @@ describe 'the Puppet Docker module' do
 
       it 'should start a container with the hostname set' do
         pp=<<-EOS
-          class { 'docker':}
+          class { 'docker_old':}
 
-          docker::image { 'ubuntu':
-            require => Class['docker'],
+          docker_old::image { 'ubuntu':
+            require => Class['docker_old'],
           }
 
-          docker::run { 'container_3_3':
+          docker_old::run { 'container_3_3':
             image    => 'ubuntu',
             command  => 'init',
             hostname => 'testdomain.com',
-            require  => Docker::Image['ubuntu'],
+            require  => Docker_old::Image['ubuntu'],
           }
         EOS
 
@@ -362,17 +362,17 @@ describe 'the Puppet Docker module' do
 
       it 'should start a container while mounting local volumes' do
         pp=<<-EOS
-          class { 'docker':}
+          class { 'docker_old':}
 
-          docker::image { 'ubuntu':
-            require => Class['docker'],
+          docker_old::image { 'ubuntu':
+            require => Class['docker_old'],
           }
 
-          docker::run { 'container_3_4':
+          docker_old::run { 'container_3_4':
             image   => 'ubuntu',
             command => 'init',
             volumes => ["/root:/root/mnt:rw"],
-            require => Docker::Image['ubuntu'],
+            require => Docker_old::Image['ubuntu'],
           }
 
           file { '/root/test_mount.txt':
@@ -395,16 +395,15 @@ describe 'the Puppet Docker module' do
 
       it 'should start multiple linked containers' do
         pp=<<-EOS
-          class { 'docker':}
-
-          docker::image { 'ubuntu':
-            require => Class['docker'],
+          class { 'docker_old':}
+          docker_old::image { 'ubuntu':
+            require => Class['docker_old'],
           }
 
-          docker::run { 'container_3_5_1':
+          docker_old::run { 'container_3_5_1':
             image   => 'ubuntu',
             command => 'init',
-            require => Docker::Image['ubuntu'],
+            require => Docker_old::Image['ubuntu'],
           }
         EOS
 
@@ -417,18 +416,18 @@ describe 'the Puppet Docker module' do
         container_1 = shell("docker ps | awk 'FNR == 2 {print $NF}'")
 
         pp2=<<-EOS
-          class { 'docker':}
+          class { 'docker_old':}
 
-          docker::image { 'ubuntu':
-            require => Class['docker'],
+          docker_old::image { 'ubuntu':
+            require => Class['docker_old'],
           }
 
-          docker::run { 'container_3_5_2':
+          docker_old::run { 'container_3_5_2':
             image   => 'ubuntu',
             command => 'init',
             depends => ['#{container_1.stdout.strip}'],
             links   => "#{container_1.stdout.strip}:the_link",
-            require => Docker::Image['ubuntu'],
+            require => Docker_old::Image['ubuntu'],
           }
         EOS
 
@@ -448,30 +447,30 @@ describe 'the Puppet Docker module' do
 
       it 'should stop a running container' do
         pp=<<-EOS
-          class { 'docker':}
+          class { 'docker_old':}
 
-          docker::image { 'ubuntu':
-            require => Class['docker'],
+          docker_old::image { 'ubuntu':
+            require => Class['docker_old'],
           }
 
-          docker::run { 'container_3_6':
+          docker_old::run { 'container_3_6':
             image   => 'ubuntu',
             command => 'init',
-            require => Docker::Image['ubuntu'],
+            require => Docker_old::Image['ubuntu'],
           }
         EOS
 
         pp2=<<-EOS
-          class { 'docker':}
+          class { 'docker_old':}
 
-          docker::image { 'ubuntu':
-            require => Class['docker'],
+          docker_old::image { 'ubuntu':
+            require => Class['docker_old'],
           }
 
-          docker::run { 'container_3_6':
+          docker_old::run { 'container_3_6':
             image   => 'ubuntu',
             running => false,
-            require => Docker::Image['ubuntu'],
+            require => Docker_old::Image['ubuntu'],
           }
         EOS
 
@@ -498,30 +497,30 @@ describe 'the Puppet Docker module' do
 
       it 'should stop a running container and remove container' do
         pp=<<-EOS
-          class { 'docker':}
+          class { 'docker_old':}
 
-          docker::image { 'ubuntu':
-            require => Class['docker'],
+          docker_old::image { 'ubuntu':
+            require => Class['docker_old'],
           }
 
-          docker::run { 'container_3_6':
+          docker_old::run { 'container_3_6':
             image   => 'ubuntu',
             command => 'init',
-            require => Docker::Image['ubuntu'],
+            require => Docker_old::Image['ubuntu'],
           }
         EOS
 
         pp2=<<-EOS
-          class { 'docker':}
+          class { 'docker_old':}
 
-          docker::image { 'ubuntu':
-            require => Class['docker'],
+          docker_old::image { 'ubuntu':
+            require => Class['docker_old'],
           }
 
-          docker::run { 'container_3_6':
+          docker_old::run { 'container_3_6':
             ensure  => 'absent',
             image   => 'ubuntu',
-            require => Docker::Image['ubuntu'],
+            require => Docker_old::Image['ubuntu'],
           }
         EOS
 
@@ -543,19 +542,19 @@ describe 'the Puppet Docker module' do
       end
     end
 
-    describe "docker::exec" do
+    describe "docker_old::exec" do
       it 'should run a command inside an already running container' do
         pp=<<-EOS
-          class { 'docker':}
+          class { 'docker_old':}
 
-          docker::image { 'ubuntu':
-            require => Class['docker'],
+          docker_old::image { 'ubuntu':
+            require => Class['docker_old'],
           }
 
-          docker::run { 'container_4_1':
+          docker_old::run { 'container_4_1':
             image   => 'ubuntu',
             command => 'init',
-            require => Docker::Image['ubuntu'],
+            require => Docker_old::Image['ubuntu'],
           }
         EOS
 
@@ -568,8 +567,8 @@ describe 'the Puppet Docker module' do
         container_1 = shell("docker ps | awk 'FNR == 2 {print $NF}'")
 
         pp2=<<-EOS
-          class { 'docker':}
-          docker::exec { 'test_command':
+          class { 'docker_old':}
+          docker_old::exec { 'test_command':
             container => '#{container_1.stdout.strip}',
             command   => 'touch /root/test_command_file.txt',
             tty       => true,

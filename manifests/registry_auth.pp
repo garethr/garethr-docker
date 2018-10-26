@@ -1,4 +1,4 @@
-# docker::registry_auth
-class docker::registry_auth($registries) {
-  create_resources(docker::registry, $registries)
+# docker_old::registry_auth
+class docker_old::registry_auth($registries) {
+  create_resources(docker_old::registry, $registries)
 }
