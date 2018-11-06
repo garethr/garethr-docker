@@ -143,7 +143,7 @@ class { 'docker':
 Unless specified this installs the latest version of docker from the docker
 repository on first run. However if you want to specify a specific version you
 can do so, unless you are using Archlinux which only supports the latest release.
-Note that this relies on a package with that version existing in the reposiroty.
+Note that this relies on a package with that version existing in the repository.
 
 ```puppet
 class { 'docker':
