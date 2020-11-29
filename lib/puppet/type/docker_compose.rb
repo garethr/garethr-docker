@@ -4,7 +4,7 @@ Puppet::Type.newtype(:docker_compose) do
   ensurable
 
   def refresh
-      provider.restart
+    provider.restart
   end
 
   newparam(:name) do
@@ -13,30 +13,37 @@ Puppet::Type.newtype(:docker_compose) do
 
   newparam(:scale) do
     desc 'A hash of compose services and number of containers.'
- 		validate do |value|
+    validate do |value|
       fail 'scale should be a Hash' unless value.is_a? Hash
-			unless value.all? { |k,v| k.is_a? String }
+      unless value.all? { |k,v| k.is_a? String }
         fail 'The name of the compose service in scale should be a String'
-			end
-			unless value.all? { |k,v| v.is_a? Integer }
+      end
+      unless value.all? { |k,v| v.is_a? Integer }
         fail 'The number of containers in scale should be an Integer'
-			end
-		end
-   end
+      end
+    end
+  end
 
-	newparam(:options) do
+  newparam(:options) do
     desc 'Additional options to be passed directly to docker-compose.'
-		validate do |value|
+    validate do |value|
       fail 'options should be a String' unless value.is_a? String
-		end
-	end
+    end
+  end
 
-	newparam(:up_args) do
+  newparam(:up_args) do
     desc 'Arguments to be passed directly to docker-compose up.'
-		validate do |value|
+    validate do |value|
       fail 'up_args should be a String' unless value.is_a? String
-		end
-	end
+    end
+  end
+
+  newparam(:restart) do
+    desc 'Argument to set if containers have to be killed and restarted on refresh event'
+    validate do |value|
+      fail 'restart should be a Boolean' unless value.is_a? TrueClass or value.is_a? FalseClass
+    end
+  end
 
   autorequire(:file) do
     self[:name]

@@ -448,10 +448,15 @@ docker_compose { '/tmp/docker-compose.yml':
 Now when Puppet runs it will automatically run Compose is required,
 for example because the relevant Compose services aren't running.
 
+If a refresh event happens, all the containers are restarted 
+by default. It is possible to avoid this behavior using the ```restart```
+argument (```false``` to simply run the ```up``` command, ```true``` for
+restarting all containers, default: ```true```).
+
 You can also pass additional options (for example to enable experimental
 features) as well as provide scaling rules. The following example
 requests 2 containers be running for example. Puppet will now run
-Compose if the number of containers for a given service don't match the
+Compose if the number of containers for a given service doesn't match the
 provided scale values.
 
 ```puppet
@@ -460,6 +465,7 @@ docker_compose { '/tmp/docker-compose.yml':
   scale   => {
     'compose_test' => 2,
   },
+  restart => true,
   options => '--x-networking'
 }
 ```
